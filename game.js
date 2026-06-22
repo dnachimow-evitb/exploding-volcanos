@@ -2,10 +2,10 @@ const cv=document.getElementById('c'),X=cv.getContext('2d'),W=380,H=600;
 const song=document.getElementById('song');
 const CX=190,CY=176,G=0.22,T=58,CHARGE_RATE=0.55,CHARGE_MAX=1.7;
 const windAng=-1.45,swingEnd=1.5,idleAng=0.9,swingDur=0.32;
-const BASE=['🦆','⛵','🦕'],NEWBY={2:'🚚',3:'🐙',4:'🦈',5:'🐸',6:'🚀'};
-const TOYNAME={'🚚':'Monster Truck','🐙':'Octopus','🦈':'Shark','🐸':'Froggy','🚀':'Rocket'};
-const DIFF=[{cr:34,drift:0,blk:0,time:30},{cr:32,drift:.25,blk:0,time:32},{cr:30,drift:.45,blk:1.2,time:35},{cr:28,drift:.65,blk:1.8,time:38},{cr:26,drift:.85,blk:2.3,time:41},{cr:24,drift:1.05,blk:2.9,time:44}];
-const diff=()=>DIFF[Math.min(round-1,5)];
+const BASE=['🦆','⛵','🦕'],NEWBY={2:'🚚',3:'🚗',4:'🐙',5:'🪣',6:'🦈',7:'🐬',8:'🐸',9:'🦸',10:'🚀'};
+const TOYNAME={'🚚':'Monster Truck','🚗':'Car','🐙':'Octopus','🪣':'Pail','🦈':'Shark','🐬':'Dolphin','🐸':'Froggy','🦸':'Action Figure','🚀':'Rocket'};
+const DIFF=[{cr:34,drift:0,blk:0,time:30},{cr:33,drift:.2,blk:0,time:32},{cr:31,drift:.35,blk:0,time:35},{cr:29,drift:.5,blk:1.2,time:38},{cr:27,drift:.65,blk:1.6,time:41},{cr:25,drift:.8,blk:2.0,time:44},{cr:23,drift:.95,blk:2.3,time:47},{cr:21,drift:1.1,blk:2.6,time:50},{cr:19,drift:1.25,blk:2.9,time:53},{cr:17,drift:1.4,blk:3.2,time:56}];
+const diff=()=>DIFF[Math.min(round-1,9)];
 let craterR=30,score=0,round=1,collected=0,need=0,combo=0,bestCombo=0;
 let objs=[],parts=[],eParts=[],rings=[],ejecta=[],collectedToys=[],currentToys=[],landed=[],state='menu';
 let charging=null,pendingLaunch=null,armAng=idleAng,swingT=0,swingHit=false,splashSide=1;
@@ -128,7 +128,7 @@ function pop(x,y,t,c){const e=document.createElement('div');e.className='fp';e.t
  const wr=document.getElementById('w'),r=cv.getBoundingClientRect(),wb=wr.getBoundingClientRect(),sx=r.width/W,sy=r.height/H;
  e.style.left=(x*sx+r.left-wb.left-22)+'px';e.style.top=(y*sy+r.top-wb.top-12)+'px';wr.appendChild(e);setTimeout(()=>e.remove(),1000);}
 function roundWin(){
- if(round>=6){score+=150+Math.round(timeLeft)*10;state='win';eruptT=160;bigErupt();return;}
+ if(round>=10){score+=150+Math.round(timeLeft)*10;state='win';eruptT=160;bigErupt();return;}
  state='erupt';eruptT=160;score+=need*15+combo*5+Math.round(timeLeft)*10;bigErupt();
  banner='💦 The toys rain back into the tub!';bannerT=3.4;
  setTimeout(()=>{round++;newToyEm=NEWBY[round]||null;if(newToyEm)currentToys=[...currentToys,newToyEm];
@@ -255,7 +255,7 @@ function drawBanner(){if(bannerT<=0)return;X.save();X.globalAlpha=Math.min(1,ban
 function hud(){X.fillStyle='rgba(8,4,2,.82)';X.fillRect(0,0,W,58);X.fillStyle='rgba(255,180,0,.35)';X.fillRect(0,56,W,2);
  X.fillStyle='#ffd23f';X.font='800 16px sans-serif';X.textAlign='left';X.fillText('⭐ '+score,12,24);
  if(combo>1){X.fillStyle='#ff8800';X.font='800 13px sans-serif';X.textAlign='left';X.fillText('🔥 x'+combo,12,46);}
- X.fillStyle='#fff';X.font='700 12px sans-serif';X.textAlign='right';X.fillText('Round '+round+'/6',W-12,20);
+ X.fillStyle='#fff';X.font='700 12px sans-serif';X.textAlign='right';X.fillText('Round '+round+'/10',W-12,20);
  const tot=need,dw=tot*15,ds=(W-dw)/2;for(let i=0;i<tot;i++){X.fillStyle=i<collected?'#ffcc00':'rgba(255,255,255,.22)';X.beginPath();X.arc(ds+i*15+7,52,5,0,6.28);X.fill();}
  const tw=130,tx=(W-tw)/2,ty=8,pct=Math.max(0,timeLeft/roundTime),low=timeLeft<8;
  X.fillStyle='rgba(0,0,0,.5)';X.beginPath();X.roundRect(tx,ty,tw,11,6);X.fill();
@@ -267,7 +267,7 @@ let card=null;
 function overlay(){if(state==='menu')drawCard('🌋 Exploding Volcanos','Noah splashes toys into the volcano!\nHold a toy to wind up, release to splash.\nEach round adds a new toy!','START',()=>startGame());
  else if(state==='intro')drawIntroCard();
  else if(state==='newtoy')drawNewToyCard();
- else if(state==='win')drawCard('🏆 You Win!','All 6 rounds cleared!\nScore: '+score+'   Best combo: x'+bestCombo,'PLAY AGAIN',()=>startGame());
+ else if(state==='win')drawCard('🏆 You Win!','All 10 rounds cleared!\nScore: '+score+'   Best combo: x'+bestCombo,'PLAY AGAIN',()=>startGame());
  else if(state==='gameover')drawCard('⏰ Time\'s Up!','You reached Round '+round+'.\nScore: '+score+'   Best combo: x'+bestCombo,'TRY AGAIN',()=>startGame());else card=null;}
 function drawCard(t,b,bt,act){X.fillStyle='rgba(0,0,0,.6)';X.fillRect(0,0,W,H);const cw=314,ch=216,cx=(W-cw)/2,cy=(H-ch)/2;
  X.fillStyle='#fff';X.beginPath();X.roundRect(cx,cy,cw,ch,18);X.fill();X.strokeStyle='#ffcc00';X.lineWidth=4;X.stroke();
