@@ -274,7 +274,7 @@ function overlay(){if(state==='menu')drawCard('🌋 Exploding Volcanos','Noah sp
  else if(state==='intro')drawIntroCard();
  else if(state==='newtoy')drawNewToyCard();
  else if(state==='win')drawCard('🏆 You Win!','All 10 rounds cleared!\nScore: '+score+'   Best combo: x'+bestCombo,'PLAY AGAIN',()=>startGame());
- else if(state==='gameover')drawCard('⏰ Time\'s Up!','You reached Round '+round+'.\nScore: '+score+'   Best combo: x'+bestCombo,'TRY AGAIN',()=>startGame());else card=null;}
+ else if(state==='gameover')drawCard('⏰ Time\'s Up!','Out of time on round '+round+'.\nScore: '+score+' — give this round another go!','RETRY ROUND',()=>{startRound(false);state='play';lastNow=performance.now();});else card=null;}
 function drawCard(t,b,bt,act){X.fillStyle='rgba(0,0,0,.6)';X.fillRect(0,0,W,H);const cw=314,ch=216,cx=(W-cw)/2,cy=(H-ch)/2;
  X.fillStyle='#fff';X.beginPath();X.roundRect(cx,cy,cw,ch,18);X.fill();X.strokeStyle='#ffcc00';X.lineWidth=4;X.stroke();
  X.fillStyle='#cc2200';X.font='800 20px sans-serif';X.textAlign='center';X.fillText(t,W/2,cy+42);
