@@ -1,0 +1,5 @@
+# OS / OneDrive sync junk — never track these
+Thumbs.db
+desktop.ini
+.DS_Store
+*.tmp

@@ -1,0 +1,13 @@
+{
+  "name": "Exploding Volcanos in the Bathtub",
+  "short_name": "Volcanos",
+  "description": "Help Noah splash bath toys into the volcano until it erupts!",
+  "start_url": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#163a5c",
+  "theme_color": "#163a5c",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
