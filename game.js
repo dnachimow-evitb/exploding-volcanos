@@ -8,7 +8,7 @@ const DIFF=[{cr:34,drift:0,blk:0,time:30},{cr:33,drift:.2,blk:0,time:32},{cr:31,
 const diff=()=>DIFF[Math.min(round-1,9)];
 let craterR=30,score=0,round=1,collected=0,need=0,combo=0,bestCombo=0;
 let objs=[],parts=[],eParts=[],rings=[],ejecta=[],collectedToys=[],currentToys=[],landed=[],state='menu';
-let charging=null,pendingLaunch=null,armAng=idleAng,swingT=0,swingHit=false,splashSide=1;
+let charging=null,pendingLaunch=null,armAng=idleAng,swingT=0,swingHit=false,splashSide=1,paused=false;
 let newToyEm=null,bannerT=0,banner='',newToyT=0;
 let wave=0,volP=0,shake=0,flash=0,flashCol='#fff',eruptT=0,hintT=0;
 let blk={on:false,x:190,dir:1,spd:0,y:292};
@@ -54,6 +54,8 @@ function waterBurst(x,y,big){const n=big?26:12;for(let i=0;i<n;i++){const a=-1.5
 function P(e){const r=cv.getBoundingClientRect(),sx=W/r.width,sy=H/r.height;return{x:(e.clientX-r.left)*sx,y:(e.clientY-r.top)*sy};}
 function down(e){initAudio();const p=P(e);
  if(dist(p.x,p.y,W-22,46)<20){muted=!muted;if(song){if(muted)song.pause();else song.play().catch(()=>{});}return;}
+ if((state==='play'||paused)&&dist(p.x,p.y,W-56,46)<16){paused=!paused;if(!paused)lastNow=performance.now();return;}
+ if(paused){if(card&&p.x>card.x&&p.x<card.x+card.w&&p.y>card.y&&p.y<card.y+card.h)card.act();return;}
  if(state!=='play'){if(card&&p.x>card.x&&p.x<card.x+card.w&&p.y>card.y&&p.y<card.y+card.h)card.act();return;}
  if(charging||pendingLaunch||swingT>0)return;
  let best=null,bd=74;objs.forEach(o=>{if(o.st!=='float')return;const d=dist(p.x,p.y,o.x,o.y);if(d<bd){bd=d;best=o;}});
@@ -255,6 +257,13 @@ function kid(){const kx=190,base=372,hy=base-44,s=splashSide;
  if(state==='erupt'||state==='win'){X.strokeStyle='#c87040';X.lineWidth=13;X.lineCap='round';[-1,1].forEach(sg=>{X.beginPath();X.moveTo(kx+18*sg,base-20);X.lineTo(kx+27*sg,hy+4);X.stroke();});[-1,1].forEach(sg=>{X.fillStyle='#d88050';X.beginPath();X.arc(kx+27*sg,hy+4,8,0,6.28);X.fill();X.strokeStyle='#1a0a00';X.lineWidth=2;X.stroke();});}}
 function drawParts(){parts.forEach(p=>{X.save();X.globalAlpha=p.life;X.fillStyle=p.col;X.beginPath();X.arc(p.x,p.y,p.r*p.life,0,6.28);X.fill();X.restore();});eParts.forEach(p=>{X.save();X.globalAlpha=p.life*.85;X.fillStyle=p.col;X.beginPath();X.arc(p.x,p.y,p.r,0,6.28);X.fill();X.restore();});}
 function drawMute(){X.font='18px sans-serif';X.textAlign='center';X.textBaseline='middle';X.fillText(muted?'🔇':'🔊',W-22,46);X.textBaseline='alphabetic';}
+function drawPauseBtn(){X.font='18px sans-serif';X.textAlign='center';X.textBaseline='middle';X.fillText(paused?'▶':'⏸',W-56,46);X.textBaseline='alphabetic';}
+function drawPauseCard(){X.fillStyle='rgba(0,0,0,.62)';X.fillRect(0,0,W,H);const cw=260,ch=172,cx=(W-cw)/2,cy=(H-ch)/2;
+ X.fillStyle='#fff';X.beginPath();X.roundRect(cx,cy,cw,ch,18);X.fill();X.strokeStyle='#ffcc00';X.lineWidth=4;X.stroke();
+ X.fillStyle='#cc2200';X.font='800 22px sans-serif';X.textAlign='center';X.fillText('⏸ Paused',W/2,cy+50);
+ X.fillStyle='#666';X.font='500 12.5px sans-serif';X.fillText('Round '+round+' · Score '+score,W/2,cy+80);
+ const bw=164,bh=46,bx=(W-bw)/2,by=cy+ch-64;X.fillStyle='#cc2200';X.beginPath();X.roundRect(bx,by,bw,bh,12);X.fill();X.fillStyle='#fff';X.font='800 16px sans-serif';X.fillText('▶ RESUME',W/2,by+29);
+ card={x:bx,y:by,w:bw,h:bh,act:()=>{paused=false;lastNow=performance.now();}};}
 function drawBanner(){if(bannerT<=0)return;X.save();X.globalAlpha=Math.min(1,bannerT/0.5);X.font='800 14px sans-serif';const w=X.measureText(banner).width+28;
  X.fillStyle='rgba(8,4,2,.85)';X.beginPath();X.roundRect(W/2-w/2,66,w,30,9);X.fill();X.strokeStyle='#ffd23f';X.lineWidth=2;X.stroke();
  X.fillStyle='#ffd23f';X.textAlign='center';X.textBaseline='middle';X.fillText(banner,W/2,82);X.textBaseline='alphabetic';X.restore();}
@@ -270,7 +279,8 @@ function hud(){X.fillStyle='rgba(8,4,2,.82)';X.fillRect(0,0,W,58);X.fillStyle='r
  const sec=Math.ceil(timeLeft),pulse=low?(1+Math.sin(wave*.5)*.12):1;X.save();X.translate(W/2,34);X.scale(pulse,pulse);
  X.fillStyle=low?'#ff5a5a':'#fff';X.font='900 18px sans-serif';X.textAlign='center';X.textBaseline='middle';X.fillText('⏱ '+sec,0,0);X.restore();X.textBaseline='alphabetic';}
 let card=null;
-function overlay(){if(state==='menu')drawCard('🌋 Exploding Volcanos','Noah splashes toys into the volcano!\nHold a toy to wind up, release to splash.\nEach round adds a new toy!','START',()=>startGame());
+function overlay(){if(paused){drawPauseCard();return;}
+ if(state==='menu')drawCard('🌋 Exploding Volcanos','Noah splashes toys into the volcano!\nHold a toy to wind up, release to splash.\nEach round adds a new toy!','START',()=>startGame());
  else if(state==='intro')drawIntroCard();
  else if(state==='newtoy')drawNewToyCard();
  else if(state==='win')drawCard('🏆 You Win!','All 10 rounds cleared!\nScore: '+score+'   Best combo: x'+bestCombo,'PLAY AGAIN',()=>startGame());
@@ -321,10 +331,10 @@ function loop(now){
  try{
   const dt=Math.min((now-lastNow)/1000||0,.05);lastNow=now;
   X.clearRect(0,0,W,H);X.save();if(shake>.3)X.translate((Math.random()-.5)*shake,(Math.random()-.5)*shake);
-  if(state!=='menu'){if(state==='play')step(dt);else{wave+=1.1;volP+=.05;if(shake>0)shake*=.82;if(flash>0)flash-=.04;if(bannerT>0)bannerT-=dt;armAng+=((idleAng)-armAng)*0.1;rings=rings.filter(r=>r.life>0);rings.forEach(r=>{r.r+=(r.big?8:2.6);r.life-=(r.big?.03:.045);});eParts=eParts.filter(p=>p.life>0);eParts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.2;p.life-=.022;p.r*=.985;});}
-   updateEjecta();
+  if(state!=='menu'){if(paused){}else if(state==='play')step(dt);else{wave+=1.1;volP+=.05;if(shake>0)shake*=.82;if(flash>0)flash-=.04;if(bannerT>0)bannerT-=dt;armAng+=((idleAng)-armAng)*0.1;rings=rings.filter(r=>r.life>0);rings.forEach(r=>{r.r+=(r.big?8:2.6);r.life-=(r.big?.03:.045);});eParts=eParts.filter(p=>p.life>0);eParts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.2;p.life-=.022;p.r*=.985;});}
+   if(!paused)updateEjecta();
    tile();tub();water(false);volcano();maxBlocker();drawObjs();kid();water(true);drawRings();aimHint();chargeGuide();drawParts();eruptFX();drawEjecta();hud();drawBanner();}else{tile();}
-  X.restore();if(flash>0){X.save();X.globalAlpha=flash;X.fillStyle=flashCol;X.fillRect(0,0,W,H);X.restore();}overlay();drawMute();
+  X.restore();if(flash>0){X.save();X.globalAlpha=flash;X.fillStyle=flashCol;X.fillRect(0,0,W,H);X.restore();}overlay();drawMute();if(state==='play'||paused)drawPauseBtn();
  }catch(err){}
  requestAnimationFrame(loop);
 }
