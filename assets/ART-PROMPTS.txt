@@ -1,0 +1,56 @@
+==========================================================
+EXPLODING VOLCANOS — ART PROMPTS (toys)
+==========================================================
+
+HOW THIS WORKS
+The game looks for a PNG for each toy in:  assets/toys/<name>.png
+If the PNG exists, it uses it. If not, it shows the emoji (so nothing
+breaks). You add art one toy at a time.
+
+BEST TOOL
+ChatGPT (GPT-4o / DALL·E 3) — it can make TRANSPARENT PNGs and you can
+upload your album cover as a style reference. Midjourney works too.
+
+STEPS FOR EACH TOY
+1. (Once) Upload your "Exploding Bathtub Volcanoes" cover image and say:
+   "Use this image as the art style reference for everything I ask next."
+2. Paste the toy prompt below.
+3. Ask for: "square image, fully transparent background, just the object."
+4. Download the PNG.
+5. Rename it EXACTLY to the filename listed (e.g. duck.png) — all lowercase.
+6. Put it in:  assets/toys/
+7. Tell me, and I'll commit + push so it goes live.
+
+TIP: If the background isn't truly transparent, run the image through
+https://www.remove.bg (free) to knock out the background, then save.
+
+----------------------------------------------------------
+STYLE SUFFIX — paste this at the END of every prompt:
+----------------------------------------------------------
+"...in a vibrant, glossy children's storybook cartoon style with soft
+cel-shading, bold friendly rounded shapes, and bright saturated colors,
+matching the reference cover art. Single object, centered, fully
+transparent background, square 1:1, no scene, no floor, no shadow, no
+text, no watermark. High quality, cute, kid-friendly."
+
+----------------------------------------------------------
+THE 12 TOYS  (filename  ->  prompt subject)
+----------------------------------------------------------
+duck.png          -> a classic yellow rubber bath duck with an orange beak
+boat.png          -> a small red-and-white toy sailboat with a tiny sail
+dino.png          -> a friendly green cartoon brontosaurus bath toy
+monstertruck.png  -> a chunky cartoon monster truck with huge knobby wheels
+car.png           -> a cute little rounded cartoon car, bright blue
+octopus.png       -> a smiling purple cartoon octopus bath toy
+pail.png          -> a colorful child's beach pail/bucket with a handle
+shark.png         -> a friendly grey cartoon shark with a big goofy grin
+dolphin.png       -> a happy light-blue cartoon dolphin leaping
+frog.png          -> a cheerful green cartoon frog bath toy
+actionfigure.png  -> a small heroic cartoon action figure in a cape
+rocket.png        -> a retro red-and-white cartoon toy rocket ship
+
+----------------------------------------------------------
+SIZE: any square size from 512x512 to 1024x1024 is great.
+START SMALL: do duck, dino, and rocket first so we can test that the
+pipeline works, then batch the rest.
+==========================================================

@@ -1,0 +1,7 @@
+Drop your toy PNGs in THIS folder, named exactly:
+
+duck.png  boat.png  dino.png  monstertruck.png  car.png  octopus.png
+pail.png  shark.png  dolphin.png  frog.png  actionfigure.png  rocket.png
+
+See ../ART-PROMPTS.txt for the prompts and instructions.
+The game shows the emoji for any toy that doesn't have a PNG yet.

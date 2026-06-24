@@ -13,6 +13,11 @@ let newToyEm=null,bannerT=0,banner='',newToyT=0;
 let wave=0,volP=0,shake=0,flash=0,flashCol='#fff',eruptT=0,hintT=0;
 let blk={on:false,x:190,dir:1,spd:0,y:292};
 let timeLeft=30,roundTime=30,hbTimer=0,lastNow=0;
+// ── SPRITE ART: drop PNGs into assets/toys/ ; falls back to emoji until they exist ──
+const SPRITE_FILE={'🦆':'duck','⛵':'boat','🦕':'dino','🚚':'monstertruck','🚗':'car','🐙':'octopus','🪣':'pail','🦈':'shark','🐬':'dolphin','🐸':'frog','🦸':'actionfigure','🚀':'rocket'};
+const sprites={};
+for(const em in SPRITE_FILE){const img=new Image();img.onload=()=>{img._ok=true;};img.src='assets/toys/'+SPRITE_FILE[em]+'.png';sprites[em]=img;}
+function paintToy(em,size){const img=sprites[em];if(img&&img._ok){X.drawImage(img,-size/2,-size/2,size,size);}else{X.font=(size*0.83).toFixed(0)+'px sans-serif';X.textAlign='center';X.textBaseline='middle';X.fillText(em,0,0);}}
 
 function catchHit(x,y,vy){return vy>0&&Math.abs(x-CX)<craterR*1.35&&y>CY-craterR*.7&&y<CY+craterR;}
 function ideal(o){return{vx:(CX-o.x)/T,vy:(CY-o.y-0.5*G*T*T)/T};}
@@ -127,7 +132,7 @@ function updateEjecta(){if(!ejecta.length)return;for(const e of ejecta){if(!e.al
  ejecta=ejecta.filter(e=>e.alive);}
 function drawEjecta(){ejecta.forEach(e=>{if(e.delay>0)return;X.save();X.translate(e.x,e.y);
   X.globalAlpha=.55;X.fillStyle='#fff';X.beginPath();X.arc(0,0,23,0,6.28);X.fill();X.globalAlpha=1;
-  X.rotate(e.rot);X.font='34px sans-serif';X.textAlign='center';X.textBaseline='middle';X.shadowColor='rgba(0,0,0,.35)';X.shadowBlur=5;X.fillText(e.em,0,0);X.restore();});}
+  X.rotate(e.rot);X.shadowColor='rgba(0,0,0,.35)';X.shadowBlur=5;paintToy(e.em,40);X.restore();});}
 function splash(x,y,col,n){for(let i=0;i<n;i++){const a=-1.57+(Math.random()-.5)*2.4,s=2+Math.random()*6;parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-2,life:1,r:3+Math.random()*5,col});}}
 function pop(x,y,t,c){const e=document.createElement('div');e.className='fp';e.textContent=t;e.style.color=c;
  const wr=document.getElementById('w'),r=cv.getBoundingClientRect(),wb=wr.getBoundingClientRect(),sx=r.width/W,sy=r.height/H;
@@ -205,7 +210,7 @@ function drawObjs(){objs.forEach(o=>{if(o.st==='gone')return;const fly=o.st==='f
  const canGrab=o.st==='float'&&!charging&&!pendingLaunch&&swingT<=0;
  if(canGrab){X.save();X.globalAlpha=.4+Math.sin(wave*.08+o.bob)*.18;X.strokeStyle=o.hb?'#ffd23f':(o.isNew&&newToyT>0?'#ffcc00':'#ffe066');X.lineWidth=o.hb?3.5:3;X.setLineDash([5,5]);X.beginPath();X.arc(o.x,by,o.hb?28:27,0,6.28);X.stroke();X.setLineDash([]);X.restore();}
  if(o.hb){drawHairball(o.x,by,o.r,o.sq||0);if(canGrab){X.fillStyle='#ffd23f';X.font='800 11px sans-serif';X.textAlign='center';X.fillText('BONUS! +5s',o.x,by-32);X.fillStyle='#fff';X.font='700 9px sans-serif';X.fillText('('+Math.ceil(o.life)+'s)',o.x,by+34);}
- }else{const sq=o.sq||0,s1=1+sq*.4,s2=1-sq*.3;X.save();X.translate(o.x,by);X.rotate(o.rot||0);X.scale(s1,s2);X.shadowColor='rgba(0,0,0,.4)';X.shadowBlur=6;X.font='30px sans-serif';X.textAlign='center';X.textBaseline='middle';X.fillText(o.em,0,0);X.restore();}
+ }else{const sq=o.sq||0,s1=1+sq*.4,s2=1-sq*.3;X.save();X.translate(o.x,by);X.rotate(o.rot||0);X.scale(s1,s2);X.shadowColor='rgba(0,0,0,.4)';X.shadowBlur=6;paintToy(o.em,36);X.restore();}
  if(o.isNew&&newToyT>0){const pu=(Math.sin(wave*.2)+1)/2;X.save();X.globalAlpha=.55+pu*.45;X.strokeStyle='#ffcc00';X.lineWidth=3;X.beginPath();X.arc(o.x,by,30,0,6.28);X.stroke();X.fillStyle='#ffcc00';X.font='800 12px sans-serif';X.textAlign='center';X.fillText('NEW!',o.x,by-34);X.restore();}
  if(!fly){X.save();X.globalAlpha=.2;X.strokeStyle='#fff';X.lineWidth=1.5;X.beginPath();X.ellipse(o.x,by+13,18,4,0,0,6.28);X.stroke();X.restore();}
 });}

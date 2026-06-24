@@ -1,4 +1,4 @@
-const CACHE = 'exploding-volcanos-v1';
+const CACHE = 'exploding-volcanos-v2';
 const ASSETS = ['./', 'index.html', 'game.js', 'style.css', 'manifest.webmanifest', 'icon.svg', 'song.mp3'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
