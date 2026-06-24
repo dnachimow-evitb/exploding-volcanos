@@ -1,0 +1,7 @@
+Drop the big-piece PNGs in THIS folder, named exactly:
+
+volcano.png   tub.png   noah.png   max.png
+
+See ../SCENE-ART-PROMPTS.txt for the prompts.
+Unlike the toys, tell me once a file is here — these are animated, so I
+hand-place each one and keep the motion working (rising lava, etc.).
