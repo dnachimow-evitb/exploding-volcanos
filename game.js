@@ -345,6 +345,6 @@ function loop(now){
 }
 
 // ── RESPONSIVE: scale the 380x600 canvas to fill any phone screen ──
-function resize(){const vw=window.innerWidth,vh=window.innerHeight,sc=Math.min(vw/W,vh/H),cw=Math.round(W*sc),ch=Math.round(H*sc),wEl=document.getElementById('w');wEl.style.width=cw+'px';wEl.style.height=ch+'px';cv.style.width=cw+'px';cv.style.height=ch+'px';}
+function resize(){const vw=window.innerWidth,vh=window.innerHeight,sc=Math.min(vw/W,vh/H),cw=Math.round(W*sc),ch=Math.round(H*sc),wEl=document.getElementById('w');wEl.style.width=cw+'px';wEl.style.height=ch+'px';cv.style.width=cw+'px';cv.style.height=ch+'px';const dpr=Math.min(window.devicePixelRatio||1,3);cv.width=Math.round(cw*dpr);cv.height=Math.round(ch*dpr);X.setTransform(cv.width/W,0,0,cv.height/H,0,0);}
 window.addEventListener('resize',resize);resize();
 requestAnimationFrame(loop);
