@@ -31,6 +31,12 @@ An iPhone only reads the icon when you tap "Add to Home Screen", so to
 update it: delete the Volcanos icon from the home screen, open the link
 above in Safari, then Share -> Add to Home Screen.
 
+VERSION 6 TEST LINK (swipe to throw, experimental)
+A test build that is NOT the live game:
+  https://dnachimow-evitb.github.io/exploding-volcanos/play-fable-v6.html
+It does not replace version 5 and can be deleted at any time
+(remove play-fable-v6.html and game-fable-v6.js). Notes: experiments/fable-v6.md
+
 Full notes on version 5: experiments/fable-v5.md
 
 WHAT THIS IS
