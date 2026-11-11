@@ -100,6 +100,10 @@ function step(dt){
  }
  if(blk.on){blk.x+=blk.spd*blk.dir;if(blk.x>298||blk.x<82)blk.dir*=-1;blk.y=292+Math.sin(wave*.05)*8;}
  const d=diff();
+ // each toy has a home spot (two tidy clusters, left and right) and sways around it, so toys never pile up
+ objs.forEach((o,i)=>{if(o.st!=='float'||(charging&&charging.o===o)||(pendingLaunch&&pendingLaunch.o===o))return;let tx,ty;
+  if(o.hb){if(o.hx==null)o.hx=o.x<CX?154:226;tx=o.hx;ty=476;}else{const k=i>>1,row=k>>1,col=k&1,side=i&1;tx=(side?262:60)+col*48+(row===1?12:0)+Math.sin(wave*.018*(1+d.drift)+o.bob)*(5+d.drift*4);ty=446+row*24;}
+  o.vx=0;o.x+=(tx-o.x)*.045;o.y+=(ty-o.y)*.045;});
  objs.forEach(o=>{
   if(o.sq>0)o.sq*=.86;
   if(o.hb&&o.st==='float'){o.life-=dt;if(o.life<=0){o.st='gone';pop(o.x,o.y-20,'Gurgle…','#9a7a4a');}}
@@ -366,10 +370,9 @@ function paintBg(){const k=KS*DPR,c=document.createElement('canvas');c.width=Mat
  circ(27,30,12.5);fill(C.gold);X.fillStyle=C.navy;circ(23,28,1.7);X.fill();circ(31,28,1.7);X.fill();X.strokeStyle=C.navy;X.lineWidth=1.8;X.beginPath();X.arc(27,31,5,.3,PI-.3);X.stroke();X.restore();
  X.fillStyle='#fff';X.fillRect(40,7,6,86);X.fillRect(7,47,72,6);rr(-7,97,100,11,5.5);fill('#fff');X.restore();
  poster(W-98,zb-34*kz,kz,-.07,'NOAH','#e5533d',C.hairN,'#1f9a3a');poster(W-42,zb-40*kz,kz,.08,'MAX','#3d7be5',C.hairM,'#7a3fc0');
- // floor + mat
+ // floor
  X.fillStyle=C.deep;X.fillRect(0,floorY,W,HS-floorY);X.fillStyle='#fff';X.fillRect(0,floorY-6,W,8);
  X.save();X.translate(0,OY);ell(190,598,186,14);fill('#081440');
- if(HS>OY+622){rr(92,604,196,Math.min(44,HS-OY-614),16);fill(C.gold);rr(104,612,172,Math.min(28,HS-OY-630),10);X.strokeStyle='#fff';X.lineWidth=3;X.setLineDash([8,8]);X.stroke();X.setLineDash([]);}
  // tub: flat white porcelain, one shade tone
  for(const fx of[46,334]){circ(fx,590,13);fill(C.gold);}
  X.beginPath();X.moveTo(8,538);X.lineTo(372,538);X.quadraticCurveTo(372,594,334,596);X.lineTo(46,596);X.quadraticCurveTo(8,594,8,538);X.closePath();fill(C.apron);
@@ -412,7 +415,6 @@ function volFace(fp,er){const ey=CY+35,my=CY+60,lk=lookAt(CX,ey),LINE='#ffe9d2';
  else{const w=m==='calm'?10:13,d=m==='calm'?7:11;X.beginPath();X.moveTo(CX-w,my-5);X.quadraticCurveTo(CX,my+d,CX+w,my-5);X.stroke();}}
 function volcano(){const er=(state==='erupt'||state==='win'),fp=er?1:collected/Math.max(need,1),top=CY+3,hh=VB-top,cr=craterR+4,cry=cr*.38;
  const heat=clamp((fp-.5)/.5,0,1),trem=er?(eruptT>112?2.4:0):(heat*heat*1.1+build*3),pl=Math.sin(volP)*.5+.5;
- X.fillStyle=fp>.6||build>0?'#ff8a2a':'#ffb347';X.globalAlpha=.22;circ(CX,CY,craterR*(2.3+fp*1.1+pl*.15+build*.9));X.fill();circ(CX,CY,craterR*(1.5+fp*.7+build*.5));X.fill();X.globalAlpha=1;
  X.save();const sw=1+build*.055+Math.sin(NOW*2.1)*.006,sq=vol.sq;X.translate(CX+(Math.random()-.5)*trem,VB+(Math.random()-.5)*trem*.4);X.scale((1+sq*.07)*sw,(1-sq*.1)*sw);X.translate(-CX,-VB);
  sticker(()=>{ell(CX,CY,cr+7,cry+5);shp(C.rockLt);conePath();shp(C.rock);if(!PASS)return;
   X.save();conePath();X.clip();const h0=coneHalf(0);
@@ -460,7 +462,6 @@ function kid(){const kx=190,base=372,s=splashSide,er=(state==='erupt'||state==='
  const tl=charging?-s*(.05+.07*Math.min(1,charging.c/1.2)):swingT>0?s*.14:0;noah.lean+=(tl-noah.lean)*.25;
  foam(kx,wl,40,false);X.save();X.beginPath();X.rect(-20,-500,W+40,wl+500);X.clip();X.translate(kx,wl+12);X.rotate(noah.lean);X.translate(-kx,-(wl+12)+hopY);
  sticker(()=>{
-  if(!cheer){lin([[kx-18*s,base-18],[kx-44*s,base-6]],12,C.skin);circ(kx-45*s,base-6,8.5);shp(C.skin);}
   rr(kx-25,base-35,50,92,22);shp(C.skin);if(PASS){ell(kx,base-29,15,7);fill(C.skinD);}
   if(!cheer){const sX=kx+18*s,sY=base-20,ex=sX+s*Math.cos(armAng)*26,ey=sY+Math.sin(armAng)*26,hx=ex+s*Math.cos(armAng+0.5)*22,hy2=ey+Math.sin(armAng+0.5)*22;lin([[sX,sY],[ex,ey],[hx,hy2]],12,C.skin);circ(hx,hy2,9.5);shp(C.skin);}
   else[-1,1].forEach(sg=>{const wg=Math.sin(NOW*9+sg)*4,hx=kx+42*sg+wg,hy2=hy-22;lin([[kx+18*sg,base-20],[kx+38*sg,hy+12],[hx,hy2]],12,C.skin);circ(hx,hy2-2,9.5);shp(C.skin);});
@@ -469,12 +470,12 @@ function kid(){const kx=190,base=372,s=splashSide,er=(state==='erupt'||state==='
 
 // ── TOYS ──
 function toyFloat(em,x,by,size,rot,sx,sy,hb){ell(x,by+size*.38,size*.52,size*.13);fill(C.waterDk);X.save();X.translate(x,by);X.rotate(rot);X.scale(sx,sy);paintToy(em,size);X.restore();}
-function drawObjs(){const anyHeld=charging||pendingLaunch;objs.forEach((o,i)=>{if(o.st==='gone')return;if(o.born&&NOW<o.born)return;
- const fly=o.st==='fly',held=(charging&&charging.o===o)||(pendingLaunch&&pendingLaunch.o===o),bk=o.born?EZ.back((NOW-o.born)/.38):1,em=o.hb?'🧶':o.em,size=o.hb?40:36;
+function drawObjs(){const anyHeld=charging||pendingLaunch;objs.map((o,i)=>[o,i]).sort((a,b)=>((a[0].st==='fly')-(b[0].st==='fly'))||(a[0].y-b[0].y)).forEach(([o,i])=>{if(o.st==='gone')return;if(o.born&&NOW<o.born)return;
+ const fly=o.st==='fly',held=(charging&&charging.o===o)||(pendingLaunch&&pendingLaunch.o===o),bk=o.born?EZ.back((NOW-o.born)/.38):1,em=o.hb?'🧶':o.em,size=o.hb?36:(need>8?30:need>5?33:36);
  let nudge=0;if(!anyHeld&&idleT>3.5&&!fly){const ph=(idleT*1.1-i*.33)%3.2;if(ph>0&&ph<.42)nudge=-Math.sin(ph/.42*PI)*9;}
  const by=o.y+((fly||held)?0:Math.sin(wave*.045+o.bob)*3.2)+nudge,canGrab=o.st==='float'&&!anyHeld&&swingT<=0,sq=o.sq||0;
  if(fly){X.save();X.translate(o.x,by);X.rotate(o.rot||0);X.scale(1+sq*.4,1-sq*.3);paintToy(em,size);X.restore();return;}
- if(canGrab){const pu=.5+Math.sin(wave*.08+o.bob)*.5;X.strokeStyle=o.hb?C.gold:'#fff';X.lineWidth=3;X.setLineDash([7,7]);X.lineDashOffset=-wave*.25;circ(o.x,by,29+pu*2);X.stroke();X.setLineDash([]);}
+ if(canGrab&&(o.hb||need<=4)){const pu=.5+Math.sin(wave*.08+o.bob)*.5;X.strokeStyle=o.hb?C.gold:'#fff';X.lineWidth=3;X.setLineDash([7,7]);X.lineDashOffset=-wave*.25;circ(o.x,by,29+pu*2);X.stroke();X.setLineDash([]);}
  let s1=(1+sq*.4)*bk,s2=(1-sq*.3)*bk,dy=0,jx=0,rot=Math.sin(wave*.03+o.bob)*.09;
  if(held&&charging){const k=clamp((charging.c-.3)/1.1,0,1);s1*=1+k*.15;s2*=1-k*.15;dy=k*3.5;jx=(Math.random()-.5)*k*1.6;rot=0;}
  toyFloat(em,o.x+jx,by+dy,size,rot,s1,s2);

@@ -63,3 +63,20 @@ Browser pane, no console errors in any state.
 - Fixes made after looking: the cover was being cropped (now shown whole); Max's raised hands sat behind his head and read as ears (moved out wide).
 
 **Not checked:** a real iPhone (notch and home-bar insets read as 0 in the browser), audio, 430×932, frame rate on an older phone, and rounds 3 to 10 played by hand. I did not screenshot the block, miss or hairball-catch reactions.
+
+---
+
+## v2 revision (same day, tag `fable-v5-v2`)
+
+**Feedback on v1:** a round-3 screenshot captioned "what", then "what's up with the yellow line at the bottom".
+
+**What I fixed**
+
+- **Toys piling up.** The hairball was sitting on the duck and boat, and toys drifted through each other. Each toy now has a home spot (two tidy clusters, left and right of Noah, three rows each) and sways gently around it; the hairball floats on its own in the middle. Toys are drawn slightly smaller when there are more than five, and sorted so nearer ones are in front. The dashed grab rings only show while there are four toys or fewer, so they no longer stack up.
+- **Grey disc behind the volcano.** It was a translucent glow. Removed.
+- **White blob at Noah's side.** His resting arm was being cut off at the waterline. It now stays under the water.
+- **Yellow line at the bottom.** It was a bath mat with only a sliver showing. Removed.
+
+**Gameplay-feel change to judge:** toys no longer drift freely across the tub; they sway around a home spot (the sway is wider in later rounds). Throws still auto-aim from wherever the toy is, and the in-flight drift that makes later rounds harder is unchanged, so difficulty should be the same, but it is a change from the original behaviour. A missed toy lands where it falls and then glides back to its spot.
+
+**How I checked v2:** 375×812, no console errors: round 7 after the first pass (disc, mat and arm fixed, toys still bunched on one side, which led to the home-spot change), then round 10 with all 12 toys and a hairball in two readable clusters. The final row spacing was widened slightly after that last screenshot and not re-shot.
