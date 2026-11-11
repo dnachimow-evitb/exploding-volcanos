@@ -3,6 +3,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
+const VERSION='v5.12'; // shown small in the corner of the start screen; bump it with every change
 const cv=document.getElementById('c'),W=380,H=600;let X=cv.getContext('2d');
 const song=document.getElementById('song');
 const CX=190,CY=176,G=0.22,T=58,CHARGE_RATE=0.55,CHARGE_MAX=1.7;
@@ -594,7 +595,8 @@ function drawMenu(){const t=38;X.fillStyle=C.wall;X.fillRect(0,0,W,HS);X.strokeS
  edge();fill(C.water);X.beginPath();for(let x=0;x<=W;x+=8)x?X.lineTo(x,wy(x)):X.moveTo(x,wy(x));X.strokeStyle='#fff';X.lineWidth=5;X.stroke();
  X.beginPath();X.moveTo(0,HS);for(let x=0;x<=W;x+=8)X.lineTo(x,ih+bandH*.64+Math.sin(x*.04+NOW)*6);X.lineTo(W,HS);X.closePath();fill(C.waterDk);
  [['🦆',54,.26,0],['⛵',W-56,.3,2],['🦕',W/2+96,.84,4],['🐙',66,.86,1]].forEach(d=>{const k=EZ.back((uiT-.4-d[3]*.1)/.4);if(k<=0)return;const y=ih+bandH*d[2]+Math.sin(NOW*2+d[3])*4;toyFloat(d[0],d[1],y,44,Math.sin(NOW*1.3+d[3])*.1,k,k);});
- const bw=232,bh=70,bx=(W-bw)/2,by=ih+(bandH-SAFEB-bh)*.5,k=EZ.back((uiT-.7)/.45);if(k>0){X.save();X.translate(W/2,by+bh/2);X.scale(k,k);X.rotate(.012);X.translate(-W/2,-(by+bh/2));button(bx,by,bw,bh,'Play',()=>startGame(),{icon:1,size:32});X.restore();}else card=null;}
+ const bw=232,bh=70,bx=(W-bw)/2,by=ih+(bandH-SAFEB-bh)*.5,k=EZ.back((uiT-.7)/.45);if(k>0){X.save();X.translate(W/2,by+bh/2);X.scale(k,k);X.rotate(.012);X.translate(-W/2,-(by+bh/2));button(bx,by,bw,bh,'Play',()=>startGame(),{icon:1,size:32});X.restore();}else card=null;
+ text(VERSION,W-10,HS-SAFEB-12,10,'#d6efff',{a:'right',w:800});}
 function overlay(){const key=paused?'pause':state;if(key!==uiKey){uiKey=key;uiT=0;card=null;press=null;}
  if(paused){drawPauseCard();return;}
  if(state==='menu')drawMenu();else if(state==='intro')drawIntroCard();else if(state==='newtoy')drawNewToyCard();else if(state==='win')drawResultCard(true);else if(state==='gameover')drawResultCard(false);else card=null;}

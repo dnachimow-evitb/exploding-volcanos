@@ -224,3 +224,11 @@ To return to version 5 after that, undo that commit: `git revert HEAD` and `git 
 **Feedback:** on a round win the title reads "EXPLODING VOLCANOS in the Bathtub!" and "in" and "the" aren't capitalised.
 
 **What I changed:** it now reads "In The Bathtub!". To keep the rule consistent (every word capitalised in titles, buttons, labels and callouts), the tutorial bubble is now "Press And Hold". The same fix applies to the fallback title shown if the cover image fails to load.
+
+---
+
+## v12 revision (same day, tag `fable-v5-v12`)
+
+**Request:** a very small version number in the corner of the start screen.
+
+**What I changed:** the start screen shows `v5.12` in small text at the bottom-right corner, from one `VERSION` line at the top of the game file. Bump it with every change (along with the cache name in `sw.js` for the live game).
