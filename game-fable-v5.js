@@ -55,7 +55,7 @@ function startRound(carry){const d=diff();craterR=d.cr;need=currentToys.length;c
  parts=[];eParts=[];rings=[];ejecta=[];collectedToys=[];landed=[];charging=null;pendingLaunch=null;swingT=0;swingHit=false;armAng=idleAng;splashSide=1;
  blk.on=d.blk>0;blk.spd=d.blk;blk.x=110;blk.dir=1;blk.y=292;
  timeLeft=d.time;roundTime=d.time;hbTimer=5+Math.random()*3;hintT=round===1?6:0;
- bannerT=2.6;newToyT=newToyEm?5:0;banner=round===1?'Round 1 — splash away!':('Round '+round+'!');}
+ bannerT=2.6;newToyT=newToyEm?5:0;banner=round===1?'Round 1 — Splash Away!':('Round '+round+'!');}
 function startGame(){round=1;score=0;bestCombo=0;currentToys=[...BASE];newToyEm=null;landed=[];objs=[];ejecta=[];confet=[];collected=0;need=0;combo=0;craterR=DIFF[0].cr;blk.on=false;scoreShown=0;lastScore=0;state='intro';}
 function dist(a,b,c,d){return Math.hypot(a-c,b-d);}
 function spawnHairball(){const left=Math.random()<.5;objs.push({hb:true,x:left?70:310,y:450,vx:(Math.random()-.5)*.6,vy:0,bob:Math.random()*6.28,st:'float',sq:0,life:8,r:16});}
@@ -112,14 +112,14 @@ function step(dt){
   }else if(o.st==='fly'){
    o.vx+=o.drift||0;o.vy+=G;o.x+=o.vx;o.y+=o.vy;o.rot=(o.rot||0)+o.vx*.05;
    if(Math.random()<.4)parts.push({x:o.x+(Math.random()-.5)*14,y:o.y+8,vx:(Math.random()-.5)*.8,vy:.5,life:.7,r:2+Math.random()*2.5,col:'#dff4ff'});
-   if(blk.on&&!o.blocked&&dist(o.x,o.y,blk.x,blk.y)<30){o.blocked=1;o.vy=Math.abs(o.vy)*.5+1;o.vx*=-.5;shake=3;pop(blk.x,blk.y-36,'Max got it!','#ffb020');sfxBlock();mood(mxc,'gotcha',1.1);hop(mxc,3.2);mood(noah,'wow',.8);}
+   if(blk.on&&!o.blocked&&dist(o.x,o.y,blk.x,blk.y)<30){o.blocked=1;o.vy=Math.abs(o.vy)*.5+1;o.vx*=-.5;shake=3;pop(blk.x,blk.y-36,'Max Got It!','#ffb020');sfxBlock();mood(mxc,'gotcha',1.1);hop(mxc,3.2);mood(noah,'wow',.8);}
    if(catchHit(o.x,o.y,o.vy)){
      if(o.hb){combo++;bestCombo=Math.max(bestCombo,combo);timeLeft+=5;score+=50;shake=4;flash=.18;flashCol='#ffe9b0';collectedToys.push('🧶');freeze=3;vol.sv+=.5;mood(vol,'yuck',1.3);mood(noah,'cheer',1);hop(noah,3);sparkle(CX,CY-6,10);
        pop(CX,CY-18,'Hairball! +50  +5s','#ffd23f');splash(CX,CY,'#8a5a2a',26);sfxHair();o.st='gone';
      }else{collected++;combo++;bestCombo=Math.max(bestCombo,combo);collectedToys.push(o.em);
        const fpN2=collected/need,fpPrev=(collected-1)/need;
-       if(fpN2>=.85&&fpPrev<.85)pop(CX,CY-46,'Gonna overflow?!','#ff4400');else if(fpN2>=.6&&fpPrev<.6)pop(CX,CY-46,"It's getting hotter!",'#ff8a1a');else if(fpN2>=.35&&fpPrev<.35)pop(CX,CY-46,"It's getting bigger!",'#ffd23f');
-       if(combo===3)pop(190,150,'Look, Daddy, look!','#7fd0ff');
+       if(fpN2>=.85&&fpPrev<.85)pop(CX,CY-46,'Gonna Overflow?!','#ff4400');else if(fpN2>=.6&&fpPrev<.6)pop(CX,CY-46,"It's Getting Hotter!",'#ff8a1a');else if(fpN2>=.35&&fpPrev<.35)pop(CX,CY-46,"It's Getting Bigger!",'#ffd23f');
+       if(combo===3)pop(190,150,'Look, Daddy, Look!','#7fd0ff');
        const mult=Math.min(combo,5),pts=(12+round*2)*mult;score+=pts;shake=4;flash=.14;flashCol='#fff3c4';freeze=3;vol.sv+=.55;mood(vol,'gulp',.75);mood(noah,'cheer',1);hop(noah,3);mood(mxc,'aww',.9);sparkle(CX,CY-6,combo>=3?14:8);
        splash(CX,CY,'#ffcc00',24);waterBurst(CX,CY,false);
        for(let k=0;k<10;k++){const a=-1.57+(Math.random()-.5)*1.4,s=3+Math.random()*5;eParts.push({x:CX,y:CY,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:1,r:3+Math.random()*4,col:'#ff8a1a'});}
@@ -129,7 +129,7 @@ function step(dt){
      combo=0;
      if(o.hb){o.st='gone';waterBurst(Math.max(40,Math.min(340,o.x)),456,false);}
      else{o.st='float';o.x=Math.max(58,Math.min(322,o.x));o.y=Math.max(448,Math.min(o.y,486));o.vx=(Math.random()<.5?-1:1)*(0.4+d.drift)*(round>=3?1:.4);o.vy=0;o.blocked=0;
-       waterBurst(o.x,o.y-6,false);pop(o.x,o.y-30,'Splash! Try again!','#dff4ff');sfxPlop();mood(noah,'oops',.9);mood(mxc,'laugh',.8);mood(vol,'aww',.9);}
+       waterBurst(o.x,o.y-6,false);pop(o.x,o.y-30,'Splash! Try Again!','#dff4ff');sfxPlop();mood(noah,'oops',.9);mood(mxc,'laugh',.8);mood(vol,'aww',.9);}
    }
   }
  });
@@ -506,14 +506,14 @@ function drawPops(){pops.forEach(p=>{const k=p.age,sc=k<.16?lerp(.4,1.2,EZ.out(k
 
 // ── AIM + TUTORIAL ──
 function arrowHead(x,y,ang,s,col){X.save();X.translate(x,y);X.rotate(ang);X.beginPath();X.moveTo(s,0);X.lineTo(-s*.7,-s*.8);X.lineTo(-s*.25,0);X.lineTo(-s*.7,s*.8);X.closePath();X.lineJoin='round';X.lineWidth=5;X.strokeStyle=C.navy;X.stroke();fill(col);X.restore();}
-function bubble(t,x,y,col,tc){X.font=fnt(900,15);const w=X.measureText(t).width+26,bx=clamp(x-w/2,8,W-w-8);rr(bx,y-15+3,w,30,8);fill(C.deep);rr(bx,y-15,w,30,8);fill(col);text(t,bx+w/2,y+.5,15,tc);}
+function bubble(t,x,y,col,tc){X.font=fnt(900,15);const w=X.measureText(t).width+26,bx=clamp(x-w/2,8,W-w-8);rr(bx,y-15+3,w,30,6);fill(C.deep);rr(bx,y-15,w,30,6);fill(col);text(t,bx+w/2,y+.5,15,tc);}
 function chargeGuide(){if(!charging){wasOn=false;return;}const o=charging.o,iv=ideal(o),f=charging.c,dr=diff().drift*.012;
  let vx=iv.vx*f,vy=iv.vy*f,tx=o.x,ty=o.y,on=false;const pts=[];
  for(let i=0;i<110;i++){vy+=G;vx+=dr;tx+=vx;ty+=vy;if(catchHit(tx,ty,vy)){on=true;break;}if(ty>556||tx<0||tx>W)break;pts.push([tx,ty]);}
  if(on&&!wasOn)sfxTick();wasOn=on;const col=on?C.go:'#fff',sh=~~(NOW*14);
  pts.forEach((p,i)=>{if((i+sh)%3===1||i<3)return;const r=Math.max(2.6,5.4-i*.03);circ(p[0],p[1],r+1.8);fill(C.navy);circ(p[0],p[1],r);fill(col);});
  const frac=Math.min(f/1.4,1);X.lineCap='round';X.strokeStyle=C.navy;X.lineWidth=9;circ(o.x,o.y,32);X.stroke();X.strokeStyle=col;X.lineWidth=5;X.beginPath();X.arc(o.x,o.y,32,-1.57,-1.57+TAU*frac);X.stroke();
- if(on){X.save();X.strokeStyle=C.go;X.lineWidth=4.5;ell(CX,CY,craterR+16+Math.sin(NOW*16)*1.5,craterR*.5+10);X.stroke();X.restore();const pu=1+Math.sin(NOW*16)*.06;X.save();X.translate(o.x,o.y-52);X.scale(pu,pu);bubble('Let go!',0,0,C.go,'#fff');X.restore();}
+ if(on){X.save();X.strokeStyle=C.go;X.lineWidth=4.5;ell(CX,CY,craterR+16+Math.sin(NOW*16)*1.5,craterR*.5+10);X.stroke();X.restore();const pu=1+Math.sin(NOW*16)*.06;X.save();X.translate(o.x,o.y-52);X.scale(pu,pu);bubble('Let Go!',0,0,C.go,'#fff');X.restore();}
  else bubble('Hold…',o.x,o.y-52,'#fff',C.navy);}
 // wordless demo: a dashed arrow sweeps from the toy to the crater until the first real throw
 function tutorial(){if(!tutOn||state!=='play'||charging||pendingLaunch||swingT>0)return;const o=objs.find(q=>q.st==='float'&&!q.hb);if(!o||(o.born&&NOW<o.born+.4))return;
@@ -523,11 +523,11 @@ function tutorial(){if(!tutOn||state!=='play'||charging||pendingLaunch||swingT>0
  const path=()=>{X.beginPath();for(let i=6;i<n;i++)i===6?X.moveTo(pts[i][0],pts[i][1]):X.lineTo(pts[i][0],pts[i][1]);};
  X.lineCap='round';X.lineJoin='round';X.setLineDash([10,9]);X.lineDashOffset=-NOW*40;path();X.strokeStyle=C.navy;X.lineWidth=9;X.stroke();path();X.strokeStyle='#fff';X.lineWidth=4.5;X.stroke();X.setLineDash([]);
  const a=pts[n-1],b=pts[Math.max(0,n-4)];arrowHead(a[0],a[1],Math.atan2(a[1]-b[1],a[0]-b[0]),12,'#fff');
- bubble('Press and hold',o.x,o.y+50,'#fff',C.navy);}
+ bubble('Press and Hold',o.x,o.y+50,'#fff',C.navy);}
 
 // ── HUD ──
-function chip(x,y,w,h){const r=Math.min(9,h/2);rr(x,y+3,w,h,r);fill(C.deep);rr(x,y,w,h,r);fill('#fff');}
-function roundBtn(x,y,kind){circ(x,y+3,19);fill(C.deep);circ(x,y,19);fill('#fff');X.fillStyle=C.navy;
+function chip(x,y,w,h){const r=Math.min(6,h/2);rr(x,y+3,w,h,r);fill(C.deep);rr(x,y,w,h,r);fill('#fff');}
+function roundBtn(x,y,kind){rr(x-19,y-16,38,38,8);fill(C.deep);rr(x-19,y-19,38,38,8);fill('#fff');X.fillStyle=C.navy;
  if(kind==='pause'){rr(x-7,y-7.5,5,15,1.8);X.fill();rr(x+2,y-7.5,5,15,1.8);X.fill();}
  else if(kind==='play'){X.beginPath();X.moveTo(x-5,y-8);X.lineTo(x+8,y);X.lineTo(x-5,y+8);X.closePath();X.fill();}
  else{X.beginPath();X.moveTo(x-10,y-4);X.lineTo(x-5,y-4);X.lineTo(x+1,y-9.5);X.lineTo(x+1,y+9.5);X.lineTo(x-5,y+4);X.lineTo(x-10,y+4);X.closePath();X.fill();X.lineWidth=2.4;X.strokeStyle=C.navy;X.lineCap='round';
@@ -537,10 +537,10 @@ function drawPauseBtn(){roundBtn(W-74,SAFE+28,paused?'play':'pause');}
 function hud(){const s=SAFE,sp=1+scorePop*scorePop*.2;
  X.save();X.translate(60,s+28);X.scale(sp,sp);chip(-50,-18,100,36);star(-30,0,11,5.4);fill(C.gold);text(String(Math.round(scoreShown)),13,1,19,C.navy);X.restore();
  text('Round '+round+'/10',60,s+62,12.5,'#fff',{s:C.navy});
- if(combo>1){const cp=1+comboPop*.3;X.save();X.translate(60,s+84);X.scale(cp,cp);chip(-30,-12,60,24);text('x'+combo+' combo',0,.5,10.5,C.lavaDk);X.restore();}
+ if(combo>1){const cp=1+comboPop*.3;X.save();X.translate(60,s+84);X.scale(cp,cp);chip(-30,-12,60,24);text('x'+combo+' Combo',0,.5,10.5,C.lavaDk);X.restore();}
  const tw=126,tx=122,ty=s+17,pct=clamp(timeLeft/roundTime,0,1),low=state==='play'&&timeLeft<8,tc=low?C.amber:pct>.5?C.go:C.gold;
- rr(tx,ty+3,tw,22,11);fill(C.deep);rr(tx,ty,tw,22,11);fill('#fff');rr(tx+3,ty+3,tw-6,16,8);fill('#c9d8f2');
- if(pct>0){rr(tx+3,ty+3,Math.max(16,(tw-6)*pct),16,8);fill(tc);}
+ rr(tx,ty+3,tw,22,6);fill(C.deep);rr(tx,ty,tw,22,6);fill('#fff');rr(tx+3,ty+3,tw-6,16,4);fill('#c9d8f2');
+ if(pct>0){rr(tx+3,ty+3,Math.max(10,(tw-6)*pct),16,4);fill(tc);}
  const pu=low?1+Math.sin(NOW*9)*.12:1;X.save();X.translate(tx+tw/2,ty+11.5);X.scale(pu,pu);text(String(Math.ceil(timeLeft)),0,0,13,C.navy);X.restore();
  // toy tracker: empty slots fill with the real toy as it goes in
  const n=need,gap=Math.min(22,150/Math.max(n,1)),x0=tx+tw/2-(n-1)*gap/2;
@@ -555,46 +555,46 @@ function cardBegin(cw,ch,title,age){age=age==null?uiT:age;const cx=(W-cw)/2,cy=(
  text(title,W/2,cy+31,26,'#fff',{s:C.lavaDk,sw:6});return{cx,cy,age};}
 function cardEnd(){X.restore();}
 function button(bx,by,bw,bh,t,act,o){o=o||{};const down=(press&&press.key===uiKey)||NOW<pressUntil,cx=bx+bw/2,cy=by+bh/2,pu=down?0:Math.sin(NOW*4)*.016,dy=down?5:0;
- X.save();X.translate(cx,cy);X.scale(1+pu,1+pu);X.translate(-cx,-cy);rr(bx,by+8,bw,bh,16);fill(C.greenD);rr(bx,by+dy,bw,bh,16);fill(down?'#27a83f':C.green);
+ X.save();X.translate(cx,cy);X.scale(1+pu,1+pu);X.translate(-cx,-cy);rr(bx,by+8,bw,bh,9);fill(C.greenD);rr(bx,by+dy,bw,bh,9);fill(down?'#27a83f':C.green);
  const fz=o.size||22;X.font=fnt(900,fz);const tw=X.measureText(t).width,iw=o.icon?fz*1.2:0,x0=cx-(tw+iw)/2;
  if(o.icon){const ix=x0+fz*.42,iy=cy+dy+1,z=fz*.5;X.beginPath();X.moveTo(ix-z*.6,iy-z*.85);X.lineTo(ix+z*.9,iy);X.lineTo(ix-z*.6,iy+z*.85);X.closePath();X.lineJoin='round';X.lineWidth=3;X.strokeStyle='#fff';X.stroke();fill('#fff');}
  text(t,x0+iw+tw/2,cy+dy+1,fz,'#fff');X.restore();card={x:bx-8,y:by-8,w:bw+16,h:bh+23,act,key:uiKey};}
 function cardToy(em,x,y,size,age,delay){const k=EZ.elastic((age-delay)/.7);if(k<=0)return;X.save();X.translate(x,y+Math.sin(NOW*3+x)*3);X.scale(k,k);paintToy(em,size);X.restore();}
 function body(t,y,size,col){text(t,W/2,y,size||15,col||C.navy,{w:800});}
 function check(x,y){circ(x,y,8);fill('#fff');circ(x,y,6.5);fill(C.green);X.strokeStyle='#fff';X.lineWidth=2.4;X.lineCap='round';X.lineJoin='round';X.beginPath();X.moveTo(x-3,y);X.lineTo(x-.8,y+2.4);X.lineTo(x+3.2,y-2.2);X.stroke();}
-function drawIntroCard(){const cw=328,ch=306,{cy,age}=cardBegin(cw,ch,'Noah’s bath toys');
+function drawIntroCard(){const cw=328,ch=306,{cy,age}=cardBegin(cw,ch,'Noah’s Bath Toys');
  const n=currentToys.length,gap=92,sx=W/2-(n-1)*gap/2;currentToys.forEach((em,i)=>cardToy(em,sx+i*gap,cy+128,62,age,.2+i*.12));
  body('Splash them into the volcano!',cy+188,16);body('A new toy joins every round',cy+211,13,'#4a6fc4');
- button((W-236)/2,cy+ch-80,236,58,'Let’s splash!',()=>{startRound(false);state='play';lastNow=performance.now();});cardEnd();}
-function drawNewToyCard(){const cw=328,ch=366,{cx,cy,age}=cardBegin(cw,ch,'New toy!');
+ button((W-236)/2,cy+ch-80,236,58,'Let’s Splash!',()=>{startRound(false);state='play';lastNow=performance.now();});cardEnd();}
+function drawNewToyCard(){const cw=328,ch=366,{cx,cy,age}=cardBegin(cw,ch,'New Toy!');
  X.save();X.translate(W/2,cy+144);burstShape(104,74,14,NOW*.3);fill(C.hot);burstShape(86,60,14,NOW*.3+.11);fill('#fff3bf');X.restore();cardToy(newToyEm,W/2,cy+142,84,age,.25);
- const nm=TOYNAME[newToyEm]||'New toy';body(nm.charAt(0)+nm.slice(1).toLowerCase(),cy+226,24);body('joins the tub for round '+round,cy+250,13.5,'#4a6fc4');
+ body(TOYNAME[newToyEm]||'New Toy',cy+226,24);body('Joins the tub for round '+round,cy+250,13.5,'#4a6fc4');
  const n=currentToys.length,gap=Math.min(28,(cw-60)/n),sx=W/2-(n-1)*gap/2;currentToys.forEach((em,i)=>{const k=EZ.back((age-.5-i*.04)/.3);if(k<=0)return;X.save();X.translate(sx+i*gap,cy+278);X.scale(k,k);paintToy(em,i===n-1?24:19);X.restore();});
- button((W-220)/2,cy+ch-66,220,56,'Splash on!',()=>{startRound(true);state='play';lastNow=performance.now();});cardEnd();}
+ button((W-220)/2,cy+ch-66,220,56,'Splash On!',()=>{startRound(true);state='play';lastNow=performance.now();});cardEnd();}
 function drawPauseCard(){const cw=288,ch=212,{cy}=cardBegin(cw,ch,'Paused');body('Round '+round+'  ·  Score '+score,cy+100,16);
  button((W-208)/2,cy+ch-80,208,58,'Resume',()=>{paused=false;lastNow=performance.now();acc=0;},{icon:1});cardEnd();}
 function drawResultCard(win){const age=win?uiT-1.75:uiT;if(age<0){card=null;return;}
- if(win){const cw=324,ch=340,{cx,cy}=cardBegin(cw,ch,'You did it!',age);X.save();X.translate(W/2,cy+144);burstShape(104,74,14,NOW*.3);fill(C.hot);burstShape(86,60,14,NOW*.3+.11);fill('#fff3bf');X.restore();
+ if(win){const cw=324,ch=340,{cx,cy}=cardBegin(cw,ch,'You Did It!',age);X.save();X.translate(W/2,cy+144);burstShape(104,74,14,NOW*.3);fill(C.hot);burstShape(86,60,14,NOW*.3+.11);fill('#fff3bf');X.restore();
   const k=EZ.elastic((age-.15)/.8);X.save();X.translate(W/2,cy+146);X.scale(k*2,k*2);X.rotate(Math.sin(NOW*3)*.06);
   X.lineCap='round';for(const g of[-1,1]){X.beginPath();X.arc(g*15,-9,8,g>0?-PI*.5:PI*.5,g>0?PI*.5:PI*1.5);X.lineWidth=4.5;X.strokeStyle=C.amber;X.stroke();}
   X.beginPath();X.moveTo(-15,-21);X.lineTo(15,-21);X.quadraticCurveTo(15,4,0,8);X.quadraticCurveTo(-15,4,-15,-21);X.closePath();fill(C.gold);rr(-3.5,7,7,9,1);fill(C.amber);rr(-12,15,24,7,3.5);fill(C.lava);star(0,-8,6,2.9);fill('#fff');X.restore();
   body('All 10 rounds cleared!',cy+226,17);body('Score '+score+'   ·   Best combo x'+bestCombo,cy+250,13.5,'#4a6fc4');
-  button((W-224)/2,cy+ch-74,224,58,'Play again',()=>startGame(),{icon:1});cardEnd();}
- else{const cw=324,ch=292,{cy}=cardBegin(cw,ch,'So close!',age),n=need,gap=Math.min(44,(cw-70)/Math.max(n,1)),x0=W/2-(n-1)*gap/2,sz=Math.min(40,gap*.95);
+  button((W-224)/2,cy+ch-74,224,58,'Play Again',()=>startGame(),{icon:1});cardEnd();}
+ else{const cw=324,ch=292,{cy}=cardBegin(cw,ch,'So Close!',age),n=need,gap=Math.min(44,(cw-70)/Math.max(n,1)),x0=W/2-(n-1)*gap/2,sz=Math.min(40,gap*.95);
   for(let i=0;i<n;i++){const o=objs[i],got=!o||o.st==='gone',kk=EZ.back((age-.2-i*.05)/.3);if(kk<=0)continue;X.save();X.translate(x0+i*gap,cy+118);X.scale(kk,kk);paintToy(currentToys[i],sz);if(got)check(sz*.38,sz*.34);X.restore();}
   body(collected>0?'You splashed '+collected+' of '+need+'. Nice!':'So nearly! Have another go.',cy+166,16);body('Round '+round+' is waiting for you',cy+189,13,'#4a6fc4');
-  button((W-224)/2,cy+ch-78,224,58,'Try again',()=>{startRound(false);state='play';lastNow=performance.now();},{icon:1});cardEnd();}}
+  button((W-224)/2,cy+ch-78,224,58,'Try Again',()=>{startRound(false);state='play';lastNow=performance.now();},{icon:1});cardEnd();}}
 const cover=new Image();cover.onload=()=>{cover._ok=true;};cover.onerror=()=>{};cover.src='assets/cover.png';
-function drawMenu(){const ih=Math.round(Math.min(W,HS-250)),bandH=HS-ih,zoom=1;X.fillStyle=C.wall;X.fillRect(0,0,W,HS);
- if(cover._ok){const s=Math.max(W/cover.width,ih/cover.height)*zoom,dw=cover.width*s,dh=cover.height*s;X.save();X.beginPath();X.rect(0,0,W,ih+10);X.clip();X.drawImage(cover,(W-dw)/2,(ih-dh)*.5,dw,dh);X.restore();}
- else{text('EXPLODING',W/2,ih*.4,44,C.lava,{s:C.navy});text('VOLCANOS',W/2,ih*.4+50,46,C.hot,{s:C.navy});text('in the Bathtub!',W/2,ih*.4+96,22,'#fff',{s:C.navy});}
- const wy=x=>ih+Math.sin(x*.06+NOW*1.6)*5;X.beginPath();X.moveTo(0,HS);for(let x=0;x<=W;x+=8)X.lineTo(x,wy(x));X.lineTo(W,HS);X.closePath();fill(C.water);
- X.beginPath();X.moveTo(0,HS);for(let x=0;x<=W;x+=8)X.lineTo(x,ih+bandH*.62+Math.sin(x*.04+NOW)*6);X.lineTo(W,HS);X.closePath();fill(C.waterDk);
- X.fillStyle='#fff';X.beginPath();for(let i=0;i<28;i++){const x=i*14.4,r=6+((i*7)%5);X.moveTo(x+r,wy(x)+1);X.arc(x,wy(x)+1,r,0,TAU);}X.fill();
- [['🦆',56,.3,0],['⛵',W-58,.34,2],['🦕',W/2+92,.84,4],['🐙',70,.86,1]].forEach(d=>{const k=EZ.back((uiT-.4-d[3]*.1)/.4);if(k<=0)return;const y=ih+bandH*d[2]+Math.sin(NOW*2+d[3])*4;toyFloat(d[0],d[1],y,44,Math.sin(NOW*1.3+d[3])*.1,k,k);});
- const bw=228,bh=68,bx=(W-bw)/2,by=ih+(bandH-SAFEB-bh)*.5,k=EZ.back((uiT-.7)/.45);if(k>0){X.save();X.translate(W/2,by+bh/2);X.scale(k,k);X.translate(-W/2,-(by+bh/2));
-  const p=(NOW*.7)%1;if(!press){X.save();X.globalAlpha=1-p;X.strokeStyle='#fff';X.lineWidth=4;rr(bx-p*18,by-p*18,bw+p*36,bh+p*36+8,16+p*16);X.stroke();X.restore();}
-  button(bx,by,bw,bh,'Play',()=>startGame(),{icon:1,size:30});X.restore();}else card=null;}
+function drawMenu(){const t=38;X.fillStyle=C.wall;X.fillRect(0,0,W,HS);X.strokeStyle=C.tile;X.lineWidth=2.5;X.beginPath();for(let x=0;x<=W;x+=t){X.moveTo(x,0);X.lineTo(x,HS);}for(let y=8;y<HS;y+=t){X.moveTo(0,y);X.lineTo(W,y);}X.stroke();
+ const pw=W-48,py=SAFE+60,k0=lerp(.85,1,EZ.back(uiT/.5)),ih=py+pw+36,bandH=HS-ih;
+ X.save();X.translate(W/2,py+pw/2);X.rotate(-.022);X.scale(k0,k0);X.fillStyle=C.deep;X.fillRect(-pw/2-3,-pw/2,pw+16,pw+16);X.fillStyle='#fff';X.fillRect(-pw/2-8,-pw/2-8,pw+16,pw+16);
+ if(cover._ok)X.drawImage(cover,-pw/2,-pw/2,pw,pw);else{X.fillStyle=C.lava;X.fillRect(-pw/2,-pw/2,pw,pw);text('EXPLODING',0,-30,40,'#fff');text('VOLCANOS',0,18,42,C.hot);text('in the Bathtub!',0,62,22,'#fff');}
+ for(const g of[-1,1]){X.save();X.translate(g*(pw/2-10),-pw/2-6);X.rotate(g*.55);X.fillStyle=C.gold;X.fillRect(-24,-8,48,16);X.restore();}X.restore();
+ const wy=x=>ih+Math.sin(x*.05+NOW*1.4)*5,edge=()=>{X.beginPath();X.moveTo(0,HS);for(let x=0;x<=W;x+=8)X.lineTo(x,wy(x));X.lineTo(W,HS);X.closePath();};
+ edge();fill(C.water);X.beginPath();for(let x=0;x<=W;x+=8)x?X.lineTo(x,wy(x)):X.moveTo(x,wy(x));X.strokeStyle='#fff';X.lineWidth=5;X.stroke();
+ X.beginPath();X.moveTo(0,HS);for(let x=0;x<=W;x+=8)X.lineTo(x,ih+bandH*.64+Math.sin(x*.04+NOW)*6);X.lineTo(W,HS);X.closePath();fill(C.waterDk);
+ [['🦆',54,.26,0],['⛵',W-56,.3,2],['🦕',W/2+96,.84,4],['🐙',66,.86,1]].forEach(d=>{const k=EZ.back((uiT-.4-d[3]*.1)/.4);if(k<=0)return;const y=ih+bandH*d[2]+Math.sin(NOW*2+d[3])*4;toyFloat(d[0],d[1],y,44,Math.sin(NOW*1.3+d[3])*.1,k,k);});
+ const bw=232,bh=70,bx=(W-bw)/2,by=ih+(bandH-SAFEB-bh)*.5,k=EZ.back((uiT-.7)/.45);if(k>0){X.save();X.translate(W/2,by+bh/2);X.scale(k,k);X.rotate(.012);X.translate(-W/2,-(by+bh/2));button(bx,by,bw,bh,'Play',()=>startGame(),{icon:1,size:32});X.restore();}else card=null;}
 function overlay(){const key=paused?'pause':state;if(key!==uiKey){uiKey=key;uiT=0;card=null;press=null;}
  if(paused){drawPauseCard();return;}
  if(state==='menu')drawMenu();else if(state==='intro')drawIntroCard();else if(state==='newtoy')drawNewToyCard();else if(state==='win')drawResultCard(true);else if(state==='gameover')drawResultCard(false);else card=null;}
@@ -603,7 +603,7 @@ function overlay(){const key=paused?'pause':state;if(key!==uiKey){uiKey=key;uiT=
 function big(t,dy,size,col){text(t,0,dy+size*.09,size,C.navy,{s:C.navy,sw:size*.36});text(t,0,dy,size,col,{s:C.navy,sw:size*.3});}
 function burstShape(r1,r2,n,rot){X.beginPath();for(let i=0;i<n*2;i++){const a=rot+i*PI/n,q=i%2?r2:r1;X.lineTo(Math.cos(a)*q,Math.sin(a)*q*.72);}X.closePath();}
 function eruptFX(){if(state!=='erupt')return;
- if(eruptT>134){const sc=lerp(.5,1.08,EZ.back((160-eruptT)/11));X.save();X.translate(W/2,H/2-6);X.scale(sc,sc);X.rotate(-.03);big('This is',-24,40,C.hot);big('the end!',22,40,C.hot);X.restore();}
+ if(eruptT>134){const sc=lerp(.5,1.08,EZ.back((160-eruptT)/11));X.save();X.translate(W/2,H/2-6);X.scale(sc,sc);X.rotate(-.03);big('This Is',-24,40,C.hot);big('The End!',22,40,C.hot);X.restore();}
  else if(eruptT>116){const a=(134-eruptT)/18;X.save();X.translate(W/2,H/2-6);[[-74,-10,-.14,0],[70,14,.12,.42]].forEach(q=>{const k=EZ.back((a-q[3])/.3);if(k<=0)return;X.save();X.translate(q[0],q[1]);X.rotate(q[2]);X.scale(k,k);burstShape(92,62,12,NOW);fill(C.navy);burstShape(84,56,12,NOW);fill(C.hot);burstShape(62,42,12,NOW+.13);fill('#fff');text('POW!',0,2,38,C.lavaDk);X.restore();});X.restore();}
  else if(eruptT>14){const sc=lerp(.5,1,EZ.back((116-eruptT)/14))*Math.min(1,(eruptT-14)/8);X.save();X.translate(W/2,122);X.scale(sc,sc);big('EXPLODING VOLCANOS',-16,29,C.lava);big('in the Bathtub!',16,22,'#fff');X.restore();}}
 

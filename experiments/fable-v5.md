@@ -160,3 +160,27 @@ No gameplay or feel changes.
 **What I changed:** Noah has a resting pose with both hands held up out of the water, bobbing slightly. When you hold a toy, the throwing arm blends smoothly from that pose into the wind-up and swing while the other hand stays up, so two hands are always visible. Drawing only; the throw itself is unchanged. Also: the tutorial arrow always draws some of its dashed line, so it never shows as a lone arrowhead.
 
 **How I checked:** close crops of Noah at rest and mid wind-up at 375×812, no console errors. Both show two hands. I did not capture the mid-swing frame or the cheer pose again.
+
+---
+
+## v9 revision (same day, tag `fable-v5-v9`)
+
+**Feedback:** still a bit over-roundy, mostly on the start screen; and the casing is inconsistent ("should it be New Toy, not New toy. And Splash On, not Splash on").
+
+**Roundness**
+
+- Start screen rebuilt: the cover is now a square-cornered poster with a white border, taped to the tiled wall at a slight tilt. The bubbly foam edge on the water is replaced by a clean white wave line. The Play button is a firm rectangle with small corners and no pulsing rounded halo.
+- Everywhere else: buttons went from radius 16 to 9, the score chip and banners from 9 to 6, the timer bar from a pill to radius 6, and the pause and sound buttons from circles to rounded squares.
+- Still round on purpose: foam, toy-tracker slots, the dashed grab rings and the characters themselves.
+
+**Casing: one rule**
+
+Title Case for every title, button, label and callout. Sentence case only for full sentences of body text.
+
+- Titles: Noah's Bath Toys, New Toy!, You Did It!, So Close!, Paused
+- Buttons: Play, Let's Splash!, Splash On!, Play Again, Try Again, Resume
+- Labels and callouts: Press and Hold, Let Go!, x3 Combo, Round 1 — Splash Away!, Max Got It!, Splash! Try Again!, It's Getting Bigger!, It's Getting Hotter!, Gonna Overflow?!, Look, Daddy, Look!, This Is The End!
+- Toy names: Monster Truck, Action Figure (back to Title Case)
+- Body text stays sentence case: "Splash them into the volcano!", "Joins the tub for round 6", "You splashed 3 of 8. Nice!"
+
+**How I checked:** start screen, the top of the play screen with a combo and round banner, and the new-toy card at 375×812; no console errors. Other cards and callouts were changed by text replacement and not individually re-shot.
