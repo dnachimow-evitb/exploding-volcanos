@@ -5,7 +5,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v6.8'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v6.9'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,pressId=0,hardMode=false; // second start-screen button; Easy / Hard
 const cv=document.getElementById('c'),W=380,H=600;let X=cv.getContext('2d');
 const song=document.getElementById('song');
@@ -148,11 +148,11 @@ function updateEjecta(){if(!ejecta.length)return;for(const e of ejecta){if(!e.al
   if((e.vy>0&&e.y>462)||e.y>590||e.x<-30||e.x>W+30){e.alive=false;const lx=Math.max(58,Math.min(322,e.x)),ly=Math.max(450,Math.min(e.y,484));if(e.y<560&&e.x>14&&e.x<W-14){waterBurst(lx,ly,false);if(Math.random()<.4)sfxPlop();}if(e.em!=='🧶')landed.push({x:lx,y:ly});}}
  ejecta=ejecta.filter(e=>e.alive);}
 function splash(x,y,col,n){for(let i=0;i<n;i++){const a=-1.57+(Math.random()-.5)*2.4,s=2+Math.random()*6;parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-2,life:1,r:3+Math.random()*5,col});}}
-function roundWin(){
+function roundWin(){if(state!=='play')return;
  if(round>=10){score+=150+Math.round(timeLeft)*10;state='win';eruptT=160;bigErupt();return;}
  state='erupt';eruptT=160;score+=need*15+combo*5+Math.round(timeLeft)*10;bigErupt();
  
- setTimeout(()=>{round++;newToyEm=NEWBY[round]||null;if(newToyEm)currentToys=[...currentToys,newToyEm];
+ setTimeout(()=>{if(state!=='erupt')return;round++;newToyEm=NEWBY[round]||null;if(newToyEm)currentToys=[...currentToys,newToyEm];
    if(newToyEm){state='newtoy';sfxFanfare();}else{startRound(true);state='play';lastNow=performance.now();}},3500);
 }
 function bigErupt(){sfxErupt();shake=12;flash=.42;flashCol='#ffce8a';freeze=7;punch=1;surge=1;buildOn=false;confettiBurst(state==='win'?60:36);mood(noah,'cheer',3.6);mood(mxc,'laugh',3.6);vol.sv+=.9;rings.push({x:CX,y:CY,r:10,life:1,big:true});
@@ -579,8 +579,10 @@ function drawNewToyCard(){const cw=328,ch=366,{cx,cy,age}=cardBegin(cw,ch,'New T
  body(TOYNAME[newToyEm]||'New Toy',cy+226,24);body('Joins the tub for round '+round,cy+250,13.5,'#4a6fc4');
  const n=currentToys.length,gap=Math.min(28,(cw-60)/n),sx=W/2-(n-1)*gap/2;currentToys.forEach((em,i)=>{const k=EZ.back((age-.5-i*.04)/.3);if(k<=0)return;X.save();X.translate(sx+i*gap,cy+278);X.scale(k,k);paintToy(em,i===n-1?24:19);X.restore();});
  button((W-220)/2,cy+ch-66,220,56,'Splash On!',()=>{startRound(true);state='play';lastNow=performance.now();});cardEnd();}
-function drawPauseCard(){const cw=288,ch=212,{cy}=cardBegin(cw,ch,'Paused');body('Round '+round+'  ·  Score '+score,cy+100,16);
- button((W-208)/2,cy+ch-80,208,58,'Resume',()=>{paused=false;lastNow=performance.now();acc=0;},{icon:1});cardEnd();}
+function goMenu(){paused=false;charging=null;pendingLaunch=null;swingT=0;objs=[];ejecta=[];parts=[];eParts=[];rings=[];pops=[];confet=[];smoke=[];sparks=[];buildOn=false;build=0;shake=0;flash=0;blk.on=false;collected=0;need=0;combo=0;state='menu';lastNow=performance.now();acc=0;}
+function drawPauseCard(){const cw=288,ch=286,{cy}=cardBegin(cw,ch,'Paused');body((hardMode?'Hard':'Easy')+'  ·  Round '+round+'  ·  Score '+score,cy+100,15);
+ button((W-208)/2,cy+124,208,58,'Resume',()=>{paused=false;lastNow=performance.now();acc=0;},{icon:1});
+ button((W-208)/2,cy+204,208,50,'Start Screen',goMenu,{id:2,size:18,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});cardEnd();}
 function drawResultCard(win){const age=win?uiT-1.75:uiT;if(age<0){card=null;return;}
  if(win){const cw=324,ch=340,{cx,cy}=cardBegin(cw,ch,'You Did It!',age);X.save();X.translate(W/2,cy+144);burstShape(104,74,14,NOW*.3);fill(C.hot);burstShape(86,60,14,NOW*.3+.11);fill('#fff3bf');X.restore();
   const k=EZ.elastic((age-.15)/.8);X.save();X.translate(W/2,cy+146);X.scale(k*2,k*2);X.rotate(Math.sin(NOW*3)*.06);
