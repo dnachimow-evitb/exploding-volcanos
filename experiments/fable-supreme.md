@@ -188,3 +188,28 @@ Served the folder locally and used the Claude desktop browser pane.
 - A real iPhone, real touch, real notch and home-indicator insets (the browser reports both as 0), audio, and actual frame rate on an older phone.
 - The block, miss, hairball-catch and combo reactions are wired to the same events as the catch reaction I watched, but I did not screenshot each one.
 - Rounds 3 to 10 were not played through by hand; the round logic is the Opus code unchanged.
+
+---
+
+## v2 revision (same day, tag `fable-supreme-v2`)
+
+**Feedback on v1:** "still feels supremely amateurish": bland colors on the pop-up screens, every character looks like it was made in MS Paint, the font is annoying and the casing is inconsistent.
+
+**What I changed**
+
+- **Characters repainted.** v1 kept the flat fills, single brown outline and tube arms, which is what read as MS Paint.
+  - Noah and Max: a shaped head (cheeks and chin, not a circle), radial skin shading, hair shadow on the forehead, chin shadow on the chest, coloured sienna line work instead of one brown outline, shoulders with collarbones, tapered arms with a form shadow and wet highlight, hands with fingers and a thumb that point along the arm, flowing hair locks with a gradient and shine band.
+  - Faces: eyes with coloured irises (brown for Noah, green for Max), lid shadow, two highlights, heavy upper lash line and shaped brows; a mouth with curved teeth and a shaded tongue; soft blush.
+  - Volcano: charcoal rock (as on the cover) with a scale texture, warm rim light on the left, cool bounce light from the water, wider lava glow, glossier eyes, and the face drawn 15% larger.
+  - Toys: form shading (light upper left, cool shadow below) and a white glossy rim so they read against the water.
+- **Pop-ups in full colour.** The cream cards are replaced by a water-blue panel with drifting bubbles, a lava-gradient frame, an orange title ribbon, a cream "well" that holds the toys or trophy, and a green go-button. The "So close!" card now shows which toys you got ("You splashed 5 of 8 toys!").
+- **Type.** On Windows v1 fell through to Trebuchet MS with synthetic bolding. The stack is now `ui-rounded` / SF Pro Rounded (iPhone), then Segoe UI Black, then Helvetica Neue. No fake-bolded face is used.
+- **Casing: one rule.** Sentence case everywhere (buttons, titles, HUD, labels, floating text, name tags). Capitals are reserved for the EXPLODING VOLCANOS wordmark and "POW!". Examples: "Play", "Let's splash!", "New toy!", "You did it!", "Round 5/10", "Hold…", "Let go!", "It's getting hotter!", "Monster truck".
+
+**Palette addition:** the primary button moved from lava orange to green (`#8cec4e → #27b637`), so green now means "go" in both places it appears (the button and "Let go!"), and orange is left for lava, titles and rewards.
+
+**No gameplay or feel changes in v2.** The tweak list in section 4 is unchanged.
+
+**How I checked v2:** 375×812 in the browser pane, no console errors: round 5 in play with Max (plus a close crop of the characters), new-toy card, "So close!" card, win card, title screen. I confirmed by measuring text that the font stack resolves to Segoe UI on this machine.
+
+**Still true:** this is code-drawn art. It is cleaner and has form now, but it will not match the painted cover. The next real step up in character quality is illustrated sprites; the toy loader already accepts PNGs.
