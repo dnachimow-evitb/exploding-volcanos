@@ -124,3 +124,41 @@ Round 10 (smallest crater): 0° in, 8° in, 14° miss.
 **Not checked:** a real finger, haptics, and whether rapid swiping now sprays as intended; the tests were single deliberate swipes.
 
 **Tuning numbers:** `STEER_DEAD` (free angle, 0.06 radians), `STEER_GAIN` (sideways units per radian, 230), the power forgiveness list in `assistSwipe`, and the three-part power curve in `swipeMove`.
+
+---
+
+## v4 revision (same day, tag `fable-v6-v4`)
+
+**Feedback:** "still a bit too sensitive in that it's too easy to LAUNCH it way too far... also, it would be cool if we could bounce off the walls and effectively create rebound scores."
+
+**Over-launching**
+
+- Fast swipes no longer add extra power (speed multiplier now 0.88 to 1.0, was 0.85 to 1.075).
+- The sweet zone reaches further up: swipes of about 110 to 240 units give power 0.8 to 1.2.
+- Past the sweet zone, power climbs slowly to a ceiling of 1.5 (was 1.7, reached quickly). A swipe across most of the screen now overshoots a little instead of rocketing off.
+
+**Wall bounces and rebound scores**
+
+- A flying toy bounces off the left and right walls (keeping 82% of its sideways speed) and off the top of the play area just under the score bar (keeping 60%). Each bounce gets a ring, sparkles, a "boing" tone and a haptic tick.
+- Previously a toy that reached the side of the screen simply counted as a miss. Now it only misses when it comes back down into the water.
+- **A toy that goes in after at least one bounce scores double**, with a "Rebound! x2" callout. The combo multiplier still applies on top. Hairballs get no rebound bonus.
+- The dotted aiming arc and the green "Let Go!" check both include bounces, so bank shots can be lined up on purpose by swiping toward a wall.
+
+**This changes scoring.** The original has no rebound bonus. It is new in version 6 only.
+
+**Scripted results (round 1, toy at the left of the tub)**
+
+| Swipe | Power | Result |
+|---|---|---|
+| 120 units, straight | 0.80 | short |
+| 175 units, straight | 0.96 | in, 14 points |
+| 240 units, straight | 1.17 | in, 14 points |
+| 300 units, straight | 1.28 | overshot, bounced once, missed |
+| 360 units, fast | 1.38 | overshot, bounced once, went in: 28 points |
+| deliberate bank shot off the right wall | 1.24 | 1 bounce, in: 28 points |
+
+So a plain catch is 14 and a rebound is 28, as intended. One consequence to judge: a big overshoot can now luck into a double score by bouncing back in.
+
+**Not checked:** a real finger, how bank shots feel to aim by hand, haptics, and bounces while Max is blocking.
+
+**New tuning numbers:** `WALL_L` / `WALL_R` (wall positions), `BNC` (side bounce, 0.82), `BNC_TOP` (top bounce, 0.6), and the rebound multiplier in the scoring line.
