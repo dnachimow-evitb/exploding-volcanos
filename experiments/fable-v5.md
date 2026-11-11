@@ -184,3 +184,35 @@ Title Case for every title, button, label and callout. Sentence case only for fu
 - Body text stays sentence case: "Splash them into the volcano!", "Joins the tub for round 6", "You splashed 3 of 8. Nice!"
 
 **How I checked:** start screen, the top of the play screen with a combo and round banner, and the new-toy card at 375×812; no console errors. Other cards and callouts were changed by text replacement and not individually re-shot.
+
+---
+
+## v10 revision and publishing (same day, tag `fable-v5-v10`)
+
+**Request:** make the "x3 Combo" chip square, and publish this version so it can be played for real, with a clear way back to the original at any point.
+
+**Chip:** the combo chip is now a square-cornered rectangle.
+
+**Publishing: what was done**
+
+The live game is GitHub Pages serving the `main` branch at https://dnachimow-evitb.github.io/exploding-volcanos/ . To publish version 5 there:
+
+- `index.html` now loads `game-fable-v5.js` (it is the v5 play page plus the home-screen app links and the offline service worker).
+- `sw.js` has a new cache name and file list, so phones that already have the game installed fetch the new version.
+- `game.js` and `style.css` (the original game) are untouched and still in the repo.
+- `original.html` was added: the original game, exactly as it was, playable any time at https://dnachimow-evitb.github.io/exploding-volcanos/original.html .
+- The commit just before publishing is tagged `before-v5-publish`.
+
+**How to go back to the original at any point**
+
+Nothing was deleted, so going back is restoring two files:
+
+    git checkout before-v5-publish -- index.html sw.js
+    git commit -m "Back to the original game"
+    git push
+
+Or ask Claude: "revert the live game to the original." Either way the home-screen app switches back the next time or two it is opened (the first open downloads the change, the next one shows it).
+
+To return to version 5 after that, undo that commit: `git revert HEAD` and `git push`.
+
+**Note for future updates:** the service worker serves cached files first, so any later change to the live game needs the cache name in `sw.js` bumped again or phones will keep the old files.

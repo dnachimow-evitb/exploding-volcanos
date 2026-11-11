@@ -537,7 +537,7 @@ function drawPauseBtn(){roundBtn(W-74,SAFE+28,paused?'play':'pause');}
 function hud(){const s=SAFE,sp=1+scorePop*scorePop*.2;
  X.save();X.translate(60,s+28);X.scale(sp,sp);chip(-50,-18,100,36);star(-30,0,11,5.4);fill(C.gold);text(String(Math.round(scoreShown)),13,1,19,C.navy);X.restore();
  text('Round '+round+'/10',60,s+62,12.5,'#fff',{s:C.navy});
- if(combo>1){const cp=1+comboPop*.3;X.save();X.translate(60,s+84);X.scale(cp,cp);chip(-30,-12,60,24);text('x'+combo+' Combo',0,.5,10.5,C.lavaDk);X.restore();}
+ if(combo>1){const cp=1+comboPop*.3;X.save();X.translate(60,s+84);X.scale(cp,cp);X.fillStyle=C.deep;X.fillRect(-33,-9,66,24);X.fillStyle='#fff';X.fillRect(-33,-12,66,24);text('x'+combo+' Combo',0,.5,10.5,C.lavaDk);X.restore();}
  const tw=126,tx=122,ty=s+17,pct=clamp(timeLeft/roundTime,0,1),low=state==='play'&&timeLeft<8,tc=low?C.amber:pct>.5?C.go:C.gold;
  rr(tx,ty+3,tw,22,6);fill(C.deep);rr(tx,ty,tw,22,6);fill('#fff');rr(tx+3,ty+3,tw-6,16,4);fill('#c9d8f2');
  if(pct>0){rr(tx+3,ty+3,Math.max(10,(tw-6)*pct),16,4);fill(tc);}
