@@ -213,3 +213,18 @@ Served the folder locally and used the Claude desktop browser pane.
 **How I checked v2:** 375×812 in the browser pane, no console errors: round 5 in play with Max (plus a close crop of the characters), new-toy card, "So close!" card, win card, title screen. I confirmed by measuring text that the font stack resolves to Segoe UI on this machine.
 
 **Still true:** this is code-drawn art. It is cleaner and has form now, but it will not match the painted cover. The next real step up in character quality is illustrated sprites; the toy loader already accepts PNGs.
+
+---
+
+## v3 revision (same day, tag `fable-supreme-v3`)
+
+**Feedback on v2:** the boys looked like they were wearing makeup, and the volcano looked stoned. Both were my v2 additions.
+
+**What I changed**
+
+- **Noah and Max:** removed the lash lines, lash flicks, coloured irises, lid shadow, pink blush and red mouth with lip line. They now have plain dark dot eyes with one highlight, thicker brows set closer to the eyes, a faint warm cheek tone and a brown-red mouth. The shaped head, shading, hands and hair from v2 stay.
+- **Volcano:** removed the half-closed lids (resting and after erupting) and the grey lid shadow. Its eyes are now fully open with larger pupils, it looks up rather than down when idle, has friendly brows and a wider smile when resting, and lighter cheeks. After erupting it shows closed happy eyes instead of drooping ones.
+
+No gameplay, feel or layout changes.
+
+**How I checked v3:** close crops at 375×812 of the volcano, Noah and Max, resting and cheering; no console errors.
