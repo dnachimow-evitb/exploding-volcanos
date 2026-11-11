@@ -5,7 +5,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v6.5'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v6.6'; // shown small in the corner of the start screen; bump it with every change
 const cv=document.getElementById('c'),W=380,H=600;let X=cv.getContext('2d');
 const song=document.getElementById('song');
 const CX=190,CY=176,G=0.22,T=58,CHARGE_RATE=0.55,CHARGE_MAX=1.7;
@@ -616,7 +616,8 @@ function eruptFX(){if(state!=='erupt')return;
 
 // ── SWIPE TO THROW (version 6) ──
 // Power comes from the swipe: how far the finger travels TOWARD the volcano, boosted by how fast it moved.
-// Swipes of roughly 110 to 240 units land in the sweet zone (power 0.8 to 1.2); about 175 is dead centre.
+// "Effective swipe" = distance x speed factor. 110 to 280 effective units is the sweet zone (power 0.8 to 1.2):
+// that is a fast flick of about 80 to 205 units, or a slow drag of about 150 to 370.
 // Past that, power climbs slowly to a ceiling of 1.5, so a huge swipe overshoots a little, not wildly.
 // The swipe's direction steers the throw: STEER_DEAD radians either side of the true line is free, then
 // every further radian moves the landing spot STEER_GAIN units sideways.
@@ -624,8 +625,8 @@ const SWIPE_MIN=16,SWIPE_FAST=1500,STEER_DEAD=.06,STEER_GAIN=230;
 function swipeMove(p){const c=charging,o=c.o,now=performance.now(),dtm=now-c.lt;
  if(dtm>8){const v=Math.hypot(p.x-c.lx,p.y-c.ly)/dtm*1000;c.peak=Math.max(c.peak,Math.min(v,2400));c.lx=p.x;c.ly=p.y;c.lt=now;}
  const ux=CX-o.x,uy=CY-o.y,ul=Math.hypot(ux,uy)||1;c.fx=p.x;c.fy=p.y;c.len=Math.max(0,((p.x-c.sx)*ux+(p.y-c.sy)*uy)/ul);
- // speed counts a little (x0.88 slow .. x1.0 fast); a wide middle band of swipe lengths all give close to the right power
- const e=c.len*(.88+.12*Math.min(c.peak/SWIPE_FAST,1));c.tc=e<110?.3+.5*e/110:e<240?.8+.4*(e-110)/130:Math.min(1.5,1.2+.3*(e-240)/200);
+ // speed is what makes a throw hard (x0.75 slow drag .. x1.35 fast flick); a wide middle band of swipe lengths all give close to the right power
+ const e=c.len*(.75+.6*Math.min(c.peak/SWIPE_FAST,1));c.tc=e<110?.3+.5*e/110:e<280?.8+.4*(e-110)/170:Math.min(1.5,1.2+.3*(e-280)/200);
  // DIRECTION: how far the swipe leans off the toy-to-crater line steers the landing spot left or right
  const dx=p.x-c.sx,dy=p.y-c.sy;if(Math.hypot(dx,dy)>24){const dev=Math.atan2((ux*dy-uy*dx)/ul,(ux*dx+uy*dy)/ul),a=Math.max(0,Math.abs(dev)-STEER_DEAD);c.ts=clamp(Math.sign(dev)*a*STEER_GAIN,-160,160);}}
 // flicks are less precise than holds, so near-misses snap to the crater from further away (±0.09 instead of ±0.04); direction gets no snap beyond its small dead zone

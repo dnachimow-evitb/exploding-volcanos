@@ -170,3 +170,25 @@ So a plain catch is 14 and a rebound is 28, as intended. One consequence to judg
 **Request:** a very small version number in the corner of the start screen, to tell at a glance which build is running.
 
 **What I changed:** the start screen shows the version in small text at the bottom-right corner. This build reads `v6.5`. It comes from one `VERSION` line at the top of the game file and should be bumped with every change.
+
+---
+
+## v6 revision (same day, tag `fable-v6-v6`, shows as `v6.6`)
+
+**Feedback:** the last change overcompensated; even a very hard swipe felt weak.
+
+**Cause:** a hard, quick flick covers little distance, and v6.4 had made power almost entirely about distance (speed added at most 12%).
+
+**What I changed:** speed is now what makes a throw hard. The speed factor runs from 0.75 for a slow drag to 1.35 for a fast flick (was 0.88 to 1.0), and the sweet zone is a little wider at the top. The ceiling stays at 1.5 so a huge swipe still cannot rocket off.
+
+**Scripted results (round 1, straight swipes)**
+
+| Fast flick (60 to 110ms) | Result | Slow drag (400 to 600ms) | Result |
+|---|---|---|---|
+| 50 to 80 units | short | 110 units | short |
+| 110 to 200 units | in | 160 to 240 units | in |
+| 260 to 320 units | overshot, bounced in (rebound) | 330 units | overshot, bounced, missed |
+
+So a quick flick of about a third of the screen width now lands, where in v6.5 the same flick fell short. From this toy position the long fast overshoots happened to bounce back in; that is the lucky-rebound effect noted in v4.
+
+**Not checked:** a real finger. Real flick speeds and lengths differ from scripted ones, so this is the number most likely to need another pass.
