@@ -1,6 +1,32 @@
 EXPLODING VOLCANOS IN THE BATHTUB — web app (PWA)
 ==================================================
 
+WHICH VERSION IS LIVE (updated 2026-11-11)
+------------------------------------------------------------------
+The live game at https://dnachimow-evitb.github.io/exploding-volcanos/
+is now VERSION 5 (index.html loads game-fable-v5.js).
+
+The ORIGINAL game has not been deleted or changed:
+  - game.js and style.css are untouched.
+  - It is playable any time at
+    https://dnachimow-evitb.github.io/exploding-volcanos/original.html
+  - The commit just before the switch is tagged  before-v5-publish
+
+TO SWITCH THE LIVE GAME BACK TO THE ORIGINAL (any time):
+Open a terminal in this folder and run these three commands:
+    git checkout before-v5-publish -- index.html sw.js
+    git commit -m "Back to the original game"
+    git push
+Or just ask Claude: "revert the live game to the original".
+The home-screen app switches back the next time or two it is opened
+(the first open downloads the change, the next one shows it).
+
+To return to version 5 after that:
+    git revert HEAD
+    git push
+
+Full notes on version 5: experiments/fable-v5.md
+
 WHAT THIS IS
 A complete, installable web version of the game, with your song as the
 soundtrack. Runs on any phone or computer browser, works offline once

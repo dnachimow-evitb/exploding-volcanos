@@ -1,0 +1,218 @@
+# Version 5 (fable-v5): a from-scratch visual build
+
+- **Model:** Claude Fable 5.2 (`claude-fable-5-2`), in Claude Code (desktop app)
+- **Date:** 2026-11-11
+- **Branch / tag:** `model/fable-v5`, branched from `original-v1`, tagged `fable-v5-v1`
+- **Files added:** `game-fable-v5.js`, `play-fable-v5.html`, `experiments/fable-v5.md`
+- **Files untouched:** `index.html`, `game.js`, `sw.js`, `style.css`, and every other version's files
+
+Open `play-fable-v5.html` to play. Self-contained: inline CSS, no service worker, no network requests. It loads `assets/cover.png` and `song.mp3` from the folder.
+
+## The prompt
+
+After three rounds on fable-supreme, the feedback (verbatim):
+
+> yo, the fake tutorital that you tried to implement...it looks like a god damn toilet plunger , not an arrow. thsi is the shit i'm talking about, it just pure amateur hour all over hte place. also, the tub covers the fun part of the window and the max poster ont eh wall....i thoought fale was supposed to be good. also, look how faded this shit looks....give a holistic rework ingoring all previous direction and build something from scratch as version 5; maybe i'm the probelm and i just need to get out of your way
+
+Two screenshots came with it: the "So close!" card in a wide window, with the tub drawn over the window and posters, and washed-out toys on the card.
+
+## What was wrong, and the decision
+
+1. **The style was the problem, not the details.** Every earlier version tried to imitate painted, outlined storybook art using code-drawn shapes. That always lands as "MS Paint". Version 5 uses a style that code does well: flat sticker-book art. Solid colours, no gradients, no outlines; the actors (volcano, Noah, Max, toys) get a white sticker keyline so they pop off the scene.
+2. **"Faded" came from transparency.** Dimmed toys, translucent overlays, soft glows. Version 5 uses solid colour for everything that matters. Nothing is ghosted to show state.
+3. **The tub covered the window and Max's poster** because in a wide window the old layout squeezed to 600 units tall and the wall art had nowhere to go. The new layout is never shorter than 720 units and places the decor in the space between the HUD and the tub rim, scaled to fit.
+4. **The tutorial finger looked like a plunger.** It is gone. The hint is a dashed arrow that sweeps from the toy to the crater, with a real arrowhead, a pulse on the toy and a "Press and hold" bubble.
+
+## What version 5 is
+
+- **Title screen:** your actual cover art, uncropped, above a band of water with toy stickers and one large Play button.
+- **Scene:** cobalt tile wall, white tub with one shade tone, bright aqua water with drifting light bands and white foam, navy floor, yellow bath mat. Window with a smiling sun on the left; NOAH and MAX drawings side by side on the right, always clear of the tub.
+- **Volcano:** flat charcoal cone with a light and a dark facet, solid orange lava runs that lengthen as it fills, big white eyes that follow the toy, and cream line work for the mouth so the expression reads. Wide awake at rest; grins, puffs up and trembles as it fills; gulps toys; pulls a face at hairballs.
+- **Noah and Max:** flat heads with spiky hair, dot eyes, strong brows, big grins. No lashes, blush or shading. Noah leans into the throw, shouts, cheers with both arms; Max holds his hands out wide to block and laughs when he gets one.
+- **Toys:** the 12 vector toys and the hairball, each with a white sticker edge and a flat shadow on the water. A dashed white ring marks what can be grabbed.
+- **HUD:** white chips with navy text. The toy tracker shows empty slots that fill with the real toy.
+- **Cards:** white card, solid orange header, navy text, solid green button. "So close!" shows every toy in full colour with a green tick on the ones you got. Behind the card is a solid navy scrim, not a grey wash.
+- **Aiming:** white dotted arc that turns green on target, with a green "Let go!" bubble and a chime.
+- **Type and casing:** system rounded face on iPhone, Segoe UI on Windows; sentence case everywhere, capitals only for the EXPLODING VOLCANOS wordmark and "POW!".
+
+## What carries over
+
+Rules, scoring, the difficulty table, round structure and the song are unchanged from the original.
+
+The game logic and motion helpers are reused from fable-supreme (extracted by script, not retyped), so these feel tweaks still apply:
+
+1. Release forgiveness: a release within ±0.04 charge (about 70ms) of an on-target throw counts.
+2. Eruption delay 700ms instead of 380ms, with the timer frozen for the extra time so bonuses are identical.
+3. Fixed 60Hz simulation.
+4. Hit-stop: 3 frames on a catch, 7 at the eruption.
+5. Buttons fire on lift.
+6. Reduced shake and flash; no continuous screen shake when the volcano is nearly full.
+7. Three synth sounds: button click, on-target chime, build-up rumble.
+8. Kinder copy: "Max got it!", "Splash! Try again!", "So close!".
+9. No "toys rain back" banner; the speaker's first tap starts the music.
+
+Every draw call is new.
+
+## How I checked it
+
+Browser pane, no console errors in any state.
+
+- **375×812:** title screen; round 1 with the arrow tutorial; round 5 aiming on target with Max, a hairball, a combo and a low timer; "So close!" card; new-toy card; eruption at the "POW!" beat; win card.
+- **Wide desktop window:** play screen, confirming the window and both posters sit above the tub.
+- **Real taps (desktop size):** Play → Let's splash! → hold until on target → release → caught (+14, same as the original) → rest of the toys in → eruption → new-toy card (Monster truck) → Splash on! → round 2 with 4 toys.
+- Fixes made after looking: the cover was being cropped (now shown whole); Max's raised hands sat behind his head and read as ears (moved out wide).
+
+**Not checked:** a real iPhone (notch and home-bar insets read as 0 in the browser), audio, 430×932, frame rate on an older phone, and rounds 3 to 10 played by hand. I did not screenshot the block, miss or hairball-catch reactions.
+
+---
+
+## v2 revision (same day, tag `fable-v5-v2`)
+
+**Feedback on v1:** a round-3 screenshot captioned "what", then "what's up with the yellow line at the bottom".
+
+**What I fixed**
+
+- **Toys piling up.** The hairball was sitting on the duck and boat, and toys drifted through each other. Each toy now has a home spot (two tidy clusters, left and right of Noah, three rows each) and sways gently around it; the hairball floats on its own in the middle. Toys are drawn slightly smaller when there are more than five, and sorted so nearer ones are in front. The dashed grab rings only show while there are four toys or fewer, so they no longer stack up.
+- **Grey disc behind the volcano.** It was a translucent glow. Removed.
+- **White blob at Noah's side.** His resting arm was being cut off at the waterline. It now stays under the water.
+- **Yellow line at the bottom.** It was a bath mat with only a sliver showing. Removed.
+
+**Gameplay-feel change to judge:** toys no longer drift freely across the tub; they sway around a home spot (the sway is wider in later rounds). Throws still auto-aim from wherever the toy is, and the in-flight drift that makes later rounds harder is unchanged, so difficulty should be the same, but it is a change from the original behaviour. A missed toy lands where it falls and then glides back to its spot.
+
+**How I checked v2:** 375×812, no console errors: round 7 after the first pass (disc, mat and arm fixed, toys still bunched on one side, which led to the home-spot change), then round 10 with all 12 toys and a hairball in two readable clusters. The final row spacing was widened slightly after that last screenshot and not re-shot.
+
+---
+
+## v3 revision (same day, tag `fable-v5-v3`)
+
+**Feedback on v2:** restore the toy behaviour so they float, not just sway; add more colour to the top of the screen (a lot of blue); improve the window, which looked like MS Paint again.
+
+**What I changed**
+
+- **Toys float again.** The v2 home spots are removed and the original free drift is back, including the faster drift in later rounds. One addition: when two floating toys bump, they swap direction and ease apart instead of sliding through each other. In crowded rounds toys still overlap at times, because the original keeps them out of the middle of the tub.
+- **Colour at the top.** On phone-height screens the wall has a border row of yellow, coral, mint and pink tiles under the score bar, and a white shelf with two bottles and a rubber duck above the posters. In short, wide windows there isn't room for those, so the colour there comes from the curtains and posters.
+- **Window redrawn.** Coral curtains with tie-backs on a gold rod, a bevelled white frame with a shadow on the wall, a layered view (two-tone sky, glass glints, sun with a halo, a proper cloud, two hills and a tree), and a potted plant on the sill. The sun's face is gone.
+
+**Feel tweak to judge:** the toy-bump behaviour above. Everything else about floating is the original.
+
+**How I checked v3:** 375×812 round 6 after 5 seconds (toys had drifted 54 to 134 units, confirming free float), a close crop of the top of the screen, and a wide desktop window. No console errors. I removed some stray coloured tiles after the last screenshots and did not re-shoot.
+
+---
+
+## v4 revision (same day, tag `fable-v5-v4`)
+
+**Feedback on v3:** "there's an over dependence on rounded edges, especially on the pop ups." Agreed: cards had a 30-unit radius and every button, chip, tag and bubble was a full pill, so nothing had hierarchy.
+
+**What I changed: three shape families instead of one**
+
+- **Sharp (rewards and titles):** each card title sits on an angular swallow-tail banner that overhangs the card's edges; the new toy and the trophy sit on a spiky starburst (the same shape as the "POW!" bursts) instead of a rounded box.
+- **Firm (panels and buttons):** cards have a small corner radius and a slight tilt, like a sticker pressed on; buttons are chunky rounded rectangles with a thick bottom edge; the score chip, round banner, name tags and speech bubbles are rounded rectangles, not pills.
+- **Round (small controls only):** pause and sound buttons, the timer bar and the toy-tracker slots.
+
+No gameplay or feel changes.
+
+**How I checked v4:** the new-toy and "So close!" cards at 375×812, no console errors. I did not re-shoot the pause, intro or win cards or the in-play HUD chips; they use the same shared drawing code.
+
+---
+
+## v5 revision (same day, tag `fable-v5-v5`)
+
+**Question on v4:** "what happened to the row of colorful tiles I saw in some of your previews... did you cut that intentionally?"
+
+**Answer:** it was not cut. The border only appeared on phone-height screens, and the preview pane is shorter and wider than a phone, so the layout hid it. The loose coloured tiles scattered on the wall were removed on purpose in v3.
+
+**What I changed:** short windows now get a slim version of the tile border (half-height tiles under the score bar), and the window and posters scale down slightly to make room. Phone-height screens keep the full-size border and the shelf.
+
+**How I checked:** a 400×630 window (the shape of the preview pane): slim border visible, window and both posters still clear of the tub, no console errors. The phone-height layout uses the unchanged code path and was not re-shot.
+
+---
+
+## v6 revision (same day, tag `fable-v5-v6`)
+
+**Request:** make the Max and Noah pictures on the wall a bit larger.
+
+**What I changed:** both pictures are 30% larger. The shelf moved up slightly on phone-height screens to stay clear of them.
+
+**How I checked:** close crops of the wall at 375×812 and 400×630: both pictures larger, readable names, clear of the tub, shelf and volcano. No console errors.
+
+---
+
+## v7 revision (same day, tag `fable-v5-v7`)
+
+**Request:** make the pictures another 10% bigger, move the rainbow tiles up a bit, and make the window a bit bigger.
+
+**What I changed**
+
+- Noah and Max pictures: another 10% larger (43% over the first v5 size), raised slightly so they stay clear of the volcano's target ring.
+- Rainbow tile border: moved up to sit just under the score bar (about 20 units higher on phone-height screens, 8 on short ones). It is now its own strip rather than a row of the wall grid.
+- Window: 15% larger. The shelf moved up to make room.
+
+**How I checked:** crops of the top of the screen at 375×812 and 400×630, no console errors. The window, pictures and shelf are clear of each other, the tub and the volcano. The combo chip overlaps the left end of the tile border when a combo is showing.
+
+---
+
+## v8 revision (same day, tag `fable-v5-v8`)
+
+**Feedback:** "it sometimes looks like Noah only has one hand."
+
+**Cause:** at rest his throwing arm hung below the waterline, and v2 had hidden his other arm, so often no hands or only one showed.
+
+**What I changed:** Noah has a resting pose with both hands held up out of the water, bobbing slightly. When you hold a toy, the throwing arm blends smoothly from that pose into the wind-up and swing while the other hand stays up, so two hands are always visible. Drawing only; the throw itself is unchanged. Also: the tutorial arrow always draws some of its dashed line, so it never shows as a lone arrowhead.
+
+**How I checked:** close crops of Noah at rest and mid wind-up at 375×812, no console errors. Both show two hands. I did not capture the mid-swing frame or the cheer pose again.
+
+---
+
+## v9 revision (same day, tag `fable-v5-v9`)
+
+**Feedback:** still a bit over-roundy, mostly on the start screen; and the casing is inconsistent ("should it be New Toy, not New toy. And Splash On, not Splash on").
+
+**Roundness**
+
+- Start screen rebuilt: the cover is now a square-cornered poster with a white border, taped to the tiled wall at a slight tilt. The bubbly foam edge on the water is replaced by a clean white wave line. The Play button is a firm rectangle with small corners and no pulsing rounded halo.
+- Everywhere else: buttons went from radius 16 to 9, the score chip and banners from 9 to 6, the timer bar from a pill to radius 6, and the pause and sound buttons from circles to rounded squares.
+- Still round on purpose: foam, toy-tracker slots, the dashed grab rings and the characters themselves.
+
+**Casing: one rule**
+
+Title Case for every title, button, label and callout. Sentence case only for full sentences of body text.
+
+- Titles: Noah's Bath Toys, New Toy!, You Did It!, So Close!, Paused
+- Buttons: Play, Let's Splash!, Splash On!, Play Again, Try Again, Resume
+- Labels and callouts: Press and Hold, Let Go!, x3 Combo, Round 1 — Splash Away!, Max Got It!, Splash! Try Again!, It's Getting Bigger!, It's Getting Hotter!, Gonna Overflow?!, Look, Daddy, Look!, This Is The End!
+- Toy names: Monster Truck, Action Figure (back to Title Case)
+- Body text stays sentence case: "Splash them into the volcano!", "Joins the tub for round 6", "You splashed 3 of 8. Nice!"
+
+**How I checked:** start screen, the top of the play screen with a combo and round banner, and the new-toy card at 375×812; no console errors. Other cards and callouts were changed by text replacement and not individually re-shot.
+
+---
+
+## v10 revision and publishing (same day, tag `fable-v5-v10`)
+
+**Request:** make the "x3 Combo" chip square, and publish this version so it can be played for real, with a clear way back to the original at any point.
+
+**Chip:** the combo chip is now a square-cornered rectangle.
+
+**Publishing: what was done**
+
+The live game is GitHub Pages serving the `main` branch at https://dnachimow-evitb.github.io/exploding-volcanos/ . To publish version 5 there:
+
+- `index.html` now loads `game-fable-v5.js` (it is the v5 play page plus the home-screen app links and the offline service worker).
+- `sw.js` has a new cache name and file list, so phones that already have the game installed fetch the new version.
+- `game.js` and `style.css` (the original game) are untouched and still in the repo.
+- `original.html` was added: the original game, exactly as it was, playable any time at https://dnachimow-evitb.github.io/exploding-volcanos/original.html .
+- The commit just before publishing is tagged `before-v5-publish`.
+
+**How to go back to the original at any point**
+
+Nothing was deleted, so going back is restoring two files:
+
+    git checkout before-v5-publish -- index.html sw.js
+    git commit -m "Back to the original game"
+    git push
+
+Or ask Claude: "revert the live game to the original." Either way the home-screen app switches back the next time or two it is opened (the first open downloads the change, the next one shows it).
+
+To return to version 5 after that, undo that commit: `git revert HEAD` and `git push`.
+
+**Note for future updates:** the service worker serves cached files first, so any later change to the live game needs the cache name in `sw.js` bumped again or phones will keep the old files.
