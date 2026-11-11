@@ -247,3 +247,19 @@ Power stayed at 1.08 for every angle from 25° right to 50° left, confirming th
 **Not checked:** a real finger, whether the shortened arc is the right length, and the pressed look of each button individually.
 
 **Tuning numbers:** `HARD_MAX_AIR` (3) and `HARD_ARC` (22).
+
+---
+
+## v9 revision (same day, tag `fable-v6-v9`, shows as `v6.9`)
+
+**Request:** a way back to the start screen from the pause card.
+
+**What I changed**
+
+- The pause card has a second button, "Start Screen" (blue, under the green "Resume"). It abandons the current game and returns to the start screen, where Easy or Hard can be chosen again.
+- The pause card's info line now also shows the mode: "Easy · Round 1 · Score 0".
+- A guard so a round-win timer left over from an abandoned game cannot fire on the start screen.
+
+There is no "are you sure?" step: one tap on Start Screen ends the game in progress and the score is lost.
+
+**How I checked (375×812, scripted taps, no console errors):** Easy → play → pause (both buttons present) → Resume returns to play → pause → Start Screen returns to the start screen with the tub cleared → Hard starts a Hard game. One screenshot of the pause card.
