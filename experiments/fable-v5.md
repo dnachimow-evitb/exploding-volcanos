@@ -148,3 +148,15 @@ No gameplay or feel changes.
 - Window: 15% larger. The shelf moved up to make room.
 
 **How I checked:** crops of the top of the screen at 375×812 and 400×630, no console errors. The window, pictures and shelf are clear of each other, the tub and the volcano. The combo chip overlaps the left end of the tile border when a combo is showing.
+
+---
+
+## v8 revision (same day, tag `fable-v5-v8`)
+
+**Feedback:** "it sometimes looks like Noah only has one hand."
+
+**Cause:** at rest his throwing arm hung below the waterline, and v2 had hidden his other arm, so often no hands or only one showed.
+
+**What I changed:** Noah has a resting pose with both hands held up out of the water, bobbing slightly. When you hold a toy, the throwing arm blends smoothly from that pose into the wind-up and swing while the other hand stays up, so two hands are always visible. Drawing only; the throw itself is unchanged. Also: the tutorial arrow always draws some of its dashed line, so it never shows as a lone arrowhead.
+
+**How I checked:** close crops of Noah at rest and mid wind-up at 375×812, no console errors. Both show two hands. I did not capture the mid-swing frame or the cheer pose again.

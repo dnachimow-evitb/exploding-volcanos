@@ -471,11 +471,12 @@ function drawMax(mx,hY){const headY=hY+38,wob=Math.sin(wave*.22)*2,wl=headY+44,e
 function maxBlocker(){if(blk.on)drawMax(blk.x,blk.y);}
 function kid(){const kx=190,base=372,s=splashSide,er=(state==='erupt'||state==='win'),wl=base+8,busy=charging||pendingLaunch||swingT>0;
  const cheer=er||(noah.mood==='cheer'&&!busy),hopY=noah.hop+(er?-Math.abs(Math.sin(NOW*7))*4:0),hy=base-44+Math.sin(NOW*2.2)*.8;
- const tl=charging?-s*(.05+.07*Math.min(1,charging.c/1.2)):swingT>0?s*.14:0;noah.lean+=(tl-noah.lean)*.25;
+ const tl=charging?-s*(.05+.07*Math.min(1,charging.c/1.2)):swingT>0?s*.14:0;noah.lean+=(tl-noah.lean)*.25;noah.ab=(noah.ab||0)+((busy?1:0)-(noah.ab||0))*.3;
  foam(kx,wl,40,false);X.save();X.beginPath();X.rect(-20,-500,W+40,wl+500);X.clip();X.translate(kx,wl+12);X.rotate(noah.lean);X.translate(-kx,-(wl+12)+hopY);
  sticker(()=>{
   rr(kx-25,base-35,50,92,22);shp(C.skin);if(PASS){ell(kx,base-29,15,7);fill(C.skinD);}
-  if(!cheer){const sX=kx+18*s,sY=base-20,ex=sX+s*Math.cos(armAng)*26,ey=sY+Math.sin(armAng)*26,hx=ex+s*Math.cos(armAng+0.5)*22,hy2=ey+Math.sin(armAng+0.5)*22;lin([[sX,sY],[ex,ey],[hx,hy2]],12,C.skin);circ(hx,hy2,9.5);shp(C.skin);}
+  if(!cheer){const rest=(sg,ph)=>[[kx+18*sg,base-18],[kx+35*sg,base+1],[kx+41*sg,base-14+Math.sin(NOW*2.4+ph)*2.5]],arm=q=>{lin(q,12,C.skin);circ(q[2][0],q[2][1]-1,9.5);shp(C.skin);};arm(rest(-s,1.3));
+   const sX=kx+18*s,sY=base-20,ex=sX+s*Math.cos(armAng)*26,ey=sY+Math.sin(armAng)*26,hx=ex+s*Math.cos(armAng+0.5)*22,hy2=ey+Math.sin(armAng+0.5)*22,r=rest(s,0),b=noah.ab||0,mix=(u,v)=>[lerp(u[0],v[0],b),lerp(u[1],v[1],b)];arm([mix(r[0],[sX,sY]),mix(r[1],[ex,ey]),mix(r[2],[hx,hy2])]);}
   else[-1,1].forEach(sg=>{const wg=Math.sin(NOW*9+sg)*4,hx=kx+42*sg+wg,hy2=hy-22;lin([[kx+18*sg,base-20],[kx+38*sg,hy+12],[hx,hy2]],12,C.skin);circ(hx,hy2-2,9.5);shp(C.skin);});
   const nm=noah.mood;kidHead(kx,hy,27,C.hairN,'#2b1a12',{mood:cheer?'laugh':charging?'focus':nm==='throw'?'throw':(nm==='wow'||nm==='oops')?'wow':'happy',look:lookAt(kx,hy),blink:noah.blink>0});});
  X.restore();lapWater(kx,wl,40);foam(kx,wl,40,true);nameTag('Noah',kx,wl+24,'#1f5fd0');}
@@ -517,7 +518,7 @@ function chargeGuide(){if(!charging){wasOn=false;return;}const o=charging.o,iv=i
 // wordless demo: a dashed arrow sweeps from the toy to the crater until the first real throw
 function tutorial(){if(!tutOn||state!=='play'||charging||pendingLaunch||swingT>0)return;const o=objs.find(q=>q.st==='float'&&!q.hb);if(!o||(o.born&&NOW<o.born+.4))return;
  const iv=ideal(o),pts=[];let vx=iv.vx,vy=iv.vy,x=o.x,y=o.y;for(let i=0;i<T-3;i++){vy+=G;x+=vx;y+=vy;pts.push([x,y]);}
- const t=(tutT%2.4)/2.4,grow=EZ.out(t/.55),n=Math.max(8,~~(pts.length*grow)),p1=(NOW*1.5)%1;
+ const t=(tutT%2.4)/2.4,grow=EZ.out(t/.55),n=Math.max(18,~~(pts.length*grow)),p1=(NOW*1.5)%1;
  X.save();X.globalAlpha=1-p1;X.strokeStyle='#fff';X.lineWidth=4;circ(o.x,o.y,20+p1*18);X.stroke();X.restore();
  const path=()=>{X.beginPath();for(let i=6;i<n;i++)i===6?X.moveTo(pts[i][0],pts[i][1]):X.lineTo(pts[i][0],pts[i][1]);};
  X.lineCap='round';X.lineJoin='round';X.setLineDash([10,9]);X.lineDashOffset=-NOW*40;path();X.strokeStyle=C.navy;X.lineWidth=9;X.stroke();path();X.strokeStyle='#fff';X.lineWidth=4.5;X.stroke();X.setLineDash([]);
