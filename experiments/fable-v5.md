@@ -96,3 +96,19 @@ Browser pane, no console errors in any state.
 **Feel tweak to judge:** the toy-bump behaviour above. Everything else about floating is the original.
 
 **How I checked v3:** 375×812 round 6 after 5 seconds (toys had drifted 54 to 134 units, confirming free float), a close crop of the top of the screen, and a wide desktop window. No console errors. I removed some stray coloured tiles after the last screenshots and did not re-shoot.
+
+---
+
+## v4 revision (same day, tag `fable-v5-v4`)
+
+**Feedback on v3:** "there's an over dependence on rounded edges, especially on the pop ups." Agreed: cards had a 30-unit radius and every button, chip, tag and bubble was a full pill, so nothing had hierarchy.
+
+**What I changed: three shape families instead of one**
+
+- **Sharp (rewards and titles):** each card title sits on an angular swallow-tail banner that overhangs the card's edges; the new toy and the trophy sit on a spiky starburst (the same shape as the "POW!" bursts) instead of a rounded box.
+- **Firm (panels and buttons):** cards have a small corner radius and a slight tilt, like a sticker pressed on; buttons are chunky rounded rectangles with a thick bottom edge; the score chip, round banner, name tags and speech bubbles are rounded rectangles, not pills.
+- **Round (small controls only):** pause and sound buttons, the timer bar and the toy-tracker slots.
+
+No gameplay or feel changes.
+
+**How I checked v4:** the new-toy and "So close!" cards at 375×812, no console errors. I did not re-shoot the pause, intro or win cards or the in-play HUD chips; they use the same shared drawing code.
