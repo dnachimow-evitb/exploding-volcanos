@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no, maximum-scale=1" />
+<title>Exploding Volcanos in the Bathtub — Opus 5.5 repaint</title>
+<meta name="theme-color" content="#17609c" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<link rel="icon" href="icon.svg" type="image/svg+xml" />
+<link rel="stylesheet" href="style.css" />
+<style>
+  /* v2: full-bleed on phones; framed card only when letterboxed on wide screens */
+  #w{border-radius:0;box-shadow:none;}
+  #w.boxed{border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.5);}
+  .fp{font-family:ui-rounded,"SF Pro Rounded","Arial Rounded MT Bold","Trebuchet MS",system-ui,sans-serif;}
+  #safe{position:fixed;top:0;left:0;width:1px;height:env(safe-area-inset-top);visibility:hidden;pointer-events:none;}
+</style>
+</head>
+<body>
+<!-- Opus 5.5 visual repaint (model comparison). Does NOT replace index.html / game.js, and registers no service worker. -->
+<div id="safe"></div>
+<div id="w"><canvas id="c" width="380" height="600"></canvas></div>
+<audio id="song" src="song.mp3" loop preload="auto"></audio>
+<script src="game-opus55.js?v=1"></script>
+</body>
+</html>
