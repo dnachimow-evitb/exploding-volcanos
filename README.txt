@@ -25,6 +25,12 @@ To return to version 5 after that:
     git revert HEAD
     git push
 
+HOME-SCREEN ICON ON AN IPHONE
+The icon is apple-touch-icon.png (the volcano from the cover art).
+An iPhone only reads the icon when you tap "Add to Home Screen", so to
+update it: delete the Volcanos icon from the home screen, open the link
+above in Safari, then Share -> Add to Home Screen.
+
 Full notes on version 5: experiments/fable-v5.md
 
 WHAT THIS IS
