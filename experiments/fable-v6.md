@@ -162,3 +162,11 @@ So a plain catch is 14 and a rebound is 28, as intended. One consequence to judg
 **Not checked:** a real finger, how bank shots feel to aim by hand, haptics, and bounces while Max is blocking.
 
 **New tuning numbers:** `WALL_L` / `WALL_R` (wall positions), `BNC` (side bounce, 0.82), `BNC_TOP` (top bounce, 0.6), and the rebound multiplier in the scoring line.
+
+---
+
+## v5 revision (same day, tag `fable-v6-v5`)
+
+**Request:** a very small version number in the corner of the start screen, to tell at a glance which build is running.
+
+**What I changed:** the start screen shows the version in small text at the bottom-right corner. This build reads `v6.5`. It comes from one `VERSION` line at the top of the game file and should be bumped with every change.
