@@ -134,3 +134,17 @@ No gameplay or feel changes.
 **What I changed:** both pictures are 30% larger. The shelf moved up slightly on phone-height screens to stay clear of them.
 
 **How I checked:** close crops of the wall at 375×812 and 400×630: both pictures larger, readable names, clear of the tub, shelf and volcano. No console errors.
+
+---
+
+## v7 revision (same day, tag `fable-v5-v7`)
+
+**Request:** make the pictures another 10% bigger, move the rainbow tiles up a bit, and make the window a bit bigger.
+
+**What I changed**
+
+- Noah and Max pictures: another 10% larger (43% over the first v5 size), raised slightly so they stay clear of the volcano's target ring.
+- Rainbow tile border: moved up to sit just under the score bar (about 20 units higher on phone-height screens, 8 on short ones). It is now its own strip rather than a row of the wall grid.
+- Window: 15% larger. The shelf moved up to make room.
+
+**How I checked:** crops of the top of the screen at 375×812 and 400×630, no console errors. The window, pictures and shelf are clear of each other, the tub and the volcano. The combo chip overlaps the left end of the tile border when a combo is showing.
