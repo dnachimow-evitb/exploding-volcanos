@@ -192,3 +192,30 @@ So a plain catch is 14 and a rebound is 28, as intended. One consequence to judg
 So a quick flick of about a third of the screen width now lands, where in v6.5 the same flick fell short. From this toy position the long fast overshoots happened to bounce back in; that is the lucky-rebound effect noted in v4.
 
 **Not checked:** a real finger. Real flick speeds and lengths differ from scripted ones, so this is the number most likely to need another pass.
+
+---
+
+## v7 revision (same day, tag `fable-v6-v7`, shows as `v6.7`)
+
+**Feedback:** when the toy is near the far left and you try to bounce it off the left wall (the side you are on), the throw comes out weak however hard the swipe; otherwise it is generally good. Also: get rid of the ceiling bounce.
+
+**Cause of the weak near-wall throw:** power only counted the part of the swipe that pointed at the crater. A swipe at the near wall points away from the crater, so most of it was thrown away. Steering was also capped too low for a near-wall bank to reach the volcano at all.
+
+**What I changed**
+
+- **Power counts the whole swipe** as long as it is heading up the screen. Anything within about 50° of straight up gets full credit, so a swipe at a side wall is as strong as one at the crater. Sideways and downward swipes still do nothing.
+- **Steering reaches further.** How far the throw is steered now grows with the tangent of the swipe angle and is capped at ±460 units (was ±160), enough to send a toy into the near wall and back across to the crater.
+- **Ceiling bounce removed.** Toys only bounce off the two side walls. A throw that goes too high leaves the top of the screen and falls back in.
+
+**Scripted results (round 1, toy at the far left, 170-unit fast swipes)**
+
+| Swipe | Power | Result |
+|---|---|---|
+| straight at the crater | 1.08 | in, 14 points, no bounce |
+| 35° left of straight up, at the near wall | 1.08 | hit the left wall, in: 28 points |
+| 40° left of straight up | 1.08 | hit the left wall, in: 28 points |
+| huge swipe, 330 units | 1.45 | flew off the top of the screen, came back, bounced off the right wall and in |
+
+Power stayed at 1.08 for every angle from 25° right to 50° left, confirming the swipe direction no longer weakens the throw. From this spot, near-wall banks land for swipes roughly 35 to 40° left of straight up.
+
+**Not checked:** a real finger, the mirror case on the right side (same code, opposite sign), and rounds with drift.

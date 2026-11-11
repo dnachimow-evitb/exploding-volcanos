@@ -5,7 +5,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v6.6'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v6.7'; // shown small in the corner of the start screen; bump it with every change
 const cv=document.getElementById('c'),W=380,H=600;let X=cv.getContext('2d');
 const song=document.getElementById('song');
 const CX=190,CY=176,G=0.22,T=58,CHARGE_RATE=0.55,CHARGE_MAX=1.7;
@@ -277,7 +277,7 @@ function hop(c,v){c.hv=-v;}
 function sfxClick(){blip(700,.07,'triangle',.14,980);}
 function sfxTick(){blip(980,.08,'sine',.16,1320);}
 function sfxRise(){blip(90,.7,'sawtooth',.14,300);noise(.7,.16,200,.6,900);}
-function hitsAt(o,f,st){const iv=ideal(o),dr=diff().drift*.012;let vx=(iv.vx+(st||0)/T)*f,vy=iv.vy*f,x=o.x,y=o.y;const cy=ceilY();for(let i=0;i<220;i++){vy+=G;vx+=dr;x+=vx;y+=vy;if(x<WALL_L&&vx<0){x=WALL_L;vx*=-BNC;}else if(x>WALL_R&&vx>0){x=WALL_R;vx*=-BNC;}if(y<cy&&vy<0){y=cy;vy*=-BNC_TOP;}if(catchHit(x,y,vy))return true;if(y>556)return false;}return false;}
+function hitsAt(o,f,st){const iv=ideal(o),dr=diff().drift*.012;let vx=(iv.vx+(st||0)/T)*f,vy=iv.vy*f,x=o.x,y=o.y;for(let i=0;i<220;i++){vy+=G;vx+=dr;x+=vx;y+=vy;if(x<WALL_L&&vx<0){x=WALL_L;vx*=-BNC;}else if(x>WALL_R&&vx>0){x=WALL_R;vx*=-BNC;}if(catchHit(x,y,vy))return true;if(y>556)return false;}return false;}
 function assist(o,f){if(hitsAt(o,f))return f;for(const d of[.02,-.02,.04,-.04])if(hitsAt(o,f+d))return f+d;return f;}
 function pop(x,y,t,c){pops.forEach(p=>{if(p.age<.55&&Math.abs(p.y-y)<21&&Math.abs(p.x-x)<120)y-=23;});pops.push({x,y,t,c,age:0,big:/^\+|Hairball/.test(t)});}
 function star(x,y,R,r,rot){X.beginPath();for(let i=0;i<10;i++){const a=(rot||0)-PI/2+i*PI/5,q=i%2?r:R;X.lineTo(x+Math.cos(a)*q,y+Math.sin(a)*q);}X.closePath();}
@@ -513,7 +513,7 @@ function arrowHead(x,y,ang,s,col){X.save();X.translate(x,y);X.rotate(ang);X.begi
 function bubble(t,x,y,col,tc){X.font=fnt(900,15);const w=X.measureText(t).width+26,bx=clamp(x-w/2,8,W-w-8);rr(bx,y-15+3,w,30,6);fill(C.deep);rr(bx,y-15,w,30,6);fill(col);text(t,bx+w/2,y+.5,15,tc);}
 function chargeGuide(){if(!charging){wasOn=false;return;}charging.c+=(charging.tc-charging.c)*.25;charging.steer=(charging.steer||0)+((charging.ts||0)-(charging.steer||0))*.25;const o=charging.o,iv=ideal(o),f=charging.c,dr=diff().drift*.012;
  let vx=(iv.vx+(charging.steer||0)/T)*f,vy=iv.vy*f,tx=o.x,ty=o.y,on=false;const pts=[];
- const cy=ceilY();for(let i=0;i<220;i++){vy+=G;vx+=dr;tx+=vx;ty+=vy;if(tx<WALL_L&&vx<0){tx=WALL_L;vx*=-BNC;}else if(tx>WALL_R&&vx>0){tx=WALL_R;vx*=-BNC;}if(ty<cy&&vy<0){ty=cy;vy*=-BNC_TOP;}if(catchHit(tx,ty,vy)){on=true;break;}if(ty>556)break;pts.push([tx,ty]);}
+ for(let i=0;i<220;i++){vy+=G;vx+=dr;tx+=vx;ty+=vy;if(tx<WALL_L&&vx<0){tx=WALL_L;vx*=-BNC;}else if(tx>WALL_R&&vx>0){tx=WALL_R;vx*=-BNC;}if(catchHit(tx,ty,vy)){on=true;break;}if(ty>556)break;pts.push([tx,ty]);}
  if(on&&!wasOn){sfxTick();haptic(1);}wasOn=on;const col=on?C.go:'#fff',sh=~~(NOW*14);
  pts.forEach((p,i)=>{if((i+sh)%3===1||i<3)return;const r=Math.max(2.6,5.4-i*.02);circ(p[0],p[1],r+1.8);fill(C.navy);circ(p[0],p[1],r);fill(col);});
  const frac=Math.min(f/1.4,1);X.lineCap='round';X.strokeStyle=C.navy;X.lineWidth=9;circ(o.x,o.y,32);X.stroke();X.strokeStyle=col;X.lineWidth=5;X.beginPath();X.arc(o.x,o.y,32,-1.57,-1.57+TAU*frac);X.stroke();
@@ -615,27 +615,26 @@ function eruptFX(){if(state!=='erupt')return;
  else if(eruptT>14){const sc=lerp(.5,1,EZ.back((116-eruptT)/14))*Math.min(1,(eruptT-14)/8);X.save();X.translate(W/2,122);X.scale(sc,sc);big('EXPLODING VOLCANOS',-16,29,C.lava);big('In The Bathtub!',16,22,'#fff');X.restore();}}
 
 // ── SWIPE TO THROW (version 6) ──
-// Power comes from the swipe: how far the finger travels TOWARD the volcano, boosted by how fast it moved.
+// Power comes from the swipe: how far the finger travels up the screen (any upward direction counts in full,
+// so a swipe at a side wall is as strong as one at the crater), boosted by how fast it moved.
 // "Effective swipe" = distance x speed factor. 110 to 280 effective units is the sweet zone (power 0.8 to 1.2):
 // that is a fast flick of about 80 to 205 units, or a slow drag of about 150 to 370.
 // Past that, power climbs slowly to a ceiling of 1.5, so a huge swipe overshoots a little, not wildly.
 // The swipe's direction steers the throw: STEER_DEAD radians either side of the true line is free, then
 // every further radian moves the landing spot STEER_GAIN units sideways.
-const SWIPE_MIN=16,SWIPE_FAST=1500,STEER_DEAD=.06,STEER_GAIN=230;
+const SWIPE_MIN=16,SWIPE_FAST=1500,STEER_DEAD=.06,STEER_GAIN=200;
 function swipeMove(p){const c=charging,o=c.o,now=performance.now(),dtm=now-c.lt;
  if(dtm>8){const v=Math.hypot(p.x-c.lx,p.y-c.ly)/dtm*1000;c.peak=Math.max(c.peak,Math.min(v,2400));c.lx=p.x;c.ly=p.y;c.lt=now;}
- const ux=CX-o.x,uy=CY-o.y,ul=Math.hypot(ux,uy)||1;c.fx=p.x;c.fy=p.y;c.len=Math.max(0,((p.x-c.sx)*ux+(p.y-c.sy)*uy)/ul);
+ const ux=CX-o.x,uy=CY-o.y,ul=Math.hypot(ux,uy)||1;c.fx=p.x;c.fy=p.y;{const sx=p.x-c.sx,sy=p.y-c.sy,sd=Math.hypot(sx,sy)||1;c.len=sd*clamp(-sy/sd*1.6,0,1);}
  // speed is what makes a throw hard (x0.75 slow drag .. x1.35 fast flick); a wide middle band of swipe lengths all give close to the right power
  const e=c.len*(.75+.6*Math.min(c.peak/SWIPE_FAST,1));c.tc=e<110?.3+.5*e/110:e<280?.8+.4*(e-110)/170:Math.min(1.5,1.2+.3*(e-280)/200);
  // DIRECTION: how far the swipe leans off the toy-to-crater line steers the landing spot left or right
- const dx=p.x-c.sx,dy=p.y-c.sy;if(Math.hypot(dx,dy)>24){const dev=Math.atan2((ux*dy-uy*dx)/ul,(ux*dx+uy*dy)/ul),a=Math.max(0,Math.abs(dev)-STEER_DEAD);c.ts=clamp(Math.sign(dev)*a*STEER_GAIN,-160,160);}}
+ const dx=p.x-c.sx,dy=p.y-c.sy;if(Math.hypot(dx,dy)>24){const dev=Math.atan2((ux*dy-uy*dx)/ul,(ux*dx+uy*dy)/ul),a=Math.max(0,Math.abs(dev)-STEER_DEAD);c.ts=clamp(Math.sign(dev)*Math.tan(Math.min(a,1.3))*STEER_GAIN,-460,460);}}
 // flicks are less precise than holds, so near-misses snap to the crater from further away (±0.09 instead of ±0.04); direction gets no snap beyond its small dead zone
 function assistSwipe(o,f,st){if(hitsAt(o,f,st))return f;for(const d of[.03,-.03,.06,-.06,.09,-.09])if(hitsAt(o,f+d,st))return f+d;return f;}
-// WALLS: a flying toy bounces off the side walls and the top of the play area; in off a wall scores double.
-const WALL_L=16,WALL_R=364,BNC=.82,BNC_TOP=.6;
-function ceilY(){return SAFE+92-OY;}
+// WALLS: a flying toy bounces off the two side walls (not the top); in off a wall scores double.
+const WALL_L=16,WALL_R=364,BNC=.82;
 function wallBounce(o){let hit=false;if(o.x<WALL_L&&o.vx<0){o.x=WALL_L;o.vx*=-BNC;hit=true;}else if(o.x>WALL_R&&o.vx>0){o.x=WALL_R;o.vx*=-BNC;hit=true;}
- const cy=ceilY();if(o.y<cy&&o.vy<0){o.y=cy;o.vy*=-BNC_TOP;hit=true;}
  if(hit){o.bn=(o.bn||0)+1;o.sq=.8;rings.push({x:o.x,y:o.y,r:6,life:1});sparkle(o.x,o.y,5);blip(300,.09,'triangle',.16,560);haptic(1);}}
 // haptic tick: real vibration where the browser has it; on iPhone, the switch-control trick (may not fire on every iOS version)
 let hapEl=null;
