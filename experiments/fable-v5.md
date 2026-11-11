@@ -216,3 +216,11 @@ Or ask Claude: "revert the live game to the original." Either way the home-scree
 To return to version 5 after that, undo that commit: `git revert HEAD` and `git push`.
 
 **Note for future updates:** the service worker serves cached files first, so any later change to the live game needs the cache name in `sw.js` bumped again or phones will keep the old files.
+
+---
+
+## v11 revision (same day, tag `fable-v5-v11`)
+
+**Feedback:** on a round win the title reads "EXPLODING VOLCANOS in the Bathtub!" and "in" and "the" aren't capitalised.
+
+**What I changed:** it now reads "In The Bathtub!". To keep the rule consistent (every word capitalised in titles, buttons, labels and callouts), the tutorial bubble is now "Press And Hold". The same fix applies to the fallback title shown if the cover image fails to load.
