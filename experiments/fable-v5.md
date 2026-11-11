@@ -112,3 +112,15 @@ Browser pane, no console errors in any state.
 No gameplay or feel changes.
 
 **How I checked v4:** the new-toy and "So close!" cards at 375×812, no console errors. I did not re-shoot the pause, intro or win cards or the in-play HUD chips; they use the same shared drawing code.
+
+---
+
+## v5 revision (same day, tag `fable-v5-v5`)
+
+**Question on v4:** "what happened to the row of colorful tiles I saw in some of your previews... did you cut that intentionally?"
+
+**Answer:** it was not cut. The border only appeared on phone-height screens, and the preview pane is shorter and wider than a phone, so the layout hid it. The loose coloured tiles scattered on the wall were removed on purpose in v3.
+
+**What I changed:** short windows now get a slim version of the tile border (half-height tiles under the score bar), and the window and posters scale down slightly to make room. Phone-height screens keep the full-size border and the shelf.
+
+**How I checked:** a 400×630 window (the shape of the preview pane): slim border visible, window and both posters still clear of the tub, no console errors. The phone-height layout uses the unchanged code path and was not re-shot.

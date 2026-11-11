@@ -363,7 +363,8 @@ function paintBg(){const k=KS*DPR,c=document.createElement('canvas');c.width=Mat
  if(tall)for(let x=0,i=0;x<W;x+=t,i++){X.fillStyle=ACC[i%4];X.fillRect(x,by0,t,t);X.fillStyle='#fff';X.beginPath();X.arc(x+t/2,by0+t/2,5,0,TAU);X.fill();}
  X.strokeStyle=C.tile;X.lineWidth=2.5;X.beginPath();for(let x=0;x<=W;x+=t){X.moveTo(x,0);X.lineTo(x,floorY);}for(let y=floorY-t*Math.ceil(floorY/t);y<floorY;y+=t){X.moveTo(0,y);X.lineTo(W,y);}X.stroke();
  // decor zone = between the HUD and the top of the tub, whatever the screen shape
- const zt=SAFE+84,zb=OY+170,kz=clamp((zb-zt)/170,.45,1);
+ const zt=SAFE+(tall?84:124),zb=OY+170,kz=clamp((zb-zt)/170,.45,1);
+ if(!tall){const h=20,y=SAFE+98;X.fillStyle=C.deep;X.fillRect(0,y+h,W,3);for(let x=0,i=0;x<W;x+=h,i++){X.fillStyle=ACC[i%4];X.fillRect(x,y,h,h);X.fillStyle='#fff';X.beginPath();X.arc(x+h/2,y+h/2,2.8,0,TAU);X.fill();}}
  X.save();X.translate(24,zb-126*kz);X.scale(kz,kz);X.lineCap='round';X.lineJoin='round';
  rr(5,7,96,112,12);fill('#1f58b8');rr(0,0,96,112,12);fill('#fff');rr(6,6,84,100,8);fill('#d3e0f6');
  X.save();rr(9,9,78,94,6);X.clip();X.fillStyle='#86d8ff';X.fillRect(0,0,100,120);X.fillStyle='#b4ebff';X.fillRect(0,58,100,60);
