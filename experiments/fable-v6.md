@@ -65,3 +65,30 @@ Browser pane at 375×812, no console errors, using scripted pointer events on ro
 One screenshot mid-swipe confirmed the green finger line, green arc and "Let Go!" bubble. I then moved that bubble below the toy so the swipe line doesn't cover it, and did not re-shoot.
 
 **Not checked:** a real finger on a real phone, which is the whole point of this experiment; haptics on any device; rounds with drift, where the "just right" power shifts slightly; and whether a 4-year-old finds a swipe easier than a hold.
+
+---
+
+## v2 revision (same day, tag `fable-v6-v2`)
+
+**Feedback after trying it on the phone:** "the swipe feels too sensitive and reactive, turn up the forgiveness."
+
+**What I changed**
+
+- **Wide sweet zone.** Power no longer rises in a straight line with swipe length. Swipes of roughly 100 to 240 units all give close to the right power (0.85 to 1.15); only short swipes under about 100 fall away quickly, and only long ones past 240 climb toward an overshoot.
+- **More forgiveness.** Near-misses snap to the crater within ±0.18 power (was ±0.12; version 5's hold is ±0.04).
+- **Speed counts for less.** The speed multiplier is now 0.85 to 1.075 (was 0.7 to 1.15), so a quick flick and a slow drag of the same length behave almost the same.
+- **Calmer arc.** The dotted arc eases toward the current power instead of jumping with every finger movement. The throw itself uses the true value at release.
+
+**Scripted results on round 1 (toy at the left side of the tub)**
+
+| Swipe length | Slow (300ms) | Fast (90ms) |
+|---|---|---|
+| 50 to 80 units | miss (short) | miss (short) |
+| 100 to 110 | in | in |
+| 140 to 200 | in | in |
+| 240 to 260 | in | in |
+| 290 to 300 | miss (over) | miss (over) |
+
+So anything from about a quarter to two thirds of the screen width now goes in. That is very forgiving; if it turns out too easy, narrow the forgiveness first (`assistSwipe`), then the sweet zone.
+
+**Not checked:** a real finger, haptics, and rounds with drift.
