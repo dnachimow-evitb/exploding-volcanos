@@ -75,9 +75,9 @@ function down(e){const wasPlaying=song&&!song.paused;initAudio();const p=P(e);
  if(best){charging={o:best,c:0.3,sx:p.x,sy:p.y,fx:p.x,fy:p.y,lx:p.x,ly:p.y,lt:performance.now(),peak:0,len:0,tc:0.3};hintT=0;splashSide=best.x<190?-1:1;haptic(1);}}
 function release(){if(press){const p=press;press=null;pressUntil=NOW+.12;sfxClick();setTimeout(()=>{if(p.key===uiKey)p.act();},90);return;}
  if(!charging)return;if(charging.len<SWIPE_MIN){charging=null;tutOn=true;tutT=0;return;}
- pendingLaunch={o:charging.o,f:assistSwipe(charging.o,charging.tc)};haptic(2);charging=null;swingT=swingDur;swingHit=false;}
+ {const st=charging.ts||0;pendingLaunch={o:charging.o,f:assistSwipe(charging.o,charging.tc,st),steer:st};}haptic(2);charging=null;swingT=swingDur;swingHit=false;}
 function doLaunch(){if(!pendingLaunch)return;const o=pendingLaunch.o,f=pendingLaunch.f,iv=ideal(o);
- o.st='fly';o.vx=iv.vx*f;o.vy=iv.vy*f;o.drift=diff().drift*.012;o.blocked=0;o.rot=0;o.sq=1;
+ o.st='fly';o.vx=(iv.vx+(pendingLaunch.steer||0)/T)*f;o.vy=iv.vy*f;o.drift=diff().drift*.012;o.blocked=0;o.rot=0;o.sq=1;
  shake=3;flash=.12;flashCol='#dff4ff';mood(noah,'throw',.45);tutOn=false;const hp=handPos();waterBurst(hp.x,hp.y,true);waterBurst(o.x,o.y,true);sfxSplash();pendingLaunch=null;}
 cv.addEventListener('pointerdown',e=>{e.preventDefault();down(e);});
 window.addEventListener('pointerup',release);
@@ -276,7 +276,7 @@ function hop(c,v){c.hv=-v;}
 function sfxClick(){blip(700,.07,'triangle',.14,980);}
 function sfxTick(){blip(980,.08,'sine',.16,1320);}
 function sfxRise(){blip(90,.7,'sawtooth',.14,300);noise(.7,.16,200,.6,900);}
-function hitsAt(o,f){const iv=ideal(o),dr=diff().drift*.012;let vx=iv.vx*f,vy=iv.vy*f,x=o.x,y=o.y;for(let i=0;i<110;i++){vy+=G;vx+=dr;x+=vx;y+=vy;if(catchHit(x,y,vy))return true;if(y>556||x<0||x>W)return false;}return false;}
+function hitsAt(o,f,st){const iv=ideal(o),dr=diff().drift*.012;let vx=(iv.vx+(st||0)/T)*f,vy=iv.vy*f,x=o.x,y=o.y;for(let i=0;i<110;i++){vy+=G;vx+=dr;x+=vx;y+=vy;if(catchHit(x,y,vy))return true;if(y>556||x<0||x>W)return false;}return false;}
 function assist(o,f){if(hitsAt(o,f))return f;for(const d of[.02,-.02,.04,-.04])if(hitsAt(o,f+d))return f+d;return f;}
 function pop(x,y,t,c){pops.forEach(p=>{if(p.age<.55&&Math.abs(p.y-y)<21&&Math.abs(p.x-x)<120)y-=23;});pops.push({x,y,t,c,age:0,big:/^\+|Hairball/.test(t)});}
 function star(x,y,R,r,rot){X.beginPath();for(let i=0;i<10;i++){const a=(rot||0)-PI/2+i*PI/5,q=i%2?r:R;X.lineTo(x+Math.cos(a)*q,y+Math.sin(a)*q);}X.closePath();}
@@ -510,8 +510,8 @@ function drawPops(){pops.forEach(p=>{const k=p.age,sc=k<.16?lerp(.4,1.2,EZ.out(k
 // ── AIM + TUTORIAL ──
 function arrowHead(x,y,ang,s,col){X.save();X.translate(x,y);X.rotate(ang);X.beginPath();X.moveTo(s,0);X.lineTo(-s*.7,-s*.8);X.lineTo(-s*.25,0);X.lineTo(-s*.7,s*.8);X.closePath();X.lineJoin='round';X.lineWidth=5;X.strokeStyle=C.navy;X.stroke();fill(col);X.restore();}
 function bubble(t,x,y,col,tc){X.font=fnt(900,15);const w=X.measureText(t).width+26,bx=clamp(x-w/2,8,W-w-8);rr(bx,y-15+3,w,30,6);fill(C.deep);rr(bx,y-15,w,30,6);fill(col);text(t,bx+w/2,y+.5,15,tc);}
-function chargeGuide(){if(!charging){wasOn=false;return;}charging.c+=(charging.tc-charging.c)*.25;const o=charging.o,iv=ideal(o),f=charging.c,dr=diff().drift*.012;
- let vx=iv.vx*f,vy=iv.vy*f,tx=o.x,ty=o.y,on=false;const pts=[];
+function chargeGuide(){if(!charging){wasOn=false;return;}charging.c+=(charging.tc-charging.c)*.25;charging.steer=(charging.steer||0)+((charging.ts||0)-(charging.steer||0))*.25;const o=charging.o,iv=ideal(o),f=charging.c,dr=diff().drift*.012;
+ let vx=(iv.vx+(charging.steer||0)/T)*f,vy=iv.vy*f,tx=o.x,ty=o.y,on=false;const pts=[];
  for(let i=0;i<110;i++){vy+=G;vx+=dr;tx+=vx;ty+=vy;if(catchHit(tx,ty,vy)){on=true;break;}if(ty>556||tx<0||tx>W)break;pts.push([tx,ty]);}
  if(on&&!wasOn){sfxTick();haptic(1);}wasOn=on;const col=on?C.go:'#fff',sh=~~(NOW*14);
  pts.forEach((p,i)=>{if((i+sh)%3===1||i<3)return;const r=Math.max(2.6,5.4-i*.03);circ(p[0],p[1],r+1.8);fill(C.navy);circ(p[0],p[1],r);fill(col);});
@@ -614,15 +614,19 @@ function eruptFX(){if(state!=='erupt')return;
 
 // ── SWIPE TO THROW (version 6) ──
 // Power comes from the swipe: how far the finger travels TOWARD the volcano, boosted by how fast it moved.
-// Any swipe of roughly 100 to 240 units lands in a wide sweet zone (power 0.85 to 1.15); about 170 is dead centre.
-const SWIPE_MIN=16,SWIPE_FULL=250,SWIPE_FAST=1500;
+// Swipes of roughly 110 to 220 units land in the sweet zone (power 0.8 to 1.2); about 165 is dead centre.
+// The swipe's direction steers the throw: STEER_DEAD radians either side of the true line is free, then
+// every further radian moves the landing spot STEER_GAIN units sideways.
+const SWIPE_MIN=16,SWIPE_FAST=1500,STEER_DEAD=.06,STEER_GAIN=230;
 function swipeMove(p){const c=charging,o=c.o,now=performance.now(),dtm=now-c.lt;
  if(dtm>8){const v=Math.hypot(p.x-c.lx,p.y-c.ly)/dtm*1000;c.peak=Math.max(c.peak,Math.min(v,2400));c.lx=p.x;c.ly=p.y;c.lt=now;}
  const ux=CX-o.x,uy=CY-o.y,ul=Math.hypot(ux,uy)||1;c.fx=p.x;c.fy=p.y;c.len=Math.max(0,((p.x-c.sx)*ux+(p.y-c.sy)*uy)/ul);
  // speed counts a little (x0.85 slow .. x1.075 very fast); a wide middle band of swipe lengths all give close to the right power
- const e=c.len*(.85+.15*Math.min(c.peak/SWIPE_FAST,1.5));c.tc=e<100?.3+.55*e/100:e<240?.85+.3*(e-100)/140:Math.min(1.7,1.15+.55*(e-240)/90);}
-// flicks are less precise than holds, so near-misses snap to the crater from further away (±0.18 instead of ±0.04)
-function assistSwipe(o,f){if(hitsAt(o,f))return f;for(const d of[.03,-.03,.06,-.06,.09,-.09,.12,-.12,.15,-.15,.18,-.18])if(hitsAt(o,f+d))return f+d;return f;}
+ const e=c.len*(.85+.15*Math.min(c.peak/SWIPE_FAST,1.5));c.tc=e<110?.3+.5*e/110:e<220?.8+.4*(e-110)/110:Math.min(1.7,1.2+.5*(e-220)/90);
+ // DIRECTION: how far the swipe leans off the toy-to-crater line steers the landing spot left or right
+ const dx=p.x-c.sx,dy=p.y-c.sy;if(Math.hypot(dx,dy)>24){const dev=Math.atan2((ux*dy-uy*dx)/ul,(ux*dx+uy*dy)/ul),a=Math.max(0,Math.abs(dev)-STEER_DEAD);c.ts=clamp(Math.sign(dev)*a*STEER_GAIN,-160,160);}}
+// flicks are less precise than holds, so near-misses snap to the crater from further away (±0.09 instead of ±0.04); direction gets no snap beyond its small dead zone
+function assistSwipe(o,f,st){if(hitsAt(o,f,st))return f;for(const d of[.03,-.03,.06,-.06,.09,-.09])if(hitsAt(o,f+d,st))return f+d;return f;}
 // haptic tick: real vibration where the browser has it; on iPhone, the switch-control trick (may not fire on every iOS version)
 let hapEl=null;
 function haptic(n){try{if(navigator.vibrate){navigator.vibrate(n>1?[12,40,18]:10);return;}

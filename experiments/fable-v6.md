@@ -92,3 +92,35 @@ One screenshot mid-swipe confirmed the green finger line, green arc and "Let Go!
 So anything from about a quarter to two thirds of the screen width now goes in. That is very forgiving; if it turns out too easy, narrow the forgiveness first (`assistSwipe`), then the sweet zone.
 
 **Not checked:** a real finger, haptics, and rounds with drift.
+
+---
+
+## v3 revision (same day, tag `fable-v6-v3`)
+
+**Feedback:** "a bit too easy now... it makes it too easy to just go into full on launch mode." Chosen from the options offered: narrow the forgiveness, and make direction count.
+
+**What I changed**
+
+- **Tighter power.** The sweet zone is now swipes of roughly 140 to 235 units (was 100 to 260), and near-misses snap in within ±0.09 power (was ±0.18).
+- **Direction steers the throw.** Until now every throw auto-aimed at the crater and the swipe only set power. Now the swipe's angle matters: swiping off the toy-to-crater line lands the toy off to that side. The first 3.4° either way is free; beyond that each extra degree moves the landing spot about 4 units sideways. The dotted arc bends to show it, and only turns green when both power and direction are right.
+- How much angle you get away with depends on the crater size, so it tightens as rounds go on: about 12 to 18° off-line still lands in round 1, about 8 to 10° in round 10.
+
+**Scripted results (toy at the left of the tub, 250ms swipes)**
+
+Power, swiping dead straight, round 1:
+
+| Length | 90 | 120 | 165 | 215 | 260 |
+|---|---|---|---|---|---|
+| Result | short | short | in | in | over |
+
+Direction, 165-unit swipe:
+
+| Angle off-line | 6° | 12° | 18° | 28° |
+|---|---|---|---|---|
+| Round 1 | in | in | in one side, miss the other | miss |
+
+Round 10 (smallest crater): 0° in, 8° in, 14° miss.
+
+**Not checked:** a real finger, haptics, and whether rapid swiping now sprays as intended; the tests were single deliberate swipes.
+
+**Tuning numbers:** `STEER_DEAD` (free angle, 0.06 radians), `STEER_GAIN` (sideways units per radian, 230), the power forgiveness list in `assistSwipe`, and the three-part power curve in `swipeMove`.
