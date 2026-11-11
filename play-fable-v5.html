@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no, maximum-scale=1" />
+<title>Exploding Volcanos in the Bathtub</title>
+<meta name="theme-color" content="#2a6fdb" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Volcanos" />
+<link rel="icon" href="icon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="icon.svg" />
+<style>
+  /* fable-v5: self-contained page (no shared stylesheet, no service worker, no network) */
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;width:100%;overflow:hidden;background:#2a6fdb;overscroll-behavior:none;}
+  body{display:flex;align-items:center;justify-content:center;touch-action:none;position:fixed;inset:0;
+    -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;}
+  #w{position:relative;overflow:hidden;}
+  #w.boxed{border-radius:16px;box-shadow:0 12px 44px rgba(0,0,0,.5);}
+  body:has(#w.boxed){background:radial-gradient(ellipse at 50% 35%,#1b4a78 0%,#0d2740 60%,#07182a 100%);}
+  canvas{display:block;width:100%;height:100%;touch-action:none;}
+  /* probes: the script reads the notch and home-indicator insets from these */
+  #safe,#safeb{position:fixed;left:0;width:1px;visibility:hidden;pointer-events:none;}
+  #safe{top:0;height:env(safe-area-inset-top);}
+  #safeb{bottom:0;height:env(safe-area-inset-bottom);}
+</style>
+</head>
+<body>
+<!-- version 5 (fable-v5): flat sticker-book build. Does NOT replace index.html / game.js and registers no service worker. -->
+<div id="safe"></div><div id="safeb"></div>
+<div id="w"><canvas id="c" width="380" height="600"></canvas></div>
+<audio id="song" src="song.mp3" loop preload="auto"></audio>
+<script src="game-fable-v5.js"></script>
+</body>
+</html>
