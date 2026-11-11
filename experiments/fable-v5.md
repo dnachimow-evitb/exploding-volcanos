@@ -124,3 +124,13 @@ No gameplay or feel changes.
 **What I changed:** short windows now get a slim version of the tile border (half-height tiles under the score bar), and the window and posters scale down slightly to make room. Phone-height screens keep the full-size border and the shelf.
 
 **How I checked:** a 400×630 window (the shape of the preview pane): slim border visible, window and both posters still clear of the tub, no console errors. The phone-height layout uses the unchanged code path and was not re-shot.
+
+---
+
+## v6 revision (same day, tag `fable-v5-v6`)
+
+**Request:** make the Max and Noah pictures on the wall a bit larger.
+
+**What I changed:** both pictures are 30% larger. The shelf moved up slightly on phone-height screens to stay clear of them.
+
+**How I checked:** close crops of the wall at 375×812 and 400×630: both pictures larger, readable names, clear of the tub, shelf and volcano. No console errors.
