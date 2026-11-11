@@ -219,3 +219,31 @@ So a quick flick of about a third of the screen width now lands, where in v6.5 t
 Power stayed at 1.08 for every angle from 25° right to 50° left, confirming the swipe direction no longer weakens the throw. From this spot, near-wall banks land for swipes roughly 35 to 40° left of straight up.
 
 **Not checked:** a real finger, the mirror case on the right side (same code, opposite sign), and rounds with drift.
+
+---
+
+## v8 revision (same day, tag `fable-v6-v8`, shows as `v6.8`)
+
+**Request:** an Easy and Hard choice at the beginning. Hard doesn't show the green indicator that tells you the shot will score, and limits toys in the air to 3. Easy remains the game as it currently is.
+
+**What I changed**
+
+- **Start screen:** the single Play button is now two buttons, a green "Easy" and an orange "Hard".
+- **Easy:** unchanged from v6.7.
+- **Hard:**
+  - No green arc, no green ring on the crater, no "Let Go!" bubble, and no chime or haptic tick when the aim is on target.
+  - The dotted arc shows only its first stretch (22 steps). My addition, not in the request: the full arc ends at the crater when the throw is good, which gives the answer away as much as the green does.
+  - At most 3 toys in the air. A fourth cannot be picked up until one lands.
+  - The score bar reads "Hard · 3/10" in yellow instead of "Round 3/10".
+- Power, steering, forgiveness, bounces, scoring and the difficulty table are identical in both modes.
+- "Play Again" and "Try Again" keep the mode you chose. To switch modes, reload to get back to the start screen.
+
+**How I checked (375×812, scripted, no console errors)**
+
+- Start screen shows both buttons and `v6.8` in the corner.
+- Tapping Hard starts a Hard game; a swipe that would score showed no green signal.
+- With 3 toys flying, a fourth could not be grabbed in Hard and could in Easy.
+
+**Not checked:** a real finger, whether the shortened arc is the right length, and the pressed look of each button individually.
+
+**Tuning numbers:** `HARD_MAX_AIR` (3) and `HARD_ARC` (22).
