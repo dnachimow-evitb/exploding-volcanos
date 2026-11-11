@@ -58,8 +58,8 @@ function waterBurst(x,y,big){const n=big?26:12;for(let i=0;i<n;i++){const a=-1.5
 // ── INPUT ──
 // v2: sx/sy = screen-space logical coords (HUD, cards); x/y = game-world coords (toys)
 function P(e){const r=cv.getBoundingClientRect(),sx=(e.clientX-r.left)/KS,sy=(e.clientY-r.top)/KS;return{sx,sy,x:sx,y:sy-OY};}
-function down(e){initAudio();const p=P(e);
- if(dist(p.sx,p.sy,W-26,SAFE+24)<20){muted=!muted;if(song){if(muted)song.pause();else song.play().catch(()=>{});}return;}
+function down(e){const wasPlaying=song&&!song.paused;initAudio();const p=P(e);
+ if(dist(p.sx,p.sy,W-26,SAFE+24)<20){if(!wasPlaying&&!muted)return;muted=!muted;if(song){if(muted)song.pause();else song.play().catch(()=>{});}return;}
  if((state==='play'||paused)&&dist(p.sx,p.sy,W-64,SAFE+24)<18){paused=!paused;if(!paused)lastNow=performance.now();return;}
  if(paused){if(card&&p.sx>card.x&&p.sx<card.x+card.w&&p.sy>card.y&&p.sy<card.y+card.h)card.act();return;}
  if(state!=='play'){if(card&&p.sx>card.x&&p.sx<card.x+card.w&&p.sy>card.y&&p.sy<card.y+card.h)card.act();return;}
@@ -141,7 +141,7 @@ function pop(x,y,t,c){const e=document.createElement('div');e.className='fp';e.t
 function roundWin(){
  if(round>=10){score+=150+Math.round(timeLeft)*10;state='win';eruptT=160;bigErupt();return;}
  state='erupt';eruptT=160;score+=need*15+combo*5+Math.round(timeLeft)*10;bigErupt();
- banner='💦 The toys rain back into the tub!';bannerT=3.4;
+ 
  setTimeout(()=>{round++;newToyEm=NEWBY[round]||null;if(newToyEm)currentToys=[...currentToys,newToyEm];
    if(newToyEm){state='newtoy';sfxFanfare();}else{startRound(true);state='play';lastNow=performance.now();}},3500);
 }
