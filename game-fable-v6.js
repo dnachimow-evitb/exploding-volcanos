@@ -5,7 +5,8 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v6.7'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v6.8'; // shown small in the corner of the start screen; bump it with every change
+let card2=null,pressId=0,hardMode=false; // second start-screen button; Easy / Hard
 const cv=document.getElementById('c'),W=380,H=600;let X=cv.getContext('2d');
 const song=document.getElementById('song');
 const CX=190,CY=176,G=0.22,T=58,CHARGE_RATE=0.55,CHARGE_MAX=1.7;
@@ -70,11 +71,12 @@ function P(e){const r=cv.getBoundingClientRect(),sx=(e.clientX-r.left)/KS,sy=(e.
 function down(e){const wasPlaying=song&&!song.paused;initAudio();const p=P(e);
  if(dist(p.sx,p.sy,W-28,SAFE+28)<25){if(!wasPlaying&&!muted)return;muted=!muted;if(song){if(muted)song.pause();else song.play().catch(()=>{});}return;}
  if((state==='play'||paused)&&dist(p.sx,p.sy,W-74,SAFE+28)<23){paused=!paused;sfxClick();if(!paused){lastNow=performance.now();acc=0;}return;}
- if(paused||state!=='play'){if(card&&card.act&&p.sx>card.x&&p.sx<card.x+card.w&&p.sy>card.y&&p.sy<card.y+card.h)press={key:card.key,act:card.act};return;}
+ if(paused||state!=='play'){for(const b of[card,card2])if(b&&b.act&&p.sx>b.x&&p.sx<b.x+b.w&&p.sy>b.y&&p.sy<b.y+b.h){press={key:b.key,act:b.act,id:b.id||0};break;}return;}
  if(charging||pendingLaunch||swingT>0)return;
+ if(hardMode&&objs.filter(o=>o.st==='fly').length>=HARD_MAX_AIR)return;
  let best=null,bd=74;objs.forEach(o=>{if(o.st!=='float')return;const d=dist(p.x,p.y,o.x,o.y);if(d<bd){bd=d;best=o;}});
  if(best){charging={o:best,c:0.3,sx:p.x,sy:p.y,fx:p.x,fy:p.y,lx:p.x,ly:p.y,lt:performance.now(),peak:0,len:0,tc:0.3};hintT=0;splashSide=best.x<190?-1:1;haptic(1);}}
-function release(){if(press){const p=press;press=null;pressUntil=NOW+.12;sfxClick();setTimeout(()=>{if(p.key===uiKey)p.act();},90);return;}
+function release(){if(press){const p=press;press=null;pressUntil=NOW+.12;pressId=p.id||0;sfxClick();setTimeout(()=>{if(p.key===uiKey)p.act();},90);return;}
  if(!charging)return;if(charging.len<SWIPE_MIN){charging=null;tutOn=true;tutT=0;return;}
  {const st=charging.ts||0;pendingLaunch={o:charging.o,f:assistSwipe(charging.o,charging.tc,st),steer:st};}haptic(2);charging=null;swingT=swingDur;swingHit=false;}
 function doLaunch(){if(!pendingLaunch)return;const o=pendingLaunch.o,f=pendingLaunch.f,iv=ideal(o);
@@ -514,10 +516,10 @@ function bubble(t,x,y,col,tc){X.font=fnt(900,15);const w=X.measureText(t).width+
 function chargeGuide(){if(!charging){wasOn=false;return;}charging.c+=(charging.tc-charging.c)*.25;charging.steer=(charging.steer||0)+((charging.ts||0)-(charging.steer||0))*.25;const o=charging.o,iv=ideal(o),f=charging.c,dr=diff().drift*.012;
  let vx=(iv.vx+(charging.steer||0)/T)*f,vy=iv.vy*f,tx=o.x,ty=o.y,on=false;const pts=[];
  for(let i=0;i<220;i++){vy+=G;vx+=dr;tx+=vx;ty+=vy;if(tx<WALL_L&&vx<0){tx=WALL_L;vx*=-BNC;}else if(tx>WALL_R&&vx>0){tx=WALL_R;vx*=-BNC;}if(catchHit(tx,ty,vy)){on=true;break;}if(ty>556)break;pts.push([tx,ty]);}
- if(on&&!wasOn){sfxTick();haptic(1);}wasOn=on;const col=on?C.go:'#fff',sh=~~(NOW*14);
+ const show=on&&!hardMode;if(hardMode)pts.length=Math.min(pts.length,HARD_ARC);if(show&&!wasOn){sfxTick();haptic(1);}wasOn=show;const col=show?C.go:'#fff',sh=~~(NOW*14);
  pts.forEach((p,i)=>{if((i+sh)%3===1||i<3)return;const r=Math.max(2.6,5.4-i*.02);circ(p[0],p[1],r+1.8);fill(C.navy);circ(p[0],p[1],r);fill(col);});
  const frac=Math.min(f/1.4,1);X.lineCap='round';X.strokeStyle=C.navy;X.lineWidth=9;circ(o.x,o.y,32);X.stroke();X.strokeStyle=col;X.lineWidth=5;X.beginPath();X.arc(o.x,o.y,32,-1.57,-1.57+TAU*frac);X.stroke();
- if(on){X.save();X.strokeStyle=C.go;X.lineWidth=4.5;ell(CX,CY,craterR+16+Math.sin(NOW*16)*1.5,craterR*.5+10);X.stroke();X.restore();const pu=1+Math.sin(NOW*16)*.06;X.save();X.translate(o.x,o.y+54);X.scale(pu,pu);bubble('Let Go!',0,0,C.go,'#fff');X.restore();}
+ if(show){X.save();X.strokeStyle=C.go;X.lineWidth=4.5;ell(CX,CY,craterR+16+Math.sin(NOW*16)*1.5,craterR*.5+10);X.stroke();X.restore();const pu=1+Math.sin(NOW*16)*.06;X.save();X.translate(o.x,o.y+54);X.scale(pu,pu);bubble('Let Go!',0,0,C.go,'#fff');X.restore();}
  else if(charging.len<SWIPE_MIN)bubble('Swipe Up!',o.x,o.y-52,'#fff',C.navy);
  // the swipe itself: a line from where the finger went down to where it is now
  if(charging.len>4){X.lineCap='round';X.beginPath();X.moveTo(charging.sx,charging.sy);X.lineTo(charging.fx,charging.fy);X.strokeStyle=C.navy;X.lineWidth=9;X.stroke();X.strokeStyle=col;X.lineWidth=4.5;X.stroke();circ(charging.fx,charging.fy,9);fill(C.navy);circ(charging.fx,charging.fy,6.5);fill(col);}}
@@ -542,7 +544,7 @@ function drawMute(){roundBtn(W-28,SAFE+28,muted?'mute':'sound');}
 function drawPauseBtn(){roundBtn(W-74,SAFE+28,paused?'play':'pause');}
 function hud(){const s=SAFE,sp=1+scorePop*scorePop*.2;
  X.save();X.translate(60,s+28);X.scale(sp,sp);chip(-50,-18,100,36);star(-30,0,11,5.4);fill(C.gold);text(String(Math.round(scoreShown)),13,1,19,C.navy);X.restore();
- text('Round '+round+'/10',60,s+62,12.5,'#fff',{s:C.navy});
+ text((hardMode?'Hard · ':'Round ')+round+'/10',60,s+62,12.5,hardMode?C.hot:'#fff',{s:C.navy});
  if(combo>1){const cp=1+comboPop*.3;X.save();X.translate(60,s+84);X.scale(cp,cp);X.fillStyle=C.deep;X.fillRect(-33,-9,66,24);X.fillStyle='#fff';X.fillRect(-33,-12,66,24);text('x'+combo+' Combo',0,.5,10.5,C.lavaDk);X.restore();}
  const tw=126,tx=122,ty=s+17,pct=clamp(timeLeft/roundTime,0,1),low=state==='play'&&timeLeft<8,tc=low?C.amber:pct>.5?C.go:C.gold;
  rr(tx,ty+3,tw,22,6);fill(C.deep);rr(tx,ty,tw,22,6);fill('#fff');rr(tx+3,ty+3,tw-6,16,4);fill('#c9d8f2');
@@ -560,11 +562,11 @@ function cardBegin(cw,ch,title,age){age=age==null?uiT:age;const cx=(W-cw)/2,cy=(
  const bn=(dy,c)=>{X.beginPath();X.moveTo(cx-15,cy+6+dy);X.lineTo(cx+cw+15,cy+6+dy);X.lineTo(cx+cw+3,cy+33+dy);X.lineTo(cx+cw+15,cy+60+dy);X.lineTo(cx-15,cy+60+dy);X.lineTo(cx-3,cy+33+dy);X.closePath();fill(c);};bn(6,'#a82a06');bn(0,C.lava);X.fillStyle=C.hot;X.fillRect(cx-7,cy+52,cw+14,3.5);
  text(title,W/2,cy+31,26,'#fff',{s:C.lavaDk,sw:6});return{cx,cy,age};}
 function cardEnd(){X.restore();}
-function button(bx,by,bw,bh,t,act,o){o=o||{};const down=(press&&press.key===uiKey)||NOW<pressUntil,cx=bx+bw/2,cy=by+bh/2,pu=down?0:Math.sin(NOW*4)*.016,dy=down?5:0;
- X.save();X.translate(cx,cy);X.scale(1+pu,1+pu);X.translate(-cx,-cy);rr(bx,by+8,bw,bh,9);fill(C.greenD);rr(bx,by+dy,bw,bh,9);fill(down?'#27a83f':C.green);
+function button(bx,by,bw,bh,t,act,o){o=o||{};const id=o.id||0,down=(press&&press.key===uiKey&&press.id===id)||(NOW<pressUntil&&pressId===id),cx=bx+bw/2,cy=by+bh/2,pu=down?0:Math.sin(NOW*4)*.016,dy=down?5:0;
+ X.save();X.translate(cx,cy);X.scale(1+pu,1+pu);X.translate(-cx,-cy);rr(bx,by+8,bw,bh,9);fill(o.colD||C.greenD);rr(bx,by+dy,bw,bh,9);fill(down?(o.colP||'#27a83f'):(o.col||C.green));
  const fz=o.size||22;X.font=fnt(900,fz);const tw=X.measureText(t).width,iw=o.icon?fz*1.2:0,x0=cx-(tw+iw)/2;
  if(o.icon){const ix=x0+fz*.42,iy=cy+dy+1,z=fz*.5;X.beginPath();X.moveTo(ix-z*.6,iy-z*.85);X.lineTo(ix+z*.9,iy);X.lineTo(ix-z*.6,iy+z*.85);X.closePath();X.lineJoin='round';X.lineWidth=3;X.strokeStyle='#fff';X.stroke();fill('#fff');}
- text(t,x0+iw+tw/2,cy+dy+1,fz,'#fff');X.restore();card={x:bx-8,y:by-8,w:bw+16,h:bh+23,act,key:uiKey};}
+ text(t,x0+iw+tw/2,cy+dy+1,fz,'#fff');X.restore();const hit={x:bx-8,y:by-6,w:bw+16,h:bh+18,act,key:uiKey,id};if(id===2)card2=hit;else card=hit;}
 function cardToy(em,x,y,size,age,delay){const k=EZ.elastic((age-delay)/.7);if(k<=0)return;X.save();X.translate(x,y+Math.sin(NOW*3+x)*3);X.scale(k,k);paintToy(em,size);X.restore();}
 function body(t,y,size,col){text(t,W/2,y,size||15,col||C.navy,{w:800});}
 function check(x,y){circ(x,y,8);fill('#fff');circ(x,y,6.5);fill(C.green);X.strokeStyle='#fff';X.lineWidth=2.4;X.lineCap='round';X.lineJoin='round';X.beginPath();X.moveTo(x-3,y);X.lineTo(x-.8,y+2.4);X.lineTo(x+3.2,y-2.2);X.stroke();}
@@ -600,9 +602,12 @@ function drawMenu(){const t=38;X.fillStyle=C.wall;X.fillRect(0,0,W,HS);X.strokeS
  edge();fill(C.water);X.beginPath();for(let x=0;x<=W;x+=8)x?X.lineTo(x,wy(x)):X.moveTo(x,wy(x));X.strokeStyle='#fff';X.lineWidth=5;X.stroke();
  X.beginPath();X.moveTo(0,HS);for(let x=0;x<=W;x+=8)X.lineTo(x,ih+bandH*.64+Math.sin(x*.04+NOW)*6);X.lineTo(W,HS);X.closePath();fill(C.waterDk);
  [['🦆',54,.26,0],['⛵',W-56,.3,2],['🦕',W/2+96,.84,4],['🐙',66,.86,1]].forEach(d=>{const k=EZ.back((uiT-.4-d[3]*.1)/.4);if(k<=0)return;const y=ih+bandH*d[2]+Math.sin(NOW*2+d[3])*4;toyFloat(d[0],d[1],y,44,Math.sin(NOW*1.3+d[3])*.1,k,k);});
- const bw=232,bh=70,bx=(W-bw)/2,by=ih+(bandH-SAFEB-bh)*.5,k=EZ.back((uiT-.7)/.45);if(k>0){X.save();X.translate(W/2,by+bh/2);X.scale(k,k);X.rotate(.012);X.translate(-W/2,-(by+bh/2));button(bx,by,bw,bh,'Play',()=>startGame(),{icon:1,size:32});X.restore();}else card=null;
+ const bw=232,bh=62,gap=20,bx=(W-bw)/2,by=ih+(bandH-SAFEB-bh*2-gap)*.5,appear=(k,y,fn)=>{if(k<=0)return;X.save();X.translate(W/2,y+bh/2);X.scale(k,k);X.translate(-W/2,-(y+bh/2));fn();X.restore();};
+ if(uiT<.7)card=null;
+ appear(EZ.back((uiT-.7)/.45),by,()=>button(bx,by,bw,bh,'Easy',()=>{hardMode=false;startGame();},{size:28,id:0}));
+ appear(EZ.back((uiT-.85)/.45),by+bh+gap,()=>button(bx,by+bh+gap,bw,bh,'Hard',()=>{hardMode=true;startGame();},{size:28,id:2,col:C.lava,colD:'#a82a06',colP:'#e2580f'}));
  text(VERSION,W-10,HS-SAFEB-12,10,'#d6efff',{a:'right',w:800});}
-function overlay(){const key=paused?'pause':state;if(key!==uiKey){uiKey=key;uiT=0;card=null;press=null;}
+function overlay(){card2=null;const key=paused?'pause':state;if(key!==uiKey){uiKey=key;uiT=0;card=null;press=null;}
  if(paused){drawPauseCard();return;}
  if(state==='menu')drawMenu();else if(state==='intro')drawIntroCard();else if(state==='newtoy')drawNewToyCard();else if(state==='win')drawResultCard(true);else if(state==='gameover')drawResultCard(false);else card=null;}
 
@@ -622,6 +627,8 @@ function eruptFX(){if(state!=='erupt')return;
 // Past that, power climbs slowly to a ceiling of 1.5, so a huge swipe overshoots a little, not wildly.
 // The swipe's direction steers the throw: STEER_DEAD radians either side of the true line is free, then
 // every further radian moves the landing spot STEER_GAIN units sideways.
+// HARD MODE: no green "it will score" signal, only the first HARD_ARC steps of the arc, and at most HARD_MAX_AIR toys flying.
+const HARD_MAX_AIR=3,HARD_ARC=22;
 const SWIPE_MIN=16,SWIPE_FAST=1500,STEER_DEAD=.06,STEER_GAIN=200;
 function swipeMove(p){const c=charging,o=c.o,now=performance.now(),dtm=now-c.lt;
  if(dtm>8){const v=Math.hypot(p.x-c.lx,p.y-c.ly)/dtm*1000;c.peak=Math.max(c.peak,Math.min(v,2400));c.lx=p.x;c.ly=p.y;c.lt=now;}
