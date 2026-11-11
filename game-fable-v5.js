@@ -100,10 +100,9 @@ function step(dt){
  }
  if(blk.on){blk.x+=blk.spd*blk.dir;if(blk.x>298||blk.x<82)blk.dir*=-1;blk.y=292+Math.sin(wave*.05)*8;}
  const d=diff();
- // each toy has a home spot (two tidy clusters, left and right) and sways around it, so toys never pile up
- objs.forEach((o,i)=>{if(o.st!=='float'||(charging&&charging.o===o)||(pendingLaunch&&pendingLaunch.o===o))return;let tx,ty;
-  if(o.hb){if(o.hx==null)o.hx=o.x<CX?154:226;tx=o.hx;ty=476;}else{const k=i>>1,row=k>>1,col=k&1,side=i&1;tx=(side?262:60)+col*48+(row===1?12:0)+Math.sin(wave*.018*(1+d.drift)+o.bob)*(5+d.drift*4);ty=446+row*24;}
-  o.vx=0;o.x+=(tx-o.x)*.045;o.y+=(ty-o.y)*.045;});
+ // toys float freely (the original drift); when two bump they bounce apart instead of stacking
+ {const fl=objs.filter(o=>o.st==='float'&&!(charging&&charging.o===o)&&!(pendingLaunch&&pendingLaunch.o===o));
+  for(let i=0;i<fl.length;i++)for(let j=i+1;j<fl.length;j++){const a=fl[i],b=fl[j],dx=b.x-a.x,dy=b.y-a.y;if(Math.abs(dx)<34&&Math.abs(dy)<20){const sg=dx>=0?1:-1,sy=dy>=0?.12:-.12;if((b.vx-a.vx)*sg<0){const t=a.vx;a.vx=b.vx;b.vx=t;}a.x=clamp(a.x-sg*.35,46,334);b.x=clamp(b.x+sg*.35,46,334);a.y=clamp(a.y-sy,442,490);b.y=clamp(b.y+sy,442,490);}}}
  objs.forEach(o=>{
   if(o.sq>0)o.sq*=.86;
   if(o.hb&&o.st==='float'){o.life-=dt;if(o.life<=0){o.st='gone';pop(o.x,o.y-20,'Gurgle…','#9a7a4a');}}
@@ -359,16 +358,29 @@ function poster(x,y,k,rot,name,shirt,hairC,nameC){X.save();X.translate(x,y);X.ro
 function paintBg(){const k=KS*DPR,c=document.createElement('canvas');c.width=Math.ceil(W*k);c.height=Math.ceil(HS*k);const main=X;X=c.getContext('2d');X.setTransform(k,0,0,k,0,0);
  const floorY=OY+508,t=38;X.fillStyle=C.wall;X.fillRect(0,0,W,HS);
  let sd=7;const rn=()=>{sd=(sd*16807)%2147483647;return sd/2147483647;};
- for(let y=floorY-t*Math.ceil(floorY/t);y<floorY;y+=t)for(let x=0;x<W;x+=t)if(rn()<.16){X.fillStyle=C.tileHi;X.fillRect(x,y,t,t);}
+ const ACC=['#ffd23f','#ff7a59','#4ad6a7','#ff9ac1'],tall=(OY+170-(SAFE+84))>=190,by0=floorY-t*Math.floor((floorY-(SAFE+94))/t);
+ for(let y=floorY-t*Math.ceil(floorY/t);y<floorY;y+=t)for(let x=0;x<W;x+=t)if(rn()<.14){X.fillStyle=C.tileHi;X.fillRect(x,y,t,t);}
+ if(tall)for(let x=0,i=0;x<W;x+=t,i++){X.fillStyle=ACC[i%4];X.fillRect(x,by0,t,t);X.fillStyle='#fff';X.beginPath();X.arc(x+t/2,by0+t/2,5,0,TAU);X.fill();}
  X.strokeStyle=C.tile;X.lineWidth=2.5;X.beginPath();for(let x=0;x<=W;x+=t){X.moveTo(x,0);X.lineTo(x,floorY);}for(let y=floorY-t*Math.ceil(floorY/t);y<floorY;y+=t){X.moveTo(0,y);X.lineTo(W,y);}X.stroke();
  // decor zone = between the HUD and the top of the tub, whatever the screen shape
  const zt=SAFE+84,zb=OY+170,kz=clamp((zb-zt)/170,.45,1);
- X.save();X.translate(18,zb-108*kz);X.scale(kz,kz);
- rr(0,0,86,100,12);fill('#fff');X.save();rr(7,7,72,86,7);X.clip();X.fillStyle='#9be4ff';X.fillRect(0,0,90,100);ell(20,98,44,24);fill('#5fd06e');ell(74,102,38,24);fill('#3fb957');
- X.fillStyle='#fff';circ(54,56,8);X.fill();circ(64,53,10);X.fill();circ(73,57,7);X.fill();
- X.strokeStyle=C.gold;X.lineWidth=3;X.lineCap='round';for(let i=0;i<10;i++){const a=i*.628;X.beginPath();X.moveTo(27+Math.cos(a)*16,30+Math.sin(a)*16);X.lineTo(27+Math.cos(a)*21,30+Math.sin(a)*21);X.stroke();}
- circ(27,30,12.5);fill(C.gold);X.fillStyle=C.navy;circ(23,28,1.7);X.fill();circ(31,28,1.7);X.fill();X.strokeStyle=C.navy;X.lineWidth=1.8;X.beginPath();X.arc(27,31,5,.3,PI-.3);X.stroke();X.restore();
- X.fillStyle='#fff';X.fillRect(40,7,6,86);X.fillRect(7,47,72,6);rr(-7,97,100,11,5.5);fill('#fff');X.restore();
+ X.save();X.translate(24,zb-126*kz);X.scale(kz,kz);X.lineCap='round';X.lineJoin='round';
+ rr(5,7,96,112,12);fill('#1f58b8');rr(0,0,96,112,12);fill('#fff');rr(6,6,84,100,8);fill('#d3e0f6');
+ X.save();rr(9,9,78,94,6);X.clip();X.fillStyle='#86d8ff';X.fillRect(0,0,100,120);X.fillStyle='#b4ebff';X.fillRect(0,58,100,60);
+ X.fillStyle='#c9f2ff';X.beginPath();X.moveTo(52,9);X.lineTo(66,9);X.lineTo(30,103);X.lineTo(16,103);X.closePath();X.fill();X.beginPath();X.moveTo(74,9);X.lineTo(80,9);X.lineTo(44,103);X.lineTo(38,103);X.closePath();X.fill();
+ circ(31,34,19);fill('#fff3b0');circ(31,34,13);fill(C.gold);
+ X.fillStyle='#fff';circ(60,27,7);X.fill();circ(69,24,9);X.fill();circ(77,29,6.5);X.fill();rr(54,27,30,8,4);X.fill();
+ ell(24,110,48,32);fill('#5fd06e');ell(80,116,46,34);fill('#35b257');X.fillStyle='#7a4a22';X.fillRect(67.5,74,3,12);circ(69,70,8.5);fill('#1f9a48');circ(64,75,5.5);fill('#1f9a48');circ(74.5,75,5.5);fill('#1f9a48');X.restore();
+ X.fillStyle='#fff';X.fillRect(45,9,6,94);X.fillRect(9,53,78,6);X.fillStyle='#d3e0f6';X.fillRect(51,9,1.6,94);X.fillRect(9,59,78,1.6);
+ for(const g of[0,1]){X.save();if(g){X.translate(96,0);X.scale(-1,1);}X.beginPath();X.moveTo(-8,-3);X.lineTo(27,-3);X.quadraticCurveTo(24,40,7,60);X.quadraticCurveTo(15,86,10,110);X.lineTo(-8,110);X.closePath();fill('#ff6b57');
+  X.strokeStyle='#e04a38';X.lineWidth=2.2;X.beginPath();X.moveTo(8,0);X.quadraticCurveTo(8,36,0,56);X.moveTo(18,0);X.quadraticCurveTo(16,38,4,58);X.moveTo(1,66);X.quadraticCurveTo(5,88,2,108);X.stroke();rr(-9,55,19,9,4.5);fill(C.gold);X.restore();}
+ rr(-13,-9,122,7,3.5);fill(C.gold);circ(-13,-5.5,5.5);fill(C.gold);circ(109,-5.5,5.5);fill(C.gold);
+ rr(-5,123,106,4,2);fill('#1f58b8');rr(-9,110,114,12,6);fill('#fff');
+ ell(72,92,5,10,-.5);fill('#2fae56');ell(80,89,5,12,0);fill('#3cc266');ell(88,93,5,10,.5);fill('#2fae56');X.beginPath();X.moveTo(70,98);X.lineTo(90,98);X.lineTo(87,111);X.lineTo(73,111);X.closePath();fill('#e2793c');rr(68.5,96,23,5,2.5);fill('#f08a4a');X.restore();
+ if(tall){const sy=zb-112;rr(W-114,sy+4,104,8,4);fill('#1f58b8');rr(W-116,sy,104,8,4);fill('#fff');
+  rr(W-103,sy-8-30,10,9,3);fill('#d94a78');rr(W-108,sy-32,20,32,7);fill('#ff6b9a');rr(W-104,sy-24,12,13,3);fill('#fff');
+  rr(W-78,sy-8-22,9,8,3);fill('#2aa57e');rr(W-82,sy-25,17,25,6);fill('#4ad6a7');rr(W-79,sy-18,11,9,2.5);fill('#fff');
+  X.save();X.translate(W-36,sy-15);paintToy('🦆',26);X.restore();}
  poster(W-98,zb-34*kz,kz,-.07,'NOAH','#e5533d',C.hairN,'#1f9a3a');poster(W-42,zb-40*kz,kz,.08,'MAX','#3d7be5',C.hairM,'#7a3fc0');
  // floor
  X.fillStyle=C.deep;X.fillRect(0,floorY,W,HS-floorY);X.fillStyle='#fff';X.fillRect(0,floorY-6,W,8);

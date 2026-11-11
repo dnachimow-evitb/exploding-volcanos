@@ -80,3 +80,19 @@ Browser pane, no console errors in any state.
 **Gameplay-feel change to judge:** toys no longer drift freely across the tub; they sway around a home spot (the sway is wider in later rounds). Throws still auto-aim from wherever the toy is, and the in-flight drift that makes later rounds harder is unchanged, so difficulty should be the same, but it is a change from the original behaviour. A missed toy lands where it falls and then glides back to its spot.
 
 **How I checked v2:** 375×812, no console errors: round 7 after the first pass (disc, mat and arm fixed, toys still bunched on one side, which led to the home-spot change), then round 10 with all 12 toys and a hairball in two readable clusters. The final row spacing was widened slightly after that last screenshot and not re-shot.
+
+---
+
+## v3 revision (same day, tag `fable-v5-v3`)
+
+**Feedback on v2:** restore the toy behaviour so they float, not just sway; add more colour to the top of the screen (a lot of blue); improve the window, which looked like MS Paint again.
+
+**What I changed**
+
+- **Toys float again.** The v2 home spots are removed and the original free drift is back, including the faster drift in later rounds. One addition: when two floating toys bump, they swap direction and ease apart instead of sliding through each other. In crowded rounds toys still overlap at times, because the original keeps them out of the middle of the tub.
+- **Colour at the top.** On phone-height screens the wall has a border row of yellow, coral, mint and pink tiles under the score bar, and a white shelf with two bottles and a rubber duck above the posters. In short, wide windows there isn't room for those, so the colour there comes from the curtains and posters.
+- **Window redrawn.** Coral curtains with tie-backs on a gold rod, a bevelled white frame with a shadow on the wall, a layered view (two-tone sky, glass glints, sun with a halo, a proper cloud, two hills and a tree), and a potted plant on the sill. The sun's face is gone.
+
+**Feel tweak to judge:** the toy-bump behaviour above. Everything else about floating is the original.
+
+**How I checked v3:** 375×812 round 6 after 5 seconds (toys had drifted 54 to 134 units, confirming free float), a close crop of the top of the screen, and a wide desktop window. No console errors. I removed some stray coloured tiles after the last screenshots and did not re-shoot.
