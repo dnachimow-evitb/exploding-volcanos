@@ -33,11 +33,9 @@ Keep this file current: tick items off and add decisions as they are made.
 ### 1. Accounts (Derek)
 - [ ] **Join the Apple Developer Program** (99 US dollars a year): developer.apple.com/programs/enroll,
       or the Apple Developer app on the iPhone. Needs an Apple Account with two-factor authentication.
-      - *Individual*: quick (often a day or two). The store shows your legal name as the seller.
-      - *Organization*: the store shows the company name. Needs a registered legal entity and a free
-        D-U-N-S number; takes longer (often one to two weeks).
-- [ ] After approval, in App Store Connect: check **Agreements, Tax, and Banking** (nothing more is
-      needed for a free app; a paid app also needs the Paid Apps agreement, tax and bank details).
+      Enrol as an **Individual** (decided): quick, often a day or two; the store shows your legal name.
+- [ ] After approval, in App Store Connect: check **Agreements, Tax, and Banking** shows the free-apps
+      agreement as active (the app is free, so no tax or bank forms).
 - [ ] Create an **App Store Connect API key** (Users and Access > Integrations > App Store Connect API,
       role Admin) so GitHub's Mac can sign and upload builds. Download the `.p8` file (it can be downloaded
       only once). Put it and its Key ID, Issuer ID and the Team ID into the repository's GitHub secrets
@@ -46,7 +44,8 @@ Keep this file current: tick items off and add decisions as they are made.
 ### 2. The app (Claude)
 - [x] Capacitor wrapper in `native/`, packaging the live game.
 - [x] Portrait, iPhone only, no status bar, edge-swipe protection, launch screen, encryption flag.
-- [x] Simulator build check on GitHub's Macs (no Apple account needed).
+- [x] Simulator build check on GitHub's Macs (no Apple account needed). First run passed 2026-11-12
+      (Xcode 26, iOS 26.5 SDK, which meets Apple's current upload requirement).
 - [ ] **App icon, 1024 x 1024.** The current one is the 512 home-screen icon enlarged, so it is soft, and
       the busy cover crop reads poorly at small sizes. Needs a crisp, simpler version.
 - [ ] Signed build + upload to TestFlight from GitHub (needs step 1).
@@ -63,7 +62,7 @@ Keep this file current: tick items off and add decisions as they are made.
 - [ ] Age rating questionnaire (expected: the lowest rating).
 - [ ] Rights: confirm we own or have commercial rights to the song, the cover art and all images. If any were
       made with an AI tool, check that the plan used allows commercial use.
-- [ ] Price: free or paid.
+- [x] Price: **free** (Derek, 2026-11-12).
 - [ ] Optional: Kids category (stricter review; the game already has no ads, tracking or outside links).
 - [ ] EU trader status (Apple asks every developer; "trader" means your contact details are shown in the EU).
 
@@ -71,10 +70,17 @@ Keep this file current: tick items off and add decisions as they are made.
 - [ ] Submit for review (usually 24 to 48 hours). Apple rejects apps that are "just a website"; a game whose
       files are all inside the app, with native touches like the above, is the accepted kind.
 
-## Open decisions
-- **Bundle ID** (the app's permanent internal name; cannot change once registered). Placeholder in use:
-  `com.explodingvolcanoes.app`, set in `capacitor.config.json` and `ios/App/App.xcodeproj/project.pbxproj`.
-- Individual or organization account; free or paid; Kids category or not.
+## Decisions
+Made by Derek on 2026-11-12:
+- **Individual** developer account (the store shows his legal name as the seller).
+- **Bundle ID `com.explodingvolcanoes.app`** (permanent once registered). Set in `capacitor.config.json` and
+  `ios/App/App.xcodeproj/project.pbxproj`.
+- **Free.** No Paid Apps agreement, tax or banking forms needed.
+
+Still open:
+- App name and subtitle (suggested: "Exploding Volcanoes" + "In The Bathtub").
+- Contact email to show on the support page (Apple requires a way to reach the developer).
+- Kids category or not.
 
 ## Commands
 ```
