@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v7.15'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v7.16'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -667,20 +667,35 @@ function statSet(id,v){if(v<=ST[id])return;const b=BADGES.find(q=>q.id===id),t0=
 function stat(id){statSet(id,ST[id]+1);}
 function statMax(id,v){statSet(id,v);}
 const MEDAL=[['#c3cde3','#9aa8c7'],['#e09a5a','#a85f24'],['#dfe6f1','#8e9bb3'],['#ffd23f','#e08a00']];
-function medal(x,y,r,tier){const m=MEDAL[tier];X.save();X.translate(x,y);
- for(const g of[-1,1]){X.beginPath();X.moveTo(g*r*.1,-r*.5);X.lineTo(g*r*.8,-r*1.4);X.lineTo(g*r*.22,-r*1.4);X.lineTo(-g*r*.3,-r*.6);X.closePath();fill(tier?(g<0?C.lava:'#5b7fd6'):'#aab4cc');}
- circ(0,r*.14,r);fill(C.navy);circ(0,r*.14,r*.84);fill(m[1]);circ(0,r*.14,r*.66);fill(m[0]);if(tier){star(0,r*.14,r*.46,r*.2);fill('#fff');}X.restore();}
+// each badge has its own picture, drawn inside a medal whose rim shows the level (grey = not earned yet, then bronze, silver, gold)
+function badgeIcon(id,z){X.lineCap='round';X.lineJoin='round';
+ if(id==='toys')paintToy('🦆',z*2.2);
+ else if(id==='hair')paintToy('🧶',z*2.1);
+ else if(id==='sneak'){sticker(()=>kidHead(0,z*.2,z*.7,C.hairM,'#a84f16',{mood:'cheeky',freckles:true,flip:true}),2);}
+ else if(id==='newFirst'){burstShape(z*1.15,z*.78,9,-.2);fill(C.lava);text('1st',0,z*.06,z*.86,'#fff');}
+ else if(id==='bestStreak'){circ(0,0,z);fill(C.lava);circ(0,0,z*.7);fill('#fff');circ(0,0,z*.42);fill(C.lava);circ(0,0,z*.16);fill('#fff');}
+ else if(id==='perfect'){circ(0,0,z);fill(C.green);X.strokeStyle='#fff';X.lineWidth=z*.3;X.beginPath();X.moveTo(-z*.48,z*.02);X.lineTo(-z*.12,z*.4);X.lineTo(z*.5,-z*.36);X.stroke();}
+ else if(id==='quick'){circ(0,0,z);fill(C.navy);circ(0,0,z*.8);fill('#fff');X.strokeStyle=C.navy;X.lineWidth=z*.2;X.beginPath();X.moveTo(0,0);X.lineTo(0,-z*.48);X.stroke();X.strokeStyle=C.lava;X.beginPath();X.moveTo(0,0);X.lineTo(z*.42,z*.2);X.stroke();}
+ else if(id==='rounds'){X.beginPath();X.moveTo(-z*1.05,z*.9);X.lineTo(-z*.36,-z*.3);X.lineTo(z*.36,-z*.3);X.lineTo(z*1.05,z*.9);X.closePath();fill('#7a4a2c');X.fillStyle=C.lava;X.fillRect(-z*.36,-z*.42,z*.72,z*.26);for(const q of[[-.5,-.85,.2],[0,-1.02,.24],[.5,-.85,.2]]){circ(q[0]*z,q[1]*z,q[2]*z);fill(C.hot);}}
+ else if(id==='rebounds'){X.fillStyle=C.navy;X.fillRect(-z*1.02,-z,z*.26,z*2);X.strokeStyle=C.lava;X.lineWidth=z*.26;X.beginPath();X.moveTo(z*.9,z*.8);X.lineTo(-z*.6,0);X.lineTo(z*.5,-z*.62);X.stroke();X.beginPath();X.moveTo(z*.95,-z*.88);X.lineTo(z*.1,-z*.82);X.lineTo(z*.62,-z*.2);X.closePath();fill(C.lava);}
+ else if(id==='hardRounds'){X.beginPath();X.arc(0,z*.2,z*.86,PI,0);X.closePath();fill(C.gold);X.fillStyle=C.amber;X.fillRect(-z*1.08,z*.2,z*2.16,z*.3);X.fillRect(-z*.14,-z*.72,z*.28,z*.92);}
+ else if(id==='wins'){X.strokeStyle=C.amber;X.lineWidth=z*.2;for(const g of[-1,1]){X.beginPath();X.arc(g*z*.66,-z*.38,z*.34,g>0?-PI*.5:PI*.5,g>0?PI*.5:PI*1.5);X.stroke();}X.beginPath();X.moveTo(-z*.66,-z*.9);X.lineTo(z*.66,-z*.9);X.quadraticCurveTo(z*.66,z*.2,0,z*.36);X.quadraticCurveTo(-z*.66,z*.2,-z*.66,-z*.9);X.closePath();fill(C.gold);X.fillStyle=C.amber;X.fillRect(-z*.14,z*.3,z*.28,z*.36);X.fillStyle=C.lava;X.fillRect(-z*.52,z*.62,z*1.04,z*.3);}
+ else{star(0,0,z*1.08,z*.5);fill(C.gold);star(0,0,z*.5,z*.24);fill('#fff');}}
+function medal(x,y,r,tier,id){const m=MEDAL[tier];X.save();X.translate(x,y);
+ if(tier)for(const g of[-1,1]){X.beginPath();X.moveTo(g*r*.1,-r*.4);X.lineTo(g*r*.85,-r*1.42);X.lineTo(g*r*.28,-r*1.42);X.lineTo(-g*r*.3,-r*.5);X.closePath();fill(g<0?C.lava:'#5b7fd6');}
+ circ(0,0,r);fill(C.navy);circ(0,0,r*.88);fill(m[1]);circ(0,0,r*.76);fill(m[0]);circ(0,0,r*.66);fill('#fff');
+ X.save();X.beginPath();X.arc(0,0,r*.66,0,PI*2);X.clip();badgeIcon(id,r*.46);X.restore();X.restore();}
 function drawToast(){if(!toast){if(!toastQ.length||state==='menu')return;toast=toastQ.shift();toast.t0=NOW;sfxFanfare();}
  const a=NOW-toast.t0;if(a>2.8){toast=null;return;}
  const k=a<.3?EZ.back(a/.3):a>2.5?1-EZ.in((a-2.5)/.3):1,w=252,h=58,x=(W-w)/2,y=SAFE+88;
- X.save();X.translate(W/2,y+h/2);X.scale(k,k);X.rotate(-.015);X.translate(-W/2,-(y+h/2));rr(x,y+5,w,h,9);fill(C.deep);rr(x,y,w,h,9);fill('#fff');medal(x+34,y+h/2+3,17,toast.tier);
+ X.save();X.translate(W/2,y+h/2);X.scale(k,k);X.rotate(-.015);X.translate(-W/2,-(y+h/2));rr(x,y+5,w,h,9);fill(C.deep);rr(x,y,w,h,9);fill('#fff');medal(x+34,y+h/2+3,20,toast.tier,toast.b.id);
  text(TIER[toast.tier]+' Badge!',x+64,y+19,12.5,C.lava,{a:'left'});text(toast.b.name,x+64,y+38,17,C.navy,{a:'left'});X.restore();}
 function drawBadges(){const age=uiT-bdgT0,cw=336,ch=470,{cx,cy}=cardBegin(cw,ch,bdgPg<3?'Badges':'Stats',age);
  text(bdgPg+' Of 3',cx+cw-20,cy+80,12,'#4a6fc4',{a:'right',w:800});if(bdgPg===3)text(PF.list[PF.cur].name,cx+20,cy+80,12,'#4a6fc4',{a:'left',w:800});
  if(bdgPg<3){const got=BADGES.reduce((n,b)=>n+tierOf(b),0);text(PF.list[PF.cur].name+'  ·  '+got+' Of '+BADGES.length*3,cx+20,cy+80,12,'#4a6fc4',{a:'left',w:800});
-  BADGES.slice((bdgPg-1)*6,bdgPg*6).forEach((b,i)=>{const y=cy+118+i*48,tr=tierOf(b),v=ST[b.id],nx=b.t[Math.min(tr,2)],lo=tr?b.t[tr-1]:0,f=tr>=3?1:clamp((v-lo)/(nx-lo),0,1),bx=cx+cw-86,bw=68;
-   medal(cx+36,y-2,15,tr);text(b.name,cx+62,y-9,15.5,C.navy,{a:'left'});text(b.how,cx+62,y+10,11.5,'#4a6fc4',{a:'left',w:800});
-   text(tr>=3?'Gold!':Math.min(v,nx)+' / '+nx,bx+bw,y-9,12,tr>=3?C.amber:C.navy,{a:'right'});X.fillStyle='#d3e2f8';X.fillRect(bx,y+5,bw,8);X.fillStyle=MEDAL[Math.min(tr+1,3)][1];X.fillRect(bx,y+5,bw*f,8);});}
+  BADGES.slice((bdgPg-1)*6,bdgPg*6).forEach((b,i)=>{const y=cy+118+i*48,tr=tierOf(b),v=ST[b.id],nx=b.t[Math.min(tr,2)],lo=tr?b.t[tr-1]:0,f=tr>=3?1:clamp(v/nx,0,1),bx=cx+cw-86,bw=68;
+   medal(cx+37,y+(tr?3:0),19,tr,b.id);text(b.name,cx+66,y-9,15.5,C.navy,{a:'left'});text(b.how,cx+66,y+10,11.5,'#4a6fc4',{a:'left',w:800});
+   text(tr>=3?'Gold!':Math.min(v,nx)+' / '+nx,bx+bw,y-9,12,tr>=3?C.amber:C.navy,{a:'right'});text(tr>=3?'Top Level':'Next: '+TIER[tr+1],bx+bw,y+21,9.5,MEDAL[Math.min(tr+1,3)][1],{a:'right'});X.fillStyle='#d3e2f8';X.fillRect(bx,y+5,bw,8);X.fillStyle=MEDAL[Math.min(tr+1,3)][1];X.fillRect(bx,y+5,bw*f,8);});}
  else{[['Games Played',ST.games],['Rounds Won',ST.rounds],['Toys In The Volcano',ST.toys],['Misses',ST.misses],['Hairballs',ST.hair],['Blocked By Max',ST.blocks],['Best Score',ST.bestScore],['Best Round',ST.bestRound],['Longest No-Miss Streak',ST.bestStreak],['Best Combo',ST.bestCombo]].forEach((r,i)=>{const y=cy+108+i*28;
    if(i%2===0){X.fillStyle='#eef4fd';X.fillRect(cx+12,y-14,cw-24,28);}text(r[0],cx+24,y+1,14.5,C.navy,{a:'left',w:800});text(''+r[1],cx+cw-24,y+1,16,C.lava,{a:'right'});});}
  const x0=W/2-(96+12+176)/2,yb=cy+ch-72;button(x0,yb,96,48,bdgPg===1?'Close':'Back',()=>{bdgPg--;},{size:16,id:7,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});
