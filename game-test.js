@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v7.25'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v7.26'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -874,8 +874,9 @@ function drawMenu(){const t=38;X.fillStyle=C.wall;X.fillRect(0,0,W,HS);X.strokeS
  const bw=232,bx=(W-bw)/2,appear=(k,y,h,fn)=>{if(k<=0)return;X.save();X.translate(W/2,y+h/2);X.scale(k,k);X.translate(-W/2,-(y+h/2));fn();X.restore();};
  if(uiT<.7)card=null;
  if(!howTo&&!bdgPg&&!pfOpen&&!toysT0&&uiT>.6)drawChip();
- if(TEST&&!howTo&&!bdgPg&&!pfOpen&&!toysT0&&uiT>.6)button(8,HS-SAFEB-54,72,26,'+50 Coins',()=>addCoins(50),{size:11,id:17,col:'#e08a00',colD:'#a85f24',colP:'#c97800'}); // test page only
- if(TEST&&!howTo&&!bdgPg&&!pfOpen&&!toysT0&&uiT>.6)button(86,HS-SAFEB-54,64,26,'Round '+testRound,()=>{testRound=testRound>=10?1:testRound+1;},{size:12.5,id:6,col:'#e08a00',colD:'#a85f24',colP:'#c97800'}); // test page only: tap to choose the starting round
+ const tby=ih+34+(bandH-34-SAFEB-56*2-16*2-36)*.5; // test buttons sit in the empty margin left of Push and Swipe, clear of everything on any phone
+ if(TEST&&menuStep===0&&!howTo&&!bdgPg&&!pfOpen&&!toysT0&&uiT>.6)button(5,tby+14,60,28,'+50',()=>addCoins(50),{size:13,id:17,col:'#e08a00',colD:'#a85f24',colP:'#c97800'}); // test page only
+ if(TEST&&menuStep===0&&!howTo&&!bdgPg&&!pfOpen&&!toysT0&&uiT>.6)button(5,tby+56+16+14,60,28,'Rd '+testRound,()=>{testRound=testRound>=10?1:testRound+1;},{size:12.5,id:6,col:'#e08a00',colD:'#a85f24',colP:'#c97800'}); // test page only: tap to choose the starting round
  if(howTo){drawHowTo();}
  else if(bdgPg){drawBadges();}
  else if(toysT0){drawMyToys();}
