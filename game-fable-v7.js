@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v7.18'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v7.19'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -600,11 +600,15 @@ function drawNewToyCard(){const cw=328,ch=366,{cx,cy,age}=cardBegin(cw,ch,'New T
 const ST_KEY='evitb-stats-v1'; // old single-player save, read once to become Player 1
 // PLAYERS: up to 4 profiles on this phone, each with its own stats and badges (localStorage key PF_KEY).
 // Stats saved before profiles existed (ST_KEY) become the first player's.
-const PF_KEY='evitb-profiles-v1',PF_MAX=4,PF_ICONS=['🦆','🐙','⛵','🦕'],PF_TOYS=[...BASE,...Object.values(NEWBY)]; // PF_ICONS: handed out to new players in turn; PF_TOYS: every toy in the game, any of which a player can pick
+// TEST: true only on the test page (play-test.html). The test page keeps its players and badges under its own
+// key, so trying things there can never damage the live game's saved progress. On its first visit it starts
+// from a copy of the live progress.
+const TEST=/play-test/.test(location.pathname),PF_LIVE='evitb-profiles-v1';
+const PF_KEY=TEST?'evitb-test-profiles-v1':PF_LIVE,PF_MAX=4,PF_ICONS=['🦆','🐙','⛵','🦕'],PF_TOYS=[...BASE,...Object.values(NEWBY)]; // PF_ICONS: handed out to new players in turn; PF_TOYS: every toy in the game, any of which a player can pick
 const ST0={games:0,rounds:0,toys:0,misses:0,hair:0,blocks:0,newFirst:0,sneak:0,perfect:0,quick:0,rebounds:0,hardRounds:0,wins:0,bestScore:0,bestStreak:0,bestRound:0,bestCombo:0};
 function pfFix(o){const r={...ST0};if(o)for(const k in ST0)if(typeof o[k]==='number')r[k]=o[k];return r;}
 let PF={cur:0,list:[]},ST;
-try{const sv=JSON.parse(localStorage.getItem(PF_KEY)||'null');if(sv&&Array.isArray(sv.list)&&sv.list.length){PF.list=sv.list.slice(0,PF_MAX).map((q,i)=>({name:String(q.name||'Player '+(i+1)).slice(0,10),icon:PF_TOYS.includes(q.icon)?q.icon:PF_ICONS[i],st:pfFix(q.st)}));PF.cur=clamp(sv.cur|0,0,PF.list.length-1);}}catch(e){}
+try{const sv=JSON.parse(localStorage.getItem(PF_KEY)||(TEST&&localStorage.getItem(PF_LIVE))||'null');if(sv&&Array.isArray(sv.list)&&sv.list.length){PF.list=sv.list.slice(0,PF_MAX).map((q,i)=>({name:String(q.name||'Player '+(i+1)).slice(0,10),icon:PF_TOYS.includes(q.icon)?q.icon:PF_ICONS[i],st:pfFix(q.st)}));PF.cur=clamp(sv.cur|0,0,PF.list.length-1);}}catch(e){}
 if(!PF.list.length){let old=null;try{old=JSON.parse(localStorage.getItem(ST_KEY)||'null');}catch(e){}PF.list=[{name:'Player 1',icon:PF_ICONS[0],st:pfFix(old)}];}
 ST=PF.list[PF.cur].st;
 function pfSave(){try{localStorage.setItem(PF_KEY,JSON.stringify(PF));}catch(e){}}
@@ -780,7 +784,7 @@ function drawMenu(){const t=38;X.fillStyle=C.wall;X.fillRect(0,0,W,HS);X.strokeS
   appear(EZ.back(mt/.35),by,bh,()=>button(bx,by,bw,bh,'Easy',()=>{hardMode=false;startGame();},{size:28,id:0}));
   appear(EZ.back((mt-.1)/.35),by+bh+gap,bh,()=>button(bx,by+bh+gap,bw,bh,'Hard',()=>{hardMode=true;startGame();},{size:28,id:2,col:C.lava,colD:'#a82a06',colP:'#e2580f'}));
   appear(EZ.back((mt-.2)/.35),by+(bh+gap)*2,bk,()=>button((W-120)/2,by+(bh+gap)*2,120,bk,'Back',()=>{menuStep=0;menuT0=0;swipeMode=false;},{size:16,id:3,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'}));}
- text(VERSION,W-10,HS-SAFEB-12,10,'#d6efff',{a:'right',w:800});}
+ text(VERSION+(TEST?' TEST':''),W-10,HS-SAFEB-12,10,TEST?C.hot:'#d6efff',{a:'right',w:800});}
 function overlay(){card2=null;card3=null;card4=null;hits.length=0;const key=paused?'pause':state;if(key!==uiKey){uiKey=key;uiT=0;card=null;press=null;}
  if(paused){if(homeAsk)drawHomeCard();else drawPauseCard();return;}
  if(state==='menu')drawMenu();else if(state==='intro')drawIntroCard();else if(state==='newtoy')drawNewToyCard();else if(state==='win')drawResultCard(true);else if(state==='gameover')drawResultCard(false);else card=null;}

@@ -50,9 +50,26 @@ A test build that is NOT the live game:
 It does not replace version 5 and can be deleted at any time
 (remove play-fable-v6.html and game-fable-v6.js). Notes: experiments/fable-v6.md
 
-Version 7 test link (the same game file as the live game; kept for testing changes first):
-  https://dnachimow-evitb.github.io/exploding-volcanos/play-fable-v7.html
-Notes: experiments/fable-v7.md
+TEST COPY (where changes are tried before they go live)
+------------------------------------------------------------------
+Test link:  https://dnachimow-evitb.github.io/exploding-volcanos/play-test.html
+The corner of its start screen shows the version followed by TEST.
+
+  game-test.js ........ the working copy. New changes are made HERE first.
+  play-test.html ...... the page that loads it. No offline cache.
+  game-fable-v7.js .... the LIVE game. Not edited directly any more.
+
+The test page keeps its own players and badges, separate from the live game's,
+so nothing tried there can damage real progress. The first time it is opened
+it starts from a copy of the live players and badges.
+
+TO PUBLISH A TESTED CHANGE (or ask Claude: "publish the test version"):
+  1. Copy game-test.js over game-fable-v7.js.
+  2. In sw.js raise the number at the end of the CACHE name by one.
+  3. Commit and push.
+
+(play-fable-v7.html is the older test link. It loads the live file, so it now
+shows exactly what the live game shows.)
 
 Full notes on version 5: experiments/fable-v5.md
 

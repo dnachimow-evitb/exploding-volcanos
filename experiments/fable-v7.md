@@ -6,7 +6,7 @@ Files: game-fable-v7.js, play-fable-v7.html.
 **LIVE since 2026-11-12 (v7.18):** index.html loads game-fable-v7.js and sw.js caches it (cache name exploding-volcanos-v9).
 The commit before the switch is tagged `before-v7-publish`. To go back to version 5:
 `git checkout before-v7-publish -- index.html sw.js`, commit, push, then raise the cache number in sw.js by one and push again.
-Because the live page and the test page load the same file, any future edit to game-fable-v7.js changes the live game too; bump the sw.js cache name with every such change.
+Since v7.19 changes are made in a separate test copy first: game-test.js, loaded by play-test.html (its own saved players and badges, key `evitb-test-profiles-v1`, seeded once from the live ones). Publishing = copy game-test.js over game-fable-v7.js, bump the sw.js cache name, commit, push.
 
 One game, two ways to throw, chosen on the start screen:
 
@@ -47,6 +47,7 @@ The pause card shows the mode (Push, Swipe Easy, Swipe Hard) and has a Start Scr
 - v7.16: every badge has its own picture inside the medal (duck, hairball, Max, clock, volcano, trophy and so on); the medal rim shows the level. Each row also says which level comes next ("Next: Silver") under its progress bar.
 - v7.17: the two personal-best badges (Never Miss, Big Score) no longer look like running totals: the row reads "Best streak: 14" / "Best game: 3400" with "Goal: 20" / "Goal: 6000" on the right.
 - v7.18: published as the live game (see the top of this file).
+- v7.19: separate test copy set up (game-test.js + play-test.html). No change to how the game plays. The start-screen corner reads "v7.19 TEST" on the test page.
 
 ## Tested
 Scripted in the preview at 375x812 by stepping the game by hand: Push scores on a held throw,
