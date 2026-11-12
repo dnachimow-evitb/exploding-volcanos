@@ -4,7 +4,7 @@ Read this first before changing the game. It says where things are and gives ste
 common jobs (add a toy, change prices, add a badge, publish). The history of *why* things are the way they are
 is in `experiments/fable-v7.md` (one line per version) and, for the art, `experiments/fable-v5.md`.
 
-Last updated: 2026-11-12, at test version v7.32 / live version v7.23.
+Last updated: 2026-11-12, at test version v7.33 / live version v7.23.
 
 ## 1. The files that matter
 
@@ -58,7 +58,7 @@ Sections are marked with `// ── NAME ──` comments, in this order:
 Conventions:
 - Logical canvas is 380 units wide; height `HS` varies (720 minimum). `SAFE` / `SAFEB` are the top / bottom
   phone insets in logical units. All top-of-screen UI is positioned from `SAFE`.
-- **Buttons:** `button(x,y,w,h,label,action,{size,id,col,colD,colP})`. `id` 0 is the main button (`card`),
+- **Buttons:** `button(x,y,w,h,label,action,{size,id,col,colD,colP,sub})`. `sub` is an optional small second line. `id` 0 is the main button (`card`),
   2/3/4 are `card2/3/4`, **5 and up go into the `hits` list** (use a fresh number for a new button).
   Bare tap areas: `hits.push({x,y,w,h,act,key:uiKey,id})`. Everything is cleared and rebuilt each frame.
 - **Start-screen cards** are flags checked in `drawMenu`: `howTo`, `bdgPg`, `toysT0`, `pfOpen` (+ `nameEd`,
