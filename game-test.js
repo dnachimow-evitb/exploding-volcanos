@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v7.22'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v7.23'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -56,13 +56,17 @@ function sfxBlock(){blip(170,.14,'sawtooth',.22,70);noise(.12,.18,300,.6);}
 function sfxErupt(){noise(1.1,.55,600,.4,100);blip(150,1.0,'sawtooth',.28,38);setTimeout(()=>noise(.7,.4,300,.5,80),120);}
 function sfxFanfare(){blip(660,.12,'square',.2,990);setTimeout(()=>blip(880,.12,'square',.18,1180),120);setTimeout(()=>blip(1180,.2,'square',.18),250);}
 
+// how fast a toy drifts across the tub (units per frame). v7.23: the per-round increase is halved (round 10: 1.1, was 1.8).
+// When toys bump they turn around and keep their own speed; they used to trade speeds, so a toy that touched the
+// slow hairball took its near-zero speed and sat still.
+function floatSpd(d){return 0.4+d.drift*.5;}
 function startRound(carry){rdMiss=0;rdBlock=0;rdFirst=true;const d=diff();craterR=d.cr;need=currentToys.length;collected=0;combo=0;
  const single=round>=3;
  objs=currentToys.map((em,i)=>{let x,y;const L=carry?landed[i]:null;
   if(L){x=L.x;y=L.y;}
   else if(single){const col=i%6,row=(i/6|0)%3;x=58+col*50+(row%2)*20+(Math.random()-.5)*8;y=448+row*19+(Math.random()-.5)*6;} // spread across the whole tub
   else{const left=i%2===0;x=left?(58+Math.random()*74):(248+Math.random()*76);y=442+Math.random()*42;}
-  const vx=(Math.random()<.5?-1:1)*(0.4+d.drift)*(single?1:.5);
+  const vx=(Math.random()<.5?-1:1)*floatSpd(d)*(single?1:.5);
   return{em,x,y,vx,vy:0,bob:Math.random()*6.28,st:'float',sq:0,hb:false,isNew:false};});
  if(newToyEm){const idx=currentToys.lastIndexOf(newToyEm);if(idx>=0){objs[idx].isNew=true;objs[idx].x=CX+(Math.random()-.5)*26;objs[idx].y=458;}}
  objs.forEach((o,i)=>{o.born=NOW+.12+i*.06;});smoke=[];buildOn=false;tutOn=round===1;tutT=0;idleT=0;
@@ -122,7 +126,7 @@ function step(dt){
  const d=diff();
  // toys float freely (the original drift); when two bump they bounce apart instead of stacking
  {const fl=objs.filter(o=>o.st==='float'&&!(charging&&charging.o===o)&&!(pendingLaunch&&pendingLaunch.o===o));
-  for(let i=0;i<fl.length;i++)for(let j=i+1;j<fl.length;j++){const a=fl[i],b=fl[j],dx=b.x-a.x,dy=b.y-a.y;if(Math.abs(dx)<34&&Math.abs(dy)<20){const sg=dx>=0?1:-1,sy=(dy>0||(dy===0&&(i+j)%2))?.5:-.5;if((b.vx-a.vx)*sg<0){const t=a.vx;a.vx=b.vx;b.vx=t;}a.x=clamp(a.x-sg*.6,46,334);b.x=clamp(b.x+sg*.6,46,334);a.y=clamp(a.y-sy,442,490);b.y=clamp(b.y+sy,442,490);}}}
+  for(let i=0;i<fl.length;i++)for(let j=i+1;j<fl.length;j++){const a=fl[i],b=fl[j],dx=b.x-a.x,dy=b.y-a.y;if(Math.abs(dx)<34&&Math.abs(dy)<20){const sg=dx>=0?1:-1,sy=(dy>0||(dy===0&&(i+j)%2))?.5:-.5;if((b.vx-a.vx)*sg<0){a.vx=-sg*Math.abs(a.vx);b.vx=sg*Math.abs(b.vx);}a.x=clamp(a.x-sg*.6,46,334);b.x=clamp(b.x+sg*.6,46,334);a.y=clamp(a.y-sy,442,490);b.y=clamp(b.y+sy,442,490);}}}
  const nLeft=objs.filter(o=>o.st==='float'&&o.x<CX).length,nRight=objs.filter(o=>o.st==='float'&&o.x>=CX).length;
  objs.forEach(o=>{
   if(o.sq>0)o.sq*=.86;
@@ -149,7 +153,7 @@ function step(dt){
    }else if((o.vy>0&&o.y>=448)||(!swipeMode&&(o.x<22||o.x>358))){
      combo=0;streak=0;
      if(o.hb){o.st='gone';waterBurst(Math.max(40,Math.min(340,o.x)),456,false);}
-     else{rdMiss++;stat('misses');o.st='float';o.x=Math.max(58,Math.min(322,o.x));o.y=Math.max(448,Math.min(o.y,486));o.vx=(Math.random()<.5?-1:1)*(0.4+d.drift)*(round>=3?1:.4);o.vy=0;o.blocked=0;
+     else{rdMiss++;stat('misses');o.st='float';o.x=Math.max(58,Math.min(322,o.x));o.y=Math.max(448,Math.min(o.y,486));o.vx=(Math.random()<.5?-1:1)*floatSpd(d)*(round>=3?1:.4);o.vy=0;o.blocked=0;
        waterBurst(o.x,o.y-6,false);pop(o.x,o.y-30,'Splash! Try Again!','#dff4ff');sfxPlop();mood(noah,'oops',.9);mood(mxc,'laugh',.8);mood(vol,'aww',.9);}
    }
   }
