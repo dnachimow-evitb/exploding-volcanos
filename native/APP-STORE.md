@@ -47,7 +47,9 @@ Keep this file current: tick items off and add decisions as they are made.
 - [x] Simulator build check on GitHub's Macs (no Apple account needed). First run passed 2026-11-12
       (Xcode 26, iOS 26.5 SDK, which meets Apple's current upload requirement).
 - [ ] **App icon, 1024 x 1024.** The current one is the 512 home-screen icon enlarged, so it is soft, and
-      the busy cover crop reads poorly at small sizes. Needs a crisp, simpler version.
+      the busy cover crop reads poorly at small sizes. Needs a crisp, simpler version. Blocked 2026-11-12:
+      the Google AI Studio project behind Claude's Gemini access is on the free tier, which allows no image
+      requests; Derek can turn on billing there (roughly 10-25 cents an image) or supply an icon.
 - [ ] Signed build + upload to TestFlight from GitHub (needs step 1).
 - [ ] Try it on Derek's iPhone through TestFlight (audio start, haptics, safe areas, saving).
 - [ ] Optional: real haptics in Swipe mode (iPhone web pages cannot vibrate; the app can).
@@ -56,7 +58,8 @@ Keep this file current: tick items off and add decisions as they are made.
 - [ ] **App name**, 30 characters at most. "Exploding Volcanoes in the Bathtub" is 34, so for example
       name "Exploding Volcanoes" + subtitle "In The Bathtub" (subtitle is also 30 at most).
 - [ ] Description, keywords (100 characters), category (Games > Family or Casual).
-- [ ] Screenshots: the 6.9-inch iPhone size (1320 x 2868) is required; Claude can make them from the game.
+- [x] Screenshots, 6.9-inch iPhone size (1320 x 2868): `native/screenshots/` (start screen, aiming, eruption,
+      Badges, My Toys), made from v7.35. Remake after visible game changes: `npm run build && node scripts/screenshots.js`.
 - [ ] **Privacy policy page** (required for every app) and a **support page**. Both can be simple pages on the
       game's website. The app collects nothing, so the App Privacy answer is "Data Not Collected".
 - [ ] Age rating questionnaire (expected: the lowest rating).

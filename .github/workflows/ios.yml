@@ -9,6 +9,9 @@ on:
   push:
     paths:
       - 'native/**'
+      - '!native/screenshots/**'
+      - '!native/scripts/screenshots.js'
+      - '!native/**/*.md'
       - '.github/workflows/ios.yml'
   workflow_dispatch:
 
