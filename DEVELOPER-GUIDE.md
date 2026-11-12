@@ -4,7 +4,7 @@ Read this first before changing the game. It says where things are and gives ste
 common jobs (add a toy, change prices, add a badge, publish). The history of *why* things are the way they are
 is in `experiments/fable-v7.md` (one line per version) and, for the art, `experiments/fable-v5.md`.
 
-Last updated: 2026-11-12, at test version v7.34 / live version v7.23.
+Last updated: 2026-11-12, at test version v7.34 / live version v7.34.
 
 ## 1. The files that matter
 
@@ -66,6 +66,7 @@ Conventions:
   to the `!howTo&&!bdgPg&&!pfOpen&&!toysT0` conditions that hide the chips and test buttons.
 - **Text style (Derek's rule):** Title Case On Every Word for titles, buttons and labels; sentence case only
   for full sentences. Nothing faded or see-through in the game art. Few rounded shapes.
+- **The version label stays on the live start screen** (bottom-right corner). Derek wants it there; do not hide it.
 - **No system pop-ups** (`prompt`, `confirm`, `alert`): they do not open in the iPhone home-screen app.
 - The `TEST` flag is true only on `play-test.html`. Test-only tools (the "+50" coin and "Rd N" start-round
   buttons beside Push and Swipe, the debug line bottom-left) are wrapped in `if(TEST…)`, so they stay hidden
