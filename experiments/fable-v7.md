@@ -65,6 +65,7 @@ The pause card shows the mode (Push, Swipe Easy, Swipe Hard) and has a Start Scr
 - v7.25 (TEST COPY ONLY): the three small start-screen buttons (How To Play, Badges, My Toys) now span exactly the width of Push and Swipe.
 - v7.26 (TEST COPY ONLY): the two test-only buttons moved to the empty margin left of Push ("+50" coins) and Swipe ("Rd N" starting round); at the bottom they were hidden under the How To Play row on a real iPhone.
 - 2026-11-12: DEVELOPER-GUIDE.md added at the top of the project (file map, workflow, saved-data shape, recipes, testing tips). Keep it current when a recipe changes.
+- v7.27 (TEST COPY ONLY): My Toys no longer repeats the lineup in the lower grid. It shows only the toys that are not in the lineup ("Other Toys", 8 of them, bigger cells, names under owned ones, prices under locked ones). Tapping one spot and then another swaps the two.
 
 ## Tested
 Scripted in the preview at 375x812 by stepping the game by hand: Push scores on a held throw,

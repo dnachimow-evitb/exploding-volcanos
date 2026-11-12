@@ -4,7 +4,7 @@ Read this first before changing the game. It says where things are and gives ste
 common jobs (add a toy, change prices, add a badge, publish). The history of *why* things are the way they are
 is in `experiments/fable-v7.md` (one line per version) and, for the art, `experiments/fable-v5.md`.
 
-Last updated: 2026-11-12, at test version v7.26 / live version v7.23.
+Last updated: 2026-11-12, at test version v7.27 / live version v7.23.
 
 ## 1. The files that matter
 
@@ -98,9 +98,10 @@ Conventions:
 3. **Price it:** add `['seal',95]` to `SHOP`.
 4. That is all the wiring. `ALL_TOYS`, the grey "locked" copy, the My Toys grid, the icon picker and the
    lineup all pick it up from `SHOP`.
-5. **Check the My Toys card.** The grid is 5 per row. 20 toys = 4 rows. A 21st toy starts a 5th row:
-   raise `ch` in `drawMyToys` by 56 and move the message and buttons down with it (they are positioned from
-   `cy+455` and `cy+ch-70`). The card must still fit a 720-unit-tall screen.
+5. **Check the My Toys card.** The lower grid shows only toys that are not in the lineup, 4 per row.
+   With 20 toys that is always 8 (2 rows). A 21st toy starts a 3rd row: raise `ch` in `drawMyToys` by 76 and
+   move the message down with it (it is at `cy+408`; the buttons follow `ch`). The card must still fit a
+   720-unit-tall screen.
 6. Optional real art: put `assets/toys/<name>.png` in place and add the key to `SPRITE_FILE`; a PNG replaces
    the drawn version automatically.
 

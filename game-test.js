@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v7.26'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v7.27'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -788,20 +788,21 @@ function drawBadges(){const age=uiT-bdgT0,cw=336,ch=470,{cx,cy}=cardBegin(cw,ch,
 function openToys(){toysT0=uiT||.001;selSlot=-1;selToy=null;}
 function toyPlace(em,i){const q=PF.list[PF.cur],L=q.line,j=L.indexOf(em);if(j>=0)L[j]=L[i];L[i]=em;pfSave();selSlot=-1;selToy=null;}
 function toyBuy(){const q=PF.list[PF.cur],em=selToy,pr=priceOf(em);if(!em||owns(q,em)||q.coins<pr)return;q.coins-=pr;q.owned.push(em);pfSave();sfxFanfare();}
-function drawMyToys(){const q=PF.list[PF.cur],cw=344,ch=548,{cx,cy}=cardBegin(cw,ch,'My Toys',uiT-toysT0),L=q.line;
+function drawMyToys(){const q=PF.list[PF.cur],cw=344,ch=502,{cx,cy}=cardBegin(cw,ch,'My Toys',uiT-toysT0),L=q.line;
  coin(cx+26,cy+80,9);text(q.coins+' Coins',cx+41,cy+81,15,C.navy,{a:'left'});text(q.name+'’s Lineup',cx+cw-18,cy+81,12,'#4a6fc4',{a:'right',w:800});
  // the 12 spots
  const sx=cx+(cw-6*52+4)/2;L.forEach((em,i)=>{const x=sx+(i%6)*52,y=cy+96+(i/6|0)*50,sel=i===selSlot,id=40+i;if(sel){rr(x-3,y-3,54,52,9);fill(C.lava);}rr(x,y,48,46,7);fill(sel?'#fff3bf':'#eef4fd');
   X.save();X.translate(x+24,y+18+(sel?Math.sin(NOW*6)*1.5:0));paintToy(em,30);X.restore();text(i<3?'Start':'Round '+(i-1),x+24,y+39,8,'#4a6fc4',{w:800});
-  hits.push({x,y,w:48,h:46,act:()=>{if(selToy&&owns(q,selToy))toyPlace(selToy,i);else{selSlot=selSlot===i?-1:i;selToy=null;}},key:uiKey,id});});
+  hits.push({x,y,w:48,h:46,act:()=>{if(selToy&&owns(q,selToy))toyPlace(selToy,i);else if(selSlot>=0&&selSlot!==i){const t=L[selSlot];L[selSlot]=L[i];L[i]=t;pfSave();selSlot=-1;}else{selSlot=selSlot===i?-1:i;selToy=null;}},key:uiKey,id});});
  text('The first 3 start the game. One more joins each round.',W/2,cy+203,10,'#4a6fc4',{w:800});
- // every toy: owned in colour (ticked when it is in the lineup), locked ones grey with their price
- const gx=cx+(cw-5*62+4)/2;ALL_TOYS.forEach((em,i)=>{const x=gx+(i%5)*62,y=cy+216+(i/5|0)*56,own=owns(q,em),sel=em===selToy,pr=priceOf(em),id=70+i;if(sel){rr(x-3,y-3,64,58,9);fill(C.lava);}rr(x,y,58,52,7);fill(sel?'#fff3bf':own?'#eef4fd':'#dfe3ec');
-  X.save();X.translate(x+29,y+(own?24:19)+(sel?Math.sin(NOW*6)*1.5:0));paintToy(em,own?36:30,!own);X.restore();
-  if(own){if(L.includes(em)){X.save();X.translate(x+48,y+10);X.scale(.72,.72);check(0,0);X.restore();}}else{coin(x+19,y+42,5.5);text(''+pr,x+28,y+42.5,11,q.coins>=pr?C.navy:'#7c879f',{a:'left'});}
-  hits.push({x,y,w:58,h:52,act:()=>{if(owns(q,em)&&selSlot>=0)toyPlace(em,selSlot);else{selToy=selToy===em?null:em;if(!owns(q,em))selSlot=-1;}},key:uiKey,id});});
+ // the pool: only the toys that are NOT in the lineup (always 8 while there are 20 toys). Owned ones in colour, locked ones grey with a price.
+ text('Other Toys',W/2,cy+223,12.5,C.navy);
+ const pool=ALL_TOYS.filter(e=>!L.includes(e)),gx=cx+(cw-4*78+4)/2;pool.forEach((em,n)=>{const x=gx+(n%4)*78,y=cy+236+(n/4|0)*76,own=owns(q,em),sel=em===selToy,pr=priceOf(em),id=70+ALL_TOYS.indexOf(em);if(sel){rr(x-3,y-3,80,76,10);fill(C.lava);}rr(x,y,74,70,8);fill(sel?'#fff3bf':own?'#eef4fd':'#dfe3ec');
+  X.save();X.translate(x+37,y+29+(sel?Math.sin(NOW*6)*1.5:0));paintToy(em,own?44:40,!own);X.restore();
+  if(own)text(TOYNAME[em]||'',x+37,y+60,10,'#4a6fc4',{w:800});else{const t=''+pr;X.font=fnt(900,12);const tw=X.measureText(t).width;coin(x+37-tw/2-5,y+59,6);text(t,x+37-tw/2+5,y+59.5,12,q.coins>=pr?C.navy:'#7c879f',{a:'left'});}
+  hits.push({x,y,w:74,h:70,act:()=>{if(owns(q,em)&&selSlot>=0)toyPlace(em,selSlot);else{selToy=selToy===em?null:em;if(!owns(q,em))selSlot=-1;}},key:uiKey,id});});
  const own=selToy&&owns(q,selToy),pr=selToy?priceOf(selToy):0,can=selToy&&!own&&q.coins>=pr,nm=selToy?TOYNAME[selToy]||'This Toy':'';
- body(selToy?(own?'Now tap a spot for '+nm+'.':can?'Buy '+nm+' for '+pr+' coins?':nm+': you need '+(pr-q.coins)+' more coins.'):selSlot>=0?'Now tap a toy for this spot.':'Tap a spot, then tap a toy.',cy+455,13.5);
+ body(selToy?(own?'Now tap a spot for '+nm+'.':can?'Buy '+nm+' for '+pr+' coins?':nm+': you need '+(pr-q.coins)+' more coins.'):selSlot>=0?'Now tap a toy, or another spot to swap.':'Tap a spot, then tap a toy.',cy+408,13.5);
  const x0=W/2-(80+8+92+8+124)/2,yb=cy+ch-70,B={col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'};
  button(x0,yb,80,46,'Close',()=>{toysT0=0;},{size:15,id:7,...B});
  button(x0+88,yb,92,46,'Default',()=>{q.line=DEF_LINE.slice();pfSave();selSlot=-1;selToy=null;},{size:15,id:19,col:'#8a5bd6',colD:'#5a359c',colP:'#7648c2'});
