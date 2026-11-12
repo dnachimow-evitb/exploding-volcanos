@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v7.36'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v7.37'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -909,7 +909,8 @@ function drawBadges(){const age=uiT-bdgT0,cw=336,ch=470,{cx,cy}=cardBegin(cw,ch,
 // ── MY TOYS (start screen): the player's 12-spot lineup, every toy in the game, and the shop ──
 function openToys(){toysT0=uiT||.001;selSlot=-1;selToy=null;toyPg=0;}
 function toyPlace(em,i){const q=PF.list[PF.cur],L=q.line,j=L.indexOf(em);if(j>=0)L[j]=L[i];L[i]=em;pfSave();selSlot=-1;selToy=null;}
-function toyBuy(){const q=PF.list[PF.cur],em=selToy,pr=priceOf(em);if(!em||owns(q,em)||q.coins<pr)return;q.coins-=pr;q.owned.push(em);pfSave();sfxFanfare();}
+function toyBuy(){const q=PF.list[PF.cur],em=selToy,pr=priceOf(em);if(!em||owns(q,em)||q.coins<pr)return;q.coins-=pr;q.owned.push(em);pfSave();sfxFanfare();
+ {const rest=ALL_TOYS.filter(e=>!q.line.includes(e)),i=rest.filter(e=>owns(q,e)).indexOf(em);toyPg=i<0?0:Math.floor(i/8);}} // jump to the page the new toy is now on (owned toys are listed first, so normally page 1)
 function drawMyToys(){const q=PF.list[PF.cur],cw=344,ch=502,{cx,cy}=cardBegin(cw,ch,'My Toys',uiT-toysT0),L=q.line;
  coin(cx+26,cy+80,9);text(q.coins+' Coins',cx+41,cy+81,15,C.navy,{a:'left'});text(q.name+'’s Lineup',cx+cw-18,cy+81,12,'#4a6fc4',{a:'right',w:800});
  // the 12 spots
