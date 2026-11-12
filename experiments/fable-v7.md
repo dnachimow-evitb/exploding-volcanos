@@ -72,6 +72,7 @@ The pause card shows the mode (Push, Swipe Easy, Swipe Hard) and has a Start Scr
 - v7.31 (TEST COPY ONLY): the Speedboat is replaced by a Train (same price, 120); Derek found the speedboat too close to the tugboat. `TOY_SWAP` turns a saved `speedboat` into `train` on load, so a player who bought it keeps a toy.
 - v7.32 (TEST COPY ONLY): How To Play is five pages. New page 2, "Two Ways To Play", says Push and Swipe are a choice made on the start screen and what Easy or Hard means; the two demo pages are now titled "Way 1: Push" and "Way 2: Swipe"; new last page "Coins And Toys" covers earning coins, buying toys and picking the 12-toy lineup.
 - v7.33 (TEST COPY ONLY): the start screen says the two big buttons are modes: a "Pick A Game Mode" heading above them, and a small line inside each (Push: "Press And Hold", Swipe: "Flick To Throw"). The next step is headed "Push Mode: Easy Or Hard?" (or Swipe), with "With Hints" / "No Hints" under Easy / Hard.
+- v7.34 (TEST COPY ONLY): start-screen cover is 85% of its old width (282 units, was 332) because the lower half had become crowded; the freed height went into space around the heading and between the buttons (gap 20, was 16). Derek chose this over removing the small lines inside the buttons.
 
 ## Tested
 Scripted in the preview at 375x812 by stepping the game by hand: Push scores on a held throw,
