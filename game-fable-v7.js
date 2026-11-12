@@ -7,8 +7,9 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v7.2'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v7.3'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
+let howTo=0,howT0=0; // How To Play card on the start screen: 0 closed, 1 Push page, 2 Swipe page
 let swipeMode=false,menuStep=0,menuT0=0; // Push or Swipe; start screen step 0 = Push/Swipe, 1 = Easy/Hard
 const cv=document.getElementById('c'),W=380,H=600;let X=cv.getContext('2d');
 const song=document.getElementById('song');
@@ -587,7 +588,33 @@ function drawNewToyCard(){const cw=328,ch=366,{cx,cy,age}=cardBegin(cw,ch,'New T
  body(TOYNAME[newToyEm]||'New Toy',cy+226,24);body('Joins the tub for round '+round,cy+250,13.5,'#4a6fc4');
  const n=currentToys.length,gap=Math.min(28,(cw-60)/n),sx=W/2-(n-1)*gap/2;currentToys.forEach((em,i)=>{const k=EZ.back((age-.5-i*.04)/.3);if(k<=0)return;X.save();X.translate(sx+i*gap,cy+278);X.scale(k,k);paintToy(em,i===n-1?24:19);X.restore();});
  button((W-220)/2,cy+ch-66,220,56,'Splash On!',()=>{startRound(true);state='play';lastNow=performance.now();});cardEnd();}
-function goMenu(){paused=false;charging=null;pendingLaunch=null;swingT=0;objs=[];ejecta=[];parts=[];eParts=[];rings=[];pops=[];confet=[];smoke=[];sparks=[];buildOn=false;build=0;shake=0;flash=0;blk.on=false;collected=0;need=0;combo=0;state='menu';menuStep=0;lastNow=performance.now();acc=0;}
+// ── HOW TO PLAY (start screen) ── two pages, Push then Swipe: a small looping demo and three short steps each.
+const HOWTO=[null,
+ {name:'Push',steps:['Press a toy and hold.','Let go when the dots turn green.','It flies into the volcano!'],note:'Hard: the dots never turn green.',next:'Next: Swipe'},
+ {name:'Swipe',steps:['Put your finger on a toy.','Swipe up at the volcano.','Bigger swipe, bigger throw!'],note:'Bounce it off a wall for double points.',next:'Got It!'}];
+function drawHowTo(){const pg=HOWTO[howTo],age=uiT-howT0,cw=324,ch=428,{cx,cy}=cardBegin(cw,ch,'How To Play',age);
+ text(pg.name,W/2,cy+84,23,C.navy);text(howTo+' Of 2',cx+cw-20,cy+84,12,'#4a6fc4',{a:'right',w:800});
+ // demo panel: a toy, the volcano, a finger, and the dotted throw line
+ const pw=272,ph=124,x0=(W-pw)/2,y0=cy+102,tx=x0+54,ty=y0+94,vx=x0+196,vy=y0+44,t=(NOW%3.4)/3.4;
+ X.save();rr(x0,y0,pw,ph,8);X.clip();X.fillStyle=C.wall;X.fillRect(x0,y0,pw,ph);
+ X.beginPath();X.moveTo(vx-58,y0+ph);X.lineTo(vx-20,vy);X.lineTo(vx+20,vy);X.lineTo(vx+58,y0+ph);X.closePath();fill('#7a4a2c');X.fillStyle=C.lava;X.fillRect(vx-20,vy-4,40,9);
+ X.fillStyle=C.water;X.fillRect(x0,y0+ph-22,pw,22);X.fillStyle='#fff';X.fillRect(x0,y0+ph-24,pw,3);
+ const arc=u=>[tx+(vx-tx)*u,ty+(vy-ty)*u-150*u*(1-u)],N=13,swipe=howTo===2;
+ let grow,fly,fx=tx,fy=ty,finger=true; // grow: how much of the line shows; fly: toy along the line
+ if(swipe){const m=clamp((t-.12)/.3,0,1);grow=t<.5?m:0;fly=clamp((t-.5)/.3,0,1);fx=tx+42*EZ.out(m);fy=ty-58*EZ.out(m);finger=t<.5;}
+ else{grow=t<.55?clamp(t/.42,0,1):0;fly=clamp((t-.55)/.3,0,1);finger=t<.55;}
+ const green=grow>=1;
+ for(let i=1;i<=N;i++){if(i/N>grow)break;const q=arc(i/(N+1));circ(q[0],q[1],5.2);fill(C.navy);circ(q[0],q[1],3.6);fill(green?C.go:'#fff');}
+ if(swipe&&finger&&grow>0){X.lineCap='round';X.beginPath();X.moveTo(tx,ty);X.lineTo(fx,fy);X.strokeStyle=C.navy;X.lineWidth=8;X.stroke();X.strokeStyle='#fff';X.lineWidth=4;X.stroke();}
+ if(fly<1){const q=fly>0?arc(fly):[tx,ty];X.save();X.translate(q[0],q[1]);X.rotate(fly*5);paintToy('🦆',34);X.restore();}
+ else{const k=EZ.back((t-.8)/.1);X.save();X.translate(vx,vy-6);X.scale(k,k);burstShape(34,22,10,NOW);fill(C.navy);burstShape(29,18,10,NOW);fill(C.hot);X.restore();}
+ if(finger){const pr=swipe?0:Math.sin(NOW*9)*1.2;circ(fx+9,fy+10,13+pr);fill(C.navy);circ(fx+9,fy+10,10+pr);fill('#fff');}
+ X.restore();
+ if(finger&&green)bubble('Let Go!',tx+30,y0+20,C.go,'#fff');
+ pg.steps.forEach((st,i)=>{const y=cy+252+i*27;circ(cx+34,y,11);fill(C.lava);text(''+(i+1),cx+34,y+1,14,'#fff');text(st,cx+54,y+1,15,C.navy,{a:'left',w:800});});
+ body(pg.note,cy+336,12.5,'#4a6fc4');
+ button((W-214)/2,cy+ch-74,214,52,pg.next,()=>{if(howTo===1){howTo=2;}else howTo=0;},{size:21});cardEnd();}
+function goMenu(){paused=false;charging=null;pendingLaunch=null;swingT=0;objs=[];ejecta=[];parts=[];eParts=[];rings=[];pops=[];confet=[];smoke=[];sparks=[];buildOn=false;build=0;shake=0;flash=0;blk.on=false;collected=0;need=0;combo=0;state='menu';menuStep=0;howTo=0;lastNow=performance.now();acc=0;}
 function drawPauseCard(){const cw=288,ch=286,{cy}=cardBegin(cw,ch,'Paused');body((swipeMode?'Swipe ':'Push ')+(hardMode?'Hard':'Easy')+'  ·  Round '+round+'  ·  Score '+score,cy+100,13.5);
  button((W-208)/2,cy+124,208,58,'Resume',()=>{paused=false;lastNow=performance.now();acc=0;},{icon:1});
  button((W-208)/2,cy+204,208,50,'Start Screen',goMenu,{id:2,size:18,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});cardEnd();}
@@ -614,7 +641,9 @@ function drawMenu(){const t=38;X.fillStyle=C.wall;X.fillRect(0,0,W,HS);X.strokeS
  [['🦆',54,.26,0],['⛵',W-56,.3,2],['🦕',W/2+96,.84,4],['🐙',66,.86,1]].forEach(d=>{const k=EZ.back((uiT-.4-d[3]*.1)/.4);if(k<=0)return;const y=ih+bandH*d[2]+Math.sin(NOW*2+d[3])*4;toyFloat(d[0],d[1],y,44,Math.sin(NOW*1.3+d[3])*.1,k,k);});
  const bw=232,bx=(W-bw)/2,appear=(k,y,h,fn)=>{if(k<=0)return;X.save();X.translate(W/2,y+h/2);X.scale(k,k);X.translate(-W/2,-(y+h/2));fn();X.restore();};
  if(uiT<.7)card=null;
- if(menuStep===0){const bh=62,gap=20,by=ih+(bandH-SAFEB-bh*2-gap)*.5; // step 1 of 2: how to throw
+ if(howTo){drawHowTo();}
+ else if(menuStep===0){const bh=56,gap=16,bk=36,by=ih+(bandH-SAFEB-bh*2-gap*2-bk)*.5; // step 1 of 2: how to throw
+  appear(EZ.back((uiT-1)/.45),by+(bh+gap)*2,bk,()=>button((W-170)/2,by+(bh+gap)*2,170,bk,'How To Play',()=>{howTo=1;howT0=uiT;},{size:16,id:3,col:'#8a5bd6',colD:'#5a359c',colP:'#7648c2'}));
   appear(EZ.back((uiT-.7)/.45),by,bh,()=>button(bx,by,bw,bh,'Push',()=>{swipeMode=false;menuStep=1;menuT0=uiT;},{size:28,id:0}));
   appear(EZ.back((uiT-.85)/.45),by+bh+gap,bh,()=>button(bx,by+bh+gap,bw,bh,'Swipe',()=>{swipeMode=true;menuStep=1;menuT0=uiT;},{size:28,id:2,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'}));
  }else{const bh=56,gap=16,bk=36,by=ih+(bandH-SAFEB-bh*2-gap*2-bk)*.5,mt=uiT-menuT0; // step 2 of 2: Easy or Hard (Push Hard only hides the green signal)
