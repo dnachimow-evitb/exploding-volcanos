@@ -69,6 +69,7 @@ The pause card shows the mode (Push, Swipe Easy, Swipe Hard) and has a Start Scr
 - v7.28 (TEST COPY ONLY): Other Toys lists owned toys first, then locked ones (cheapest first).
 - v7.29 (TEST COPY ONLY): 8 more shop toys, 16 in the shop and 28 toys in all: Jellyfish 35, Swim Ring 45, Clownfish 55, Seal 70, Pufferfish 85, Seahorse 100, Speedboat 120, Narwhal 150 (whole shop now costs 1245 coins). Other Toys on the My Toys card pages 8 at a time with arrows and "1 Of 2". The player icon picker uses 5 smaller columns when it has more than 20 toys to show.
 - v7.30 (TEST COPY ONLY): 10 more shop toys, none of them sea creatures, at Derek's request: Crayon 25, Banana 65, Teddy Bear 80, Zebra 95, Robot 105, Airplane 115, Guitar 125, Helicopter 135, Fire Truck 140, Unicorn 160 (ten, with the airplane and helicopter Derek asked for mid-build). 26 toys in the shop, 38 in all; the whole shop costs 2290 coins. Other Toys is now 4 pages. The seahorse was redrawn (teal, tube snout, crown, curled tail) after Derek said the first one looked like a crab. The icon picker uses 6 columns above 30 toys.
+- v7.31 (TEST COPY ONLY): the Speedboat is replaced by a Train (same price, 120); Derek found the speedboat too close to the tugboat. `TOY_SWAP` turns a saved `speedboat` into `train` on load, so a player who bought it keeps a toy.
 
 ## Tested
 Scripted in the preview at 375x812 by stepping the game by hand: Push scores on a held throw,

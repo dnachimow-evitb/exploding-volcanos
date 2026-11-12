@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v7.30'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v7.31'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -25,11 +25,12 @@ const CX=190,CY=176,G=0.22,T=58,CHARGE_RATE=0.55,CHARGE_MAX=1.7;
 const windAng=-1.45,swingEnd=1.5,idleAng=0.9,swingDur=0.32;
 const BASE=['🦆','⛵','🦕'],NEWBY={2:'🚚',3:'🚗',4:'🐙',5:'🪣',6:'🦈',7:'🐬',8:'🐸',9:'🦸',10:'🚀'};
 const TOYNAME={'🚚':'Monster Truck','🚗':'Car','🐙':'Octopus','🪣':'Pail','🦈':'Shark','🐬':'Dolphin','🐸':'Froggy','🦸':'Action Figure','🚀':'Rocket'};
-Object.assign(TOYNAME,{'🦆':'Duck','⛵':'Sailboat','🦕':'Dino',whale:'Whale',turtle:'Turtle',sub:'Submarine',crab:'Crab',star:'Starfish',tug:'Tugboat',penguin:'Penguin',pdino:'Purple Dino',jelly:'Jellyfish',ring:'Swim Ring',clown:'Clownfish',seal:'Seal',puffer:'Pufferfish',seahorse:'Seahorse',speedboat:'Speedboat',narwhal:'Narwhal',crayon:'Crayon',banana:'Banana',teddy:'Teddy Bear',zebra:'Zebra',robot:'Robot',guitar:'Guitar',firetruck:'Fire Truck',unicorn:'Unicorn',airplane:'Airplane',helicopter:'Helicopter'});
+Object.assign(TOYNAME,{'🦆':'Duck','⛵':'Sailboat','🦕':'Dino',whale:'Whale',turtle:'Turtle',sub:'Submarine',crab:'Crab',star:'Starfish',tug:'Tugboat',penguin:'Penguin',pdino:'Purple Dino',jelly:'Jellyfish',ring:'Swim Ring',clown:'Clownfish',seal:'Seal',puffer:'Pufferfish',seahorse:'Seahorse',train:'Train',narwhal:'Narwhal',crayon:'Crayon',banana:'Banana',teddy:'Teddy Bear',zebra:'Zebra',robot:'Robot',guitar:'Guitar',firetruck:'Fire Truck',unicorn:'Unicorn',airplane:'Airplane',helicopter:'Helicopter'});
 // TOY SHOP: toys bought with coins. Coins come only from playing (rounds won, badge levels); there is no real money.
 // A player's LINEUP is 12 spots: the first 3 start the game, then one joins each round. It starts as the default set
 // and the player can put any toy they own into any spot. Coins, owned toys and the lineup are saved per player.
-const SHOP=[['crayon',25],['whale',30],['jelly',35],['turtle',40],['ring',45],['crab',50],['clown',55],['star',60],['banana',65],['seal',70],['penguin',75],['teddy',80],['puffer',85],['tug',90],['zebra',95],['seahorse',100],['robot',105],['sub',110],['airplane',115],['speedboat',120],['guitar',125],['pdino',130],['helicopter',135],['firetruck',140],['narwhal',150],['unicorn',160]]; // keep in price order: locked toys are listed in this order
+const SHOP=[['crayon',25],['whale',30],['jelly',35],['turtle',40],['ring',45],['crab',50],['clown',55],['star',60],['banana',65],['seal',70],['penguin',75],['teddy',80],['puffer',85],['tug',90],['zebra',95],['seahorse',100],['robot',105],['sub',110],['airplane',115],['train',120],['guitar',125],['pdino',130],['helicopter',135],['firetruck',140],['narwhal',150],['unicorn',160]]; // keep in price order: locked toys are listed in this order
+const TOY_SWAP={speedboat:'train'},swapToy=e=>TOY_SWAP[e]||e; // replaced toys: a saved player who had the old one gets the new one
 const COIN_ROUND=5,COIN_WIN=25,COIN_BADGE=[0,20,40,80]; // per round won, extra for finishing all 10, per badge level
 const DEF_LINE=[...BASE,...Object.values(NEWBY)],ALL_TOYS=DEF_LINE.concat(SHOP.map(q=>q[0])),priceOf=em=>{const q=SHOP.find(z=>z[0]===em);return q?q[1]:0;};
 let LINE={...NEWBY}; // the toy that joins in each round of the current game (from the player's lineup)
@@ -377,12 +378,16 @@ seahorse(k){const{E,C,blob,sh,line,eye}=k;
  sh(E(-1,4,6.5,10),'#bff0dd');['M-6 -2L4 -2','M-7 4L5 4','M-6 10L4 10'].forEach(d=>line(d,'#2fbf9a',1.8));
  line('M-25 -7L-16 -2M-26 0L-16 2','#e0a800',1.8);
  sh(C(9,-27,6.4),'#fff',2,'#1f8f72');eye(10.5,-26.5,3.8);sh(C(0,-16,3.6),'rgba(255,120,150,.55)');sh(C(42,-23.5,2.2),'#1f8f72');},
-speedboat(k){const{C,blob,sh,line,gloss}=k;
- blob('#555b66',['M-49 1L-38 1L-38 20L-49 20Z'],3);
- blob('#e9412f',['M-30 8L-30 -5L-4 -5L-4 8Z'],3);blob('#c8efff',['M-4 8L5 -14L23 -14L27 8Z'],3);gloss('M2 4L8 -10L13 -10L7 4Z');
- blob('#2f6fe0',['M-44 8L47 8Q40 31 22 33L-36 33Q-43 23 -44 8Z']);
- sh('M-41 15L42 15L40 21L-39 21Z','#ffd43b');gloss('M-34 10L10 10L10 12L-33.5 12Z');
- line('M-38 30Q-46 34 -50 28','#bfeaff',3);},
+train(k){const{C,blob,sh,line,gloss}=k;
+ sh(C(27,-39,5),'#eef2f8',2);sh(C(36,-45,3.4),'#eef2f8',2);
+ blob('#2b2b33',['M17 -31L35 -31L33 -24L19 -24Z','M20 -8L20 -25L32 -25L32 -8Z'],3);
+ blob('#ffd43b',['M40 7L49 21L40 21Z',C(6,-10,7.5)],2.8);
+ blob('#2fa84f',['M-8 -8L34 -8Q41 -8 41 0L41 21L-8 21Z']);
+ blob('#e53935',['M-40 -29L-6 -29L-6 21L-40 21Z']);blob('#2b2b33',['M-45 -36L-1 -36L-1 -29L-45 -29Z'],3);
+ sh('M-33 -21L-13 -21L-13 -5L-33 -5Z','#c8efff',2.5,'#2a2a33');gloss('M-30 -8L-26 -18L-22 -18L-26 -8Z');
+ line('M-6 5L41 5','#ffd43b',3.2);line('M-40 8L-6 8','#ffd43b',3.2);
+ [-27,-5,20].forEach(x=>{blob('#2b2b33',[C(x,26,10)],3);sh(C(x,26,4.4),'#e53935',2,'#d5dae2');});
+ line('M-27 30L20 30','#9aa7b8',3.2);},
 narwhal(k){const{E,C,blob,sh,line,eye}=k;
  blob('#fff3d0',['M-29 -5L-49 -31L-21 -12Z'],2.8);line('M-33 -12L-27 -9','#d9c79a',1.6);line('M-39 -20L-33 -17','#d9c79a',1.6);
  blob('#7fb7d9',['M26 6L47 -15L42 6L47 26Z',E(-4,10,36,22)]);
@@ -780,7 +785,7 @@ const PF_KEY=TEST?'evitb-test-profiles-v1':PF_LIVE,PF_MAX=4,PF_ICONS=['🦆','�
 const ST0={games:0,rounds:0,toys:0,misses:0,hair:0,blocks:0,newFirst:0,sneak:0,perfect:0,quick:0,rebounds:0,hardRounds:0,wins:0,bestScore:0,bestStreak:0,bestRound:0,bestCombo:0};
 function pfFix(o){const r={...ST0};if(o)for(const k in ST0)if(typeof o[k]==='number')r[k]=o[k];return r;}
 let PF={cur:0,list:[]},ST;
-try{const sv=JSON.parse(localStorage.getItem(PF_KEY)||(TEST&&localStorage.getItem(PF_LIVE))||'null');if(sv&&Array.isArray(sv.list)&&sv.list.length){PF.list=sv.list.slice(0,PF_MAX).map((q,i)=>({name:String(q.name||'Player '+(i+1)).slice(0,10),icon:ALL_TOYS.includes(q.icon)?q.icon:PF_ICONS[i],st:pfFix(q.st),coins:typeof q.coins==='number'?Math.max(0,q.coins|0):null,owned:Array.isArray(q.owned)?[...new Set(q.owned)].filter(e=>priceOf(e)):[],line:q.line}));PF.cur=clamp(sv.cur|0,0,PF.list.length-1);}}catch(e){}
+try{const sv=JSON.parse(localStorage.getItem(PF_KEY)||(TEST&&localStorage.getItem(PF_LIVE))||'null');if(sv&&Array.isArray(sv.list)&&sv.list.length){PF.list=sv.list.slice(0,PF_MAX).map((q,i)=>({name:String(q.name||'Player '+(i+1)).slice(0,10),icon:ALL_TOYS.includes(swapToy(q.icon))?swapToy(q.icon):PF_ICONS[i],st:pfFix(q.st),coins:typeof q.coins==='number'?Math.max(0,q.coins|0):null,owned:Array.isArray(q.owned)?[...new Set(q.owned.map(swapToy))].filter(e=>priceOf(e)):[],line:Array.isArray(q.line)?q.line.map(swapToy):q.line}));PF.cur=clamp(sv.cur|0,0,PF.list.length-1);}}catch(e){}
 if(!PF.list.length){let old=null;try{old=JSON.parse(localStorage.getItem(ST_KEY)||'null');}catch(e){}PF.list=[{name:'Player 1',icon:PF_ICONS[0],st:pfFix(old),coins:null,owned:[],line:null}];}
 ST=PF.list[PF.cur].st;
 const owns=(q,em)=>DEF_LINE.includes(em)||q.owned.includes(em);

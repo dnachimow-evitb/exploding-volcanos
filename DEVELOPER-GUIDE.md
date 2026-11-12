@@ -4,7 +4,7 @@ Read this first before changing the game. It says where things are and gives ste
 common jobs (add a toy, change prices, add a badge, publish). The history of *why* things are the way they are
 is in `experiments/fable-v7.md` (one line per version) and, for the art, `experiments/fable-v5.md`.
 
-Last updated: 2026-11-12, at test version v7.30 / live version v7.23.
+Last updated: 2026-11-12, at test version v7.31 / live version v7.23.
 
 ## 1. The files that matter
 
@@ -107,6 +107,12 @@ Conventions:
    720-unit-tall screen past about 48 toys.
 6. Optional real art: put `assets/toys/<name>.png` in place and add the key to `SPRITE_FILE`; a PNG replaces
    the drawn version automatically.
+
+### Replace or remove a shop toy
+Players may already own it. Never just delete the key: add `oldkey:'newkey'` to `TOY_SWAP` (next to `SHOP`).
+On load, the old key is swapped for the new one in the player's owned toys, lineup and icon, so nobody loses
+a toy they paid for. Then rename the painter in `TOYS`, the `TOYNAME` entry and the `SHOP` entry.
+Done once so far: `speedboat` became `train` in v7.31 (too similar to the tugboat).
 
 ### Change the default 12 toys or the number of rounds
 `BASE` (3 starting toys) + `NEWBY` (round 2..10) make `DEF_LINE`, which must stay 12 long. More rounds also
