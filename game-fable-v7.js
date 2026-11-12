@@ -7,10 +7,11 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v7.20'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v7.23'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
+let testRound=1; // TEST PAGE ONLY: which round a new game starts on (the small Round button on the start screen)
 let nameEd=null,pfDel=0; // in-game name keyboard {mode,txt,t0}; delete question (time it opened, 0 = closed)
 let hits=[],pfOpen=false,pfT0=0; // extra tap areas (button ids 5+); Players card on the start screen
 let card4=null,bdgPg=0,bdgT0=0; // Badges card on the start screen: 0 closed, 1-2 badges, 3 stats
@@ -55,13 +56,17 @@ function sfxBlock(){blip(170,.14,'sawtooth',.22,70);noise(.12,.18,300,.6);}
 function sfxErupt(){noise(1.1,.55,600,.4,100);blip(150,1.0,'sawtooth',.28,38);setTimeout(()=>noise(.7,.4,300,.5,80),120);}
 function sfxFanfare(){blip(660,.12,'square',.2,990);setTimeout(()=>blip(880,.12,'square',.18,1180),120);setTimeout(()=>blip(1180,.2,'square',.18),250);}
 
+// how fast a toy drifts across the tub (units per frame). v7.23: the per-round increase is halved (round 10: 1.1, was 1.8).
+// When toys bump they turn around and keep their own speed; they used to trade speeds, so a toy that touched the
+// slow hairball took its near-zero speed and sat still.
+function floatSpd(d){return 0.4+d.drift*.5;}
 function startRound(carry){rdMiss=0;rdBlock=0;rdFirst=true;const d=diff();craterR=d.cr;need=currentToys.length;collected=0;combo=0;
  const single=round>=3;
  objs=currentToys.map((em,i)=>{let x,y;const L=carry?landed[i]:null;
   if(L){x=L.x;y=L.y;}
-  else if(single){const k=i>>1,col=k%3,row=(k/3|0)%3;x=(i%2===0?62:258)+col*30+(Math.random()-.5)*8;y=448+row*18+(Math.random()-.5)*6;}
+  else if(single){const col=i%6,row=(i/6|0)%3;x=58+col*50+(row%2)*20+(Math.random()-.5)*8;y=448+row*19+(Math.random()-.5)*6;} // spread across the whole tub
   else{const left=i%2===0;x=left?(58+Math.random()*74):(248+Math.random()*76);y=442+Math.random()*42;}
-  const vx=(Math.random()<.5?-1:1)*(0.4+d.drift)*(single?1:.5);
+  const vx=(Math.random()<.5?-1:1)*floatSpd(d)*(single?1:.5);
   return{em,x,y,vx,vy:0,bob:Math.random()*6.28,st:'float',sq:0,hb:false,isNew:false};});
  if(newToyEm){const idx=currentToys.lastIndexOf(newToyEm);if(idx>=0){objs[idx].isNew=true;objs[idx].x=CX+(Math.random()-.5)*26;objs[idx].y=458;}}
  objs.forEach((o,i)=>{o.born=NOW+.12+i*.06;});smoke=[];buildOn=false;tutOn=round===1;tutT=0;idleT=0;
@@ -69,7 +74,7 @@ function startRound(carry){rdMiss=0;rdBlock=0;rdFirst=true;const d=diff();crater
  blk.on=d.blk>0;blk.spd=d.blk;blk.x=110;blk.dir=1;blk.y=292;
  timeLeft=d.time;roundTime=d.time;hbTimer=5+Math.random()*3;hintT=round===1?6:0;
  bannerT=2.6;newToyT=newToyEm?5:0;banner=round===1?'Round 1 — Splash Away!':('Round '+round+'!');}
-function startGame(){stat('games');streak=0;round=1;score=0;bestCombo=0;currentToys=[...BASE];newToyEm=null;landed=[];objs=[];ejecta=[];confet=[];collected=0;need=0;combo=0;craterR=DIFF[0].cr;blk.on=false;scoreShown=0;lastScore=0;state='intro';}
+function startGame(){stat('games');streak=0;round=1;score=0;bestCombo=0;currentToys=[...BASE];if(TEST&&testRound>1){round=testRound;for(let r=2;r<=round;r++)if(NEWBY[r])currentToys.push(NEWBY[r]);}newToyEm=null;landed=[];objs=[];ejecta=[];confet=[];collected=0;need=0;combo=0;craterR=DIFF[0].cr;blk.on=false;scoreShown=0;lastScore=0;state='intro';}
 function dist(a,b,c,d){return Math.hypot(a-c,b-d);}
 function spawnHairball(){const left=Math.random()<.5;objs.push({hb:true,x:left?70:310,y:450,vx:(Math.random()-.5)*.6,vy:0,bob:Math.random()*6.28,st:'float',sq:0,life:8,r:16});}
 function waterBurst(x,y,big){const n=big?26:12;for(let i=0;i<n;i++){const a=-1.57+(Math.random()-.5)*(big?2.4:2),s=(big?3:2)+Math.random()*(big?9:5);parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-(big?4:2),life:1,r:(big?4:3)+Math.random()*(big?7:4),col:['#bfeaff','#8ed8ff','#ffffff','#5bc0f0'][~~(Math.random()*4)]});}rings.push({x,y,r:6,life:1});}
@@ -121,14 +126,14 @@ function step(dt){
  const d=diff();
  // toys float freely (the original drift); when two bump they bounce apart instead of stacking
  {const fl=objs.filter(o=>o.st==='float'&&!(charging&&charging.o===o)&&!(pendingLaunch&&pendingLaunch.o===o));
-  for(let i=0;i<fl.length;i++)for(let j=i+1;j<fl.length;j++){const a=fl[i],b=fl[j],dx=b.x-a.x,dy=b.y-a.y;if(Math.abs(dx)<34&&Math.abs(dy)<20){const sg=dx>=0?1:-1,sy=(dy>0||(dy===0&&(i+j)%2))?.5:-.5;if((b.vx-a.vx)*sg<0){const t=a.vx;a.vx=b.vx;b.vx=t;}a.x=clamp(a.x-sg*.6,46,334);b.x=clamp(b.x+sg*.6,46,334);a.y=clamp(a.y-sy,442,490);b.y=clamp(b.y+sy,442,490);}}}
+  for(let i=0;i<fl.length;i++)for(let j=i+1;j<fl.length;j++){const a=fl[i],b=fl[j],dx=b.x-a.x,dy=b.y-a.y;if(Math.abs(dx)<34&&Math.abs(dy)<20){const sg=dx>=0?1:-1,sy=(dy>0||(dy===0&&(i+j)%2))?.5:-.5;if((b.vx-a.vx)*sg<0){a.vx=-sg*Math.abs(a.vx);b.vx=sg*Math.abs(b.vx);}a.x=clamp(a.x-sg*.6,46,334);b.x=clamp(b.x+sg*.6,46,334);a.y=clamp(a.y-sy,442,490);b.y=clamp(b.y+sy,442,490);}}}
  const nLeft=objs.filter(o=>o.st==='float'&&o.x<CX).length,nRight=objs.filter(o=>o.st==='float'&&o.x>=CX).length;
  objs.forEach(o=>{
   if(o.sq>0)o.sq*=.86;
   if(o.hb&&o.st==='float'){o.life-=dt;if(o.life<=0){o.st='gone';pop(o.x,o.y-20,'Gurgle…','#9a7a4a');}}
   const held=(charging&&charging.o===o)||(pendingLaunch&&pendingLaunch.o===o);
-  if(o.st==='float'){if(held){}else{o.x+=o.vx*clamp(3.5/(o.x<CX?nLeft:nRight),.45,1);o.y+=Math.sin(wave*.04+o.bob)*.06;
-   if(o.x<46)o.vx=Math.abs(o.vx);else if(o.x>334)o.vx=-Math.abs(o.vx);if(Math.abs(o.x-CX)<58)o.vx=(o.x<CX?-1:1)*Math.abs(o.vx);}
+  if(o.st==='float'){if(held){}else{o.x+=o.vx*clamp(7/(nLeft+nRight),.5,1);o.y+=Math.sin(wave*.04+o.bob)*.06;
+   if(o.x<46)o.vx=Math.abs(o.vx);else if(o.x>334)o.vx=-Math.abs(o.vx);} // toys drift wall to wall (v7.21: the no-go zone in the middle is gone)
   }else if(o.st==='fly'){
    o.vx+=o.drift||0;o.vy+=G;o.x+=o.vx;o.y+=o.vy;o.rot=(o.rot||0)+o.vx*.05;if(swipeMode)wallBounce(o);
    if(Math.random()<.4)parts.push({x:o.x+(Math.random()-.5)*14,y:o.y+8,vx:(Math.random()-.5)*.8,vy:.5,life:.7,r:2+Math.random()*2.5,col:'#dff4ff'});
@@ -148,7 +153,7 @@ function step(dt){
    }else if((o.vy>0&&o.y>=448)||(!swipeMode&&(o.x<22||o.x>358))){
      combo=0;streak=0;
      if(o.hb){o.st='gone';waterBurst(Math.max(40,Math.min(340,o.x)),456,false);}
-     else{rdMiss++;stat('misses');o.st='float';o.x=Math.max(58,Math.min(322,o.x));o.y=Math.max(448,Math.min(o.y,486));o.vx=(Math.random()<.5?-1:1)*(0.4+d.drift)*(round>=3?1:.4);o.vy=0;o.blocked=0;
+     else{rdMiss++;stat('misses');o.st='float';o.x=Math.max(58,Math.min(322,o.x));o.y=Math.max(448,Math.min(o.y,486));o.vx=(Math.random()<.5?-1:1)*floatSpd(d)*(round>=3?1:.4);o.vy=0;o.blocked=0;
        waterBurst(o.x,o.y-6,false);pop(o.x,o.y-30,'Splash! Try Again!','#dff4ff');sfxPlop();mood(noah,'oops',.9);mood(mxc,'laugh',.8);mood(vol,'aww',.9);}
    }
   }
@@ -588,7 +593,7 @@ function cardToy(em,x,y,size,age,delay){const k=EZ.elastic((age-delay)/.7);if(k<
 function body(t,y,size,col){text(t,W/2,y,size||15,col||C.navy,{w:800});}
 function check(x,y){circ(x,y,8);fill('#fff');circ(x,y,6.5);fill(C.green);X.strokeStyle='#fff';X.lineWidth=2.4;X.lineCap='round';X.lineJoin='round';X.beginPath();X.moveTo(x-3,y);X.lineTo(x-.8,y+2.4);X.lineTo(x+3.2,y-2.2);X.stroke();}
 function drawIntroCard(){const cw=328,ch=306,{cy,age}=cardBegin(cw,ch,'Noah’s Bath Toys');
- const n=currentToys.length,gap=92,sx=W/2-(n-1)*gap/2;currentToys.forEach((em,i)=>cardToy(em,sx+i*gap,cy+128,62,age,.2+i*.12));
+ const n=currentToys.length,gap=Math.min(92,264/Math.max(n-1,1)),tz=n>3?Math.max(26,gap*1.15):62,sx=W/2-(n-1)*gap/2;currentToys.forEach((em,i)=>cardToy(em,sx+i*gap,cy+128,tz,age,.2+i*(n>3?.05:.12)));
  body('Splash them into the volcano!',cy+188,16);body('A new toy joins every round',cy+211,13,'#4a6fc4');
  button((W-236)/2,cy+ch-80,236,58,'Let’s Splash!',()=>{startRound(false);state='play';lastNow=performance.now();});cardEnd();}
 function drawNewToyCard(){const cw=328,ch=366,{cx,cy,age}=cardBegin(cw,ch,'New Toy!');
@@ -773,6 +778,7 @@ function drawMenu(){const t=38;X.fillStyle=C.wall;X.fillRect(0,0,W,HS);X.strokeS
  const bw=232,bx=(W-bw)/2,appear=(k,y,h,fn)=>{if(k<=0)return;X.save();X.translate(W/2,y+h/2);X.scale(k,k);X.translate(-W/2,-(y+h/2));fn();X.restore();};
  if(uiT<.7)card=null;
  if(!howTo&&!bdgPg&&!pfOpen&&uiT>.6)drawChip();
+ if(TEST&&!howTo&&!bdgPg&&!pfOpen&&uiT>.6)button(W-84,HS-SAFEB-62,76,28,'Round '+testRound,()=>{testRound=testRound>=10?1:testRound+1;},{size:12.5,id:6,col:'#e08a00',colD:'#a85f24',colP:'#c97800'}); // test page only: tap to choose the starting round
  if(howTo){drawHowTo();}
  else if(bdgPg){drawBadges();}
  else if(pfOpen){if(nameEd)drawNameCard();else if(pfToy)drawToyCard();else if(pfDel)drawDeleteCard();else drawPlayers();}
