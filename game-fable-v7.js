@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v7.1'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v7.2'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let swipeMode=false,menuStep=0,menuT0=0; // Push or Swipe; start screen step 0 = Push/Swipe, 1 = Easy/Hard
 const cv=document.getElementById('c'),W=380,H=600;let X=cv.getContext('2d');
@@ -53,7 +53,7 @@ function startRound(carry){const d=diff();craterR=d.cr;need=currentToys.length;c
  const single=round>=3;
  objs=currentToys.map((em,i)=>{let x,y;const L=carry?landed[i]:null;
   if(L){x=L.x;y=L.y;}
-  else if(single){x=CX+(Math.random()-.5)*30;y=462+(Math.random()-.5)*16;}
+  else if(single){const k=i>>1,col=k%3,row=(k/3|0)%3;x=(i%2===0?62:258)+col*30+(Math.random()-.5)*8;y=448+row*18+(Math.random()-.5)*6;}
   else{const left=i%2===0;x=left?(58+Math.random()*74):(248+Math.random()*76);y=442+Math.random()*42;}
   const vx=(Math.random()<.5?-1:1)*(0.4+d.drift)*(single?1:.5);
   return{em,x,y,vx,vy:0,bob:Math.random()*6.28,st:'float',sq:0,hb:false,isNew:false};});
@@ -114,13 +114,14 @@ function step(dt){
  const d=diff();
  // toys float freely (the original drift); when two bump they bounce apart instead of stacking
  {const fl=objs.filter(o=>o.st==='float'&&!(charging&&charging.o===o)&&!(pendingLaunch&&pendingLaunch.o===o));
-  for(let i=0;i<fl.length;i++)for(let j=i+1;j<fl.length;j++){const a=fl[i],b=fl[j],dx=b.x-a.x,dy=b.y-a.y;if(Math.abs(dx)<34&&Math.abs(dy)<20){const sg=dx>=0?1:-1,sy=dy>=0?.12:-.12;if((b.vx-a.vx)*sg<0){const t=a.vx;a.vx=b.vx;b.vx=t;}a.x=clamp(a.x-sg*.35,46,334);b.x=clamp(b.x+sg*.35,46,334);a.y=clamp(a.y-sy,442,490);b.y=clamp(b.y+sy,442,490);}}}
+  for(let i=0;i<fl.length;i++)for(let j=i+1;j<fl.length;j++){const a=fl[i],b=fl[j],dx=b.x-a.x,dy=b.y-a.y;if(Math.abs(dx)<34&&Math.abs(dy)<20){const sg=dx>=0?1:-1,sy=(dy>0||(dy===0&&(i+j)%2))?.5:-.5;if((b.vx-a.vx)*sg<0){const t=a.vx;a.vx=b.vx;b.vx=t;}a.x=clamp(a.x-sg*.6,46,334);b.x=clamp(b.x+sg*.6,46,334);a.y=clamp(a.y-sy,442,490);b.y=clamp(b.y+sy,442,490);}}}
+ const nLeft=objs.filter(o=>o.st==='float'&&o.x<CX).length,nRight=objs.filter(o=>o.st==='float'&&o.x>=CX).length;
  objs.forEach(o=>{
   if(o.sq>0)o.sq*=.86;
   if(o.hb&&o.st==='float'){o.life-=dt;if(o.life<=0){o.st='gone';pop(o.x,o.y-20,'Gurgle…','#9a7a4a');}}
   const held=(charging&&charging.o===o)||(pendingLaunch&&pendingLaunch.o===o);
-  if(o.st==='float'){if(held){}else{o.x+=o.vx;o.y+=Math.sin(wave*.04+o.bob)*.06;
-   if(o.x<46||o.x>334)o.vx*=-1;if(Math.abs(o.x-CX)<58)o.vx=(o.x<CX?-1:1)*Math.abs(o.vx);}
+  if(o.st==='float'){if(held){}else{o.x+=o.vx*clamp(3.5/(o.x<CX?nLeft:nRight),.45,1);o.y+=Math.sin(wave*.04+o.bob)*.06;
+   if(o.x<46)o.vx=Math.abs(o.vx);else if(o.x>334)o.vx=-Math.abs(o.vx);if(Math.abs(o.x-CX)<58)o.vx=(o.x<CX?-1:1)*Math.abs(o.vx);}
   }else if(o.st==='fly'){
    o.vx+=o.drift||0;o.vy+=G;o.x+=o.vx;o.y+=o.vy;o.rot=(o.rot||0)+o.vx*.05;if(swipeMode)wallBounce(o);
    if(Math.random()<.4)parts.push({x:o.x+(Math.random()-.5)*14,y:o.y+8,vx:(Math.random()-.5)*.8,vy:.5,life:.7,r:2+Math.random()*2.5,col:'#dff4ff'});
