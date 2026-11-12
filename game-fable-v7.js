@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v7.12'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v7.13'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
 let nameEd=null,pfDel=0; // in-game name keyboard {mode,txt,t0}; delete question (time it opened, 0 = closed)
@@ -78,6 +78,7 @@ function waterBurst(x,y,big){const n=big?26:12;for(let i=0;i<n;i++){const a=-1.5
 function P(e){const r=cv.getBoundingClientRect(),sx=(e.clientX-r.left)/KS,sy=(e.clientY-r.top)/KS;return{sx,sy,x:sx,y:sy-OY};}
 function down(e){const wasPlaying=song&&!song.paused;initAudio();const p=P(e);
  if(dist(p.sx,p.sy,W-28,SAFE+28)<25){if(!wasPlaying&&!muted)return;muted=!muted;if(song){if(muted)song.pause();else song.play().catch(()=>{});}return;}
+ if((state==='play'||paused)&&dist(p.sx,p.sy,W-120,SAFE+28)<22){sfxClick();goMenu();return;} // home button: straight back to the start screen
  if((state==='play'||paused)&&dist(p.sx,p.sy,W-74,SAFE+28)<23){paused=!paused;sfxClick();if(!paused){lastNow=performance.now();acc=0;}return;}
  if(paused||state!=='play'){for(const b of[card,card2,card3,card4,...hits])if(b&&b.act&&p.sx>b.x&&p.sx<b.x+b.w&&p.sy>b.y&&p.sy<b.y+b.h){press={key:b.key,act:b.act,id:b.id||0};break;}return;}
  if(charging||pendingLaunch||swingT>0)return;
@@ -551,16 +552,17 @@ function tutorial(){if(!tutOn||state!=='play'||charging||pendingLaunch||swingT>0
 function chip(x,y,w,h){const r=Math.min(6,h/2);rr(x,y+3,w,h,r);fill(C.deep);rr(x,y,w,h,r);fill('#fff');}
 function roundBtn(x,y,kind){rr(x-19,y-16,38,38,8);fill(C.deep);rr(x-19,y-19,38,38,8);fill('#fff');X.fillStyle=C.navy;
  if(kind==='pause'){rr(x-7,y-7.5,5,15,1.8);X.fill();rr(x+2,y-7.5,5,15,1.8);X.fill();}
+ else if(kind==='home'){X.beginPath();X.moveTo(x-12,y-.5);X.lineTo(x,y-11);X.lineTo(x+12,y-.5);X.closePath();X.fill();X.fillRect(x-8,y-1.5,16,11.5);X.fillStyle='#fff';X.fillRect(x-2.5,y+3,5,7);}
  else if(kind==='play'){X.beginPath();X.moveTo(x-5,y-8);X.lineTo(x+8,y);X.lineTo(x-5,y+8);X.closePath();X.fill();}
  else{X.beginPath();X.moveTo(x-10,y-4);X.lineTo(x-5,y-4);X.lineTo(x+1,y-9.5);X.lineTo(x+1,y+9.5);X.lineTo(x-5,y+4);X.lineTo(x-10,y+4);X.closePath();X.fill();X.lineWidth=2.4;X.strokeStyle=C.navy;X.lineCap='round';
   if(kind==='mute'){X.beginPath();X.moveTo(x+5,y-4.5);X.lineTo(x+12,y+4.5);X.moveTo(x+12,y-4.5);X.lineTo(x+5,y+4.5);X.stroke();}else{X.beginPath();X.arc(x+2,y,5.5,-.9,.9);X.stroke();X.beginPath();X.arc(x+2,y,10,-.9,.9);X.stroke();}}}
 function drawMute(){roundBtn(W-28,SAFE+28,muted?'mute':'sound');}
-function drawPauseBtn(){roundBtn(W-74,SAFE+28,paused?'play':'pause');}
+function drawPauseBtn(){roundBtn(W-74,SAFE+28,paused?'play':'pause');roundBtn(W-120,SAFE+28,'home');}
 function hud(){const s=SAFE,sp=1+scorePop*scorePop*.2;
  X.save();X.translate(60,s+28);X.scale(sp,sp);chip(-50,-18,100,36);star(-30,0,11,5.4);fill(C.gold);text(String(Math.round(scoreShown)),13,1,19,C.navy);X.restore();
  text((hardMode?'Hard · ':'Round ')+round+'/10',60,s+62,12.5,hardMode?C.hot:'#fff',{s:C.navy});
  if(combo>1){const cp=1+comboPop*.3;X.save();X.translate(60,s+84);X.scale(cp,cp);X.fillStyle=C.deep;X.fillRect(-33,-9,66,24);X.fillStyle='#fff';X.fillRect(-33,-12,66,24);text('x'+combo+' Combo',0,.5,10.5,C.lavaDk);X.restore();}
- const tw=126,tx=122,ty=s+17,pct=clamp(timeLeft/roundTime,0,1),low=state==='play'&&timeLeft<8,tc=low?C.amber:pct>.5?C.go:C.gold;
+ const tw=104,tx=119,ty=s+17,pct=clamp(timeLeft/roundTime,0,1),low=state==='play'&&timeLeft<8,tc=low?C.amber:pct>.5?C.go:C.gold;
  rr(tx,ty+3,tw,22,6);fill(C.deep);rr(tx,ty,tw,22,6);fill('#fff');rr(tx+3,ty+3,tw-6,16,4);fill('#c9d8f2');
  if(pct>0){rr(tx+3,ty+3,Math.max(10,(tw-6)*pct),16,4);fill(tc);}
  const pu=low?1+Math.sin(NOW*9)*.12:1;X.save();X.translate(tx+tw/2,ty+11.5);X.scale(pu,pu);text(String(Math.ceil(timeLeft)),0,0,13,C.navy);X.restore();
@@ -753,8 +755,8 @@ function drawMenu(){const t=38;X.fillStyle=C.wall;X.fillRect(0,0,W,HS);X.strokeS
   appear(EZ.back((uiT-.7)/.45),by,bh,()=>button(bx,by,bw,bh,'Push',()=>{swipeMode=false;menuStep=1;menuT0=uiT;},{size:28,id:0}));
   appear(EZ.back((uiT-.85)/.45),by+bh+gap,bh,()=>button(bx,by+bh+gap,bw,bh,'Swipe',()=>{swipeMode=true;menuStep=1;menuT0=uiT;},{size:28,id:2,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'}));
  }else{const bh=56,gap=16,bk=36,by=ih+34+(bandH-34-SAFEB-bh*2-gap*2-bk)*.5,mt=uiT-menuT0; // step 2 of 2: Easy or Hard (Push Hard only hides the green signal)
-  appear(EZ.back(mt/.35),by,bh,()=>button(bx,by,bw,bh,(swipeMode?'Swipe':'Push')+' Easy',()=>{hardMode=false;startGame();},{size:25,id:0}));
-  appear(EZ.back((mt-.1)/.35),by+bh+gap,bh,()=>button(bx,by+bh+gap,bw,bh,(swipeMode?'Swipe':'Push')+' Hard',()=>{hardMode=true;startGame();},{size:25,id:2,col:C.lava,colD:'#a82a06',colP:'#e2580f'}));
+  appear(EZ.back(mt/.35),by,bh,()=>button(bx,by,bw,bh,'Easy',()=>{hardMode=false;startGame();},{size:28,id:0}));
+  appear(EZ.back((mt-.1)/.35),by+bh+gap,bh,()=>button(bx,by+bh+gap,bw,bh,'Hard',()=>{hardMode=true;startGame();},{size:28,id:2,col:C.lava,colD:'#a82a06',colP:'#e2580f'}));
   appear(EZ.back((mt-.2)/.35),by+(bh+gap)*2,bk,()=>button((W-120)/2,by+(bh+gap)*2,120,bk,'Back',()=>{menuStep=0;menuT0=0;swipeMode=false;},{size:16,id:3,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'}));}
  text(VERSION,W-10,HS-SAFEB-12,10,'#d6efff',{a:'right',w:800});}
 function overlay(){card2=null;card3=null;card4=null;hits.length=0;const key=paused?'pause':state;if(key!==uiKey){uiKey=key;uiT=0;card=null;press=null;}

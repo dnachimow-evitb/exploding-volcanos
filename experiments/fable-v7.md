@@ -36,6 +36,7 @@ The pause card shows the mode (Push, Swipe Easy, Swipe Hard) and has a Start Scr
 - v7.11 (and live v5.14): visible wording changed from "Volcanos" to "Volcanoes": round-win lettering, page titles, home-screen app name. File names, the web address and the original game are unchanged. Offline cache name is now exploding-volcanos-v7.
 - v7.12 (live v5.15, v6.10): spelling sweep. Every remaining "Volcanos" a person can see now reads "Volcanoes", including the original game (game.js, original.html: wording only), the story page and the README. Left alone on purpose: the web address and folder name (exploding-volcanos), saved-data and cache names, and the old history notes.
   Same release: the taped cover picture on the v7 start screen sits 24 units lower so the player chip and sound button no longer cover the tape; the waterline, toys and buttons moved down with it. The story page and v6 test page also use the corrected cover.
+- v7.13: the second start-screen step just says Easy and Hard. A home button sits left of pause during play: one tap goes straight to the start screen (no question asked; the game in progress is lost). The timer bar is a little narrower to make room.
 
 ## Tested
 Scripted in the preview at 375x812 by stepping the game by hand: Push scores on a held throw,
