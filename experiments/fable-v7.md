@@ -67,6 +67,7 @@ The pause card shows the mode (Push, Swipe Easy, Swipe Hard) and has a Start Scr
 - 2026-11-12: DEVELOPER-GUIDE.md added at the top of the project (file map, workflow, saved-data shape, recipes, testing tips). Keep it current when a recipe changes.
 - v7.27 (TEST COPY ONLY): My Toys no longer repeats the lineup in the lower grid. It shows only the toys that are not in the lineup ("Other Toys", 8 of them, bigger cells, names under owned ones, prices under locked ones). Tapping one spot and then another swaps the two.
 - v7.28 (TEST COPY ONLY): Other Toys lists owned toys first, then locked ones (cheapest first).
+- v7.29 (TEST COPY ONLY): 8 more shop toys, 16 in the shop and 28 toys in all: Jellyfish 35, Swim Ring 45, Clownfish 55, Seal 70, Pufferfish 85, Seahorse 100, Speedboat 120, Narwhal 150 (whole shop now costs 1245 coins). Other Toys on the My Toys card pages 8 at a time with arrows and "1 Of 2". The player icon picker uses 5 smaller columns when it has more than 20 toys to show.
 
 ## Tested
 Scripted in the preview at 375x812 by stepping the game by hand: Push scores on a held throw,

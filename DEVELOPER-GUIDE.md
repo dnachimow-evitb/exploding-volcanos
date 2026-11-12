@@ -4,7 +4,7 @@ Read this first before changing the game. It says where things are and gives ste
 common jobs (add a toy, change prices, add a badge, publish). The history of *why* things are the way they are
 is in `experiments/fable-v7.md` (one line per version) and, for the art, `experiments/fable-v5.md`.
 
-Last updated: 2026-11-12, at test version v7.28 / live version v7.23.
+Last updated: 2026-11-12, at test version v7.29 / live version v7.23.
 
 ## 1. The files that matter
 
@@ -85,7 +85,7 @@ Conventions:
 ### Add a toy to the shop
 1. **Draw it.** In the `TOYS` object add a painter, just before the `'🧶'` (hairball) entry:
    ```js
-   seal(k){const{C,E,S,blob,sh,line,eye,gloss}=k;
+   otter(k){const{C,E,S,blob,sh,line,eye,gloss}=k;
     blob('#8a97a8',[E(0,8,34,22)]);   // filled shapes with the white sticker rim
     eye(20,-2,3.6); },
    ```
@@ -94,16 +94,15 @@ Conventions:
    `blob(fill,[paths],rim)` filled shape(s) with rim; `sh(path,fill,strokeW,strokeCol)` flat detail;
    `line(path,col,width,rim)`; `eye(x,y,r)`; `gloss(path)`. Paths are SVG path strings.
    Look at `whale`, `crab`, `penguin` for the house style: 2 to 4 flat colours, dot eyes, a smile, pink cheeks.
-2. **Name it:** add `seal:'Seal'` to the `Object.assign(TOYNAME,{…})` line.
-3. **Price it:** add `['seal',95]` to `SHOP`.
+2. **Name it:** add `otter:'Otter'` to the `Object.assign(TOYNAME,{…})` line.
+3. **Price it:** add `['otter',95]` to `SHOP`, in its place by price.
 4. That is all the wiring. `ALL_TOYS`, the grey "locked" copy, the My Toys grid, the icon picker and the
    lineup all pick it up from `SHOP`.
-5. **My Toys card: keep "Other Toys" at 8 per page.** The lower grid shows only toys that are not in the
-   lineup, 4 per row, 2 rows, owned toys always first and locked ones after (cheapest first). With 20 toys
-   that is exactly 8. **Derek's decision (2026-11-12): when there are
-   more than 20 toys, do NOT make the card taller. Keep the 8-cell area and add paging** (previous / next
-   arrows and a "1 Of 2" label, like the Badges card). Paging is not built yet: the 21st toy is the trigger
-   to build it in `drawMyToys` (slice `pool` by page; reset the page in `openToys`).
+5. **Nothing to resize.** On the My Toys card, "Other Toys" (toys not in the lineup) always shows 8 per
+   page, owned first, then locked in `SHOP` order, with previous / next arrows and "1 Of 2" once there are
+   more than 8 (built in v7.29; Derek's rule: never make the card taller, add pages). Keep `SHOP` sorted by
+   price so locked toys read cheapest first. The player icon picker (`drawToyCard`) switches to 5 smaller
+   columns above 20 toys and grows by rows; check it still fits a 720-unit-tall screen past about 35 toys.
 6. Optional real art: put `assets/toys/<name>.png` in place and add the key to `SPRITE_FILE`; a PNG replaces
    the drawn version automatically.
 
