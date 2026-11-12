@@ -51,6 +51,7 @@ The pause card shows the mode (Push, Swipe Easy, Swipe Hard) and has a Start Scr
 - v7.20 (confirmed working by Derek on his iPhone home-screen app, then published live the same day, cache exploding-volcanos-v11): fix for the iPhone home-screen app, where the top buttons sat under the clock/battery bar and could not be tapped, and a strip at the bottom was left empty. The page now re-checks the screen size twice a second after launch, falls back to the real screen height, and always keeps the top buttons at least 54 points down on notch phones. The test page shows the measured numbers in the bottom-left corner.
 - Test page now has its own home-screen icon (apple-touch-icon-test.png: the volcano with a yellow TEST strip) and the name "Volcanoes Test"; before, it pointed at an SVG, which iPhones ignore.
 - .nojekyll added so GitHub Pages publishes the files as they are (two builds had failed with a generic error).
+- v7.21 (TEST COPY ONLY, not live): toys drift the full width of the tub. The no-go zone in the middle (116 units in front of Noah) is removed, rounds 3+ start with toys spread across the whole tub, and the crowd slow-down now looks at the whole tub (7 or fewer toys = full speed). Measured in the game, 25 s runs, 3 each, old v7.20 -> new: round 10 (12 toys) time touching 8-15% -> 5%, longest stuck 0.2-1.5 s -> 0.1 s; round 8: 6-7% -> 3-4%; round 6: 3-4% -> 3%. Toys now spend about 40-45% of the time in the middle.
 
 ## Tested
 Scripted in the preview at 375x812 by stepping the game by hand: Push scores on a held throw,

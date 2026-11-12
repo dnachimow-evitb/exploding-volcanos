@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v7.20'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v7.21'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -59,7 +59,7 @@ function startRound(carry){rdMiss=0;rdBlock=0;rdFirst=true;const d=diff();crater
  const single=round>=3;
  objs=currentToys.map((em,i)=>{let x,y;const L=carry?landed[i]:null;
   if(L){x=L.x;y=L.y;}
-  else if(single){const k=i>>1,col=k%3,row=(k/3|0)%3;x=(i%2===0?62:258)+col*30+(Math.random()-.5)*8;y=448+row*18+(Math.random()-.5)*6;}
+  else if(single){const col=i%6,row=(i/6|0)%3;x=58+col*50+(row%2)*20+(Math.random()-.5)*8;y=448+row*19+(Math.random()-.5)*6;} // spread across the whole tub
   else{const left=i%2===0;x=left?(58+Math.random()*74):(248+Math.random()*76);y=442+Math.random()*42;}
   const vx=(Math.random()<.5?-1:1)*(0.4+d.drift)*(single?1:.5);
   return{em,x,y,vx,vy:0,bob:Math.random()*6.28,st:'float',sq:0,hb:false,isNew:false};});
@@ -127,8 +127,8 @@ function step(dt){
   if(o.sq>0)o.sq*=.86;
   if(o.hb&&o.st==='float'){o.life-=dt;if(o.life<=0){o.st='gone';pop(o.x,o.y-20,'Gurgle…','#9a7a4a');}}
   const held=(charging&&charging.o===o)||(pendingLaunch&&pendingLaunch.o===o);
-  if(o.st==='float'){if(held){}else{o.x+=o.vx*clamp(3.5/(o.x<CX?nLeft:nRight),.45,1);o.y+=Math.sin(wave*.04+o.bob)*.06;
-   if(o.x<46)o.vx=Math.abs(o.vx);else if(o.x>334)o.vx=-Math.abs(o.vx);if(Math.abs(o.x-CX)<58)o.vx=(o.x<CX?-1:1)*Math.abs(o.vx);}
+  if(o.st==='float'){if(held){}else{o.x+=o.vx*clamp(7/(nLeft+nRight),.5,1);o.y+=Math.sin(wave*.04+o.bob)*.06;
+   if(o.x<46)o.vx=Math.abs(o.vx);else if(o.x>334)o.vx=-Math.abs(o.vx);} // toys drift wall to wall (v7.21: the no-go zone in the middle is gone)
   }else if(o.st==='fly'){
    o.vx+=o.drift||0;o.vy+=G;o.x+=o.vx;o.y+=o.vy;o.rot=(o.rot||0)+o.vx*.05;if(swipeMode)wallBounce(o);
    if(Math.random()<.4)parts.push({x:o.x+(Math.random()-.5)*14,y:o.y+8,vx:(Math.random()-.5)*.8,vy:.5,life:.7,r:2+Math.random()*2.5,col:'#dff4ff'});
