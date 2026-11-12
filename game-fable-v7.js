@@ -1,5 +1,5 @@
 /* Exploding Volcanos in the Bathtub — version 7 ("fable-v7"): PUSH or SWIPE, chosen on the start screen.
-   swipeMode=false is the version 5 game (press and hold, no wall bounces, no Easy/Hard).
+   swipeMode=false is the version 5 game (press and hold, no wall bounces); its Hard only hides the green "it will score" signal.
    swipeMode=true is the version 6 game (swipe to throw, wall rebounds, haptics, then Easy or Hard).
    Every difference between the two is behind the swipeMode flag.
    Based on version 5 ("fable-v5"):
@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v7.0'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v7.1'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let swipeMode=false,menuStep=0,menuT0=0; // Push or Swipe; start screen step 0 = Push/Swipe, 1 = Easy/Hard
 const cv=document.getElementById('c'),W=380,H=600;let X=cv.getContext('2d');
@@ -76,7 +76,7 @@ function down(e){const wasPlaying=song&&!song.paused;initAudio();const p=P(e);
  if((state==='play'||paused)&&dist(p.sx,p.sy,W-74,SAFE+28)<23){paused=!paused;sfxClick();if(!paused){lastNow=performance.now();acc=0;}return;}
  if(paused||state!=='play'){for(const b of[card,card2,card3])if(b&&b.act&&p.sx>b.x&&p.sx<b.x+b.w&&p.sy>b.y&&p.sy<b.y+b.h){press={key:b.key,act:b.act,id:b.id||0};break;}return;}
  if(charging||pendingLaunch||swingT>0)return;
- if(hardMode&&objs.filter(o=>o.st==='fly').length>=HARD_MAX_AIR)return;
+ if(hardMode&&swipeMode&&objs.filter(o=>o.st==='fly').length>=HARD_MAX_AIR)return;
  let best=null,bd=74;objs.forEach(o=>{if(o.st!=='float')return;const d=dist(p.x,p.y,o.x,o.y);if(d<bd){bd=d;best=o;}});
  if(best){charging={o:best,c:0.3,sx:p.x,sy:p.y,fx:p.x,fy:p.y,lx:p.x,ly:p.y,lt:performance.now(),peak:0,len:0,tc:0.3};hintT=0;splashSide=best.x<190?-1:1;haptic(1);}}
 function release(){if(press){const p=press;press=null;pressUntil=NOW+.12;pressId=p.id||0;sfxClick();setTimeout(()=>{if(p.key===uiKey)p.act();},90);return;}
@@ -522,7 +522,7 @@ function bubble(t,x,y,col,tc){X.font=fnt(900,15);const w=X.measureText(t).width+
 function chargeGuide(){if(!charging){wasOn=false;return;}if(swipeMode)charging.c+=(charging.tc-charging.c)*.25;charging.steer=(charging.steer||0)+((charging.ts||0)-(charging.steer||0))*.25;const o=charging.o,iv=ideal(o),f=charging.c,dr=diff().drift*.012;
  let vx=(iv.vx+(charging.steer||0)/T)*f,vy=iv.vy*f,tx=o.x,ty=o.y,on=false;const pts=[];
  for(let i=0;i<(swipeMode?220:110);i++){vy+=G;vx+=dr;tx+=vx;ty+=vy;if(swipeMode){if(tx<WALL_L&&vx<0){tx=WALL_L;vx*=-BNC;}else if(tx>WALL_R&&vx>0){tx=WALL_R;vx*=-BNC;}}if(catchHit(tx,ty,vy)){on=true;break;}if(ty>556||(!swipeMode&&(tx<0||tx>W)))break;pts.push([tx,ty]);}
- const show=on&&!hardMode;if(hardMode)pts.length=Math.min(pts.length,HARD_ARC);if(show&&!wasOn){sfxTick();haptic(1);}wasOn=show;const col=show?C.go:'#fff',sh=~~(NOW*14);
+ const show=on&&!hardMode;if(hardMode&&swipeMode)pts.length=Math.min(pts.length,HARD_ARC);if(show&&!wasOn){sfxTick();haptic(1);}wasOn=show;const col=show?C.go:'#fff',sh=~~(NOW*14);
  pts.forEach((p,i)=>{if((i+sh)%3===1||i<3)return;const r=Math.max(2.6,5.4-i*.02);circ(p[0],p[1],r+1.8);fill(C.navy);circ(p[0],p[1],r);fill(col);});
  const frac=Math.min(f/1.4,1);X.lineCap='round';X.strokeStyle=C.navy;X.lineWidth=9;circ(o.x,o.y,32);X.stroke();X.strokeStyle=col;X.lineWidth=5;X.beginPath();X.arc(o.x,o.y,32,-1.57,-1.57+TAU*frac);X.stroke();
  if(show){X.save();X.strokeStyle=C.go;X.lineWidth=4.5;ell(CX,CY,craterR+16+Math.sin(NOW*16)*1.5,craterR*.5+10);X.stroke();X.restore();const pu=1+Math.sin(NOW*16)*.06;X.save();X.translate(o.x,o.y+(swipeMode?54:-52));X.scale(pu,pu);bubble('Let Go!',0,0,C.go,'#fff');X.restore();}
@@ -587,7 +587,7 @@ function drawNewToyCard(){const cw=328,ch=366,{cx,cy,age}=cardBegin(cw,ch,'New T
  const n=currentToys.length,gap=Math.min(28,(cw-60)/n),sx=W/2-(n-1)*gap/2;currentToys.forEach((em,i)=>{const k=EZ.back((age-.5-i*.04)/.3);if(k<=0)return;X.save();X.translate(sx+i*gap,cy+278);X.scale(k,k);paintToy(em,i===n-1?24:19);X.restore();});
  button((W-220)/2,cy+ch-66,220,56,'Splash On!',()=>{startRound(true);state='play';lastNow=performance.now();});cardEnd();}
 function goMenu(){paused=false;charging=null;pendingLaunch=null;swingT=0;objs=[];ejecta=[];parts=[];eParts=[];rings=[];pops=[];confet=[];smoke=[];sparks=[];buildOn=false;build=0;shake=0;flash=0;blk.on=false;collected=0;need=0;combo=0;state='menu';menuStep=0;lastNow=performance.now();acc=0;}
-function drawPauseCard(){const cw=288,ch=286,{cy}=cardBegin(cw,ch,'Paused');body((swipeMode?(hardMode?'Swipe Hard':'Swipe Easy'):'Push')+'  ·  Round '+round+'  ·  Score '+score,cy+100,swipeMode?13.5:15);
+function drawPauseCard(){const cw=288,ch=286,{cy}=cardBegin(cw,ch,'Paused');body((swipeMode?'Swipe ':'Push ')+(hardMode?'Hard':'Easy')+'  ·  Round '+round+'  ·  Score '+score,cy+100,13.5);
  button((W-208)/2,cy+124,208,58,'Resume',()=>{paused=false;lastNow=performance.now();acc=0;},{icon:1});
  button((W-208)/2,cy+204,208,50,'Start Screen',goMenu,{id:2,size:18,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});cardEnd();}
 function drawResultCard(win){const age=win?uiT-1.75:uiT;if(age<0){card=null;return;}
@@ -614,11 +614,11 @@ function drawMenu(){const t=38;X.fillStyle=C.wall;X.fillRect(0,0,W,HS);X.strokeS
  const bw=232,bx=(W-bw)/2,appear=(k,y,h,fn)=>{if(k<=0)return;X.save();X.translate(W/2,y+h/2);X.scale(k,k);X.translate(-W/2,-(y+h/2));fn();X.restore();};
  if(uiT<.7)card=null;
  if(menuStep===0){const bh=62,gap=20,by=ih+(bandH-SAFEB-bh*2-gap)*.5; // step 1 of 2: how to throw
-  appear(EZ.back((uiT-.7)/.45),by,bh,()=>button(bx,by,bw,bh,'Push',()=>{swipeMode=false;hardMode=false;startGame();},{size:28,id:0}));
+  appear(EZ.back((uiT-.7)/.45),by,bh,()=>button(bx,by,bw,bh,'Push',()=>{swipeMode=false;menuStep=1;menuT0=uiT;},{size:28,id:0}));
   appear(EZ.back((uiT-.85)/.45),by+bh+gap,bh,()=>button(bx,by+bh+gap,bw,bh,'Swipe',()=>{swipeMode=true;menuStep=1;menuT0=uiT;},{size:28,id:2,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'}));
- }else{const bh=56,gap=16,bk=36,by=ih+(bandH-SAFEB-bh*2-gap*2-bk)*.5,mt=uiT-menuT0; // step 2 of 2, swipe only: Easy or Hard
-  appear(EZ.back(mt/.35),by,bh,()=>button(bx,by,bw,bh,'Swipe Easy',()=>{hardMode=false;startGame();},{size:25,id:0}));
-  appear(EZ.back((mt-.1)/.35),by+bh+gap,bh,()=>button(bx,by+bh+gap,bw,bh,'Swipe Hard',()=>{hardMode=true;startGame();},{size:25,id:2,col:C.lava,colD:'#a82a06',colP:'#e2580f'}));
+ }else{const bh=56,gap=16,bk=36,by=ih+(bandH-SAFEB-bh*2-gap*2-bk)*.5,mt=uiT-menuT0; // step 2 of 2: Easy or Hard (Push Hard only hides the green signal)
+  appear(EZ.back(mt/.35),by,bh,()=>button(bx,by,bw,bh,(swipeMode?'Swipe':'Push')+' Easy',()=>{hardMode=false;startGame();},{size:25,id:0}));
+  appear(EZ.back((mt-.1)/.35),by+bh+gap,bh,()=>button(bx,by+bh+gap,bw,bh,(swipeMode?'Swipe':'Push')+' Hard',()=>{hardMode=true;startGame();},{size:25,id:2,col:C.lava,colD:'#a82a06',colP:'#e2580f'}));
   appear(EZ.back((mt-.2)/.35),by+(bh+gap)*2,bk,()=>button((W-120)/2,by+(bh+gap)*2,120,bk,'Back',()=>{menuStep=0;menuT0=0;swipeMode=false;},{size:16,id:3,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'}));}
  text(VERSION,W-10,HS-SAFEB-12,10,'#d6efff',{a:'right',w:800});}
 function overlay(){card2=null;card3=null;const key=paused?'pause':state;if(key!==uiKey){uiKey=key;uiT=0;card=null;press=null;}
