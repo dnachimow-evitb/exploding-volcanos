@@ -52,6 +52,7 @@ The pause card shows the mode (Push, Swipe Easy, Swipe Hard) and has a Start Scr
 - Test page now has its own home-screen icon (apple-touch-icon-test.png: the volcano with a yellow TEST strip) and the name "Volcanoes Test"; before, it pointed at an SVG, which iPhones ignore.
 - .nojekyll added so GitHub Pages publishes the files as they are (two builds had failed with a generic error).
 - v7.21 (TEST COPY ONLY, not live): toys drift the full width of the tub. The no-go zone in the middle (116 units in front of Noah) is removed, rounds 3+ start with toys spread across the whole tub, and the crowd slow-down now looks at the whole tub (7 or fewer toys = full speed). Measured in the game, 25 s runs, 3 each, old v7.20 -> new: round 10 (12 toys) time touching 8-15% -> 5%, longest stuck 0.2-1.5 s -> 0.1 s; round 8: 6-7% -> 3-4%; round 6: 3-4% -> 3%. Toys now spend about 40-45% of the time in the middle.
+- v7.22 (TEST COPY ONLY): a small orange "Round N" button in the bottom-right of the test page's start screen. Each tap moves the starting round up by one (1 to 10, then back to 1); the next game starts on that round with all its toys. It only exists when the page is play-test.html, so it never shows in the live game even after the test file is published.
 
 ## Tested
 Scripted in the preview at 375x812 by stepping the game by hand: Push scores on a held throw,
