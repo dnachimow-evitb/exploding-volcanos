@@ -48,7 +48,9 @@ The pause card shows the mode (Push, Swipe Easy, Swipe Hard) and has a Start Scr
 - v7.17: the two personal-best badges (Never Miss, Big Score) no longer look like running totals: the row reads "Best streak: 14" / "Best game: 3400" with "Goal: 20" / "Goal: 6000" on the right.
 - v7.18: published as the live game (see the top of this file).
 - v7.19: separate test copy set up (game-test.js + play-test.html). No change to how the game plays. The start-screen corner reads "v7.19 TEST" on the test page.
-- v7.20 (TEST COPY ONLY, not live yet): fix for the iPhone home-screen app, where the top buttons sat under the clock/battery bar and could not be tapped, and a strip at the bottom was left empty. The page now re-checks the screen size twice a second after launch, falls back to the real screen height, and always keeps the top buttons at least 54 points down on notch phones. The test page shows the measured numbers in the bottom-left corner.
+- v7.20 (confirmed working by Derek on his iPhone home-screen app, then published live the same day, cache exploding-volcanos-v11): fix for the iPhone home-screen app, where the top buttons sat under the clock/battery bar and could not be tapped, and a strip at the bottom was left empty. The page now re-checks the screen size twice a second after launch, falls back to the real screen height, and always keeps the top buttons at least 54 points down on notch phones. The test page shows the measured numbers in the bottom-left corner.
+- Test page now has its own home-screen icon (apple-touch-icon-test.png: the volcano with a yellow TEST strip) and the name "Volcanoes Test"; before, it pointed at an SVG, which iPhones ignore.
+- .nojekyll added so GitHub Pages publishes the files as they are (two builds had failed with a generic error).
 
 ## Tested
 Scripted in the preview at 375x812 by stepping the game by hand: Push scores on a held throw,
