@@ -1,6 +1,9 @@
 EXPLODING VOLCANOES IN THE BATHTUB — web app (PWA)
 ==================================================
 
+FOR WHOEVER CHANGES THE GAME NEXT: read DEVELOPER-GUIDE.md first. It has the file map, the
+test-then-publish steps, and recipes (add a toy, change prices, add a badge).
+
 WHICH VERSION IS LIVE (updated 2026-11-12)
 ------------------------------------------------------------------
 The live game at https://dnachimow-evitb.github.io/exploding-volcanos/
