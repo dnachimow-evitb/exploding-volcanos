@@ -7,9 +7,9 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v7.3'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v7.4'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
-let howTo=0,howT0=0; // How To Play card on the start screen: 0 closed, 1 Push page, 2 Swipe page
+let howTo=0,howT0=0; // How To Play card on the start screen: 0 closed, 1 The Game, 2 Push, 3 Swipe
 let swipeMode=false,menuStep=0,menuT0=0; // Push or Swipe; start screen step 0 = Push/Swipe, 1 = Easy/Hard
 const cv=document.getElementById('c'),W=380,H=600;let X=cv.getContext('2d');
 const song=document.getElementById('song');
@@ -588,18 +588,27 @@ function drawNewToyCard(){const cw=328,ch=366,{cx,cy,age}=cardBegin(cw,ch,'New T
  body(TOYNAME[newToyEm]||'New Toy',cy+226,24);body('Joins the tub for round '+round,cy+250,13.5,'#4a6fc4');
  const n=currentToys.length,gap=Math.min(28,(cw-60)/n),sx=W/2-(n-1)*gap/2;currentToys.forEach((em,i)=>{const k=EZ.back((age-.5-i*.04)/.3);if(k<=0)return;X.save();X.translate(sx+i*gap,cy+278);X.scale(k,k);paintToy(em,i===n-1?24:19);X.restore();});
  button((W-220)/2,cy+ch-66,220,56,'Splash On!',()=>{startRound(true);state='play';lastNow=performance.now();});cardEnd();}
-// ── HOW TO PLAY (start screen) ── two pages, Push then Swipe: a small looping demo and three short steps each.
+// ── HOW TO PLAY (start screen) ── three pages. The Game (toys, clock, Max, hairball), then Push and Swipe (a small looping demo and three short steps each).
 const HOWTO=[null,
+ {name:'The Game',rows:[['toy','The Toys','Throw them all into the volcano.'],['clock','The Clock','Get them in before time runs out.'],['max','Max','He pops up and blocks your throw.'],['hair','The Hairball','Throw it in for 5 more seconds.']],note:'A new toy joins every round.',next:'Next: Push'},
  {name:'Push',steps:['Press a toy and hold.','Let go when the dots turn green.','It flies into the volcano!'],note:'Hard: the dots never turn green.',next:'Next: Swipe'},
  {name:'Swipe',steps:['Put your finger on a toy.','Swipe up at the volcano.','Bigger swipe, bigger throw!'],note:'Bounce it off a wall for double points.',next:'Got It!'}];
 function drawHowTo(){const pg=HOWTO[howTo],age=uiT-howT0,cw=324,ch=428,{cx,cy}=cardBegin(cw,ch,'How To Play',age);
- text(pg.name,W/2,cy+84,23,C.navy);text(howTo+' Of 2',cx+cw-20,cy+84,12,'#4a6fc4',{a:'right',w:800});
+ text(pg.name,W/2,cy+84,23,C.navy);text(howTo+' Of 3',cx+cw-20,cy+84,12,'#4a6fc4',{a:'right',w:800});
+ if(pg.rows){pg.rows.forEach((r,i)=>{const y=cy+122+i*54,ix=cx+46,k=EZ.back((age-.15-i*.08)/.3);if(k<=0)return;X.save();X.translate(ix,y);X.scale(k,k);
+   if(r[0]==='toy'){X.rotate(Math.sin(NOW*2)*.12);paintToy('🦆',40);}
+   else if(r[0]==='hair'){X.rotate(Math.sin(NOW*2+2)*.12);paintToy('🧶',38);}
+   else if(r[0]==='clock'){circ(0,0,19);fill(C.navy);circ(0,0,15.5);fill('#fff');X.strokeStyle=C.navy;X.lineCap='round';X.lineWidth=3.4;X.beginPath();X.moveTo(0,0);X.lineTo(0,-7);X.stroke();X.strokeStyle=C.lava;X.lineWidth=3;const a=NOW*2.2-PI/2;X.beginPath();X.moveTo(0,0);X.lineTo(Math.cos(a)*11,Math.sin(a)*11);X.stroke();circ(0,0,2.6);fill(C.navy);}
+   else{X.translate(0,4);sticker(()=>kidHead(0,0,15,C.hairM,'#a84f16',{mood:'cheeky',freckles:true,flip:true}));}
+   X.restore();text(r[1],cx+82,y-9,16.5,C.navy,{a:'left'});text(r[2],cx+82,y+11,12.5,'#4a6fc4',{a:'left',w:800});});
+  body(pg.note,cy+336,12.5,C.lavaDk);
+  button((W-214)/2,cy+ch-74,214,52,pg.next,()=>{howTo=2;},{size:21});cardEnd();return;}
  // demo panel: a toy, the volcano, a finger, and the dotted throw line
  const pw=272,ph=124,x0=(W-pw)/2,y0=cy+102,tx=x0+54,ty=y0+94,vx=x0+196,vy=y0+44,t=(NOW%3.4)/3.4;
  X.save();rr(x0,y0,pw,ph,8);X.clip();X.fillStyle=C.wall;X.fillRect(x0,y0,pw,ph);
  X.beginPath();X.moveTo(vx-58,y0+ph);X.lineTo(vx-20,vy);X.lineTo(vx+20,vy);X.lineTo(vx+58,y0+ph);X.closePath();fill('#7a4a2c');X.fillStyle=C.lava;X.fillRect(vx-20,vy-4,40,9);
  X.fillStyle=C.water;X.fillRect(x0,y0+ph-22,pw,22);X.fillStyle='#fff';X.fillRect(x0,y0+ph-24,pw,3);
- const arc=u=>[tx+(vx-tx)*u,ty+(vy-ty)*u-150*u*(1-u)],N=13,swipe=howTo===2;
+ const arc=u=>[tx+(vx-tx)*u,ty+(vy-ty)*u-150*u*(1-u)],N=13,swipe=howTo===3;
  let grow,fly,fx=tx,fy=ty,finger=true; // grow: how much of the line shows; fly: toy along the line
  if(swipe){const m=clamp((t-.12)/.3,0,1);grow=t<.5?m:0;fly=clamp((t-.5)/.3,0,1);fx=tx+42*EZ.out(m);fy=ty-58*EZ.out(m);finger=t<.5;}
  else{grow=t<.55?clamp(t/.42,0,1):0;fly=clamp((t-.55)/.3,0,1);finger=t<.55;}
@@ -613,7 +622,7 @@ function drawHowTo(){const pg=HOWTO[howTo],age=uiT-howT0,cw=324,ch=428,{cx,cy}=c
  if(finger&&green)bubble('Let Go!',tx+30,y0+20,C.go,'#fff');
  pg.steps.forEach((st,i)=>{const y=cy+252+i*27;circ(cx+34,y,11);fill(C.lava);text(''+(i+1),cx+34,y+1,14,'#fff');text(st,cx+54,y+1,15,C.navy,{a:'left',w:800});});
  body(pg.note,cy+336,12.5,'#4a6fc4');
- button((W-214)/2,cy+ch-74,214,52,pg.next,()=>{if(howTo===1){howTo=2;}else howTo=0;},{size:21});cardEnd();}
+ button((W-214)/2,cy+ch-74,214,52,pg.next,()=>{if(howTo===2){howTo=3;}else howTo=0;},{size:21});cardEnd();}
 function goMenu(){paused=false;charging=null;pendingLaunch=null;swingT=0;objs=[];ejecta=[];parts=[];eParts=[];rings=[];pops=[];confet=[];smoke=[];sparks=[];buildOn=false;build=0;shake=0;flash=0;blk.on=false;collected=0;need=0;combo=0;state='menu';menuStep=0;howTo=0;lastNow=performance.now();acc=0;}
 function drawPauseCard(){const cw=288,ch=286,{cy}=cardBegin(cw,ch,'Paused');body((swipeMode?'Swipe ':'Push ')+(hardMode?'Hard':'Easy')+'  ·  Round '+round+'  ·  Score '+score,cy+100,13.5);
  button((W-208)/2,cy+124,208,58,'Resume',()=>{paused=false;lastNow=performance.now();acc=0;},{icon:1});
