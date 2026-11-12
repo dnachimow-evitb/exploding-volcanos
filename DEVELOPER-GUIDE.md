@@ -4,7 +4,7 @@ Read this first before changing the game. It says where things are and gives ste
 common jobs (add a toy, change prices, add a badge, publish). The history of *why* things are the way they are
 is in `experiments/fable-v7.md` (one line per version) and, for the art, `experiments/fable-v5.md`.
 
-Last updated: 2026-11-12, at test version v7.29 / live version v7.23.
+Last updated: 2026-11-12, at test version v7.30 / live version v7.23.
 
 ## 1. The files that matter
 
@@ -93,7 +93,8 @@ Conventions:
    `C(x,y,r)` circle path, `E(x,y,a,b)` ellipse path, `S(x,y,R,r)` star path;
    `blob(fill,[paths],rim)` filled shape(s) with rim; `sh(path,fill,strokeW,strokeCol)` flat detail;
    `line(path,col,width,rim)`; `eye(x,y,r)`; `gloss(path)`. Paths are SVG path strings.
-   Look at `whale`, `crab`, `penguin` for the house style: 2 to 4 flat colours, dot eyes, a smile, pink cheeks.
+   Toys do not have to be sea creatures (Derek, 2026-11-12: "it can be anything"). Look at `whale`, `crab`,
+   `penguin`, `robot`, `firetruck` for the house style: 2 to 4 flat colours, dot eyes, a smile, pink cheeks.
 2. **Name it:** add `otter:'Otter'` to the `Object.assign(TOYNAME,{…})` line.
 3. **Price it:** add `['otter',95]` to `SHOP`, in its place by price.
 4. That is all the wiring. `ALL_TOYS`, the grey "locked" copy, the My Toys grid, the icon picker and the
@@ -101,8 +102,9 @@ Conventions:
 5. **Nothing to resize.** On the My Toys card, "Other Toys" (toys not in the lineup) always shows 8 per
    page, owned first, then locked in `SHOP` order, with previous / next arrows and "1 Of 2" once there are
    more than 8 (built in v7.29; Derek's rule: never make the card taller, add pages). Keep `SHOP` sorted by
-   price so locked toys read cheapest first. The player icon picker (`drawToyCard`) switches to 5 smaller
-   columns above 20 toys and grows by rows; check it still fits a 720-unit-tall screen past about 35 toys.
+   price so locked toys read cheapest first. The player icon picker (`drawToyCard`) uses 4 columns up to 20
+   toys, 5 up to 30, 6 above that, and grows by rows; with all 38 it is 7 rows. Check it still fits a
+   720-unit-tall screen past about 48 toys.
 6. Optional real art: put `assets/toys/<name>.png` in place and add the key to `SPRITE_FILE`; a PNG replaces
    the drawn version automatically.
 

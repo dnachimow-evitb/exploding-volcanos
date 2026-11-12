@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v7.29'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v7.30'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -25,11 +25,11 @@ const CX=190,CY=176,G=0.22,T=58,CHARGE_RATE=0.55,CHARGE_MAX=1.7;
 const windAng=-1.45,swingEnd=1.5,idleAng=0.9,swingDur=0.32;
 const BASE=['🦆','⛵','🦕'],NEWBY={2:'🚚',3:'🚗',4:'🐙',5:'🪣',6:'🦈',7:'🐬',8:'🐸',9:'🦸',10:'🚀'};
 const TOYNAME={'🚚':'Monster Truck','🚗':'Car','🐙':'Octopus','🪣':'Pail','🦈':'Shark','🐬':'Dolphin','🐸':'Froggy','🦸':'Action Figure','🚀':'Rocket'};
-Object.assign(TOYNAME,{'🦆':'Duck','⛵':'Sailboat','🦕':'Dino',whale:'Whale',turtle:'Turtle',sub:'Submarine',crab:'Crab',star:'Starfish',tug:'Tugboat',penguin:'Penguin',pdino:'Purple Dino',jelly:'Jellyfish',ring:'Swim Ring',clown:'Clownfish',seal:'Seal',puffer:'Pufferfish',seahorse:'Seahorse',speedboat:'Speedboat',narwhal:'Narwhal'});
+Object.assign(TOYNAME,{'🦆':'Duck','⛵':'Sailboat','🦕':'Dino',whale:'Whale',turtle:'Turtle',sub:'Submarine',crab:'Crab',star:'Starfish',tug:'Tugboat',penguin:'Penguin',pdino:'Purple Dino',jelly:'Jellyfish',ring:'Swim Ring',clown:'Clownfish',seal:'Seal',puffer:'Pufferfish',seahorse:'Seahorse',speedboat:'Speedboat',narwhal:'Narwhal',crayon:'Crayon',banana:'Banana',teddy:'Teddy Bear',zebra:'Zebra',robot:'Robot',guitar:'Guitar',firetruck:'Fire Truck',unicorn:'Unicorn',airplane:'Airplane',helicopter:'Helicopter'});
 // TOY SHOP: toys bought with coins. Coins come only from playing (rounds won, badge levels); there is no real money.
 // A player's LINEUP is 12 spots: the first 3 start the game, then one joins each round. It starts as the default set
 // and the player can put any toy they own into any spot. Coins, owned toys and the lineup are saved per player.
-const SHOP=[['whale',30],['jelly',35],['turtle',40],['ring',45],['crab',50],['clown',55],['star',60],['seal',70],['penguin',75],['puffer',85],['tug',90],['seahorse',100],['sub',110],['speedboat',120],['pdino',130],['narwhal',150]]; // keep in price order: locked toys are listed in this order
+const SHOP=[['crayon',25],['whale',30],['jelly',35],['turtle',40],['ring',45],['crab',50],['clown',55],['star',60],['banana',65],['seal',70],['penguin',75],['teddy',80],['puffer',85],['tug',90],['zebra',95],['seahorse',100],['robot',105],['sub',110],['airplane',115],['speedboat',120],['guitar',125],['pdino',130],['helicopter',135],['firetruck',140],['narwhal',150],['unicorn',160]]; // keep in price order: locked toys are listed in this order
 const COIN_ROUND=5,COIN_WIN=25,COIN_BADGE=[0,20,40,80]; // per round won, extra for finishing all 10, per badge level
 const DEF_LINE=[...BASE,...Object.values(NEWBY)],ALL_TOYS=DEF_LINE.concat(SHOP.map(q=>q[0])),priceOf=em=>{const q=SHOP.find(z=>z[0]===em);return q?q[1]:0;};
 let LINE={...NEWBY}; // the toy that joins in each round of the current game (from the player's lineup)
@@ -370,11 +370,13 @@ puffer(k){const{E,C,blob,sh,line,eye}=k;let d='';for(let i=0;i<28;i++){const a=i
  [[-20,-18,3],[0,-25,2.6],[20,-18,3]].forEach(q=>sh(C(q[0],q[1],q[2]),'#f7b500'));
  [-11,11].forEach(x=>{sh(C(x,-6,8.2),'#fff',2.4);eye(x+1,-5,4.2);});
  sh(C(0,11,4.2),'#b34d00');sh(C(-20,6,4),'rgba(255,110,90,.45)');sh(C(20,6,4),'rgba(255,110,90,.45)');},
-seahorse(k){const{C,blob,sh,line,eye}=k;
- blob('#ffd43b',['M-13 -2L-31 -11L-29 9Z'],3);
- blob('#ff9a3d',['M17 -30L40 -26L17 -19Z','M1 -44L7 -36L-5 -36Z','M-2 -17Q-18 0 -3 18Q9 30 -1 38Q-13 44 -19 33Q-9 34 -10 26Q-24 12 -19 -7Q-15 -24 0 -32Z',C(7,-27,13)]);
- ['M-12 -4Q-5 -1 -2 -8','M-13 6Q-5 9 0 3','M-9 16Q-2 19 3 13'].forEach(d=>line(d,'#d96a10',2.2));
- eye(10,-29,3.4);sh(C(3,-21,3.2),'rgba(255,255,255,.4)');},
+seahorse(k){const{E,C,blob,sh,line,eye}=k;
+ blob('#ffd43b',['M-12 -6L-30 -14L-29 8L-13 9Z'],3);
+ line('M2 -14Q-14 -2 -7 12Q1 22 -3 31Q-8 43 -21 41Q-32 37 -29 27Q-25 19 -17 23Q-13 27 -17 31','#2fbf9a',10,3.2);
+ blob('#2fbf9a',['M-6 -38L-1 -48L5 -40L11 -48L15 -37Z','M17 -31L43 -27L43 -20L17 -17Z',E(-4,3,12,14),C(6,-24,16)]);
+ sh(E(-1,4,6.5,10),'#bff0dd');['M-6 -2L4 -2','M-7 4L5 4','M-6 10L4 10'].forEach(d=>line(d,'#2fbf9a',1.8));
+ line('M-25 -7L-16 -2M-26 0L-16 2','#e0a800',1.8);
+ sh(C(9,-27,6.4),'#fff',2,'#1f8f72');eye(10.5,-26.5,3.8);sh(C(0,-16,3.6),'rgba(255,120,150,.55)');sh(C(42,-23.5,2.2),'#1f8f72');},
 speedboat(k){const{C,blob,sh,line,gloss}=k;
  blob('#555b66',['M-49 1L-38 1L-38 20L-49 20Z'],3);
  blob('#e9412f',['M-30 8L-30 -5L-4 -5L-4 8Z'],3);blob('#c8efff',['M-4 8L5 -14L23 -14L27 8Z'],3);gloss('M2 4L8 -10L13 -10L7 4Z');
@@ -387,6 +389,65 @@ narwhal(k){const{E,C,blob,sh,line,eye}=k;
  sh('M-36 18Q-6 33 26 15Q14 32 -6 32Q-26 32 -36 18Z','#e6f4fb');
  [[2,-2,3],[12,2,2.4],[-6,-6,2.2]].forEach(q=>sh(C(q[0],q[1],q[2]),'#5f98bd'));
  eye(-20,5,3.8);line('M-32 14Q-24 20 -15 16','#3d6f91',2.4);sh(C(-12,12,4),'rgba(255,120,150,.45)');},
+crayon(k,g){const{blob,sh,line}=k;g.save();g.rotate(.62);
+ blob('#e53935',['M-9 -22L0 -47L9 -22Z','M-12 -22L12 -22L12 36L-12 36Z']);
+ sh('M-4.5 -34L0 -47L4.5 -34Z','#a81f1c');sh('M-12 -10L12 -10L12 24L-12 24Z','#ffd9d4');
+ line('M-12 -3L12 -3','#b71c1c',2.2);line('M-12 17L12 17','#b71c1c',2.2);line('M-7 7Q-3 2 0 7Q3 12 7 7','#b71c1c',2.4);
+ line('M-7 -18L-7 31','rgba(255,255,255,.4)',3);g.restore();},
+banana(k){const{C,blob,sh,line}=k;
+ blob('#8a5a2a',['M-42 -19L-33 -25L-29 -16L-38 -11Z'],2.8);
+ blob('#ffd43b',['M-38 -15Q-31 27 14 27Q41 25 45 4Q30 16 8 14Q-22 12 -30 -19Z']);
+ sh(C(43,6,3.2),'#6b4423');line('M-24 2Q-6 20 22 19','#fff27a',3.4);line('M-31 -8Q-28 6 -18 14','#e0a800',2);},
+teddy(k){const{E,C,blob,sh,line,eye}=k;
+ blob('#b9793f',[E(-13,40,10,7),E(13,40,10,7),E(-25,13,9,13),E(25,13,9,13),E(0,20,22,22),C(-20,-31,10),C(20,-31,10),C(0,-16,22)]);
+ sh(C(-20,-31,5),'#e8b98a');sh(C(20,-31,5),'#e8b98a');sh(E(0,22,13,14),'#e8b98a');sh(E(0,-9,10.5,8.5),'#f0d2ad');
+ sh(E(0,-13,4.2,3.2),'#3a2410');line('M0 -10L0 -6M-5 -5Q0 -1 5 -5','#3a2410',2);
+ eye(-9,-21,3.4);eye(9,-21,3.4);sh(C(-15,-11,3.6),'rgba(255,120,130,.5)');sh(C(15,-11,3.6),'rgba(255,120,130,.5)');},
+zebra(k){const{E,C,blob,sh,line,eye}=k;
+ blob('#f4f6fa',['M-33 2Q-46 6 -44 22L-39 21Q-40 11 -31 9Z','M-26 14L-26 42L-17 42L-17 18Z','M-9 18L-9 42L0 42L0 18Z','M9 18L9 42L18 42L18 16Z','M25 -36L23 -47L32 -39Z',E(-6,6,28,17),'M10 2Q15 -30 29 -37Q44 -38 45 -25Q43 -14 30 -13Q28 2 22 14Z']);
+ ['M-24 -7L-20 21','M-13 -10L-9 23','M-2 -11L2 23','M9 -9L12 20','M17 -14L24 -4','M21 -24L29 -16'].forEach(d=>line(d,'#2a2a33',4.2));
+ sh('M12 -8Q14 -30 26 -38L21 -37Q10 -28 9 -6Z','#2a2a33');sh(E(41,-23,5,6.5),'#2a2a33');
+ ['M-26 38L-17 38','M-9 38L0 38','M9 38L18 38'].forEach(d=>line(d,'#2a2a33',5));line('M-44 16L-40 22','#2a2a33',4);
+ eye(32,-28,3.2);},
+robot(k){const{C,blob,sh,line,eye}=k;
+ line('M0 -40L0 -47','#9aa7b8',3.5,2.2);blob('#e53935',[C(0,-47,3.6)],2.2);
+ line('M-22 -4L-34 8L-30 20','#9aa7b8',7,2.8);line('M22 -4L34 8L30 20','#9aa7b8',7,2.8);
+ blob('#9aa7b8',['M-15 24L-15 41L-4 41L-4 24Z','M4 24L4 41L15 41L15 24Z','M-18 -40L18 -40L18 -15L-18 -15Z']);
+ blob('#5b7fd6',['M-22 -11L22 -11L22 25L-22 25Z']);
+ [-8,8].forEach(x=>{sh(C(x,-29,5.6),'#fff',2.2,'#2a2a33');eye(x+.6,-28.6,3);});sh('M-9 -21L9 -21L9 -18L-9 -18Z','#2a2a33');
+ sh('M-14 -4L14 -4L14 10L-14 10Z','#ffd43b',2.2,'#2a2a33');sh(C(-7,3,3),'#e53935');sh(C(1,3,3),'#2fc24a');line('M7 0L11 0M7 5L11 5','#2a2a33',1.8);
+ sh('M-16 15L16 15L16 19L-16 19Z','#34509c');},
+guitar(k,g){const{C,S,blob,sh,line}=k;g.save();g.rotate(.5);
+ blob('#3a2410',['M-6 -48L6 -48L7 -39L-7 -39Z'],2.6);blob('#6b4423',['M-4 -40L4 -40L4 -2L-4 -2Z'],3);
+ blob('#c98a3c',[C(0,2,15),C(0,24,21)]);sh(C(0,12,6.5),'#3a2410');sh('M-8 30L8 30L8 34L-8 34Z','#3a2410');
+ ['M-2 -44L-2 32','M0 -44L0 32','M2 -44L2 32'].forEach(d=>line(d,'#fff3d0',1));
+ sh(S(-10,22,5.5,2.5),'#8a5bd6');sh('M10 20L14 20L11 25L15 25L8 33L10 27L7 27Z','#ffd43b');g.restore();},
+firetruck(k){const{C,blob,sh,line,gloss}=k;
+ line('M-42 -21L4 -21','#d5dae2',4.5,2.4);[-34,-24,-14,-4].forEach(x=>line('M'+x+' -24L'+x+' -14','#d5dae2',3));
+ blob('#3fa9f5',['M15 -31L24 -31L24 -24L15 -24Z'],2.4);
+ blob('#e53935',['M-46 16L-46 -12L8 -12L8 -24L30 -24Q38 -24 40 -14L46 -10L46 16Z']);
+ sh('M13 -20L30 -20L35 -10L13 -10Z','#c8efff',2.5);gloss('M16 -12L19 -18L23 -18L20 -12Z');
+ line('M-44 3L44 3','#ffffff',3.4);sh('M39 -4Q45 -3 45 2L39 2Z','#fff3a0',1.5);sh('M-38 -7L-20 -7L-20 -1L-38 -1Z','#ffd43b',1.6);
+ [-24,24].forEach(x=>{blob('#2b2b33',[C(x,18,12.5)],3);sh(C(x,18,5.5),'#d5dae2',2);});},
+unicorn(k){const{E,C,S,blob,sh,line,eye}=k;
+ blob('#ff7fc8',['M-32 0Q-48 4 -46 24Q-40 26 -38 12Q-36 8 -30 8Z'],3);
+ blob('#ffd43b',['M31 -33L41 -48L37 -30Z'],2.4);
+ blob('#fbf3ff',['M-26 14L-26 42L-17 42L-17 18Z','M-9 18L-9 42L0 42L0 18Z','M9 18L9 42L18 42L18 16Z','M24 -35L21 -46L31 -39Z',E(-6,6,28,17),'M10 2Q15 -30 29 -37Q44 -38 45 -25Q43 -14 30 -13Q28 2 22 14Z']);
+ sh('M12 -6Q10 -30 26 -39Q16 -24 20 -8Z','#ff7fc8');sh('M9 2Q4 -18 16 -32Q10 -14 15 2Z','#8a5bd6');sh('M6 8Q0 -6 8 -20Q6 -4 12 8Z','#3fa9f5');
+ ['M-26 38L-17 38','M-9 38L0 38','M9 38L18 38'].forEach(d=>line(d,'#ffd43b',5));
+ sh(S(-12,6,6,2.7),'#ffd43b');eye(32,-27,3.4);line('M38 -17Q41 -15 43 -18','#b06fc0',2);sh(C(27,-20,3.4),'rgba(255,120,170,.5)');},
+airplane(k){const{E,C,blob,sh,line,gloss}=k;
+ blob('#e53935',['M-38 -8L-48 -31L-33 -31L-20 -10Z','M-10 6L8 6L-6 36L-19 36Z']);
+ blob('#f4f6fa',['M-43 2Q-41 -12 -20 -12L24 -12Q44 -10 46 4Q40 14 20 14L-30 14Q-43 12 -43 2Z']);
+ sh('M29 -9Q40 -7 43 0L29 0Z','#7fd0ff',2.2,'#2a2a33');[-10,2,14].forEach(x=>sh(C(x,-3,3.8),'#7fd0ff',1.8,'#2a2a33'));
+ line('M-40 7L42 7','#e53935',2.8);blob('#9aa7b8',[E(-4,19,8,4.5)],2.4);gloss('M-30 -9L16 -9L16 -7.5L-30 -7.5Z');},
+helicopter(k){const{C,blob,sh,line,gloss}=k;
+ line('M-8 22L-10 31M18 22L20 31','#555b66',3.4,2);line('M-18 32L30 32','#555b66',4.2,2.2);
+ line('M4 -14L4 -25','#555b66',4.2,2.2);line('M-36 -27L44 -27','#555b66',5,2.4);blob('#2b2b33',[C(4,-27,4)],2.2);
+ blob('#ff8a1f',['M-18 2L-47 -5L-47 4L-18 13Z','M-8 -14Q30 -18 37 6Q35 22 10 22L-12 22Q-23 20 -23 6Q-23 -10 -8 -14Z']);
+ blob('#e53935',[C(-46,-1,6.5)],2.4);sh(C(-46,-1,2.2),'#fff');
+ sh('M8 -10Q28 -10 33 6L8 6Z','#c8efff',2.5,'#2a2a33');gloss('M12 -6Q18 -7 22 -4L14 2Z');
+ line('M-20 13L30 13','#ffd43b',3);},
 '🧶'(k){const{C,sh,line,eye}=k;let d='';for(let i=0;i<24;i++){const a=i/24*TAU,r=i%2?40:31;d+=(i?'L':'M')+(Math.cos(a)*r).toFixed(1)+' '+(Math.sin(a)*r).toFixed(1);}
  sh(d+'Z','#8a5a2a',5,'#4a2e12');sh(C(0,0,30),'#9a6832');
  line('M-18 -6Q-4 -24 16 -12','#6b4423',2.6);line('M-20 8Q0 -8 20 6','#6b4423',2.6);line('M-12 20Q4 8 18 18','#6b4423',2.6);
@@ -744,7 +805,7 @@ function drawNameCard(){const e=nameEd,cw=336,ch=408,{cx,cy}=cardBegin(cw,ch,e.m
  key(cx+16+5*44,cy+140+3*46,84,'Erase',50,()=>pfType('<'));
  const x0=W/2-(104+12+164)/2,yb=cy+ch-78;button(x0,yb,104,46,'Cancel',()=>{nameEd=null;},{size:16,id:7,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});
  button(x0+116,yb,164,46,'Save',pfNameDone,{size:20,col:e.txt?C.green:'#aab4cc',colD:e.txt?C.greenD:'#8793ad',colP:e.txt?'#27a83f':'#aab4cc'});cardEnd();}
-function drawToyCard(){const q=PF.list[PF.cur],list=PF_TOYS.concat(q.owned),nc=list.length>20?5:4,pit=nc===5?58:72,cs=pit-8,cw=320,ch=188+Math.ceil(list.length/nc)*pit,{cx,cy}=cardBegin(cw,ch,'Pick A Toy',uiT-pfToy);
+function drawToyCard(){const q=PF.list[PF.cur],list=PF_TOYS.concat(q.owned),nc=list.length>30?6:list.length>20?5:4,pit=nc===6?49:nc===5?58:72,cs=pit-8,cw=320,ch=188+Math.ceil(list.length/nc)*pit,{cx,cy}=cardBegin(cw,ch,'Pick A Toy',uiT-pfToy);
  body('Tap a toy for '+q.name+'.',cy+84,13,'#4a6fc4');
  list.forEach((em,i)=>{const x=cx+(cw-nc*pit+8)/2+(i%nc)*pit,y=cy+102+(i/nc|0)*pit,cur=em===q.icon,id=60+i,dn=press&&press.id===id;if(cur){rr(x-3,y-3,cs+6,cs+6,10);fill(C.lava);}rr(x,y,cs,cs,8);fill(cur?'#fff3bf':dn?'#cfe0fa':'#eef4fd');
   X.save();X.translate(x+cs/2,y+cs/2+(cur?Math.sin(NOW*5)*2:0));paintToy(em,cs*.72);X.restore();hits.push({x:x-3,y:y-3,w:cs+6,h:cs+6,act:()=>{q.icon=em;pfSave();pfToy=0;},key:uiKey,id});});
