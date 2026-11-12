@@ -7,8 +7,9 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v7.6'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v7.7'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
+let hits=[],pfOpen=false,pfT0=0; // extra tap areas (button ids 5+); Players card on the start screen
 let card4=null,bdgPg=0,bdgT0=0; // Badges card on the start screen: 0 closed, 1-2 badges, 3 stats
 let howTo=0,howT0=0; // How To Play card on the start screen: 0 closed, 1 The Game, 2 Push, 3 Swipe
 let swipeMode=false,menuStep=0,menuT0=0; // Push or Swipe; start screen step 0 = Push/Swipe, 1 = Easy/Hard
@@ -76,7 +77,7 @@ function P(e){const r=cv.getBoundingClientRect(),sx=(e.clientX-r.left)/KS,sy=(e.
 function down(e){const wasPlaying=song&&!song.paused;initAudio();const p=P(e);
  if(dist(p.sx,p.sy,W-28,SAFE+28)<25){if(!wasPlaying&&!muted)return;muted=!muted;if(song){if(muted)song.pause();else song.play().catch(()=>{});}return;}
  if((state==='play'||paused)&&dist(p.sx,p.sy,W-74,SAFE+28)<23){paused=!paused;sfxClick();if(!paused){lastNow=performance.now();acc=0;}return;}
- if(paused||state!=='play'){for(const b of[card,card2,card3,card4])if(b&&b.act&&p.sx>b.x&&p.sx<b.x+b.w&&p.sy>b.y&&p.sy<b.y+b.h){press={key:b.key,act:b.act,id:b.id||0};break;}return;}
+ if(paused||state!=='play'){for(const b of[card,card2,card3,card4,...hits])if(b&&b.act&&p.sx>b.x&&p.sx<b.x+b.w&&p.sy>b.y&&p.sy<b.y+b.h){press={key:b.key,act:b.act,id:b.id||0};break;}return;}
  if(charging||pendingLaunch||swingT>0)return;
  if(hardMode&&swipeMode&&objs.filter(o=>o.st==='fly').length>=HARD_MAX_AIR)return;
  let best=null,bd=74;objs.forEach(o=>{if(o.st!=='float')return;const d=dist(p.x,p.y,o.x,o.y);if(d<bd){bd=d;best=o;}});
@@ -577,7 +578,7 @@ function button(bx,by,bw,bh,t,act,o){o=o||{};const id=o.id||0,down=(press&&press
  X.save();X.translate(cx,cy);X.scale(1+pu,1+pu);X.translate(-cx,-cy);rr(bx,by+8,bw,bh,9);fill(o.colD||C.greenD);rr(bx,by+dy,bw,bh,9);fill(down?(o.colP||'#27a83f'):(o.col||C.green));
  const fz=o.size||22;X.font=fnt(900,fz);const tw=X.measureText(t).width,iw=o.icon?fz*1.2:0,x0=cx-(tw+iw)/2;
  if(o.icon){const ix=x0+fz*.42,iy=cy+dy+1,z=fz*.5;X.beginPath();X.moveTo(ix-z*.6,iy-z*.85);X.lineTo(ix+z*.9,iy);X.lineTo(ix-z*.6,iy+z*.85);X.closePath();X.lineJoin='round';X.lineWidth=3;X.strokeStyle='#fff';X.stroke();fill('#fff');}
- text(t,x0+iw+tw/2,cy+dy+1,fz,'#fff');X.restore();const hit={x:bx-8,y:by-6,w:bw+16,h:bh+18,act,key:uiKey,id};if(id===2)card2=hit;else if(id===3)card3=hit;else if(id===4)card4=hit;else card=hit;}
+ text(t,x0+iw+tw/2,cy+dy+1,fz,'#fff');X.restore();const hit={x:bx-8,y:by-6,w:bw+16,h:bh+18,act,key:uiKey,id};if(id===2)card2=hit;else if(id===3)card3=hit;else if(id===4)card4=hit;else if(id>=5)hits.push(hit);else card=hit;}
 function cardToy(em,x,y,size,age,delay){const k=EZ.elastic((age-delay)/.7);if(k<=0)return;X.save();X.translate(x,y+Math.sin(NOW*3+x)*3);X.scale(k,k);paintToy(em,size);X.restore();}
 function body(t,y,size,col){text(t,W/2,y,size||15,col||C.navy,{w:800});}
 function check(x,y){circ(x,y,8);fill('#fff');circ(x,y,6.5);fill(C.green);X.strokeStyle='#fff';X.lineWidth=2.4;X.lineCap='round';X.lineJoin='round';X.beginPath();X.moveTo(x-3,y);X.lineTo(x-.8,y+2.4);X.lineTo(x+3.2,y-2.2);X.stroke();}
@@ -591,9 +592,35 @@ function drawNewToyCard(){const cw=328,ch=366,{cx,cy,age}=cardBegin(cw,ch,'New T
  const n=currentToys.length,gap=Math.min(28,(cw-60)/n),sx=W/2-(n-1)*gap/2;currentToys.forEach((em,i)=>{const k=EZ.back((age-.5-i*.04)/.3);if(k<=0)return;X.save();X.translate(sx+i*gap,cy+278);X.scale(k,k);paintToy(em,i===n-1?24:19);X.restore();});
  button((W-220)/2,cy+ch-66,220,56,'Splash On!',()=>{startRound(true);state='play';lastNow=performance.now();});cardEnd();}
 // ── BADGES AND STATS ── lifetime numbers kept on this phone (localStorage). Each badge has three levels: Bronze, Silver, Gold.
-const ST_KEY='evitb-stats-v1';
-let ST={games:0,rounds:0,toys:0,misses:0,hair:0,blocks:0,newFirst:0,sneak:0,perfect:0,quick:0,rebounds:0,hardRounds:0,wins:0,bestScore:0,bestStreak:0,bestRound:0,bestCombo:0};
-try{const sv=JSON.parse(localStorage.getItem(ST_KEY)||'{}');for(const k in ST)if(typeof sv[k]==='number')ST[k]=sv[k];}catch(e){}
+const ST_KEY='evitb-stats-v1'; // old single-player save, read once to become Player 1
+// PLAYERS: up to 4 profiles on this phone, each with its own stats and badges (localStorage key PF_KEY).
+// Stats saved before profiles existed (ST_KEY) become the first player's.
+const PF_KEY='evitb-profiles-v1',PF_MAX=4,PF_ICONS=['🦆','🐙','⛵','🦕'];
+const ST0={games:0,rounds:0,toys:0,misses:0,hair:0,blocks:0,newFirst:0,sneak:0,perfect:0,quick:0,rebounds:0,hardRounds:0,wins:0,bestScore:0,bestStreak:0,bestRound:0,bestCombo:0};
+function pfFix(o){const r={...ST0};if(o)for(const k in ST0)if(typeof o[k]==='number')r[k]=o[k];return r;}
+let PF={cur:0,list:[]},ST;
+try{const sv=JSON.parse(localStorage.getItem(PF_KEY)||'null');if(sv&&Array.isArray(sv.list)&&sv.list.length){PF.list=sv.list.slice(0,PF_MAX).map((q,i)=>({name:String(q.name||'Player '+(i+1)).slice(0,10),icon:PF_ICONS.includes(q.icon)?q.icon:PF_ICONS[i],st:pfFix(q.st)}));PF.cur=clamp(sv.cur|0,0,PF.list.length-1);}}catch(e){}
+if(!PF.list.length){let old=null;try{old=JSON.parse(localStorage.getItem(ST_KEY)||'null');}catch(e){}PF.list=[{name:'Player 1',icon:PF_ICONS[0],st:pfFix(old)}];}
+ST=PF.list[PF.cur].st;
+function pfSave(){try{localStorage.setItem(PF_KEY,JSON.stringify(PF));}catch(e){}}
+function pfPick(i){PF.cur=i;ST=PF.list[i].st;toastQ=[];toast=null;pfSave();}
+function pfAsk(def){let n=null;try{n=prompt('Player name?',def||'');}catch(e){}lastNow=performance.now();acc=0;if(n==null)return null;n=n.trim().slice(0,10);return n||null;}
+function pfAdd(){if(PF.list.length>=PF_MAX)return;const n=pfAsk('');if(!n)return;const icon=PF_ICONS.find(e=>!PF.list.some(q=>q.icon===e))||PF_ICONS[0];PF.list.push({name:n,icon,st:pfFix(null)});pfPick(PF.list.length-1);}
+function pfRename(){const q=PF.list[PF.cur],n=pfAsk(q.name);if(n){q.name=n;pfSave();}}
+function pfDelete(){if(PF.list.length<2)return;const q=PF.list[PF.cur];let ok=false;try{ok=confirm('Delete '+q.name+' and all of their badges?');}catch(e){}lastNow=performance.now();acc=0;if(!ok)return;PF.list.splice(PF.cur,1);pfPick(Math.min(PF.cur,PF.list.length-1));}
+const pfBadges=q=>BADGES.reduce((n,b)=>n+b.t.filter(v=>q.st[b.id]>=v).length,0);
+// who is playing: a chip in the top left of the start screen; tap it to open the Players card
+function drawChip(){const q=PF.list[PF.cur];X.font=fnt(900,14);const w=X.measureText(q.name).width+64,h=36,x=12,y=SAFE+10;rr(x,y+4,w,h,8);fill(C.deep);rr(x,y,w,h,8);fill('#fff');
+ X.save();X.translate(x+20,y+h/2);paintToy(q.icon,26);X.restore();text(q.name,x+38,y+h/2+1,14,C.navy,{a:'left'});X.beginPath();X.moveTo(x+w-20,y+14);X.lineTo(x+w-9,y+14);X.lineTo(x+w-14.5,y+22);X.closePath();fill(C.lava);
+ hits.push({x:x-4,y:y-4,w:w+8,h:h+12,act:()=>{pfOpen=true;pfT0=uiT;},key:uiKey,id:5});}
+function drawPlayers(){const age=uiT-pfT0,n=PF.list.length,cw=320,ch=232+n*56,{cx,cy}=cardBegin(cw,ch,'Players',age);
+ body('Tap a player to pick who is playing.',cy+82,12.5,'#4a6fc4');
+ PF.list.forEach((q,i)=>{const y=cy+124+i*56,cur=i===PF.cur,x=cx+16,w=cw-32;if(cur){rr(x-3,y-27,w+6,54,10);fill(C.lava);}rr(x,y-24,w,48,8);fill(cur?'#fff3bf':'#eef4fd');
+  X.save();X.translate(x+28,y);paintToy(q.icon,36);X.restore();text(q.name,x+56,y-7,17,C.navy,{a:'left'});text(pfBadges(q)+' Of '+BADGES.length*3+' Badges',x+56,y+12,11.5,'#4a6fc4',{a:'left',w:800});if(cur)check(x+w-22,y);
+  hits.push({x,y:y-26,w,h:52,act:()=>pfPick(i),key:uiKey,id:10+i});});
+ const sm=[];if(n<PF_MAX)sm.push(['Add Player',104,pfAdd,6]);sm.push(['Rename',84,pfRename,7]);if(n>1)sm.push(['Delete',80,pfDelete,8]);
+ let x=W/2-(sm.reduce((t,q)=>t+q[1],0)+(sm.length-1)*8)/2;const yb=cy+106+n*56;sm.forEach(q=>{button(x,yb,q[1],34,q[0],q[2],{size:13.5,id:q[3],col:q[3]===8?C.lava:'#5b7fd6',colD:q[3]===8?'#a82a06':'#34509c',colP:q[3]===8?'#e2580f':'#4a6cc0'});x+=q[1]+8;});
+ button((W-214)/2,cy+ch-72,214,50,'Done',()=>{pfOpen=false;},{size:20});cardEnd();}
 let streak=0,rdMiss=0,rdBlock=0,rdFirst=true,toast=null,toastQ=[]; // streak: scores in a row with no miss (carries across rounds)
 const BADGES=[
  {id:'newFirst',name:'New Toy First!',how:'Get the new toy in first',t:[1,5,10]},
@@ -609,7 +636,7 @@ const BADGES=[
  {id:'wins',name:'This Is The End!',how:'Finish all 10 rounds',t:[1,3,10]},
  {id:'bestScore',name:'Big Score',how:'Best score in one game',t:[1000,3000,6000]}];
 const TIER=['','Bronze','Silver','Gold'],tierOf=b=>b.t.filter(v=>ST[b.id]>=v).length;
-function statSet(id,v){if(v<=ST[id])return;const b=BADGES.find(q=>q.id===id),t0=b?tierOf(b):0;ST[id]=v;if(b){const t1=tierOf(b);if(t1>t0)toastQ.push({b,tier:t1});}try{localStorage.setItem(ST_KEY,JSON.stringify(ST));}catch(e){}}
+function statSet(id,v){if(v<=ST[id])return;const b=BADGES.find(q=>q.id===id),t0=b?tierOf(b):0;ST[id]=v;if(b){const t1=tierOf(b);if(t1>t0)toastQ.push({b,tier:t1});}pfSave();}
 function stat(id){statSet(id,ST[id]+1);}
 function statMax(id,v){statSet(id,v);}
 const MEDAL=[['#c3cde3','#9aa8c7'],['#e09a5a','#a85f24'],['#dfe6f1','#8e9bb3'],['#ffd23f','#e08a00']];
@@ -622,8 +649,8 @@ function drawToast(){if(!toast){if(!toastQ.length||state==='menu')return;toast=t
  X.save();X.translate(W/2,y+h/2);X.scale(k,k);X.rotate(-.015);X.translate(-W/2,-(y+h/2));rr(x,y+5,w,h,9);fill(C.deep);rr(x,y,w,h,9);fill('#fff');medal(x+34,y+h/2+3,17,toast.tier);
  text(TIER[toast.tier]+' Badge!',x+64,y+19,12.5,C.lava,{a:'left'});text(toast.b.name,x+64,y+38,17,C.navy,{a:'left'});X.restore();}
 function drawBadges(){const age=uiT-bdgT0,cw=336,ch=470,{cx,cy}=cardBegin(cw,ch,bdgPg<3?'Badges':'Stats',age);
- text(bdgPg+' Of 3',cx+cw-20,cy+80,12,'#4a6fc4',{a:'right',w:800});
- if(bdgPg<3){const got=BADGES.reduce((n,b)=>n+tierOf(b),0);text(got+' Of '+BADGES.length*3+' Earned',cx+20,cy+80,12,'#4a6fc4',{a:'left',w:800});
+ text(bdgPg+' Of 3',cx+cw-20,cy+80,12,'#4a6fc4',{a:'right',w:800});if(bdgPg===3)text(PF.list[PF.cur].name,cx+20,cy+80,12,'#4a6fc4',{a:'left',w:800});
+ if(bdgPg<3){const got=BADGES.reduce((n,b)=>n+tierOf(b),0);text(PF.list[PF.cur].name+'  ·  '+got+' Of '+BADGES.length*3,cx+20,cy+80,12,'#4a6fc4',{a:'left',w:800});
   BADGES.slice((bdgPg-1)*6,bdgPg*6).forEach((b,i)=>{const y=cy+118+i*48,tr=tierOf(b),v=ST[b.id],nx=b.t[Math.min(tr,2)],lo=tr?b.t[tr-1]:0,f=tr>=3?1:clamp((v-lo)/(nx-lo),0,1),bx=cx+cw-86,bw=68;
    medal(cx+36,y-2,15,tr);text(b.name,cx+62,y-9,15.5,C.navy,{a:'left'});text(b.how,cx+62,y+10,11.5,'#4a6fc4',{a:'left',w:800});
    text(tr>=3?'Gold!':Math.min(v,nx)+' / '+nx,bx+bw,y-9,12,tr>=3?C.amber:C.navy,{a:'right'});X.fillStyle='#d3e2f8';X.fillRect(bx,y+5,bw,8);X.fillStyle=MEDAL[Math.min(tr+1,3)][1];X.fillRect(bx,y+5,bw*f,8);});}
@@ -665,7 +692,7 @@ function drawHowTo(){const pg=HOWTO[howTo],age=uiT-howT0,cw=324,ch=428,{cx,cy}=c
  pg.steps.forEach((st,i)=>{const y=cy+252+i*27;circ(cx+34,y,11);fill(C.lava);text(''+(i+1),cx+34,y+1,14,'#fff');text(st,cx+54,y+1,15,C.navy,{a:'left',w:800});});
  body(pg.note,cy+336,12.5,'#4a6fc4');
  button((W-214)/2,cy+ch-74,214,52,pg.next,()=>{if(howTo===2){howTo=3;}else howTo=0;},{size:21});cardEnd();}
-function goMenu(){paused=false;charging=null;pendingLaunch=null;swingT=0;objs=[];ejecta=[];parts=[];eParts=[];rings=[];pops=[];confet=[];smoke=[];sparks=[];buildOn=false;build=0;shake=0;flash=0;blk.on=false;collected=0;need=0;combo=0;state='menu';menuStep=0;howTo=0;bdgPg=0;lastNow=performance.now();acc=0;}
+function goMenu(){paused=false;charging=null;pendingLaunch=null;swingT=0;objs=[];ejecta=[];parts=[];eParts=[];rings=[];pops=[];confet=[];smoke=[];sparks=[];buildOn=false;build=0;shake=0;flash=0;blk.on=false;collected=0;need=0;combo=0;state='menu';menuStep=0;howTo=0;bdgPg=0;pfOpen=false;lastNow=performance.now();acc=0;}
 function drawPauseCard(){const cw=288,ch=286,{cy}=cardBegin(cw,ch,'Paused');body((swipeMode?'Swipe ':'Push ')+(hardMode?'Hard':'Easy')+'  ·  Round '+round+'  ·  Score '+score,cy+100,13.5);
  button((W-208)/2,cy+124,208,58,'Resume',()=>{paused=false;lastNow=performance.now();acc=0;},{icon:1});
  button((W-208)/2,cy+204,208,50,'Start Screen',goMenu,{id:2,size:18,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});cardEnd();}
@@ -693,8 +720,10 @@ function drawMenu(){const t=38;X.fillStyle=C.wall;X.fillRect(0,0,W,HS);X.strokeS
  [['🦆',52,0],['🐙',144,1],['⛵',236,2],['🦕',328,4]].forEach(d=>{const k=EZ.back((uiT-.4-d[2]*.1)/.4);if(k<=0)return;const y=wy(d[1])+3+Math.sin(NOW*2+d[2])*2.5;toyFloat(d[0],d[1],y,42,Math.sin(NOW*1.3+d[2])*.1,k,k);});
  const bw=232,bx=(W-bw)/2,appear=(k,y,h,fn)=>{if(k<=0)return;X.save();X.translate(W/2,y+h/2);X.scale(k,k);X.translate(-W/2,-(y+h/2));fn();X.restore();};
  if(uiT<.7)card=null;
+ if(!howTo&&!bdgPg&&!pfOpen&&uiT>.6)drawChip();
  if(howTo){drawHowTo();}
  else if(bdgPg){drawBadges();}
+ else if(pfOpen){drawPlayers();}
  else if(menuStep===0){const bh=56,gap=16,bk=36,by=ih+38+(bandH-38-SAFEB-bh*2-gap*2-bk)*.5; // step 1 of 2: how to throw
   appear(EZ.back((uiT-1)/.45),by+(bh+gap)*2,bk,()=>{button(bx,by+(bh+gap)*2,130,bk,'How To Play',()=>{howTo=1;howT0=uiT;},{size:14.5,id:3,col:'#8a5bd6',colD:'#5a359c',colP:'#7648c2'});button(bx+142,by+(bh+gap)*2,90,bk,'Badges',()=>{bdgPg=1;bdgT0=uiT;},{size:14.5,id:4,col:'#12a5a0',colD:'#0b6f6c',colP:'#0e8f8a'});});
   appear(EZ.back((uiT-.7)/.45),by,bh,()=>button(bx,by,bw,bh,'Push',()=>{swipeMode=false;menuStep=1;menuT0=uiT;},{size:28,id:0}));
@@ -704,7 +733,7 @@ function drawMenu(){const t=38;X.fillStyle=C.wall;X.fillRect(0,0,W,HS);X.strokeS
   appear(EZ.back((mt-.1)/.35),by+bh+gap,bh,()=>button(bx,by+bh+gap,bw,bh,(swipeMode?'Swipe':'Push')+' Hard',()=>{hardMode=true;startGame();},{size:25,id:2,col:C.lava,colD:'#a82a06',colP:'#e2580f'}));
   appear(EZ.back((mt-.2)/.35),by+(bh+gap)*2,bk,()=>button((W-120)/2,by+(bh+gap)*2,120,bk,'Back',()=>{menuStep=0;menuT0=0;swipeMode=false;},{size:16,id:3,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'}));}
  text(VERSION,W-10,HS-SAFEB-12,10,'#d6efff',{a:'right',w:800});}
-function overlay(){card2=null;card3=null;card4=null;const key=paused?'pause':state;if(key!==uiKey){uiKey=key;uiT=0;card=null;press=null;}
+function overlay(){card2=null;card3=null;card4=null;hits.length=0;const key=paused?'pause':state;if(key!==uiKey){uiKey=key;uiT=0;card=null;press=null;}
  if(paused){drawPauseCard();return;}
  if(state==='menu')drawMenu();else if(state==='intro')drawIntroCard();else if(state==='newtoy')drawNewToyCard();else if(state==='win')drawResultCard(true);else if(state==='gameover')drawResultCard(false);else card=null;}
 
