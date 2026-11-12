@@ -1,7 +1,12 @@
 # Version 7 ("fable-v7"): Push Or Swipe
 
 Test link: https://dnachimow-evitb.github.io/exploding-volcanos/play-fable-v7.html
-Files: game-fable-v7.js, play-fable-v7.html. The live game (index.html, version 5) is NOT changed.
+Files: game-fable-v7.js, play-fable-v7.html.
+
+**LIVE since 2026-11-12 (v7.18):** index.html loads game-fable-v7.js and sw.js caches it (cache name exploding-volcanos-v9).
+The commit before the switch is tagged `before-v7-publish`. To go back to version 5:
+`git checkout before-v7-publish -- index.html sw.js`, commit, push, then raise the cache number in sw.js by one and push again.
+Because the live page and the test page load the same file, any future edit to game-fable-v7.js changes the live game too; bump the sw.js cache name with every such change.
 
 One game, two ways to throw, chosen on the start screen:
 
@@ -41,11 +46,9 @@ The pause card shows the mode (Push, Swipe Easy, Swipe Hard) and has a Start Scr
 - v7.15: Badges and How To Play cards have a Back button on pages 2 and 3 (Close on page 1), next to the Next button.
 - v7.16: every badge has its own picture inside the medal (duck, hairball, Max, clock, volcano, trophy and so on); the medal rim shows the level. Each row also says which level comes next ("Next: Silver") under its progress bar.
 - v7.17: the two personal-best badges (Never Miss, Big Score) no longer look like running totals: the row reads "Best streak: 14" / "Best game: 3400" with "Goal: 20" / "Goal: 6000" on the right.
+- v7.18: published as the live game (see the top of this file).
 
 ## Tested
 Scripted in the preview at 375x812 by stepping the game by hand: Push scores on a held throw,
 over-charged push throw does not bounce; Swipe Hard scores, banks off a wall, caps at 3 toys in the air;
 Push/Swipe, Easy/Hard, Back, pause and Start Screen buttons. Not tested on a real iPhone.
-
-## To make this the live game
-Point index.html at game-fable-v7.js, add it to sw.js ASSETS and bump the cache name.

@@ -1,29 +1,42 @@
 EXPLODING VOLCANOES IN THE BATHTUB — web app (PWA)
 ==================================================
 
-WHICH VERSION IS LIVE (updated 2026-11-11)
+WHICH VERSION IS LIVE (updated 2026-11-12)
 ------------------------------------------------------------------
 The live game at https://dnachimow-evitb.github.io/exploding-volcanos/
-is now VERSION 5 (index.html loads game-fable-v5.js).
+is now VERSION 7 (index.html loads game-fable-v7.js).
+Version 7 = choose Push or Swipe, then Easy or Hard; How To Play; badges and
+stats; up to 4 players, each with their own toy and badges.
+Full notes: experiments/fable-v7.md
 
-The ORIGINAL game has not been deleted or changed:
-  - game.js and style.css are untouched.
-  - It is playable any time at
+Nothing older has been deleted:
+  - VERSION 5 (the previous live game): game-fable-v5.js is still in this folder.
+    The commit just before the switch to version 7 is tagged  before-v7-publish
+  - The ORIGINAL game: game.js and style.css, playable any time at
     https://dnachimow-evitb.github.io/exploding-volcanos/original.html
-  - The commit just before the switch is tagged  before-v5-publish
+    (Only its spelling changed: "Volcanos" -> "Volcanoes".)
+    The commit just before the switch to version 5 is tagged  before-v5-publish
+
+TO SWITCH THE LIVE GAME BACK TO VERSION 5 (any time):
+Open a terminal in this folder and run these three commands:
+    git checkout before-v7-publish -- index.html sw.js
+    git commit -m "Back to version 5"
+    git push
+Then open sw.js and raise the number at the end of the CACHE name by one
+(for example exploding-volcanos-v9 -> v10), commit and push again, so phones
+that already have version 7 saved pick up the change.
+Or just ask Claude: "revert the live game to version 5".
 
 TO SWITCH THE LIVE GAME BACK TO THE ORIGINAL (any time):
-Open a terminal in this folder and run these three commands:
     git checkout before-v5-publish -- index.html sw.js
     git commit -m "Back to the original game"
     git push
 Or just ask Claude: "revert the live game to the original".
-The home-screen app switches back the next time or two it is opened
-(the first open downloads the change, the next one shows it).
 
-To return to version 5 after that:
-    git revert HEAD
-    git push
+Either way the home-screen app switches the next time or two it is opened
+(the first open downloads the change, the next one shows it).
+Badges and players are saved on each phone, not in these files, so switching
+versions does not erase them.
 
 HOME-SCREEN ICON ON AN IPHONE
 The icon is apple-touch-icon.png (the volcano from the cover art).
@@ -37,7 +50,7 @@ A test build that is NOT the live game:
 It does not replace version 5 and can be deleted at any time
 (remove play-fable-v6.html and game-fable-v6.js). Notes: experiments/fable-v6.md
 
-Version 7 test link (push OR swipe, chosen on the start screen; not the live game yet):
+Version 7 test link (the same game file as the live game; kept for testing changes first):
   https://dnachimow-evitb.github.io/exploding-volcanos/play-fable-v7.html
 Notes: experiments/fable-v7.md
 
