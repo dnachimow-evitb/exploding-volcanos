@@ -78,6 +78,7 @@ The pause card shows the mode (Push, Swipe Easy, Swipe Hard) and has a Start Scr
 - 2026-11-12: v7.35 published live (redrawn zebra). Cache name exploding-volcanos-v14.
 - v7.36 (TEST COPY ONLY): new shop toy, Toy Soldier (72 coins, between Seal and Penguin): the classic green plastic army man, one green all over with darker green shading, helmet, rifle and oval stand, plus the house dot eye and smile. 27 shop toys, 39 toys in all.
 - v7.37 (TEST COPY ONLY): buying a toy on the My Toys card jumps Other Toys to the page the new toy is on (page 1 unless the player owns more than 8 spare toys), so it can be put in the lineup without paging back (Derek's request).
+- v7.38 (TEST COPY ONLY): the version label (and the test page's debug line) sits higher and further in from the corner: 8 units higher everywhere, and in the iPhone home-screen app it also clears an assumed 34-point home-bar area when the bottom inset reads zero. Derek stopped seeing the label in the home-screen test app.
 
 ## Tested
 Scripted in the preview at 375x812 by stepping the game by hand: Push scores on a held throw,

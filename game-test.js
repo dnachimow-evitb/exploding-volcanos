@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v7.37'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v7.38'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -1028,7 +1028,7 @@ k0=lerp(.85,1,EZ.back(uiT/.5)),ih=py+pw+30,bandH=HS-ih; // the taped picture sit
   appear(EZ.back(mt/.35),by,bh,()=>button(bx,by,bw,bh,'Easy',()=>{hardMode=false;startGame();},{size:25,id:0,sub:'With Hints'}));
   appear(EZ.back((mt-.1)/.35),by+bh+gap,bh,()=>button(bx,by+bh+gap,bw,bh,'Hard',()=>{hardMode=true;startGame();},{size:25,id:2,sub:'No Hints',col:C.lava,colD:'#a82a06',colP:'#e2580f'}));
   appear(EZ.back((mt-.2)/.35),by+(bh+gap)*2,bk,()=>button((W-120)/2,by+(bh+gap)*2,120,bk,'Back',()=>{menuStep=0;menuT0=0;swipeMode=false;},{size:16,id:3,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'}));}
- text(VERSION+(TEST?' TEST':''),W-10,HS-SAFEB-12,10,TEST?C.hot:'#d6efff',{a:'right',w:800});if(TEST)text(dbg,10,HS-SAFEB-12,9,'#d6efff',{a:'left',w:800});}
+ text(VERSION+(TEST?' TEST':''),W-16,HS-lblB-12,10,TEST?C.hot:'#d6efff',{a:'right',w:800});if(TEST)text(dbg,16,HS-lblB-12,9,'#d6efff',{a:'left',w:800});}
 function overlay(){card2=null;card3=null;card4=null;hits.length=0;const key=paused?'pause':state;if(key!==uiKey){uiKey=key;uiT=0;card=null;press=null;}
  if(paused){if(homeAsk)drawHomeCard();else drawPauseCard();return;}
  if(state==='menu')drawMenu();else if(state==='intro')drawIntroCard();else if(state==='newtoy')drawNewToyCard();else if(state==='win')drawResultCard(true);else if(state==='gameover')drawResultCard(false);else card=null;}
@@ -1086,7 +1086,7 @@ function draw(){X.setTransform(KS*DPR,0,0,KS*DPR,0,0);X.globalAlpha=1;
 // re-checked twice a second (see watchSize), (2) if the window is still reported short we use the real screen
 // height and pin the game to the top, (3) if the top inset still reads zero we assume one, so the top buttons
 // always sit below the bar.
-let lastSize='',dbg='';
+let lastSize='',dbg='',lblB=0; // lblB: how far the corner labels sit above the bottom edge
 function resize(){const vw=window.innerWidth,MINH=720,ios=/iPhone|iPad|iPod/.test(navigator.userAgent),port=vw<window.innerHeight,
   sa=navigator.standalone===true||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches),homeApp=sa&&ios&&port;
  let vh=window.innerHeight,pin=false,cw,ch;if(homeApp&&Math.abs(screen.width-vw)<2&&screen.height>vh+8){vh=screen.height;pin=true;}
@@ -1094,6 +1094,7 @@ function resize(){const vw=window.innerWidth,MINH=720,ios=/iPhone|iPad|iPod/.tes
  KS=cw/W;DPR=Math.max(1,Math.min(window.devicePixelRatio||1,QCAP,Math.sqrt(2.7e6/(cw*ch))));OY=Math.round((HS-600)*.6);
  const sp=document.getElementById('safe'),sb=document.getElementById('safeb');SAFE=sp?sp.offsetHeight/KS:0;SAFEB=sb?sb.offsetHeight/KS:0;
  const rawSafe=Math.round(SAFE*KS);if(homeApp)SAFE=Math.max(SAFE,(screen.height>=812?54:22)/KS);
+ lblB=Math.max(SAFEB,homeApp&&screen.height>=812?34/KS:0)+8; // home-screen app: the bottom inset can read zero, which put the version label in the rounded corner / home bar
  dbg='s'+rawSafe+'>'+Math.round(SAFE*KS)+' h'+window.innerHeight+'/'+screen.height+(sa?' app':' web')+(pin?' pin':'');
  const wEl=document.getElementById('w');wEl.style.position=pin?'fixed':'relative';wEl.style.top=pin?'0':'';wEl.style.left=pin?'0':'';wEl.style.width=cw+'px';wEl.style.height=ch+'px';wEl.classList.toggle('boxed',cw<vw-4);
  cv.style.width=cw+'px';cv.style.height=ch+'px';cv.width=Math.round(cw*DPR);cv.height=Math.round(ch*DPR);bg=null;}
