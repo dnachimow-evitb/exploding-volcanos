@@ -30,6 +30,7 @@ The pause card shows the mode (Push, Swipe Easy, Swipe Hard) and has a Start Scr
 - v7.7: Players. Up to 4 profiles on the phone, each with its own stats and badges (localStorage key `evitb-profiles-v1`).
   A chip in the top left of the start screen shows who is playing; tapping it opens the Players card (pick, Add Player, Rename, Delete).
   Names are typed into the browser's own text box, 10 letters at most. Stats saved before v7.7 become Player 1's.
+- v7.8: fix: Add Player and Rename did nothing where the browser's own text box does not open. Names are now typed on in-game letter keys (letters only, 10 at most), and Delete asks its question on an in-game card. No system pop-ups remain.
 
 ## Tested
 Scripted in the preview at 375x812 by stepping the game by hand: Push scores on a held throw,

@@ -7,8 +7,9 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v7.7'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v7.8'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
+let nameEd=null,pfDel=0; // in-game name keyboard {mode,txt,t0}; delete question (time it opened, 0 = closed)
 let hits=[],pfOpen=false,pfT0=0; // extra tap areas (button ids 5+); Players card on the start screen
 let card4=null,bdgPg=0,bdgT0=0; // Badges card on the start screen: 0 closed, 1-2 badges, 3 stats
 let howTo=0,howT0=0; // How To Play card on the start screen: 0 closed, 1 The Game, 2 Push, 3 Swipe
@@ -604,10 +605,27 @@ if(!PF.list.length){let old=null;try{old=JSON.parse(localStorage.getItem(ST_KEY)
 ST=PF.list[PF.cur].st;
 function pfSave(){try{localStorage.setItem(PF_KEY,JSON.stringify(PF));}catch(e){}}
 function pfPick(i){PF.cur=i;ST=PF.list[i].st;toastQ=[];toast=null;pfSave();}
-function pfAsk(def){let n=null;try{n=prompt('Player name?',def||'');}catch(e){}lastNow=performance.now();acc=0;if(n==null)return null;n=n.trim().slice(0,10);return n||null;}
-function pfAdd(){if(PF.list.length>=PF_MAX)return;const n=pfAsk('');if(!n)return;const icon=PF_ICONS.find(e=>!PF.list.some(q=>q.icon===e))||PF_ICONS[0];PF.list.push({name:n,icon,st:pfFix(null)});pfPick(PF.list.length-1);}
-function pfRename(){const q=PF.list[PF.cur],n=pfAsk(q.name);if(n){q.name=n;pfSave();}}
-function pfDelete(){if(PF.list.length<2)return;const q=PF.list[PF.cur];let ok=false;try{ok=confirm('Delete '+q.name+' and all of their badges?');}catch(e){}lastNow=performance.now();acc=0;if(!ok)return;PF.list.splice(PF.cur,1);pfPick(Math.min(PF.cur,PF.list.length-1));}
+// Names are typed on the game's own letter keys (no system pop-ups: those do not open everywhere).
+function pfAdd(){if(PF.list.length<PF_MAX)nameEd={mode:'add',txt:'',t0:uiT};}
+function pfRename(){const n=PF.list[PF.cur].name;nameEd={mode:'rename',txt:/^Player \d$/.test(n)?'':n.replace(/[^A-Za-z]/g,'').slice(0,10),t0:uiT};} // a default "Player 1" starts blank
+function pfDelete(){if(PF.list.length>1)pfDel=uiT||.001;}
+function pfType(ch){const e=nameEd;if(!e)return;if(ch==='<')e.txt=e.txt.slice(0,-1);else if(e.txt.length<10)e.txt+=e.txt.length?ch.toLowerCase():ch.toUpperCase();}
+function pfNameDone(){const e=nameEd;if(!e||!e.txt)return;if(e.mode==='add'){const icon=PF_ICONS.find(c=>!PF.list.some(q=>q.icon===c))||PF_ICONS[0];PF.list.push({name:e.txt,icon,st:pfFix(null)});pfPick(PF.list.length-1);}else{PF.list[PF.cur].name=e.txt;pfSave();}nameEd=null;}
+function pfDeleteDone(){pfDel=0;if(PF.list.length<2)return;PF.list.splice(PF.cur,1);pfPick(Math.min(PF.cur,PF.list.length-1));}
+window.addEventListener('keydown',ev=>{if(!nameEd)return;if(ev.key==='Backspace'){pfType('<');ev.preventDefault();}else if(ev.key==='Enter')pfNameDone();else if(/^[a-zA-Z]$/.test(ev.key))pfType(ev.key);});
+function drawNameCard(){const e=nameEd,cw=336,ch=408,{cx,cy}=cardBegin(cw,ch,e.mode==='add'?'New Player':'Rename',uiT-e.t0);
+ const fx=cx+28,fw=cw-56;rr(fx,cy+78,fw,48,8);fill(C.navy);rr(fx+3,cy+81,fw-6,42,6);fill('#fff');
+ if(e.txt){X.font=fnt(900,25);const tw=X.measureText(e.txt).width;text(e.txt,W/2,cy+103,25,C.navy);if(Math.sin(NOW*7)>0&&e.txt.length<10){X.fillStyle=C.lava;X.fillRect(W/2+tw/2+3,cy+90,3,25);}}
+ else{text('Tap The Letters',W/2,cy+103,15,'#9aa8c7',{w:800});}
+ const key=(x,y,w,label,id,act)=>{const dn=press&&press.id===id,d=dn?3:0;rr(x,y+4,w,40,7);fill('#9db7e6');rr(x,y+d,w,40,7);fill(dn?'#cfe0fa':'#eef4fd');text(label,x+w/2,y+21+d,label.length>1?14:20,C.navy);hits.push({x:x-2,y:y-2,w:w+4,h:46,act,key:uiKey,id});};
+ 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach((L,i)=>key(cx+16+(i%7)*44,cy+140+(i/7|0)*46,40,L,20+i,()=>pfType(L)));
+ key(cx+16+5*44,cy+140+3*46,84,'Erase',50,()=>pfType('<'));
+ const x0=W/2-(104+12+164)/2,yb=cy+ch-78;button(x0,yb,104,46,'Cancel',()=>{nameEd=null;},{size:16,id:7,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});
+ button(x0+116,yb,164,46,'Save',pfNameDone,{size:20,col:e.txt?C.green:'#aab4cc',colD:e.txt?C.greenD:'#8793ad',colP:e.txt?'#27a83f':'#aab4cc'});cardEnd();}
+function drawDeleteCard(){const q=PF.list[PF.cur],cw=312,ch=262,{cx,cy}=cardBegin(cw,ch,'Delete Player?',uiT-pfDel);
+ X.save();X.translate(W/2,cy+104);paintToy(q.icon,50);X.restore();body(q.name,cy+146,20);body('All of their badges will be gone.',cy+170,12.5,'#4a6fc4');
+ const x0=W/2-(128+12+128)/2,yb=cy+ch-72;button(x0,yb,128,46,'Keep',()=>{pfDel=0;},{size:18});
+ button(x0+140,yb,128,46,'Delete',pfDeleteDone,{size:18,id:8,col:C.lava,colD:'#a82a06',colP:'#e2580f'});cardEnd();}
 const pfBadges=q=>BADGES.reduce((n,b)=>n+b.t.filter(v=>q.st[b.id]>=v).length,0);
 // who is playing: a chip in the top left of the start screen; tap it to open the Players card
 function drawChip(){const q=PF.list[PF.cur];X.font=fnt(900,14);const w=X.measureText(q.name).width+64,h=36,x=12,y=SAFE+10;rr(x,y+4,w,h,8);fill(C.deep);rr(x,y,w,h,8);fill('#fff');
@@ -692,7 +710,7 @@ function drawHowTo(){const pg=HOWTO[howTo],age=uiT-howT0,cw=324,ch=428,{cx,cy}=c
  pg.steps.forEach((st,i)=>{const y=cy+252+i*27;circ(cx+34,y,11);fill(C.lava);text(''+(i+1),cx+34,y+1,14,'#fff');text(st,cx+54,y+1,15,C.navy,{a:'left',w:800});});
  body(pg.note,cy+336,12.5,'#4a6fc4');
  button((W-214)/2,cy+ch-74,214,52,pg.next,()=>{if(howTo===2){howTo=3;}else howTo=0;},{size:21});cardEnd();}
-function goMenu(){paused=false;charging=null;pendingLaunch=null;swingT=0;objs=[];ejecta=[];parts=[];eParts=[];rings=[];pops=[];confet=[];smoke=[];sparks=[];buildOn=false;build=0;shake=0;flash=0;blk.on=false;collected=0;need=0;combo=0;state='menu';menuStep=0;howTo=0;bdgPg=0;pfOpen=false;lastNow=performance.now();acc=0;}
+function goMenu(){paused=false;charging=null;pendingLaunch=null;swingT=0;objs=[];ejecta=[];parts=[];eParts=[];rings=[];pops=[];confet=[];smoke=[];sparks=[];buildOn=false;build=0;shake=0;flash=0;blk.on=false;collected=0;need=0;combo=0;state='menu';menuStep=0;howTo=0;bdgPg=0;pfOpen=false;nameEd=null;pfDel=0;lastNow=performance.now();acc=0;}
 function drawPauseCard(){const cw=288,ch=286,{cy}=cardBegin(cw,ch,'Paused');body((swipeMode?'Swipe ':'Push ')+(hardMode?'Hard':'Easy')+'  ·  Round '+round+'  ·  Score '+score,cy+100,13.5);
  button((W-208)/2,cy+124,208,58,'Resume',()=>{paused=false;lastNow=performance.now();acc=0;},{icon:1});
  button((W-208)/2,cy+204,208,50,'Start Screen',goMenu,{id:2,size:18,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});cardEnd();}
@@ -723,7 +741,7 @@ function drawMenu(){const t=38;X.fillStyle=C.wall;X.fillRect(0,0,W,HS);X.strokeS
  if(!howTo&&!bdgPg&&!pfOpen&&uiT>.6)drawChip();
  if(howTo){drawHowTo();}
  else if(bdgPg){drawBadges();}
- else if(pfOpen){drawPlayers();}
+ else if(pfOpen){if(nameEd)drawNameCard();else if(pfDel)drawDeleteCard();else drawPlayers();}
  else if(menuStep===0){const bh=56,gap=16,bk=36,by=ih+38+(bandH-38-SAFEB-bh*2-gap*2-bk)*.5; // step 1 of 2: how to throw
   appear(EZ.back((uiT-1)/.45),by+(bh+gap)*2,bk,()=>{button(bx,by+(bh+gap)*2,130,bk,'How To Play',()=>{howTo=1;howT0=uiT;},{size:14.5,id:3,col:'#8a5bd6',colD:'#5a359c',colP:'#7648c2'});button(bx+142,by+(bh+gap)*2,90,bk,'Badges',()=>{bdgPg=1;bdgT0=uiT;},{size:14.5,id:4,col:'#12a5a0',colD:'#0b6f6c',colP:'#0e8f8a'});});
   appear(EZ.back((uiT-.7)/.45),by,bh,()=>button(bx,by,bw,bh,'Push',()=>{swipeMode=false;menuStep=1;menuT0=uiT;},{size:28,id:0}));
