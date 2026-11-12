@@ -38,6 +38,7 @@ The pause card shows the mode (Push, Swipe Easy, Swipe Hard) and has a Start Scr
   Same release: the taped cover picture on the v7 start screen sits 24 units lower so the player chip and sound button no longer cover the tape; the waterline, toys and buttons moved down with it. The story page and v6 test page also use the corrected cover.
 - v7.13: the second start-screen step just says Easy and Hard. A home button sits left of pause during play: one tap goes straight to the start screen (no question asked; the game in progress is lost). The timer bar is a little narrower to make room.
 - v7.14: the home button (and Start Screen on the pause card) now asks "Go Home?" first, with Keep Playing and Go Home buttons. The game is paused while the question is up.
+- v7.15: Badges and How To Play cards have a Back button on pages 2 and 3 (Close on page 1), next to the Next button.
 
 ## Tested
 Scripted in the preview at 375x812 by stepping the game by hand: Push scores on a held throw,

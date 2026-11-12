@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v7.14'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v7.15'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -683,7 +683,8 @@ function drawBadges(){const age=uiT-bdgT0,cw=336,ch=470,{cx,cy}=cardBegin(cw,ch,
    text(tr>=3?'Gold!':Math.min(v,nx)+' / '+nx,bx+bw,y-9,12,tr>=3?C.amber:C.navy,{a:'right'});X.fillStyle='#d3e2f8';X.fillRect(bx,y+5,bw,8);X.fillStyle=MEDAL[Math.min(tr+1,3)][1];X.fillRect(bx,y+5,bw*f,8);});}
  else{[['Games Played',ST.games],['Rounds Won',ST.rounds],['Toys In The Volcano',ST.toys],['Misses',ST.misses],['Hairballs',ST.hair],['Blocked By Max',ST.blocks],['Best Score',ST.bestScore],['Best Round',ST.bestRound],['Longest No-Miss Streak',ST.bestStreak],['Best Combo',ST.bestCombo]].forEach((r,i)=>{const y=cy+108+i*28;
    if(i%2===0){X.fillStyle='#eef4fd';X.fillRect(cx+12,y-14,cw-24,28);}text(r[0],cx+24,y+1,14.5,C.navy,{a:'left',w:800});text(''+r[1],cx+cw-24,y+1,16,C.lava,{a:'right'});});}
- button((W-214)/2,cy+ch-72,214,50,bdgPg===1?'More Badges':bdgPg===2?'Next: Stats':'Done',()=>{bdgPg=bdgPg<3?bdgPg+1:0;},{size:20});cardEnd();}
+ const x0=W/2-(96+12+176)/2,yb=cy+ch-72;button(x0,yb,96,48,bdgPg===1?'Close':'Back',()=>{bdgPg--;},{size:16,id:7,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});
+ button(x0+108,yb,176,48,bdgPg===1?'More Badges':bdgPg===2?'Next: Stats':'Done',()=>{bdgPg=bdgPg<3?bdgPg+1:0;},{size:19});cardEnd();}
 // ── HOW TO PLAY (start screen) ── three pages. The Game (toys, clock, Max, hairball), then Push and Swipe (a small looping demo and three short steps each).
 const HOWTO=[null,
  {name:'The Game',rows:[['toy','The Toys','Throw them all into the volcano.'],['clock','The Clock','Get them in before time runs out.'],['max','Max','He pops up and blocks your throw.'],['hair','The Hairball','Throw it in for 5 more seconds.']],note:'A new toy joins every round.',next:'Next: Push'},
@@ -698,7 +699,7 @@ function drawHowTo(){const pg=HOWTO[howTo],age=uiT-howT0,cw=324,ch=428,{cx,cy}=c
    else{X.translate(0,4);sticker(()=>kidHead(0,0,15,C.hairM,'#a84f16',{mood:'cheeky',freckles:true,flip:true}));}
    X.restore();text(r[1],cx+82,y-9,16.5,C.navy,{a:'left'});text(r[2],cx+82,y+11,12.5,'#4a6fc4',{a:'left',w:800});});
   body(pg.note,cy+336,12.5,C.lavaDk);
-  button((W-214)/2,cy+ch-74,214,52,pg.next,()=>{howTo=2;},{size:21});cardEnd();return;}
+  {const x0=W/2-(96+12+176)/2,yb=cy+ch-74;button(x0,yb,96,48,'Close',()=>{howTo=0;},{size:16,id:7,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});button(x0+108,yb,176,48,pg.next,()=>{howTo=2;},{size:19});}cardEnd();return;}
  // demo panel: a toy, the volcano, a finger, and the dotted throw line
  const pw=272,ph=124,x0=(W-pw)/2,y0=cy+102,tx=x0+54,ty=y0+94,vx=x0+196,vy=y0+44,t=(NOW%3.4)/3.4;
  X.save();rr(x0,y0,pw,ph,8);X.clip();X.fillStyle=C.wall;X.fillRect(x0,y0,pw,ph);
@@ -718,7 +719,7 @@ function drawHowTo(){const pg=HOWTO[howTo],age=uiT-howT0,cw=324,ch=428,{cx,cy}=c
  if(finger&&green)bubble('Let Go!',tx+30,y0+20,C.go,'#fff');
  pg.steps.forEach((st,i)=>{const y=cy+252+i*27;circ(cx+34,y,11);fill(C.lava);text(''+(i+1),cx+34,y+1,14,'#fff');text(st,cx+54,y+1,15,C.navy,{a:'left',w:800});});
  body(pg.note,cy+336,12.5,'#4a6fc4');
- button((W-214)/2,cy+ch-74,214,52,pg.next,()=>{if(howTo===2){howTo=3;}else howTo=0;},{size:21});cardEnd();}
+ const qx=W/2-(96+12+176)/2,yb=cy+ch-74;button(qx,yb,96,48,'Back',()=>{howTo--;},{size:16,id:7,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});button(qx+108,yb,176,48,pg.next,()=>{if(howTo===2){howTo=3;}else howTo=0;},{size:19});cardEnd();}
 function askHome(){if(homeAsk)return;homeWasPaused=paused;homeAsk=(paused?uiT:0)+1;paused=true;}
 function drawHomeCard(){const cw=300,ch=282,{cy}=cardBegin(cw,ch,'Go Home?',uiT-(homeAsk-1));body('This game will end.',cy+96,16);body('Your badges are safe.',cy+119,13,'#4a6fc4');
  button((W-216)/2,cy+140,216,52,'Keep Playing',()=>{homeAsk=0;if(!homeWasPaused){paused=false;lastNow=performance.now();acc=0;}},{size:21});
