@@ -1,0 +1,34 @@
+name: iPhone app
+
+# Compiles the App Store app (the native/ folder) on one of GitHub's Macs, so nobody needs a Mac of their own.
+# Runs on every push that changes native/ or this file, and by hand: Actions tab > iPhone app > Run workflow.
+# This check needs no Apple account: it builds for the iPhone simulator, unsigned, and only proves the project
+# still builds. Signing and uploading to TestFlight is added once the Apple Developer account exists
+# (see native/APP-STORE.md).
+on:
+  push:
+    paths:
+      - 'native/**'
+      - '.github/workflows/ios.yml'
+  workflow_dispatch:
+
+jobs:
+  simulator-build:
+    runs-on: macos-26
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Package the live game into the app
+        working-directory: native
+        run: npm ci && npm run sync
+      - name: Xcode version
+        run: xcodebuild -version
+      - name: Build for the iPhone simulator
+        working-directory: native/ios/App
+        run: >
+          xcodebuild -project App.xcodeproj -scheme App -configuration Debug
+          -destination 'generic/platform=iOS Simulator'
+          CODE_SIGNING_ALLOWED=NO build

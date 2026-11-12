@@ -19,6 +19,7 @@ Last updated: 2026-11-12, at test version v7.35 / live version v7.35.
 | `assets/cover-volcanoes.webp` | Start-screen cover art. |
 | `game-fable-v5.js`, `game.js` + `original.html` | Older versions, kept for reverting. Do not delete. |
 | `.nojekyll` | Makes GitHub Pages publish files as-is. Without it builds were failing. |
+| `native/` | **The iPhone App Store app** (Capacitor wrapper that packages the live game). Roadmap, checklist and decisions: `native/APP-STORE.md`. Built on GitHub's Macs by `.github/workflows/ios.yml`. |
 
 The whole game is one JavaScript file drawing to one `<canvas>`. No build step, no libraries.
 

@@ -1,0 +1,12 @@
+{
+  "appId": "com.explodingvolcanoes.app",
+  "appName": "Volcanoes",
+  "webDir": "www",
+  "backgroundColor": "#2a6fdb",
+  "ios": {
+    "contentInset": "never",
+    "scrollEnabled": false,
+    "allowsLinkPreview": false,
+    "backgroundColor": "#2a6fdb"
+  }
+}
