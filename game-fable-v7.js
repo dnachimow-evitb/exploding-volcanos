@@ -7,8 +7,9 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v7.8'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v7.9'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
+let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
 let nameEd=null,pfDel=0; // in-game name keyboard {mode,txt,t0}; delete question (time it opened, 0 = closed)
 let hits=[],pfOpen=false,pfT0=0; // extra tap areas (button ids 5+); Players card on the start screen
 let card4=null,bdgPg=0,bdgT0=0; // Badges card on the start screen: 0 closed, 1-2 badges, 3 stats
@@ -596,11 +597,11 @@ function drawNewToyCard(){const cw=328,ch=366,{cx,cy,age}=cardBegin(cw,ch,'New T
 const ST_KEY='evitb-stats-v1'; // old single-player save, read once to become Player 1
 // PLAYERS: up to 4 profiles on this phone, each with its own stats and badges (localStorage key PF_KEY).
 // Stats saved before profiles existed (ST_KEY) become the first player's.
-const PF_KEY='evitb-profiles-v1',PF_MAX=4,PF_ICONS=['🦆','🐙','⛵','🦕'];
+const PF_KEY='evitb-profiles-v1',PF_MAX=4,PF_ICONS=['🦆','🐙','⛵','🦕'],PF_TOYS=[...BASE,...Object.values(NEWBY)]; // PF_ICONS: handed out to new players in turn; PF_TOYS: every toy in the game, any of which a player can pick
 const ST0={games:0,rounds:0,toys:0,misses:0,hair:0,blocks:0,newFirst:0,sneak:0,perfect:0,quick:0,rebounds:0,hardRounds:0,wins:0,bestScore:0,bestStreak:0,bestRound:0,bestCombo:0};
 function pfFix(o){const r={...ST0};if(o)for(const k in ST0)if(typeof o[k]==='number')r[k]=o[k];return r;}
 let PF={cur:0,list:[]},ST;
-try{const sv=JSON.parse(localStorage.getItem(PF_KEY)||'null');if(sv&&Array.isArray(sv.list)&&sv.list.length){PF.list=sv.list.slice(0,PF_MAX).map((q,i)=>({name:String(q.name||'Player '+(i+1)).slice(0,10),icon:PF_ICONS.includes(q.icon)?q.icon:PF_ICONS[i],st:pfFix(q.st)}));PF.cur=clamp(sv.cur|0,0,PF.list.length-1);}}catch(e){}
+try{const sv=JSON.parse(localStorage.getItem(PF_KEY)||'null');if(sv&&Array.isArray(sv.list)&&sv.list.length){PF.list=sv.list.slice(0,PF_MAX).map((q,i)=>({name:String(q.name||'Player '+(i+1)).slice(0,10),icon:PF_TOYS.includes(q.icon)?q.icon:PF_ICONS[i],st:pfFix(q.st)}));PF.cur=clamp(sv.cur|0,0,PF.list.length-1);}}catch(e){}
 if(!PF.list.length){let old=null;try{old=JSON.parse(localStorage.getItem(ST_KEY)||'null');}catch(e){}PF.list=[{name:'Player 1',icon:PF_ICONS[0],st:pfFix(old)}];}
 ST=PF.list[PF.cur].st;
 function pfSave(){try{localStorage.setItem(PF_KEY,JSON.stringify(PF));}catch(e){}}
@@ -610,7 +611,7 @@ function pfAdd(){if(PF.list.length<PF_MAX)nameEd={mode:'add',txt:'',t0:uiT};}
 function pfRename(){const n=PF.list[PF.cur].name;nameEd={mode:'rename',txt:/^Player \d$/.test(n)?'':n.replace(/[^A-Za-z]/g,'').slice(0,10),t0:uiT};} // a default "Player 1" starts blank
 function pfDelete(){if(PF.list.length>1)pfDel=uiT||.001;}
 function pfType(ch){const e=nameEd;if(!e)return;if(ch==='<')e.txt=e.txt.slice(0,-1);else if(e.txt.length<10)e.txt+=e.txt.length?ch.toLowerCase():ch.toUpperCase();}
-function pfNameDone(){const e=nameEd;if(!e||!e.txt)return;if(e.mode==='add'){const icon=PF_ICONS.find(c=>!PF.list.some(q=>q.icon===c))||PF_ICONS[0];PF.list.push({name:e.txt,icon,st:pfFix(null)});pfPick(PF.list.length-1);}else{PF.list[PF.cur].name=e.txt;pfSave();}nameEd=null;}
+function pfNameDone(){const e=nameEd;if(!e||!e.txt)return;if(e.mode==='add'){const icon=PF_ICONS.find(c=>!PF.list.some(q=>q.icon===c))||PF_ICONS[0];PF.list.push({name:e.txt,icon,st:pfFix(null)});pfPick(PF.list.length-1);pfToy=uiT||.001;}else{PF.list[PF.cur].name=e.txt;pfSave();}nameEd=null;}
 function pfDeleteDone(){pfDel=0;if(PF.list.length<2)return;PF.list.splice(PF.cur,1);pfPick(Math.min(PF.cur,PF.list.length-1));}
 window.addEventListener('keydown',ev=>{if(!nameEd)return;if(ev.key==='Backspace'){pfType('<');ev.preventDefault();}else if(ev.key==='Enter')pfNameDone();else if(/^[a-zA-Z]$/.test(ev.key))pfType(ev.key);});
 function drawNameCard(){const e=nameEd,cw=336,ch=408,{cx,cy}=cardBegin(cw,ch,e.mode==='add'?'New Player':'Rename',uiT-e.t0);
@@ -622,6 +623,11 @@ function drawNameCard(){const e=nameEd,cw=336,ch=408,{cx,cy}=cardBegin(cw,ch,e.m
  key(cx+16+5*44,cy+140+3*46,84,'Erase',50,()=>pfType('<'));
  const x0=W/2-(104+12+164)/2,yb=cy+ch-78;button(x0,yb,104,46,'Cancel',()=>{nameEd=null;},{size:16,id:7,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});
  button(x0+116,yb,164,46,'Save',pfNameDone,{size:20,col:e.txt?C.green:'#aab4cc',colD:e.txt?C.greenD:'#8793ad',colP:e.txt?'#27a83f':'#aab4cc'});cardEnd();}
+function drawToyCard(){const q=PF.list[PF.cur],cw=320,ch=404,{cx,cy}=cardBegin(cw,ch,'Pick A Toy',uiT-pfToy);
+ body('Tap a toy for '+q.name+'.',cy+84,13,'#4a6fc4');
+ PF_TOYS.forEach((em,i)=>{const x=cx+18+(i%4)*72,y=cy+102+(i/4|0)*72,cur=em===q.icon,id=60+i,dn=press&&press.id===id;if(cur){rr(x-3,y-3,70,70,10);fill(C.lava);}rr(x,y,64,64,8);fill(cur?'#fff3bf':dn?'#cfe0fa':'#eef4fd');
+  X.save();X.translate(x+32,y+32+(cur?Math.sin(NOW*5)*2:0));paintToy(em,46);X.restore();hits.push({x:x-3,y:y-3,w:70,h:70,act:()=>{q.icon=em;pfSave();pfToy=0;},key:uiKey,id});});
+ button((W-180)/2,cy+ch-70,180,46,'Back',()=>{pfToy=0;},{size:18,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});cardEnd();}
 function drawDeleteCard(){const q=PF.list[PF.cur],cw=312,ch=262,{cx,cy}=cardBegin(cw,ch,'Delete Player?',uiT-pfDel);
  X.save();X.translate(W/2,cy+104);paintToy(q.icon,50);X.restore();body(q.name,cy+146,20);body('All of their badges will be gone.',cy+170,12.5,'#4a6fc4');
  const x0=W/2-(128+12+128)/2,yb=cy+ch-72;button(x0,yb,128,46,'Keep',()=>{pfDel=0;},{size:18});
@@ -631,12 +637,12 @@ const pfBadges=q=>BADGES.reduce((n,b)=>n+b.t.filter(v=>q.st[b.id]>=v).length,0);
 function drawChip(){const q=PF.list[PF.cur];X.font=fnt(900,14);const w=X.measureText(q.name).width+64,h=36,x=12,y=SAFE+10;rr(x,y+4,w,h,8);fill(C.deep);rr(x,y,w,h,8);fill('#fff');
  X.save();X.translate(x+20,y+h/2);paintToy(q.icon,26);X.restore();text(q.name,x+38,y+h/2+1,14,C.navy,{a:'left'});X.beginPath();X.moveTo(x+w-20,y+14);X.lineTo(x+w-9,y+14);X.lineTo(x+w-14.5,y+22);X.closePath();fill(C.lava);
  hits.push({x:x-4,y:y-4,w:w+8,h:h+12,act:()=>{pfOpen=true;pfT0=uiT;},key:uiKey,id:5});}
-function drawPlayers(){const age=uiT-pfT0,n=PF.list.length,cw=320,ch=232+n*56,{cx,cy}=cardBegin(cw,ch,'Players',age);
+function drawPlayers(){const age=uiT-pfT0,n=PF.list.length,cw=336,ch=232+n*56,{cx,cy}=cardBegin(cw,ch,'Players',age);
  body('Tap a player to pick who is playing.',cy+82,12.5,'#4a6fc4');
  PF.list.forEach((q,i)=>{const y=cy+124+i*56,cur=i===PF.cur,x=cx+16,w=cw-32;if(cur){rr(x-3,y-27,w+6,54,10);fill(C.lava);}rr(x,y-24,w,48,8);fill(cur?'#fff3bf':'#eef4fd');
   X.save();X.translate(x+28,y);paintToy(q.icon,36);X.restore();text(q.name,x+56,y-7,17,C.navy,{a:'left'});text(pfBadges(q)+' Of '+BADGES.length*3+' Badges',x+56,y+12,11.5,'#4a6fc4',{a:'left',w:800});if(cur)check(x+w-22,y);
   hits.push({x,y:y-26,w,h:52,act:()=>pfPick(i),key:uiKey,id:10+i});});
- const sm=[];if(n<PF_MAX)sm.push(['Add Player',104,pfAdd,6]);sm.push(['Rename',84,pfRename,7]);if(n>1)sm.push(['Delete',80,pfDelete,8]);
+ const sm=[];if(n<PF_MAX)sm.push(['Add',60,pfAdd,6]);sm.push(['Rename',84,pfRename,7]);sm.push(['Toy',58,()=>{pfToy=uiT||.001;},9]);if(n>1)sm.push(['Delete',78,pfDelete,8]);
  let x=W/2-(sm.reduce((t,q)=>t+q[1],0)+(sm.length-1)*8)/2;const yb=cy+106+n*56;sm.forEach(q=>{button(x,yb,q[1],34,q[0],q[2],{size:13.5,id:q[3],col:q[3]===8?C.lava:'#5b7fd6',colD:q[3]===8?'#a82a06':'#34509c',colP:q[3]===8?'#e2580f':'#4a6cc0'});x+=q[1]+8;});
  button((W-214)/2,cy+ch-72,214,50,'Done',()=>{pfOpen=false;},{size:20});cardEnd();}
 let streak=0,rdMiss=0,rdBlock=0,rdFirst=true,toast=null,toastQ=[]; // streak: scores in a row with no miss (carries across rounds)
@@ -710,7 +716,7 @@ function drawHowTo(){const pg=HOWTO[howTo],age=uiT-howT0,cw=324,ch=428,{cx,cy}=c
  pg.steps.forEach((st,i)=>{const y=cy+252+i*27;circ(cx+34,y,11);fill(C.lava);text(''+(i+1),cx+34,y+1,14,'#fff');text(st,cx+54,y+1,15,C.navy,{a:'left',w:800});});
  body(pg.note,cy+336,12.5,'#4a6fc4');
  button((W-214)/2,cy+ch-74,214,52,pg.next,()=>{if(howTo===2){howTo=3;}else howTo=0;},{size:21});cardEnd();}
-function goMenu(){paused=false;charging=null;pendingLaunch=null;swingT=0;objs=[];ejecta=[];parts=[];eParts=[];rings=[];pops=[];confet=[];smoke=[];sparks=[];buildOn=false;build=0;shake=0;flash=0;blk.on=false;collected=0;need=0;combo=0;state='menu';menuStep=0;howTo=0;bdgPg=0;pfOpen=false;nameEd=null;pfDel=0;lastNow=performance.now();acc=0;}
+function goMenu(){paused=false;charging=null;pendingLaunch=null;swingT=0;objs=[];ejecta=[];parts=[];eParts=[];rings=[];pops=[];confet=[];smoke=[];sparks=[];buildOn=false;build=0;shake=0;flash=0;blk.on=false;collected=0;need=0;combo=0;state='menu';menuStep=0;howTo=0;bdgPg=0;pfOpen=false;nameEd=null;pfDel=0;pfToy=0;lastNow=performance.now();acc=0;}
 function drawPauseCard(){const cw=288,ch=286,{cy}=cardBegin(cw,ch,'Paused');body((swipeMode?'Swipe ':'Push ')+(hardMode?'Hard':'Easy')+'  ·  Round '+round+'  ·  Score '+score,cy+100,13.5);
  button((W-208)/2,cy+124,208,58,'Resume',()=>{paused=false;lastNow=performance.now();acc=0;},{icon:1});
  button((W-208)/2,cy+204,208,50,'Start Screen',goMenu,{id:2,size:18,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});cardEnd();}
@@ -741,7 +747,7 @@ function drawMenu(){const t=38;X.fillStyle=C.wall;X.fillRect(0,0,W,HS);X.strokeS
  if(!howTo&&!bdgPg&&!pfOpen&&uiT>.6)drawChip();
  if(howTo){drawHowTo();}
  else if(bdgPg){drawBadges();}
- else if(pfOpen){if(nameEd)drawNameCard();else if(pfDel)drawDeleteCard();else drawPlayers();}
+ else if(pfOpen){if(nameEd)drawNameCard();else if(pfToy)drawToyCard();else if(pfDel)drawDeleteCard();else drawPlayers();}
  else if(menuStep===0){const bh=56,gap=16,bk=36,by=ih+38+(bandH-38-SAFEB-bh*2-gap*2-bk)*.5; // step 1 of 2: how to throw
   appear(EZ.back((uiT-1)/.45),by+(bh+gap)*2,bk,()=>{button(bx,by+(bh+gap)*2,130,bk,'How To Play',()=>{howTo=1;howT0=uiT;},{size:14.5,id:3,col:'#8a5bd6',colD:'#5a359c',colP:'#7648c2'});button(bx+142,by+(bh+gap)*2,90,bk,'Badges',()=>{bdgPg=1;bdgT0=uiT;},{size:14.5,id:4,col:'#12a5a0',colD:'#0b6f6c',colP:'#0e8f8a'});});
   appear(EZ.back((uiT-.7)/.45),by,bh,()=>button(bx,by,bw,bh,'Push',()=>{swipeMode=false;menuStep=1;menuT0=uiT;},{size:28,id:0}));

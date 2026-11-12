@@ -31,6 +31,7 @@ The pause card shows the mode (Push, Swipe Easy, Swipe Hard) and has a Start Scr
   A chip in the top left of the start screen shows who is playing; tapping it opens the Players card (pick, Add Player, Rename, Delete).
   Names are typed into the browser's own text box, 10 letters at most. Stats saved before v7.7 become Player 1's.
 - v7.8: fix: Add Player and Rename did nothing where the browser's own text box does not open. Names are now typed on in-game letter keys (letters only, 10 at most), and Delete asks its question on an in-game card. No system pop-ups remain.
+- v7.9: players can pick their toy from all 12 toys in the game: a Pick A Toy card opens after naming a new player, and a Toy button on the Players card changes it later.
 
 ## Tested
 Scripted in the preview at 375x812 by stepping the game by hand: Push scores on a held throw,
