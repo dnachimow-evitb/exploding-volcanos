@@ -26,6 +26,7 @@ The pause card shows the mode (Push, Swipe Easy, Swipe Hard) and has a Start Scr
   Volcano Feeder (toys in: 50/250/1000), Kaboom! (rounds won: 10/50/150), Rebound Champ (Swipe wall scores: 5/25/75),
   Hard Hat (rounds won in Hard: 5/25/75), This Is The End! (all 10 rounds: 1/3/10), Big Score (1000/3000/6000).
   The thresholds are first guesses and are all in the BADGES table in game-fable-v7.js.
+- v7.6: start screen toys moved into a row on the waterline, above the buttons, so buttons no longer cover them.
 
 ## Tested
 Scripted in the preview at 375x812 by stepping the game by hand: Push scores on a held throw,
