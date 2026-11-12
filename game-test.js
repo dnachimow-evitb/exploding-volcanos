@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v7.24'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v7.25'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -881,7 +881,7 @@ function drawMenu(){const t=38;X.fillStyle=C.wall;X.fillRect(0,0,W,HS);X.strokeS
  else if(toysT0){drawMyToys();}
  else if(pfOpen){if(nameEd)drawNameCard();else if(pfToy)drawToyCard();else if(pfDel)drawDeleteCard();else drawPlayers();}
  else if(menuStep===0){const bh=56,gap=16,bk=36,by=ih+34+(bandH-34-SAFEB-bh*2-gap*2-bk)*.5; // step 1 of 2: how to throw
-  appear(EZ.back((uiT-1)/.45),by+(bh+gap)*2,bk,()=>{button(bx-12,by+(bh+gap)*2,106,bk,'How To Play',()=>{howTo=1;howT0=uiT;},{size:12.5,id:3,col:'#8a5bd6',colD:'#5a359c',colP:'#7648c2'});button(bx+101,by+(bh+gap)*2,66,bk,'Badges',()=>{bdgPg=1;bdgT0=uiT;},{size:12.5,id:4,col:'#12a5a0',colD:'#0b6f6c',colP:'#0e8f8a'});button(bx+174,by+(bh+gap)*2,70,bk,'My Toys',openToys,{size:12.5,id:18,col:'#e08a00',colD:'#a85f24',colP:'#c97800'});});
+  appear(EZ.back((uiT-1)/.45),by+(bh+gap)*2,bk,()=>{button(bx,by+(bh+gap)*2,96,bk,'How To Play',()=>{howTo=1;howT0=uiT;},{size:12,id:3,col:'#8a5bd6',colD:'#5a359c',colP:'#7648c2'});button(bx+102,by+(bh+gap)*2,58,bk,'Badges',()=>{bdgPg=1;bdgT0=uiT;},{size:12,id:4,col:'#12a5a0',colD:'#0b6f6c',colP:'#0e8f8a'});button(bx+166,by+(bh+gap)*2,66,bk,'My Toys',openToys,{size:12,id:18,col:'#e08a00',colD:'#a85f24',colP:'#c97800'});});
   appear(EZ.back((uiT-.7)/.45),by,bh,()=>button(bx,by,bw,bh,'Push',()=>{swipeMode=false;menuStep=1;menuT0=uiT;},{size:28,id:0}));
   appear(EZ.back((uiT-.85)/.45),by+bh+gap,bh,()=>button(bx,by+bh+gap,bw,bh,'Swipe',()=>{swipeMode=true;menuStep=1;menuT0=uiT;},{size:28,id:2,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'}));
  }else{const bh=56,gap=16,bk=36,by=ih+34+(bandH-34-SAFEB-bh*2-gap*2-bk)*.5,mt=uiT-menuT0; // step 2 of 2: Easy or Hard (Push Hard only hides the green signal)

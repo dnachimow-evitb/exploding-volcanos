@@ -62,6 +62,7 @@ The pause card shows the mode (Push, Swipe Easy, Swipe Hard) and has a Start Scr
   - Coins, owned toys and the lineup are saved per player. A bought toy can also be picked as the player's icon.
   - The game is still 10 rounds and 12 toys. All prices and payouts are first guesses.
   - Test page only: a "+50 Coins" button next to the Round button, bottom-left of the start screen.
+- v7.25 (TEST COPY ONLY): the three small start-screen buttons (How To Play, Badges, My Toys) now span exactly the width of Push and Swipe.
 
 ## Tested
 Scripted in the preview at 375x812 by stepping the game by hand: Push scores on a held throw,
