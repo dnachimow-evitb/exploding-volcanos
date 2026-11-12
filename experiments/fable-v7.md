@@ -76,6 +76,7 @@ The pause card shows the mode (Push, Swipe Easy, Swipe Hard) and has a Start Scr
 - 2026-11-12: v7.34 published live at Derek's request ("all systems go"): everything from v7.24 to v7.34 (coins, 26 shop toys, My Toys lineup, five-page How To Play, mode labels, smaller cover). Cache name exploding-volcanos-v13. The version label stays visible in the corner of the live start screen on purpose; Derek uses it. Coins, prices and badge targets have had no real play yet.
 - v7.35 (TEST COPY ONLY): zebra redrawn (Derek: "a little flat"): bigger head with a white-ringed eye, dark muzzle and smile, black mane, tapered stripes, grey far-side legs and belly shade for depth, tail tuft, hooves, and an off-white body so it stands out from the white sticker rim.
 - 2026-11-12: v7.35 published live (redrawn zebra). Cache name exploding-volcanos-v14.
+- v7.36 (TEST COPY ONLY): new shop toy, Toy Soldier (72 coins, between Seal and Penguin): the classic green plastic army man, one green all over with darker green shading, helmet, rifle and oval stand, plus the house dot eye and smile. 27 shop toys, 39 toys in all.
 
 ## Tested
 Scripted in the preview at 375x812 by stepping the game by hand: Push scores on a held throw,

@@ -4,7 +4,7 @@ Read this first before changing the game. It says where things are and gives ste
 common jobs (add a toy, change prices, add a badge, publish). The history of *why* things are the way they are
 is in `experiments/fable-v7.md` (one line per version) and, for the art, `experiments/fable-v5.md`.
 
-Last updated: 2026-11-12, at test version v7.35 / live version v7.35.
+Last updated: 2026-11-12, at test version v7.36 / live version v7.35.
 
 ## 1. The files that matter
 
@@ -109,7 +109,7 @@ Conventions:
    page, owned first, then locked in `SHOP` order, with previous / next arrows and "1 Of 2" once there are
    more than 8 (built in v7.29; Derek's rule: never make the card taller, add pages). Keep `SHOP` sorted by
    price so locked toys read cheapest first. The player icon picker (`drawToyCard`) uses 4 columns up to 20
-   toys, 5 up to 30, 6 above that, and grows by rows; with all 38 it is 7 rows. Check it still fits a
+   toys, 5 up to 30, 6 above that, and grows by rows; with all 39 it is 7 rows. Check it still fits a
    720-unit-tall screen past about 48 toys.
 6. Optional real art: put `assets/toys/<name>.png` in place and add the key to `SPRITE_FILE`; a PNG replaces
    the drawn version automatically.
