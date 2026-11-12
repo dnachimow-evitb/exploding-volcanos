@@ -1,4 +1,4 @@
-/* Exploding Volcanos in the Bathtub — version 7 ("fable-v7"): PUSH or SWIPE, chosen on the start screen.
+/* Exploding Volcanoes in the Bathtub — version 7 ("fable-v7"): PUSH or SWIPE, chosen on the start screen.
    swipeMode=false is the version 5 game (press and hold, no wall bounces); its Hard only hides the green "it will score" signal.
    swipeMode=true is the version 6 game (swipe to throw, wall rebounds, haptics, then Easy or Hard).
    Every difference between the two is behind the swipeMode flag.
@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v7.11'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v7.12'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
 let nameEd=null,pfDel=0; // in-game name keyboard {mode,txt,t0}; delete question (time it opened, 0 = closed)
@@ -733,7 +733,7 @@ function drawResultCard(win){const age=win?uiT-1.75:uiT;if(age<0){card=null;retu
   button((W-224)/2,cy+ch-78,224,58,'Try Again',()=>{startRound(false);state='play';lastNow=performance.now();},{icon:1});cardEnd();}}
 const cover=new Image();cover.onload=()=>{cover._ok=true;};cover.onerror=()=>{};cover.src='assets/cover-volcanoes.webp'; // corrected spelling (Volcanoes); the old art is still at assets/cover.png
 function drawMenu(){const t=38;X.fillStyle=C.wall;X.fillRect(0,0,W,HS);X.strokeStyle=C.tile;X.lineWidth=2.5;X.beginPath();for(let x=0;x<=W;x+=t){X.moveTo(x,0);X.lineTo(x,HS);}for(let y=8;y<HS;y+=t){X.moveTo(0,y);X.lineTo(W,y);}X.stroke();
- const pw=W-48,py=SAFE+60,k0=lerp(.85,1,EZ.back(uiT/.5)),ih=py+pw+36,bandH=HS-ih;
+ const pw=W-48,py=SAFE+84,k0=lerp(.85,1,EZ.back(uiT/.5)),ih=py+pw+30,bandH=HS-ih; // the taped picture sits below the player chip and sound button
  X.save();X.translate(W/2,py+pw/2);X.rotate(-.022);X.scale(k0,k0);X.fillStyle=C.deep;X.fillRect(-pw/2-3,-pw/2,pw+16,pw+16);X.fillStyle='#fff';X.fillRect(-pw/2-8,-pw/2-8,pw+16,pw+16);
  if(cover._ok)X.drawImage(cover,-pw/2,-pw/2,pw,pw);else{X.fillStyle=C.lava;X.fillRect(-pw/2,-pw/2,pw,pw);text('EXPLODING',0,-30,40,'#fff');text('VOLCANOES',0,18,40,C.hot);text('In The Bathtub!',0,62,22,'#fff');}
  for(const g of[-1,1]){X.save();X.translate(g*(pw/2-10),-pw/2-6);X.rotate(g*.55);X.fillStyle=C.gold;X.fillRect(-24,-8,48,16);X.restore();}X.restore();
@@ -748,11 +748,11 @@ function drawMenu(){const t=38;X.fillStyle=C.wall;X.fillRect(0,0,W,HS);X.strokeS
  if(howTo){drawHowTo();}
  else if(bdgPg){drawBadges();}
  else if(pfOpen){if(nameEd)drawNameCard();else if(pfToy)drawToyCard();else if(pfDel)drawDeleteCard();else drawPlayers();}
- else if(menuStep===0){const bh=56,gap=16,bk=36,by=ih+38+(bandH-38-SAFEB-bh*2-gap*2-bk)*.5; // step 1 of 2: how to throw
+ else if(menuStep===0){const bh=56,gap=16,bk=36,by=ih+34+(bandH-34-SAFEB-bh*2-gap*2-bk)*.5; // step 1 of 2: how to throw
   appear(EZ.back((uiT-1)/.45),by+(bh+gap)*2,bk,()=>{button(bx,by+(bh+gap)*2,130,bk,'How To Play',()=>{howTo=1;howT0=uiT;},{size:14.5,id:3,col:'#8a5bd6',colD:'#5a359c',colP:'#7648c2'});button(bx+142,by+(bh+gap)*2,90,bk,'Badges',()=>{bdgPg=1;bdgT0=uiT;},{size:14.5,id:4,col:'#12a5a0',colD:'#0b6f6c',colP:'#0e8f8a'});});
   appear(EZ.back((uiT-.7)/.45),by,bh,()=>button(bx,by,bw,bh,'Push',()=>{swipeMode=false;menuStep=1;menuT0=uiT;},{size:28,id:0}));
   appear(EZ.back((uiT-.85)/.45),by+bh+gap,bh,()=>button(bx,by+bh+gap,bw,bh,'Swipe',()=>{swipeMode=true;menuStep=1;menuT0=uiT;},{size:28,id:2,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'}));
- }else{const bh=56,gap=16,bk=36,by=ih+38+(bandH-38-SAFEB-bh*2-gap*2-bk)*.5,mt=uiT-menuT0; // step 2 of 2: Easy or Hard (Push Hard only hides the green signal)
+ }else{const bh=56,gap=16,bk=36,by=ih+34+(bandH-34-SAFEB-bh*2-gap*2-bk)*.5,mt=uiT-menuT0; // step 2 of 2: Easy or Hard (Push Hard only hides the green signal)
   appear(EZ.back(mt/.35),by,bh,()=>button(bx,by,bw,bh,(swipeMode?'Swipe':'Push')+' Easy',()=>{hardMode=false;startGame();},{size:25,id:0}));
   appear(EZ.back((mt-.1)/.35),by+bh+gap,bh,()=>button(bx,by+bh+gap,bw,bh,(swipeMode?'Swipe':'Push')+' Hard',()=>{hardMode=true;startGame();},{size:25,id:2,col:C.lava,colD:'#a82a06',colP:'#e2580f'}));
   appear(EZ.back((mt-.2)/.35),by+(bh+gap)*2,bk,()=>button((W-120)/2,by+(bh+gap)*2,120,bk,'Back',()=>{menuStep=0;menuT0=0;swipeMode=false;},{size:16,id:3,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'}));}

@@ -1,9 +1,9 @@
-/* Exploding Volcanos in the Bathtub — version 5 ("fable-v5")
+/* Exploding Volcanoes in the Bathtub — version 5 ("fable-v5")
    A from-scratch visual build: flat sticker-book art, the real cover as the title screen,
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v5.14'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v5.15'; // shown small in the corner of the start screen; bump it with every change
 const cv=document.getElementById('c'),W=380,H=600;let X=cv.getContext('2d');
 const song=document.getElementById('song');
 const CX=190,CY=176,G=0.22,T=58,CHARGE_RATE=0.55,CHARGE_MAX=1.7;

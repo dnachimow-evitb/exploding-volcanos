@@ -1,4 +1,4 @@
-EXPLODING VOLCANOS IN THE BATHTUB — web app (PWA)
+EXPLODING VOLCANOES IN THE BATHTUB — web app (PWA)
 ==================================================
 
 WHICH VERSION IS LIVE (updated 2026-11-11)
@@ -28,7 +28,7 @@ To return to version 5 after that:
 HOME-SCREEN ICON ON AN IPHONE
 The icon is apple-touch-icon.png (the volcano from the cover art).
 An iPhone only reads the icon when you tap "Add to Home Screen", so to
-update it: delete the Volcanos icon from the home screen, open the link
+update it: delete the Volcanoes icon from the home screen, open the link
 above in Safari, then Share -> Add to Home Screen.
 
 VERSION 6 TEST LINK (swipe to throw, experimental)

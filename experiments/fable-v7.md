@@ -34,6 +34,8 @@ The pause card shows the mode (Push, Swipe Easy, Swipe Hard) and has a Start Scr
 - v7.9: players can pick their toy from all 12 toys in the game: a Pick A Toy card opens after naming a new player, and a Toy button on the Players card changes it later.
 - v7.10: start screen uses the corrected cover art, assets/cover-volcanoes.webp ("Volcanoes"). The live version 5 game got the same swap as v5.13 (offline cache name bumped to exploding-volcanos-v6). The old art stays at assets/cover.png.
 - v7.11 (and live v5.14): visible wording changed from "Volcanos" to "Volcanoes": round-win lettering, page titles, home-screen app name. File names, the web address and the original game are unchanged. Offline cache name is now exploding-volcanos-v7.
+- v7.12 (live v5.15, v6.10): spelling sweep. Every remaining "Volcanos" a person can see now reads "Volcanoes", including the original game (game.js, original.html: wording only), the story page and the README. Left alone on purpose: the web address and folder name (exploding-volcanos), saved-data and cache names, and the old history notes.
+  Same release: the taped cover picture on the v7 start screen sits 24 units lower so the player chip and sound button no longer cover the tape; the waterline, toys and buttons moved down with it. The story page and v6 test page also use the corrected cover.
 
 ## Tested
 Scripted in the preview at 375x812 by stepping the game by hand: Push scores on a held throw,

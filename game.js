@@ -285,7 +285,7 @@ function hud(){X.fillStyle='rgba(8,4,2,.82)';X.fillRect(0,0,W,58);X.fillStyle='r
  X.fillStyle=low?'#ff5a5a':'#fff';X.font='900 18px sans-serif';X.textAlign='center';X.textBaseline='middle';X.fillText('⏱ '+sec,0,0);X.restore();X.textBaseline='alphabetic';}
 let card=null;
 function overlay(){if(paused){drawPauseCard();return;}
- if(state==='menu')drawCard('🌋 Exploding Volcanos','Noah splashes toys into the volcano!\nHold a toy to wind up, release to splash.\nEach round adds a new toy!','START',()=>startGame());
+ if(state==='menu')drawCard('🌋 Exploding Volcanoes','Noah splashes toys into the volcano!\nHold a toy to wind up, release to splash.\nEach round adds a new toy!','START',()=>startGame());
  else if(state==='intro')drawIntroCard();
  else if(state==='newtoy')drawNewToyCard();
  else if(state==='win')drawCard('🏆 You Win!','All 10 rounds cleared!\nScore: '+score+'   Best combo: x'+bestCombo,'PLAY AGAIN',()=>startGame());
@@ -329,7 +329,7 @@ function eruptFX(){if(state!=='erupt'&&state!=='win')return;if(eruptT>0)eruptT--
   X.strokeText('POW! POW!',0,0);X.fillText('POW! POW!',0,0);X.restore();X.textBaseline='alphabetic';}
  else if(state==='erupt'&&eruptT>10){const sc=0.6+Math.min(1,(116-eruptT)/12)*0.4;
   X.save();X.translate(W/2,116);X.scale(sc,sc);X.textAlign='center';X.textBaseline='middle';X.lineWidth=5;X.lineJoin='round';X.strokeStyle='#3a0a00';
-  X.font='900 30px sans-serif';X.strokeText('EXPLODING VOLCANOS',0,-16);X.fillStyle='#ff8a1a';X.fillText('EXPLODING VOLCANOS',0,-16);
+  X.font='900 28px sans-serif';X.strokeText('EXPLODING VOLCANOES',0,-16);X.fillStyle='#ff8a1a';X.fillText('EXPLODING VOLCANOES',0,-16);
   X.font='900 22px sans-serif';X.strokeText('in the BATHTUB!',0,14);X.fillStyle='#3ec6ff';X.fillText('in the BATHTUB!',0,14);
   X.restore();X.textBaseline='alphabetic';}}
 function loop(now){
