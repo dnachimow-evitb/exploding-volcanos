@@ -98,10 +98,11 @@ Conventions:
 3. **Price it:** add `['seal',95]` to `SHOP`.
 4. That is all the wiring. `ALL_TOYS`, the grey "locked" copy, the My Toys grid, the icon picker and the
    lineup all pick it up from `SHOP`.
-5. **Check the My Toys card.** The lower grid shows only toys that are not in the lineup, 4 per row.
-   With 20 toys that is always 8 (2 rows). A 21st toy starts a 3rd row: raise `ch` in `drawMyToys` by 76 and
-   move the message down with it (it is at `cy+408`; the buttons follow `ch`). The card must still fit a
-   720-unit-tall screen.
+5. **My Toys card: keep "Other Toys" at 8 per page.** The lower grid shows only toys that are not in the
+   lineup, 4 per row, 2 rows. With 20 toys that is exactly 8. **Derek's decision (2026-11-12): when there are
+   more than 20 toys, do NOT make the card taller. Keep the 8-cell area and add paging** (previous / next
+   arrows and a "1 Of 2" label, like the Badges card). Paging is not built yet: the 21st toy is the trigger
+   to build it in `drawMyToys` (slice `pool` by page; reset the page in `openToys`).
 6. Optional real art: put `assets/toys/<name>.png` in place and add the key to `SPRITE_FILE`; a PNG replaces
    the drawn version automatically.
 
