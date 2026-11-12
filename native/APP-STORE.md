@@ -31,15 +31,24 @@ Keep this file current: tick items off and add decisions as they are made.
 ## Checklist
 
 ### 1. Accounts (Derek)
-- [ ] **Join the Apple Developer Program** (99 US dollars a year): developer.apple.com/programs/enroll,
-      or the Apple Developer app on the iPhone. Needs an Apple Account with two-factor authentication.
-      Enrol as an **Individual** (decided): quick, often a day or two; the store shows your legal name.
-- [ ] After approval, in App Store Connect: check **Agreements, Tax, and Banking** shows the free-apps
-      agreement as active (the app is free, so no tax or bank forms).
-- [ ] Create an **App Store Connect API key** (Users and Access > Integrations > App Store Connect API,
-      role Admin) so GitHub's Mac can sign and upload builds. Download the `.p8` file (it can be downloaded
-      only once). Put it and its Key ID, Issuer ID and the Team ID into the repository's GitHub secrets
-      (Settings > Secrets and variables > Actions). Never paste them into a chat.
+- [x] **Joined the Apple Developer Program** as an Individual (Derek, 2026-11-12).
+- [ ] **Register the bundle ID**: developer.apple.com/account/resources/identifiers/add/bundleId >
+      App IDs > App > Description "Exploding Volcanoes", Bundle ID *Explicit* `com.explodingvolcanoes.app`,
+      no capabilities > Continue > Register.
+- [ ] **Create the app record**: appstoreconnect.apple.com/apps > "+" > New App > iOS, Name
+      "Exploding Volcanoes", Primary Language English (U.S.), Bundle ID (the one above), SKU
+      `exploding-volcanoes`, User Access Full Access. Uploads are refused until this exists.
+- [ ] **Create an App Store Connect API key**: appstoreconnect.apple.com/access/integrations/api
+      (the first time, Request Access and accept) > Team Keys > "+" > Name "GitHub builds", Access **Admin**
+      (Apple's cloud signing needs Admin) > Generate. Download the `.p8` file (it can be downloaded only
+      once; keep it safe). Note the **Key ID** (in the table) and **Issuer ID** (above the table).
+- [ ] **Find the Team ID**: developer.apple.com/account > Membership details.
+- [ ] **Add four GitHub secrets**: github.com/dnachimow-evitb/exploding-volcanos/settings/secrets/actions >
+      New repository secret, one each: `ASC_KEY_ID`, `ASC_ISSUER_ID`, `APPLE_TEAM_ID`, and `ASC_KEY_P8` (open the
+      .p8 file in a text editor such as Notepad and paste all of it, including the BEGIN and END lines).
+      Never paste these into a chat; GitHub keeps them hidden, even from Claude.
+- [ ] Agreements, Tax, and Banking in App Store Connect shows the free-apps agreement as active
+      (the app is free, so no tax or bank forms).
 
 ### 2. The app (Claude)
 - [x] Capacitor wrapper in `native/`, packaging the live game.
@@ -50,7 +59,10 @@ Keep this file current: tick items off and add decisions as they are made.
       the busy cover crop reads poorly at small sizes. Needs a crisp, simpler version. Blocked 2026-11-12:
       the Google AI Studio project behind Claude's Gemini access is on the free tier, which allows no image
       requests; Derek can turn on billing there (roughly 10-25 cents an image) or supply an icon.
-- [ ] Signed build + upload to TestFlight from GitHub (needs step 1).
+- [ ] Signed build + upload to TestFlight from GitHub: the `testflight` job in `.github/workflows/ios.yml`
+      (written 2026-11-12, not yet run: needs the secrets above). It archives unsigned, then signs with Apple's
+      cloud-managed distribution certificate through the API key and uploads. Start it by pushing a tag named
+      `testflight-<anything>`, or (once the workflow is on main) Actions > iPhone app > Run workflow.
 - [ ] Try it on Derek's iPhone through TestFlight (audio start, haptics, safe areas, saving).
 - [ ] Optional: real haptics in Swipe mode (iPhone web pages cannot vibrate; the app can).
 
