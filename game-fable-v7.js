@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v7.10'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v7.11'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
 let nameEd=null,pfDel=0; // in-game name keyboard {mode,txt,t0}; delete question (time it opened, 0 = closed)
@@ -735,7 +735,7 @@ const cover=new Image();cover.onload=()=>{cover._ok=true;};cover.onerror=()=>{};
 function drawMenu(){const t=38;X.fillStyle=C.wall;X.fillRect(0,0,W,HS);X.strokeStyle=C.tile;X.lineWidth=2.5;X.beginPath();for(let x=0;x<=W;x+=t){X.moveTo(x,0);X.lineTo(x,HS);}for(let y=8;y<HS;y+=t){X.moveTo(0,y);X.lineTo(W,y);}X.stroke();
  const pw=W-48,py=SAFE+60,k0=lerp(.85,1,EZ.back(uiT/.5)),ih=py+pw+36,bandH=HS-ih;
  X.save();X.translate(W/2,py+pw/2);X.rotate(-.022);X.scale(k0,k0);X.fillStyle=C.deep;X.fillRect(-pw/2-3,-pw/2,pw+16,pw+16);X.fillStyle='#fff';X.fillRect(-pw/2-8,-pw/2-8,pw+16,pw+16);
- if(cover._ok)X.drawImage(cover,-pw/2,-pw/2,pw,pw);else{X.fillStyle=C.lava;X.fillRect(-pw/2,-pw/2,pw,pw);text('EXPLODING',0,-30,40,'#fff');text('VOLCANOS',0,18,42,C.hot);text('In The Bathtub!',0,62,22,'#fff');}
+ if(cover._ok)X.drawImage(cover,-pw/2,-pw/2,pw,pw);else{X.fillStyle=C.lava;X.fillRect(-pw/2,-pw/2,pw,pw);text('EXPLODING',0,-30,40,'#fff');text('VOLCANOES',0,18,40,C.hot);text('In The Bathtub!',0,62,22,'#fff');}
  for(const g of[-1,1]){X.save();X.translate(g*(pw/2-10),-pw/2-6);X.rotate(g*.55);X.fillStyle=C.gold;X.fillRect(-24,-8,48,16);X.restore();}X.restore();
  const wy=x=>ih+Math.sin(x*.05+NOW*1.4)*5,edge=()=>{X.beginPath();X.moveTo(0,HS);for(let x=0;x<=W;x+=8)X.lineTo(x,wy(x));X.lineTo(W,HS);X.closePath();};
  edge();fill(C.water);X.beginPath();for(let x=0;x<=W;x+=8)x?X.lineTo(x,wy(x)):X.moveTo(x,wy(x));X.strokeStyle='#fff';X.lineWidth=5;X.stroke();
@@ -767,7 +767,7 @@ function burstShape(r1,r2,n,rot){X.beginPath();for(let i=0;i<n*2;i++){const a=ro
 function eruptFX(){if(state!=='erupt')return;
  if(eruptT>134){const sc=lerp(.5,1.08,EZ.back((160-eruptT)/11));X.save();X.translate(W/2,H/2-6);X.scale(sc,sc);X.rotate(-.03);big('This Is',-24,40,C.hot);big('The End!',22,40,C.hot);X.restore();}
  else if(eruptT>116){const a=(134-eruptT)/18;X.save();X.translate(W/2,H/2-6);[[-74,-10,-.14,0],[70,14,.12,.42]].forEach(q=>{const k=EZ.back((a-q[3])/.3);if(k<=0)return;X.save();X.translate(q[0],q[1]);X.rotate(q[2]);X.scale(k,k);burstShape(92,62,12,NOW);fill(C.navy);burstShape(84,56,12,NOW);fill(C.hot);burstShape(62,42,12,NOW+.13);fill('#fff');text('POW!',0,2,38,C.lavaDk);X.restore();});X.restore();}
- else if(eruptT>14){const sc=lerp(.5,1,EZ.back((116-eruptT)/14))*Math.min(1,(eruptT-14)/8);X.save();X.translate(W/2,122);X.scale(sc,sc);big('EXPLODING VOLCANOS',-16,29,C.lava);big('In The Bathtub!',16,22,'#fff');X.restore();}}
+ else if(eruptT>14){const sc=lerp(.5,1,EZ.back((116-eruptT)/14))*Math.min(1,(eruptT-14)/8);X.save();X.translate(W/2,122);X.scale(sc,sc);big('EXPLODING VOLCANOES',-16,27.5,C.lava);big('In The Bathtub!',16,22,'#fff');X.restore();}}
 
 // ── SWIPE TO THROW (version 6) ──
 // Power comes from the swipe: how far the finger travels up the screen (any upward direction counts in full,
