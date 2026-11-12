@@ -55,8 +55,8 @@ Keep this file current: tick items off and add decisions as they are made.
 - [ ] Optional: real haptics in Swipe mode (iPhone web pages cannot vibrate; the app can).
 
 ### 3. Store listing (together)
-- [ ] **App name**, 30 characters at most. "Exploding Volcanoes in the Bathtub" is 34, so for example
-      name "Exploding Volcanoes" + subtitle "In The Bathtub" (subtitle is also 30 at most).
+- [x] **App name "Exploding Volcanoes", subtitle "In The Bathtub"** (Derek, 2026-11-12). Apple allows 30
+      characters for each; the full title "Exploding Volcanoes in the Bathtub" is 34.
 - [ ] Description, keywords (100 characters), category (Games > Family or Casual).
 - [x] Screenshots, 6.9-inch iPhone size (1320 x 2868): `native/screenshots/` (start screen, aiming, eruption,
       Badges, My Toys), made from v7.35. Remake after visible game changes: `npm run build && node scripts/screenshots.js`.
@@ -79,9 +79,9 @@ Made by Derek on 2026-11-12:
 - **Bundle ID `com.explodingvolcanoes.app`** (permanent once registered). Set in `capacitor.config.json` and
   `ios/App/App.xcodeproj/project.pbxproj`.
 - **Free.** No Paid Apps agreement, tax or banking forms needed.
+- **Name "Exploding Volcanoes", subtitle "In The Bathtub".**
 
 Still open:
-- App name and subtitle (suggested: "Exploding Volcanoes" + "In The Bathtub").
 - Contact email to show on the support page (Apple requires a way to reach the developer).
 - Kids category or not.
 
