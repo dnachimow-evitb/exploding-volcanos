@@ -40,6 +40,7 @@ The pause card shows the mode (Push, Swipe Easy, Swipe Hard) and has a Start Scr
 - v7.14: the home button (and Start Screen on the pause card) now asks "Go Home?" first, with Keep Playing and Go Home buttons. The game is paused while the question is up.
 - v7.15: Badges and How To Play cards have a Back button on pages 2 and 3 (Close on page 1), next to the Next button.
 - v7.16: every badge has its own picture inside the medal (duck, hairball, Max, clock, volcano, trophy and so on); the medal rim shows the level. Each row also says which level comes next ("Next: Silver") under its progress bar.
+- v7.17: the two personal-best badges (Never Miss, Big Score) no longer look like running totals: the row reads "Best streak: 14" / "Best game: 3400" with "Goal: 20" / "Goal: 6000" on the right.
 
 ## Tested
 Scripted in the preview at 375x812 by stepping the game by hand: Push scores on a held throw,

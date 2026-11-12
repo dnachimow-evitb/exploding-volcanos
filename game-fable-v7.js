@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v7.16'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v7.17'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -649,11 +649,12 @@ function drawPlayers(){const age=uiT-pfT0,n=PF.list.length,cw=336,ch=232+n*56,{c
  let x=W/2-(sm.reduce((t,q)=>t+q[1],0)+(sm.length-1)*8)/2;const yb=cy+106+n*56;sm.forEach(q=>{button(x,yb,q[1],34,q[0],q[2],{size:13.5,id:q[3],col:q[3]===8?C.lava:'#5b7fd6',colD:q[3]===8?'#a82a06':'#34509c',colP:q[3]===8?'#e2580f':'#4a6cc0'});x+=q[1]+8;});
  button((W-214)/2,cy+ch-72,214,50,'Done',()=>{pfOpen=false;},{size:20});cardEnd();}
 let streak=0,rdMiss=0,rdBlock=0,rdFirst=true,toast=null,toastQ=[]; // streak: scores in a row with no miss (carries across rounds)
+// best: a personal-best badge (a record, not a running total). Its row shows the record and the goal instead of a fraction.
 const BADGES=[
  {id:'newFirst',name:'New Toy First!',how:'Get the new toy in first',t:[1,5,10]},
  {id:'hair',name:'Hairball Hero',how:'Throw hairballs in',t:[10,20,50]},
  {id:'sneak',name:'Sneak Past Max',how:'Win a round, no Max blocks',t:[1,5,15]},
- {id:'bestStreak',name:'Never Miss',how:'Toys in a row, no misses',t:[10,20,40]},
+ {id:'bestStreak',name:'Never Miss',how:'Toys in a row, no misses',best:'Best streak',t:[10,20,40]},
  {id:'perfect',name:'Perfect Round',how:'Win a round, no misses',t:[1,10,30]},
  {id:'quick',name:'Beat The Clock',how:'Win with 15 seconds left',t:[1,10,30]},
  {id:'toys',name:'Volcano Feeder',how:'Toys in the volcano',t:[50,250,1000]},
@@ -661,7 +662,7 @@ const BADGES=[
  {id:'rebounds',name:'Rebound Champ',how:'Score off a wall (Swipe)',t:[5,25,75]},
  {id:'hardRounds',name:'Hard Hat',how:'Win rounds in Hard',t:[5,25,75]},
  {id:'wins',name:'This Is The End!',how:'Finish all 10 rounds',t:[1,3,10]},
- {id:'bestScore',name:'Big Score',how:'Best score in one game',t:[1000,3000,6000]}];
+ {id:'bestScore',name:'Big Score',how:'Best score in one game',best:'Best game',t:[1000,3000,6000]}];
 const TIER=['','Bronze','Silver','Gold'],tierOf=b=>b.t.filter(v=>ST[b.id]>=v).length;
 function statSet(id,v){if(v<=ST[id])return;const b=BADGES.find(q=>q.id===id),t0=b?tierOf(b):0;ST[id]=v;if(b){const t1=tierOf(b);if(t1>t0)toastQ.push({b,tier:t1});}pfSave();}
 function stat(id){statSet(id,ST[id]+1);}
@@ -694,8 +695,8 @@ function drawBadges(){const age=uiT-bdgT0,cw=336,ch=470,{cx,cy}=cardBegin(cw,ch,
  text(bdgPg+' Of 3',cx+cw-20,cy+80,12,'#4a6fc4',{a:'right',w:800});if(bdgPg===3)text(PF.list[PF.cur].name,cx+20,cy+80,12,'#4a6fc4',{a:'left',w:800});
  if(bdgPg<3){const got=BADGES.reduce((n,b)=>n+tierOf(b),0);text(PF.list[PF.cur].name+'  ·  '+got+' Of '+BADGES.length*3,cx+20,cy+80,12,'#4a6fc4',{a:'left',w:800});
   BADGES.slice((bdgPg-1)*6,bdgPg*6).forEach((b,i)=>{const y=cy+118+i*48,tr=tierOf(b),v=ST[b.id],nx=b.t[Math.min(tr,2)],lo=tr?b.t[tr-1]:0,f=tr>=3?1:clamp(v/nx,0,1),bx=cx+cw-86,bw=68;
-   medal(cx+37,y+(tr?3:0),19,tr,b.id);text(b.name,cx+66,y-9,15.5,C.navy,{a:'left'});text(b.how,cx+66,y+10,11.5,'#4a6fc4',{a:'left',w:800});
-   text(tr>=3?'Gold!':Math.min(v,nx)+' / '+nx,bx+bw,y-9,12,tr>=3?C.amber:C.navy,{a:'right'});text(tr>=3?'Top Level':'Next: '+TIER[tr+1],bx+bw,y+21,9.5,MEDAL[Math.min(tr+1,3)][1],{a:'right'});X.fillStyle='#d3e2f8';X.fillRect(bx,y+5,bw,8);X.fillStyle=MEDAL[Math.min(tr+1,3)][1];X.fillRect(bx,y+5,bw*f,8);});}
+   medal(cx+37,y+(tr?3:0),19,tr,b.id);text(b.name,cx+66,y-9,15.5,C.navy,{a:'left'});text(b.best?b.best+': '+v:b.how,cx+66,y+10,11.5,'#4a6fc4',{a:'left',w:800});
+   text(tr>=3?'Gold!':b.best?'Goal: '+nx:Math.min(v,nx)+' / '+nx,bx+bw,y-9,12,tr>=3?C.amber:C.navy,{a:'right'});text(tr>=3?'Top Level':'Next: '+TIER[tr+1],bx+bw,y+21,9.5,MEDAL[Math.min(tr+1,3)][1],{a:'right'});X.fillStyle='#d3e2f8';X.fillRect(bx,y+5,bw,8);X.fillStyle=MEDAL[Math.min(tr+1,3)][1];X.fillRect(bx,y+5,bw*f,8);});}
  else{[['Games Played',ST.games],['Rounds Won',ST.rounds],['Toys In The Volcano',ST.toys],['Misses',ST.misses],['Hairballs',ST.hair],['Blocked By Max',ST.blocks],['Best Score',ST.bestScore],['Best Round',ST.bestRound],['Longest No-Miss Streak',ST.bestStreak],['Best Combo',ST.bestCombo]].forEach((r,i)=>{const y=cy+108+i*28;
    if(i%2===0){X.fillStyle='#eef4fd';X.fillRect(cx+12,y-14,cw-24,28);}text(r[0],cx+24,y+1,14.5,C.navy,{a:'left',w:800});text(''+r[1],cx+cw-24,y+1,16,C.lava,{a:'right'});});}
  const x0=W/2-(96+12+176)/2,yb=cy+ch-72;button(x0,yb,96,48,bdgPg===1?'Close':'Back',()=>{bdgPg--;},{size:16,id:7,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});
