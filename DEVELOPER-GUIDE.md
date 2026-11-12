@@ -4,7 +4,7 @@ Read this first before changing the game. It says where things are and gives ste
 common jobs (add a toy, change prices, add a badge, publish). The history of *why* things are the way they are
 is in `experiments/fable-v7.md` (one line per version) and, for the art, `experiments/fable-v5.md`.
 
-Last updated: 2026-11-12, at test version v7.34 / live version v7.34.
+Last updated: 2026-11-12, at test version v7.35 / live version v7.34.
 
 ## 1. The files that matter
 
@@ -96,6 +96,8 @@ Conventions:
    `line(path,col,width,rim)`; `eye(x,y,r)`; `gloss(path)`. Paths are SVG path strings.
    Toys do not have to be sea creatures (Derek, 2026-11-12: "it can be anything"). Look at `whale`, `crab`,
    `penguin`, `robot`, `firetruck` for the house style: 2 to 4 flat colours, dot eyes, a smile, pink cheeks.
+   Never use pure white for a body: it disappears into the white sticker rim (use an off-white such as `#eef1f7`).
+   Add depth with a darker far-side leg or a belly shade; a first zebra without those read as flat.
 2. **Name it:** add `otter:'Otter'` to the `Object.assign(TOYNAME,{…})` line.
 3. **Price it:** add `['otter',95]` to `SHOP`, in its place by price.
 4. That is all the wiring. `ALL_TOYS`, the grey "locked" copy, the My Toys grid, the icon picker and the

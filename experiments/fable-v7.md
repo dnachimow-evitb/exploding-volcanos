@@ -74,6 +74,7 @@ The pause card shows the mode (Push, Swipe Easy, Swipe Hard) and has a Start Scr
 - v7.33 (TEST COPY ONLY): the start screen says the two big buttons are modes: a "Pick A Game Mode" heading above them, and a small line inside each (Push: "Press And Hold", Swipe: "Flick To Throw"). The next step is headed "Push Mode: Easy Or Hard?" (or Swipe), with "With Hints" / "No Hints" under Easy / Hard.
 - v7.34 (TEST COPY ONLY): start-screen cover is 85% of its old width (282 units, was 332) because the lower half had become crowded; the freed height went into space around the heading and between the buttons (gap 20, was 16). Derek chose this over removing the small lines inside the buttons.
 - 2026-11-12: v7.34 published live at Derek's request ("all systems go"): everything from v7.24 to v7.34 (coins, 26 shop toys, My Toys lineup, five-page How To Play, mode labels, smaller cover). Cache name exploding-volcanos-v13. The version label stays visible in the corner of the live start screen on purpose; Derek uses it. Coins, prices and badge targets have had no real play yet.
+- v7.35 (TEST COPY ONLY): zebra redrawn (Derek: "a little flat"): bigger head with a white-ringed eye, dark muzzle and smile, black mane, tapered stripes, grey far-side legs and belly shade for depth, tail tuft, hooves, and an off-white body so it stands out from the white sticker rim.
 
 ## Tested
 Scripted in the preview at 375x812 by stepping the game by hand: Push scores on a held throw,

@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v7.34'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v7.35'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -409,11 +409,16 @@ teddy(k){const{E,C,blob,sh,line,eye}=k;
  sh(E(0,-13,4.2,3.2),'#3a2410');line('M0 -10L0 -6M-5 -5Q0 -1 5 -5','#3a2410',2);
  eye(-9,-21,3.4);eye(9,-21,3.4);sh(C(-15,-11,3.6),'rgba(255,120,130,.5)');sh(C(15,-11,3.6),'rgba(255,120,130,.5)');},
 zebra(k){const{E,C,blob,sh,line,eye}=k;
- blob('#f4f6fa',['M-33 2Q-46 6 -44 22L-39 21Q-40 11 -31 9Z','M-26 14L-26 42L-17 42L-17 18Z','M-9 18L-9 42L0 42L0 18Z','M9 18L9 42L18 42L18 16Z','M25 -36L23 -47L32 -39Z',E(-6,6,28,17),'M10 2Q15 -30 29 -37Q44 -38 45 -25Q43 -14 30 -13Q28 2 22 14Z']);
- ['M-24 -7L-20 21','M-13 -10L-9 23','M-2 -11L2 23','M9 -9L12 20','M17 -14L24 -4','M21 -24L29 -16'].forEach(d=>line(d,'#2a2a33',4.2));
- sh('M12 -8Q14 -30 26 -38L21 -37Q10 -28 9 -6Z','#2a2a33');sh(E(41,-23,5,6.5),'#2a2a33');
- ['M-26 38L-17 38','M-9 38L0 38','M9 38L18 38'].forEach(d=>line(d,'#2a2a33',5));line('M-44 16L-40 22','#2a2a33',4);
- eye(32,-28,3.2);},
+ blob('#b4bdcd',['M-19 16L-19 40L-11 40L-11 18Z','M15 16L15 40L23 40L23 16Z'],3);sh('M-19 35L-11 35L-11 40L-19 40Z','#2a2a33');sh('M15 35L23 35L23 40L15 40Z','#2a2a33');
+ line('M-31 3Q-44 7 -42 20','#eef1f7',5.5,2.8);blob('#2a2a33',['M-47 17L-38 17L-41 31Z'],2.4);
+ blob('#eef1f7',['M25 -37L22 -48L32 -42Z','M-29 14L-29 42L-18 42L-18 18Z','M3 18L3 42L14 42L14 18Z',E(-6,6,28,17),'M7 6Q11 -22 22 -33L37 -20Q29 -6 25 13Z','M18 -33Q22 -46 36 -44Q50 -40 50 -27Q49 -14 36 -13Q22 -14 18 -24Z']);
+ sh('M-31 12Q-6 25 21 12Q14 23 -6 24Q-24 23 -31 12Z','#cfd7e4');sh('M26 -39L25 -45L30 -42Z','#ffb3c7');
+ ['M-23 -9L-17 -10L-19 9L-25 7Z','M-12 -11L-5 -11L-8 13L-14 13Z','M0 -10L7 -9L4 13L-2 13Z','M12 -5L18 -2L14 11L9 11Z','M12 -12L20 -8L17 -1L10 -5Z','M16 -22L25 -16L22 -10L14 -15Z','M22 -31L29 -27L27 -22L20 -25Z'].forEach(d=>sh(d,'#2a2a33'));
+ ['M-29 25L-18 25','M-29 32L-18 32','M3 25L14 25','M3 32L14 32'].forEach(d=>line(d,'#2a2a33',3.2));
+ sh('M-29 37L-18 37L-18 42L-29 42Z','#2a2a33');sh('M3 37L14 37L14 42L3 42Z','#2a2a33');
+ sh('M9 -4Q9 -26 21 -38L26 -35Q16 -24 15 -4Z','#2a2a33');
+ sh(E(44,-23,7.5,8.5),'#3a3a45');sh(C(46.5,-26,1.5),'#ffffff');line('M40 -17Q44 -15 48 -18','#ffffff',1.6);
+ sh(C(32,-29,5.2),'#ffffff',1.6,'#2a2a33');eye(33,-28.5,3.6);sh(C(28,-19,3.6),'rgba(255,120,150,.55)');},
 robot(k){const{C,blob,sh,line,eye}=k;
  line('M0 -40L0 -47','#9aa7b8',3.5,2.2);blob('#e53935',[C(0,-47,3.6)],2.2);
  line('M-22 -4L-34 8L-30 20','#9aa7b8',7,2.8);line('M22 -4L34 8L30 20','#9aa7b8',7,2.8);
