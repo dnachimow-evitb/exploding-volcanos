@@ -7,11 +7,12 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v7.23'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v7.24'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
 let testRound=1; // TEST PAGE ONLY: which round a new game starts on (the small Round button on the start screen)
+let toysT0=0,selSlot=-1,selToy=null; // My Toys card (time it opened, 0 = closed); the spot / toy currently picked on it
 let nameEd=null,pfDel=0; // in-game name keyboard {mode,txt,t0}; delete question (time it opened, 0 = closed)
 let hits=[],pfOpen=false,pfT0=0; // extra tap areas (button ids 5+); Players card on the start screen
 let card4=null,bdgPg=0,bdgT0=0; // Badges card on the start screen: 0 closed, 1-2 badges, 3 stats
@@ -23,6 +24,14 @@ const CX=190,CY=176,G=0.22,T=58,CHARGE_RATE=0.55,CHARGE_MAX=1.7;
 const windAng=-1.45,swingEnd=1.5,idleAng=0.9,swingDur=0.32;
 const BASE=['🦆','⛵','🦕'],NEWBY={2:'🚚',3:'🚗',4:'🐙',5:'🪣',6:'🦈',7:'🐬',8:'🐸',9:'🦸',10:'🚀'};
 const TOYNAME={'🚚':'Monster Truck','🚗':'Car','🐙':'Octopus','🪣':'Pail','🦈':'Shark','🐬':'Dolphin','🐸':'Froggy','🦸':'Action Figure','🚀':'Rocket'};
+Object.assign(TOYNAME,{'🦆':'Duck','⛵':'Sailboat','🦕':'Dino',whale:'Whale',turtle:'Turtle',sub:'Submarine',crab:'Crab',star:'Starfish',tug:'Tugboat',penguin:'Penguin',pdino:'Purple Dino'});
+// TOY SHOP: toys bought with coins. Coins come only from playing (rounds won, badge levels); there is no real money.
+// A player's LINEUP is 12 spots: the first 3 start the game, then one joins each round. It starts as the default set
+// and the player can put any toy they own into any spot. Coins, owned toys and the lineup are saved per player.
+const SHOP=[['whale',30],['turtle',40],['crab',50],['star',60],['penguin',75],['tug',90],['sub',110],['pdino',130]];
+const COIN_ROUND=5,COIN_WIN=25,COIN_BADGE=[0,20,40,80]; // per round won, extra for finishing all 10, per badge level
+const DEF_LINE=[...BASE,...Object.values(NEWBY)],ALL_TOYS=DEF_LINE.concat(SHOP.map(q=>q[0])),priceOf=em=>{const q=SHOP.find(z=>z[0]===em);return q?q[1]:0;};
+let LINE={...NEWBY}; // the toy that joins in each round of the current game (from the player's lineup)
 const DIFF=[{cr:34,drift:0,blk:0,time:30},{cr:33,drift:.2,blk:0,time:32},{cr:31,drift:.35,blk:0,time:35},{cr:29,drift:.5,blk:1.2,time:38},{cr:27,drift:.65,blk:1.6,time:41},{cr:25,drift:.8,blk:2.0,time:44},{cr:23,drift:.95,blk:2.3,time:47},{cr:21,drift:1.1,blk:2.6,time:50},{cr:19,drift:1.25,blk:2.9,time:53},{cr:17,drift:1.4,blk:3.2,time:56}];
 const diff=()=>DIFF[Math.min(round-1,9)];
 let craterR=30,score=0,round=1,collected=0,need=0,combo=0,bestCombo=0;
@@ -36,7 +45,7 @@ let timeLeft=30,roundTime=30,hbTimer=0,lastNow=0;
 const SPRITE_FILE={'🦆':'duck','⛵':'boat','🦕':'dino','🚚':'monstertruck','🚗':'car','🐙':'octopus','🪣':'pail','🦈':'shark','🐬':'dolphin','🐸':'frog','🦸':'actionfigure','🚀':'rocket'};
 const sprites={};
 for(const em in SPRITE_FILE){const img=new Image();img.onload=()=>{img._ok=true;};img.onerror=()=>{};img.src='assets/toys/'+SPRITE_FILE[em]+'.png';sprites[em]=img;}
-function paintToy(em,size){const img=sprites[em];if(img&&img._ok){X.drawImage(img,-size/2,-size/2,size,size);return;}const c=toyCv[em];if(c){const s=size*1.5;X.drawImage(c,-s/2,-s/2,s,s);}}
+function paintToy(em,size,grey){if(grey&&toyGrey[em]){const z=size*1.5;X.drawImage(toyGrey[em],-z/2,-z/2,z,z);return;}const img=sprites[em];if(img&&img._ok){X.drawImage(img,-size/2,-size/2,size,size);return;}const c=toyCv[em];if(c){const s=size*1.5;X.drawImage(c,-s/2,-s/2,s,s);}}
 
 function catchHit(x,y,vy){return vy>0&&Math.abs(x-CX)<craterR*1.35&&y>CY-craterR*.7&&y<CY+craterR;}
 function ideal(o){return{vx:(CX-o.x)/T,vy:(CY-o.y-0.5*G*T*T)/T};}
@@ -74,7 +83,7 @@ function startRound(carry){rdMiss=0;rdBlock=0;rdFirst=true;const d=diff();crater
  blk.on=d.blk>0;blk.spd=d.blk;blk.x=110;blk.dir=1;blk.y=292;
  timeLeft=d.time;roundTime=d.time;hbTimer=5+Math.random()*3;hintT=round===1?6:0;
  bannerT=2.6;newToyT=newToyEm?5:0;banner=round===1?'Round 1 — Splash Away!':('Round '+round+'!');}
-function startGame(){stat('games');streak=0;round=1;score=0;bestCombo=0;currentToys=[...BASE];if(TEST&&testRound>1){round=testRound;for(let r=2;r<=round;r++)if(NEWBY[r])currentToys.push(NEWBY[r]);}newToyEm=null;landed=[];objs=[];ejecta=[];confet=[];collected=0;need=0;combo=0;craterR=DIFF[0].cr;blk.on=false;scoreShown=0;lastScore=0;state='intro';}
+function startGame(){stat('games');streak=0;round=1;score=0;bestCombo=0;{const L=PF.list[PF.cur].line;currentToys=L.slice(0,3);LINE={};for(let r=2;r<=10;r++)LINE[r]=L[r+1];}if(TEST&&testRound>1){round=testRound;for(let r=2;r<=round;r++)if(LINE[r])currentToys.push(LINE[r]);}newToyEm=null;landed=[];objs=[];ejecta=[];confet=[];collected=0;need=0;combo=0;craterR=DIFF[0].cr;blk.on=false;scoreShown=0;lastScore=0;state='intro';}
 function dist(a,b,c,d){return Math.hypot(a-c,b-d);}
 function spawnHairball(){const left=Math.random()<.5;objs.push({hb:true,x:left?70:310,y:450,vx:(Math.random()-.5)*.6,vy:0,bob:Math.random()*6.28,st:'float',sq:0,life:8,r:16});}
 function waterBurst(x,y,big){const n=big?26:12;for(let i=0;i<n;i++){const a=-1.57+(Math.random()-.5)*(big?2.4:2),s=(big?3:2)+Math.random()*(big?9:5);parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-(big?4:2),life:1,r:(big?4:3)+Math.random()*(big?7:4),col:['#bfeaff','#8ed8ff','#ffffff','#5bc0f0'][~~(Math.random()*4)]});}rings.push({x,y,r:6,life:1});}
@@ -168,11 +177,12 @@ function updateEjecta(){if(!ejecta.length)return;for(const e of ejecta){if(!e.al
  ejecta=ejecta.filter(e=>e.alive);}
 function splash(x,y,col,n){for(let i=0;i<n;i++){const a=-1.57+(Math.random()-.5)*2.4,s=2+Math.random()*6;parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-2,life:1,r:3+Math.random()*5,col});}}
 function roundWin(){if(state!=='play')return;
+ {const c=COIN_ROUND+(round>=10?COIN_WIN:0);addCoins(c);pop(CX,CY-104,'+'+c+' Coins','#ffd23f');}
  stat('rounds');if(!rdMiss)stat('perfect');if(diff().blk>0&&!rdBlock)stat('sneak');if(timeLeft>=15)stat('quick');if(hardMode)stat('hardRounds');statMax('bestRound',round);
  if(round>=10){score+=150+Math.round(timeLeft)*10;stat('wins');statMax('bestScore',score);state='win';eruptT=160;bigErupt();return;}
  state='erupt';eruptT=160;score+=need*15+combo*5+Math.round(timeLeft)*10;statMax('bestScore',score);bigErupt();
  
- setTimeout(()=>{if(state!=='erupt')return;round++;newToyEm=NEWBY[round]||null;if(newToyEm)currentToys=[...currentToys,newToyEm];
+ setTimeout(()=>{if(state!=='erupt')return;round++;newToyEm=LINE[round]||null;if(newToyEm)currentToys=[...currentToys,newToyEm];
    if(newToyEm){state='newtoy';sfxFanfare();}else{startRound(true);state='play';lastNow=performance.now();}},3500);
 }
 function bigErupt(){sfxErupt();shake=12;flash=.42;flashCol='#ffce8a';freeze=7;punch=1;surge=1;buildOn=false;confettiBurst(state==='win'?60:36);mood(noah,'cheer',3.6);mood(mxc,'laugh',3.6);vol.sv+=.9;rings.push({x:CX,y:CY,r:10,life:1,big:true});
@@ -282,12 +292,65 @@ const TOYS={
  sh(C(0,-6,8.6),'#7fd0ff',3);gloss(C(-2.6,-8.6,2.6));
  line('M-10 -16Q-13 0 -11 8','rgba(255,255,255,.7)',3);
  blob('#e53935',['M-3 6L-3 26L3 26L3 6Z'],2.4);g.restore();},
+whale(k){const{E,C,blob,sh,line,eye}=k;
+ line('M-8 -18L-8 -31','#7fd0ff',4,2.4);line('M-8 -31Q-19 -43 -25 -33','#7fd0ff',4,2.4);line('M-8 -31Q3 -43 9 -33','#7fd0ff',4,2.4);
+ blob('#3b7fe0',['M26 4L47 -17L42 4L47 24Z',E(-4,8,36,24)]);
+ sh('M-36 16Q-6 32 26 14Q14 32 -6 32Q-26 32 -36 16Z','#dff3ff');
+ eye(-21,2,3.8);line('M-33 12Q-25 18 -16 14','#173f86',2.4);sh(C(-13,10,4),'rgba(255,120,150,.45)');
+ sh('M2 12Q12 18 6 26Q-2 20 2 12Z','#2a62b8',2);},
+turtle(k){const{E,C,blob,sh,line,eye}=k;
+ blob('#8fd14f',['M-34 8L-48 13L-34 18Z',E(-21,24,10,8),E(17,24,10,8),C(35,0,12)]);
+ blob('#2e9e5b',['M-37 16Q-36 -30 -2 -30Q32 -30 31 16Z']);
+ sh('M-37 16L31 16L27 22L-33 22Z','#f3e3a0',2.4);
+ [[-4,-9,9],[-21,3,5.5],[13,3,5.5],[-12,-21,4],[6,-21,4]].forEach(q=>sh(C(q[0],q[1],q[2]),'#7fd08a',2,'#1f7a43'));
+ eye(39,-3,3.2);line('M35 6Q40 9 45 5','#3f7a1c',2);},
+sub(k){const{E,C,blob,sh,line,gloss}=k;
+ line('M4 -24L4 -41L14 -41','#555b66',4.5,2.4);
+ blob('#e9412f',['M-37 8L-49 -7L-49 23Z']);
+ blob('#ffd43b',['M-10 -10L-10 -27L14 -27L14 -10Z',E(2,9,40,20)]);
+ sh('M-34 17Q2 30 38 17Q30 28 2 29Q-26 28 -34 17Z','#f7b500');
+ [-15,4,23].forEach(x=>{sh(C(x,6,7),'#c8efff',2.6);gloss(C(x-2,4,2.2));});
+ line('M-2 -18L8 -18','#b97f00',2.2);},
+crab(k){const{E,C,blob,sh,line,eye}=k;
+ ['M-22 22L-36 34','M-11 27L-18 41','M22 22L36 34','M11 27L18 41'].forEach(d=>line(d,'#ef4136',6,2.6));
+ line('M-22 2Q-39 -4 -36 -20','#ef4136',7,2.8);line('M22 2Q39 -4 36 -20','#ef4136',7,2.8);
+ blob('#ef4136',[C(-36,-27,11),C(36,-27,11),E(0,10,30,20)]);
+ sh('M-36 -27L-31 -39L-41 -39Z','#fff',1.6);sh('M36 -27L31 -39L41 -39Z','#fff',1.6);
+ line('M-9 -8L-11 -19','#ef4136',4,2.2);line('M9 -8L11 -19','#ef4136',4,2.2);
+ [-11,11].forEach(x=>{sh(C(x,-22,6.5),'#fff',2.4);eye(x+1,-21.5,3.4);});
+ line('M-9 12Q0 20 9 12','#8f1a10',2.6);sh(C(-19,8,4),'rgba(255,255,255,.35)');sh(C(19,8,4),'rgba(255,255,255,.35)');},
+star(k){const{C,S,blob,sh,line,eye}=k;
+ blob('#ff8a3d',[S(0,2,46,22)],4);
+ [[0,-26,3],[-25,-5,3],[25,-5,3],[-15,25,3],[15,25,3],[0,22,2.4]].forEach(q=>sh(C(q[0],q[1],q[2]),'#ffc48a'));
+ eye(-8,-2,3.8);eye(8,-2,3.8);line('M-7 9Q0 15 7 9','#a33f00',2.6);
+ sh(C(-15,6,3.6),'rgba(255,90,90,.45)');sh(C(15,6,3.6),'rgba(255,90,90,.45)');},
+tug(k){const{C,blob,sh,line,gloss}=k;
+ sh(C(9,-44,4.5),'#eef2f8',2);sh(C(17,-38,3.2),'#eef2f8',2);
+ blob('#ffd43b',['M-9 -20L-9 -38L5 -38L5 -20Z']);sh('M-9 -34L5 -34L5 -29L-9 -29Z','#e9412f');
+ blob('#ffffff',['M-23 11L-23 -14L15 -14L15 11Z']);blob('#2f6fe0',['M-27 -14L19 -14L19 -21L-27 -21Z'],3);
+ sh(C(-12,-2,5.4),'#c8efff',2.4);sh(C(4,-2,5.4),'#c8efff',2.4);
+ blob('#e9412f',['M-46 10L46 10Q42 37 26 37L-30 37Q-42 37 -46 10Z']);
+ sh('M-42 18L42 18L40 24L-40 24Z','#fff');gloss('M-36 12.5L8 12.5L8 14.5L-35.5 14.5Z');
+ sh(C(30,29,3.4),'#2a1a12');},
+penguin(k){const{E,C,blob,sh,line,eye}=k;
+ blob('#ff9a1f',[E(-12,42,11,5.5),E(12,42,11,5.5)],3);
+ blob('#27375e',['M-23 -2Q-42 12 -32 30L-20 20Z','M23 -2Q42 12 32 30L20 20Z',E(0,4,27,39)]);
+ sh(E(0,12,18,28),'#ffffff');sh(E(-9,-19,8.5,9.5),'#fff');sh(E(9,-19,8.5,9.5),'#fff');
+ eye(-8,-19,3.8);eye(8,-19,3.8);sh('M-7 -11L7 -11L0 -2Z','#ff9a1f',2.2);
+ sh(C(-15,-8,3.6),'rgba(255,120,150,.5)');sh(C(15,-8,3.6),'rgba(255,120,150,.5)');},
+pdino(k){const{E,C,blob,sh,line,eye}=k;
+ blob('#9b5de5',['M-26 6Q-43 3 -48 -11Q-47 13 -29 22Z','M-22 24L-22 42L-10 42L-10 27Z','M8 26L8 42L20 42L20 25Z',E(-4,12,30,20),'M11 -18Q11 -42 31 -38Q24 -28 25 -14Z',C(27,-7,17)]);
+ sh(E(-4,24,18,6),'#e3c8ff');
+ [[-17,3,4],[-5,-1,3.2],[6,6,3],[-22,13,2.6]].forEach(q=>sh(C(q[0],q[1],q[2]),'#7a3fc0'));
+ sh('M39 -15L49 -24L43 -8Z','#fff3d0',2);sh('M30 -22L36 -34L37 -20Z','#fff3d0',2);
+ line('M-22 37L-10 37','#7a3fc0',2);line('M8 37L20 37','#7a3fc0',2);
+ eye(31,-9,3.6);line('M30 1Q36 4 41 0','#4a1f85',2.2);sh(C(23,-1,3.2),'rgba(255,120,150,.45)');},
 '🧶'(k){const{C,sh,line,eye}=k;let d='';for(let i=0;i<24;i++){const a=i/24*TAU,r=i%2?40:31;d+=(i?'L':'M')+(Math.cos(a)*r).toFixed(1)+' '+(Math.sin(a)*r).toFixed(1);}
  sh(d+'Z','#8a5a2a',5,'#4a2e12');sh(C(0,0,30),'#9a6832');
  line('M-18 -6Q-4 -24 16 -12','#6b4423',2.6);line('M-20 8Q0 -8 20 6','#6b4423',2.6);line('M-12 20Q4 8 18 18','#6b4423',2.6);
  [-10,10].forEach(x=>{sh(C(x,-5,8.5),'#fff',2.4);eye(x+1.5,-4,4.2);});line('M-7 10Q0 16 7 10','#3a2410',3);},
 };
-const toyCv={},TOYPX=3;
+const toyCv={},toyGrey={},TOYPX=3;
 
 // ── motion helpers (easing, moods, forgiveness, particles, fixed-step loop) ──
 const clamp=(v,a,b)=>v<a?a:v>b?b:v,lerp=(a,b,t)=>a+(b-a)*t;
@@ -371,7 +434,8 @@ function lin(pts,w,c){X.beginPath();pts.forEach((p,i)=>i?X.lineTo(p[0],p[1]):X.m
 function sticker(fn,b){BRD=b||3.2;PASS=0;fn();PASS=1;fn();}
 function buildToys(){for(const em in TOYS){const c=document.createElement('canvas');c.width=c.height=120*TOYPX;const g=c.getContext('2d');g.scale(TOYPX,TOYPX);g.translate(60,60);TOYS[em](toyKit(g),g);
  const t=document.createElement('canvas');t.width=t.height=c.width;const tg=t.getContext('2d');tg.drawImage(c,0,0);tg.globalCompositeOperation='source-in';tg.fillStyle='#ffffff';tg.fillRect(0,0,t.width,t.height);
- g.setTransform(1,0,0,1,0,0);g.globalCompositeOperation='destination-over';for(let i=0;i<16;i++){const a=i/16*TAU;g.drawImage(t,Math.cos(a)*2.6*TOYPX,Math.sin(a)*2.6*TOYPX);}g.globalCompositeOperation='source-over';toyCv[em]=c;}}
+ g.setTransform(1,0,0,1,0,0);g.globalCompositeOperation='destination-over';for(let i=0;i<16;i++){const a=i/16*TAU;g.drawImage(t,Math.cos(a)*2.6*TOYPX,Math.sin(a)*2.6*TOYPX);}g.globalCompositeOperation='source-over';toyCv[em]=c;}
+ for(const q of SHOP){const src=toyCv[q[0]],c=document.createElement('canvas');c.width=c.height=src.width;const g=c.getContext('2d');g.drawImage(src,0,0);try{const im=g.getImageData(0,0,c.width,c.height),d=im.data;for(let i=0;i<d.length;i+=4){const v=(d[i]*.3+d[i+1]*.59+d[i+2]*.11)*.55+105;d[i]=d[i+1]=d[i+2]=v;}g.putImageData(im,0,0);}catch(e){}toyGrey[q[0]]=c;}}
 
 // ── BACKDROP (cached): wall, decor that always sits ABOVE the tub, floor, tub ──
 function poster(x,y,k,rot,name,shirt,hairC,nameC){X.save();X.translate(x,y);X.rotate(rot);X.scale(k,k);
@@ -613,9 +677,12 @@ const PF_KEY=TEST?'evitb-test-profiles-v1':PF_LIVE,PF_MAX=4,PF_ICONS=['🦆','�
 const ST0={games:0,rounds:0,toys:0,misses:0,hair:0,blocks:0,newFirst:0,sneak:0,perfect:0,quick:0,rebounds:0,hardRounds:0,wins:0,bestScore:0,bestStreak:0,bestRound:0,bestCombo:0};
 function pfFix(o){const r={...ST0};if(o)for(const k in ST0)if(typeof o[k]==='number')r[k]=o[k];return r;}
 let PF={cur:0,list:[]},ST;
-try{const sv=JSON.parse(localStorage.getItem(PF_KEY)||(TEST&&localStorage.getItem(PF_LIVE))||'null');if(sv&&Array.isArray(sv.list)&&sv.list.length){PF.list=sv.list.slice(0,PF_MAX).map((q,i)=>({name:String(q.name||'Player '+(i+1)).slice(0,10),icon:PF_TOYS.includes(q.icon)?q.icon:PF_ICONS[i],st:pfFix(q.st)}));PF.cur=clamp(sv.cur|0,0,PF.list.length-1);}}catch(e){}
-if(!PF.list.length){let old=null;try{old=JSON.parse(localStorage.getItem(ST_KEY)||'null');}catch(e){}PF.list=[{name:'Player 1',icon:PF_ICONS[0],st:pfFix(old)}];}
+try{const sv=JSON.parse(localStorage.getItem(PF_KEY)||(TEST&&localStorage.getItem(PF_LIVE))||'null');if(sv&&Array.isArray(sv.list)&&sv.list.length){PF.list=sv.list.slice(0,PF_MAX).map((q,i)=>({name:String(q.name||'Player '+(i+1)).slice(0,10),icon:ALL_TOYS.includes(q.icon)?q.icon:PF_ICONS[i],st:pfFix(q.st),coins:typeof q.coins==='number'?Math.max(0,q.coins|0):null,owned:Array.isArray(q.owned)?[...new Set(q.owned)].filter(e=>priceOf(e)):[],line:q.line}));PF.cur=clamp(sv.cur|0,0,PF.list.length-1);}}catch(e){}
+if(!PF.list.length){let old=null;try{old=JSON.parse(localStorage.getItem(ST_KEY)||'null');}catch(e){}PF.list=[{name:'Player 1',icon:PF_ICONS[0],st:pfFix(old),coins:null,owned:[],line:null}];}
 ST=PF.list[PF.cur].st;
+const owns=(q,em)=>DEF_LINE.includes(em)||q.owned.includes(em);
+function lineFix(q){const L=q.line;if(!(Array.isArray(L)&&L.length===12&&new Set(L).size===12&&L.every(e=>owns(q,e))))q.line=DEF_LINE.slice();}
+PF.list.forEach(lineFix);
 function pfSave(){try{localStorage.setItem(PF_KEY,JSON.stringify(PF));}catch(e){}}
 function pfPick(i){PF.cur=i;ST=PF.list[i].st;toastQ=[];toast=null;pfSave();}
 // Names are typed on the game's own letter keys (no system pop-ups: those do not open everywhere).
@@ -623,7 +690,7 @@ function pfAdd(){if(PF.list.length<PF_MAX)nameEd={mode:'add',txt:'',t0:uiT};}
 function pfRename(){const n=PF.list[PF.cur].name;nameEd={mode:'rename',txt:/^Player \d$/.test(n)?'':n.replace(/[^A-Za-z]/g,'').slice(0,10),t0:uiT};} // a default "Player 1" starts blank
 function pfDelete(){if(PF.list.length>1)pfDel=uiT||.001;}
 function pfType(ch){const e=nameEd;if(!e)return;if(ch==='<')e.txt=e.txt.slice(0,-1);else if(e.txt.length<10)e.txt+=e.txt.length?ch.toLowerCase():ch.toUpperCase();}
-function pfNameDone(){const e=nameEd;if(!e||!e.txt)return;if(e.mode==='add'){const icon=PF_ICONS.find(c=>!PF.list.some(q=>q.icon===c))||PF_ICONS[0];PF.list.push({name:e.txt,icon,st:pfFix(null)});pfPick(PF.list.length-1);pfToy=uiT||.001;}else{PF.list[PF.cur].name=e.txt;pfSave();}nameEd=null;}
+function pfNameDone(){const e=nameEd;if(!e||!e.txt)return;if(e.mode==='add'){const icon=PF_ICONS.find(c=>!PF.list.some(q=>q.icon===c))||PF_ICONS[0];PF.list.push({name:e.txt,icon,st:pfFix(null),coins:0,owned:[],line:DEF_LINE.slice()});pfPick(PF.list.length-1);pfToy=uiT||.001;}else{PF.list[PF.cur].name=e.txt;pfSave();}nameEd=null;}
 function pfDeleteDone(){pfDel=0;if(PF.list.length<2)return;PF.list.splice(PF.cur,1);pfPick(Math.min(PF.cur,PF.list.length-1));}
 window.addEventListener('keydown',ev=>{if(!nameEd)return;if(ev.key==='Backspace'){pfType('<');ev.preventDefault();}else if(ev.key==='Enter')pfNameDone();else if(/^[a-zA-Z]$/.test(ev.key))pfType(ev.key);});
 function drawNameCard(){const e=nameEd,cw=336,ch=408,{cx,cy}=cardBegin(cw,ch,e.mode==='add'?'New Player':'Rename',uiT-e.t0);
@@ -635,9 +702,9 @@ function drawNameCard(){const e=nameEd,cw=336,ch=408,{cx,cy}=cardBegin(cw,ch,e.m
  key(cx+16+5*44,cy+140+3*46,84,'Erase',50,()=>pfType('<'));
  const x0=W/2-(104+12+164)/2,yb=cy+ch-78;button(x0,yb,104,46,'Cancel',()=>{nameEd=null;},{size:16,id:7,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});
  button(x0+116,yb,164,46,'Save',pfNameDone,{size:20,col:e.txt?C.green:'#aab4cc',colD:e.txt?C.greenD:'#8793ad',colP:e.txt?'#27a83f':'#aab4cc'});cardEnd();}
-function drawToyCard(){const q=PF.list[PF.cur],cw=320,ch=404,{cx,cy}=cardBegin(cw,ch,'Pick A Toy',uiT-pfToy);
+function drawToyCard(){const q=PF.list[PF.cur],cw=320,ch=188+Math.ceil((PF_TOYS.length+q.owned.length)/4)*72,{cx,cy}=cardBegin(cw,ch,'Pick A Toy',uiT-pfToy);
  body('Tap a toy for '+q.name+'.',cy+84,13,'#4a6fc4');
- PF_TOYS.forEach((em,i)=>{const x=cx+18+(i%4)*72,y=cy+102+(i/4|0)*72,cur=em===q.icon,id=60+i,dn=press&&press.id===id;if(cur){rr(x-3,y-3,70,70,10);fill(C.lava);}rr(x,y,64,64,8);fill(cur?'#fff3bf':dn?'#cfe0fa':'#eef4fd');
+ PF_TOYS.concat(q.owned).forEach((em,i)=>{const x=cx+18+(i%4)*72,y=cy+102+(i/4|0)*72,cur=em===q.icon,id=60+i,dn=press&&press.id===id;if(cur){rr(x-3,y-3,70,70,10);fill(C.lava);}rr(x,y,64,64,8);fill(cur?'#fff3bf':dn?'#cfe0fa':'#eef4fd');
   X.save();X.translate(x+32,y+32+(cur?Math.sin(NOW*5)*2:0));paintToy(em,46);X.restore();hits.push({x:x-3,y:y-3,w:70,h:70,act:()=>{q.icon=em;pfSave();pfToy=0;},key:uiKey,id});});
  button((W-180)/2,cy+ch-70,180,46,'Back',()=>{pfToy=0;},{size:18,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});cardEnd();}
 function drawDeleteCard(){const q=PF.list[PF.cur],cw=312,ch=262,{cx,cy}=cardBegin(cw,ch,'Delete Player?',uiT-pfDel);
@@ -648,7 +715,10 @@ const pfBadges=q=>BADGES.reduce((n,b)=>n+b.t.filter(v=>q.st[b.id]>=v).length,0);
 // who is playing: a chip in the top left of the start screen; tap it to open the Players card
 function drawChip(){const q=PF.list[PF.cur];X.font=fnt(900,14);const w=X.measureText(q.name).width+64,h=36,x=12,y=SAFE+10;rr(x,y+4,w,h,8);fill(C.deep);rr(x,y,w,h,8);fill('#fff');
  X.save();X.translate(x+20,y+h/2);paintToy(q.icon,26);X.restore();text(q.name,x+38,y+h/2+1,14,C.navy,{a:'left'});X.beginPath();X.moveTo(x+w-20,y+14);X.lineTo(x+w-9,y+14);X.lineTo(x+w-14.5,y+22);X.closePath();fill(C.lava);
- hits.push({x:x-4,y:y-4,w:w+8,h:h+12,act:()=>{pfOpen=true;pfT0=uiT;},key:uiKey,id:5});}
+ hits.push({x:x-4,y:y-4,w:w+8,h:h+12,act:()=>{pfOpen=true;pfT0=uiT;},key:uiKey,id:5});
+ // coins: tap to open My Toys
+ X.font=fnt(900,14);const c2=x+w+8,w2=X.measureText(''+q.coins).width+42;rr(c2,y+4,w2,h,8);fill(C.deep);rr(c2,y,w2,h,8);fill('#fff');coin(c2+17,y+h/2,9);text(''+q.coins,c2+31,y+h/2+1,14,C.navy,{a:'left'});
+ hits.push({x:c2-2,y:y-4,w:w2+4,h:h+12,act:openToys,key:uiKey,id:16});}
 function drawPlayers(){const age=uiT-pfT0,n=PF.list.length,cw=336,ch=232+n*56,{cx,cy}=cardBegin(cw,ch,'Players',age);
  body('Tap a player to pick who is playing.',cy+82,12.5,'#4a6fc4');
  PF.list.forEach((q,i)=>{const y=cy+124+i*56,cur=i===PF.cur,x=cx+16,w=cw-32;if(cur){rr(x-3,y-27,w+6,54,10);fill(C.lava);}rr(x,y-24,w,48,8);fill(cur?'#fff3bf':'#eef4fd');
@@ -672,8 +742,12 @@ const BADGES=[
  {id:'hardRounds',name:'Hard Hat',how:'Win rounds in Hard',t:[5,25,75]},
  {id:'wins',name:'This Is The End!',how:'Finish all 10 rounds',t:[1,3,10]},
  {id:'bestScore',name:'Big Score',how:'Best score in one game',best:'Best game',t:[1000,3000,6000]}];
+// players saved before coins existed are paid for the badge levels they already hold
+PF.list.forEach(q=>{if(q.coins==null)q.coins=BADGES.reduce((n,b)=>n+[0,20,60,140][b.t.filter(v=>q.st[b.id]>=v).length],0);});
+function addCoins(n){const q=PF.list[PF.cur];q.coins=(q.coins||0)+n;pfSave();}
+function coin(x,y,r){circ(x,y,r);fill(C.navy);circ(x,y,r*.84);fill(C.amber);circ(x,y,r*.62);fill(C.gold);}
 const TIER=['','Bronze','Silver','Gold'],tierOf=b=>b.t.filter(v=>ST[b.id]>=v).length;
-function statSet(id,v){if(v<=ST[id])return;const b=BADGES.find(q=>q.id===id),t0=b?tierOf(b):0;ST[id]=v;if(b){const t1=tierOf(b);if(t1>t0)toastQ.push({b,tier:t1});}pfSave();}
+function statSet(id,v){if(v<=ST[id])return;const b=BADGES.find(q=>q.id===id),t0=b?tierOf(b):0;ST[id]=v;if(b){const t1=tierOf(b);if(t1>t0){let c=0;for(let t=t0+1;t<=t1;t++)c+=COIN_BADGE[t];PF.list[PF.cur].coins+=c;toastQ.push({b,tier:t1,coins:c});}}pfSave();}
 function stat(id){statSet(id,ST[id]+1);}
 function statMax(id,v){statSet(id,v);}
 const MEDAL=[['#c3cde3','#9aa8c7'],['#e09a5a','#a85f24'],['#dfe6f1','#8e9bb3'],['#ffd23f','#e08a00']];
@@ -699,7 +773,7 @@ function drawToast(){if(!toast){if(!toastQ.length||state==='menu')return;toast=t
  const a=NOW-toast.t0;if(a>2.8){toast=null;return;}
  const k=a<.3?EZ.back(a/.3):a>2.5?1-EZ.in((a-2.5)/.3):1,w=252,h=58,x=(W-w)/2,y=SAFE+88;
  X.save();X.translate(W/2,y+h/2);X.scale(k,k);X.rotate(-.015);X.translate(-W/2,-(y+h/2));rr(x,y+5,w,h,9);fill(C.deep);rr(x,y,w,h,9);fill('#fff');medal(x+34,y+h/2+3,20,toast.tier,toast.b.id);
- text(TIER[toast.tier]+' Badge!',x+64,y+19,12.5,C.lava,{a:'left'});text(toast.b.name,x+64,y+38,17,C.navy,{a:'left'});X.restore();}
+ text(TIER[toast.tier]+' Badge!'+(toast.coins?'   +'+toast.coins+' Coins':''),x+64,y+19,12.5,C.lava,{a:'left'});text(toast.b.name,x+64,y+38,17,C.navy,{a:'left'});X.restore();}
 function drawBadges(){const age=uiT-bdgT0,cw=336,ch=470,{cx,cy}=cardBegin(cw,ch,bdgPg<3?'Badges':'Stats',age);
  text(bdgPg+' Of 3',cx+cw-20,cy+80,12,'#4a6fc4',{a:'right',w:800});if(bdgPg===3)text(PF.list[PF.cur].name,cx+20,cy+80,12,'#4a6fc4',{a:'left',w:800});
  if(bdgPg<3){const got=BADGES.reduce((n,b)=>n+tierOf(b),0);text(PF.list[PF.cur].name+'  ·  '+got+' Of '+BADGES.length*3,cx+20,cy+80,12,'#4a6fc4',{a:'left',w:800});
@@ -710,6 +784,28 @@ function drawBadges(){const age=uiT-bdgT0,cw=336,ch=470,{cx,cy}=cardBegin(cw,ch,
    if(i%2===0){X.fillStyle='#eef4fd';X.fillRect(cx+12,y-14,cw-24,28);}text(r[0],cx+24,y+1,14.5,C.navy,{a:'left',w:800});text(''+r[1],cx+cw-24,y+1,16,C.lava,{a:'right'});});}
  const x0=W/2-(96+12+176)/2,yb=cy+ch-72;button(x0,yb,96,48,bdgPg===1?'Close':'Back',()=>{bdgPg--;},{size:16,id:7,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});
  button(x0+108,yb,176,48,bdgPg===1?'More Badges':bdgPg===2?'Next: Stats':'Done',()=>{bdgPg=bdgPg<3?bdgPg+1:0;},{size:19});cardEnd();}
+// ── MY TOYS (start screen): the player's 12-spot lineup, every toy in the game, and the shop ──
+function openToys(){toysT0=uiT||.001;selSlot=-1;selToy=null;}
+function toyPlace(em,i){const q=PF.list[PF.cur],L=q.line,j=L.indexOf(em);if(j>=0)L[j]=L[i];L[i]=em;pfSave();selSlot=-1;selToy=null;}
+function toyBuy(){const q=PF.list[PF.cur],em=selToy,pr=priceOf(em);if(!em||owns(q,em)||q.coins<pr)return;q.coins-=pr;q.owned.push(em);pfSave();sfxFanfare();}
+function drawMyToys(){const q=PF.list[PF.cur],cw=344,ch=548,{cx,cy}=cardBegin(cw,ch,'My Toys',uiT-toysT0),L=q.line;
+ coin(cx+26,cy+80,9);text(q.coins+' Coins',cx+41,cy+81,15,C.navy,{a:'left'});text(q.name+'’s Lineup',cx+cw-18,cy+81,12,'#4a6fc4',{a:'right',w:800});
+ // the 12 spots
+ const sx=cx+(cw-6*52+4)/2;L.forEach((em,i)=>{const x=sx+(i%6)*52,y=cy+96+(i/6|0)*50,sel=i===selSlot,id=40+i;if(sel){rr(x-3,y-3,54,52,9);fill(C.lava);}rr(x,y,48,46,7);fill(sel?'#fff3bf':'#eef4fd');
+  X.save();X.translate(x+24,y+18+(sel?Math.sin(NOW*6)*1.5:0));paintToy(em,30);X.restore();text(i<3?'Start':'Round '+(i-1),x+24,y+39,8,'#4a6fc4',{w:800});
+  hits.push({x,y,w:48,h:46,act:()=>{if(selToy&&owns(q,selToy))toyPlace(selToy,i);else{selSlot=selSlot===i?-1:i;selToy=null;}},key:uiKey,id});});
+ text('The first 3 start the game. One more joins each round.',W/2,cy+203,10,'#4a6fc4',{w:800});
+ // every toy: owned in colour (ticked when it is in the lineup), locked ones grey with their price
+ const gx=cx+(cw-5*62+4)/2;ALL_TOYS.forEach((em,i)=>{const x=gx+(i%5)*62,y=cy+216+(i/5|0)*56,own=owns(q,em),sel=em===selToy,pr=priceOf(em),id=70+i;if(sel){rr(x-3,y-3,64,58,9);fill(C.lava);}rr(x,y,58,52,7);fill(sel?'#fff3bf':own?'#eef4fd':'#dfe3ec');
+  X.save();X.translate(x+29,y+(own?24:19)+(sel?Math.sin(NOW*6)*1.5:0));paintToy(em,own?36:30,!own);X.restore();
+  if(own){if(L.includes(em)){X.save();X.translate(x+48,y+10);X.scale(.72,.72);check(0,0);X.restore();}}else{coin(x+19,y+42,5.5);text(''+pr,x+28,y+42.5,11,q.coins>=pr?C.navy:'#7c879f',{a:'left'});}
+  hits.push({x,y,w:58,h:52,act:()=>{if(owns(q,em)&&selSlot>=0)toyPlace(em,selSlot);else{selToy=selToy===em?null:em;if(!owns(q,em))selSlot=-1;}},key:uiKey,id});});
+ const own=selToy&&owns(q,selToy),pr=selToy?priceOf(selToy):0,can=selToy&&!own&&q.coins>=pr,nm=selToy?TOYNAME[selToy]||'This Toy':'';
+ body(selToy?(own?'Now tap a spot for '+nm+'.':can?'Buy '+nm+' for '+pr+' coins?':nm+': you need '+(pr-q.coins)+' more coins.'):selSlot>=0?'Now tap a toy for this spot.':'Tap a spot, then tap a toy.',cy+455,13.5);
+ const x0=W/2-(80+8+92+8+124)/2,yb=cy+ch-70,B={col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'};
+ button(x0,yb,80,46,'Close',()=>{toysT0=0;},{size:15,id:7,...B});
+ button(x0+88,yb,92,46,'Default',()=>{q.line=DEF_LINE.slice();pfSave();selSlot=-1;selToy=null;},{size:15,id:19,col:'#8a5bd6',colD:'#5a359c',colP:'#7648c2'});
+ button(x0+188,yb,124,46,'Buy',toyBuy,{size:19,col:can?C.green:'#aab4cc',colD:can?C.greenD:'#8793ad',colP:can?'#27a83f':'#aab4cc'});cardEnd();}
 // ── HOW TO PLAY (start screen) ── three pages. The Game (toys, clock, Max, hairball), then Push and Swipe (a small looping demo and three short steps each).
 const HOWTO=[null,
  {name:'The Game',rows:[['toy','The Toys','Throw them all into the volcano.'],['clock','The Clock','Get them in before time runs out.'],['max','Max','He pops up and blocks your throw.'],['hair','The Hairball','Throw it in for 5 more seconds.']],note:'A new toy joins every round.',next:'Next: Push'},
@@ -749,7 +845,7 @@ function askHome(){if(homeAsk)return;homeWasPaused=paused;homeAsk=(paused?uiT:0)
 function drawHomeCard(){const cw=300,ch=282,{cy}=cardBegin(cw,ch,'Go Home?',uiT-(homeAsk-1));body('This game will end.',cy+96,16);body('Your badges are safe.',cy+119,13,'#4a6fc4');
  button((W-216)/2,cy+140,216,52,'Keep Playing',()=>{homeAsk=0;if(!homeWasPaused){paused=false;lastNow=performance.now();acc=0;}},{size:21});
  button((W-216)/2,cy+208,216,44,'Go Home',goMenu,{id:2,size:17,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});cardEnd();}
-function goMenu(){homeAsk=0;paused=false;charging=null;pendingLaunch=null;swingT=0;objs=[];ejecta=[];parts=[];eParts=[];rings=[];pops=[];confet=[];smoke=[];sparks=[];buildOn=false;build=0;shake=0;flash=0;blk.on=false;collected=0;need=0;combo=0;state='menu';menuStep=0;howTo=0;bdgPg=0;pfOpen=false;nameEd=null;pfDel=0;pfToy=0;lastNow=performance.now();acc=0;}
+function goMenu(){homeAsk=0;paused=false;charging=null;pendingLaunch=null;swingT=0;objs=[];ejecta=[];parts=[];eParts=[];rings=[];pops=[];confet=[];smoke=[];sparks=[];buildOn=false;build=0;shake=0;flash=0;blk.on=false;collected=0;need=0;combo=0;state='menu';menuStep=0;howTo=0;bdgPg=0;toysT0=0;pfOpen=false;nameEd=null;pfDel=0;pfToy=0;lastNow=performance.now();acc=0;}
 function drawPauseCard(){const cw=288,ch=286,{cy}=cardBegin(cw,ch,'Paused');body((swipeMode?'Swipe ':'Push ')+(hardMode?'Hard':'Easy')+'  ·  Round '+round+'  ·  Score '+score,cy+100,13.5);
  button((W-208)/2,cy+124,208,58,'Resume',()=>{paused=false;lastNow=performance.now();acc=0;},{icon:1});
  button((W-208)/2,cy+204,208,50,'Start Screen',askHome,{id:2,size:18,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});cardEnd();}
@@ -777,13 +873,15 @@ function drawMenu(){const t=38;X.fillStyle=C.wall;X.fillRect(0,0,W,HS);X.strokeS
  [['🦆',52,0],['🐙',144,1],['⛵',236,2],['🦕',328,4]].forEach(d=>{const k=EZ.back((uiT-.4-d[2]*.1)/.4);if(k<=0)return;const y=wy(d[1])+3+Math.sin(NOW*2+d[2])*2.5;toyFloat(d[0],d[1],y,42,Math.sin(NOW*1.3+d[2])*.1,k,k);});
  const bw=232,bx=(W-bw)/2,appear=(k,y,h,fn)=>{if(k<=0)return;X.save();X.translate(W/2,y+h/2);X.scale(k,k);X.translate(-W/2,-(y+h/2));fn();X.restore();};
  if(uiT<.7)card=null;
- if(!howTo&&!bdgPg&&!pfOpen&&uiT>.6)drawChip();
- if(TEST&&!howTo&&!bdgPg&&!pfOpen&&uiT>.6)button(W-84,HS-SAFEB-62,76,28,'Round '+testRound,()=>{testRound=testRound>=10?1:testRound+1;},{size:12.5,id:6,col:'#e08a00',colD:'#a85f24',colP:'#c97800'}); // test page only: tap to choose the starting round
+ if(!howTo&&!bdgPg&&!pfOpen&&!toysT0&&uiT>.6)drawChip();
+ if(TEST&&!howTo&&!bdgPg&&!pfOpen&&!toysT0&&uiT>.6)button(8,HS-SAFEB-54,72,26,'+50 Coins',()=>addCoins(50),{size:11,id:17,col:'#e08a00',colD:'#a85f24',colP:'#c97800'}); // test page only
+ if(TEST&&!howTo&&!bdgPg&&!pfOpen&&!toysT0&&uiT>.6)button(86,HS-SAFEB-54,64,26,'Round '+testRound,()=>{testRound=testRound>=10?1:testRound+1;},{size:12.5,id:6,col:'#e08a00',colD:'#a85f24',colP:'#c97800'}); // test page only: tap to choose the starting round
  if(howTo){drawHowTo();}
  else if(bdgPg){drawBadges();}
+ else if(toysT0){drawMyToys();}
  else if(pfOpen){if(nameEd)drawNameCard();else if(pfToy)drawToyCard();else if(pfDel)drawDeleteCard();else drawPlayers();}
  else if(menuStep===0){const bh=56,gap=16,bk=36,by=ih+34+(bandH-34-SAFEB-bh*2-gap*2-bk)*.5; // step 1 of 2: how to throw
-  appear(EZ.back((uiT-1)/.45),by+(bh+gap)*2,bk,()=>{button(bx,by+(bh+gap)*2,130,bk,'How To Play',()=>{howTo=1;howT0=uiT;},{size:14.5,id:3,col:'#8a5bd6',colD:'#5a359c',colP:'#7648c2'});button(bx+142,by+(bh+gap)*2,90,bk,'Badges',()=>{bdgPg=1;bdgT0=uiT;},{size:14.5,id:4,col:'#12a5a0',colD:'#0b6f6c',colP:'#0e8f8a'});});
+  appear(EZ.back((uiT-1)/.45),by+(bh+gap)*2,bk,()=>{button(bx-12,by+(bh+gap)*2,106,bk,'How To Play',()=>{howTo=1;howT0=uiT;},{size:12.5,id:3,col:'#8a5bd6',colD:'#5a359c',colP:'#7648c2'});button(bx+101,by+(bh+gap)*2,66,bk,'Badges',()=>{bdgPg=1;bdgT0=uiT;},{size:12.5,id:4,col:'#12a5a0',colD:'#0b6f6c',colP:'#0e8f8a'});button(bx+174,by+(bh+gap)*2,70,bk,'My Toys',openToys,{size:12.5,id:18,col:'#e08a00',colD:'#a85f24',colP:'#c97800'});});
   appear(EZ.back((uiT-.7)/.45),by,bh,()=>button(bx,by,bw,bh,'Push',()=>{swipeMode=false;menuStep=1;menuT0=uiT;},{size:28,id:0}));
   appear(EZ.back((uiT-.85)/.45),by+bh+gap,bh,()=>button(bx,by+bh+gap,bw,bh,'Swipe',()=>{swipeMode=true;menuStep=1;menuT0=uiT;},{size:28,id:2,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'}));
  }else{const bh=56,gap=16,bk=36,by=ih+34+(bandH-34-SAFEB-bh*2-gap*2-bk)*.5,mt=uiT-menuT0; // step 2 of 2: Easy or Hard (Push Hard only hides the green signal)

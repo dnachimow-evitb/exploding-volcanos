@@ -55,6 +55,13 @@ The pause card shows the mode (Push, Swipe Easy, Swipe Hard) and has a Start Scr
 - v7.22 (TEST COPY ONLY): a small orange "Round N" button in the bottom-right of the test page's start screen. Each tap moves the starting round up by one (1 to 10, then back to 1); the next game starts on that round with all its toys. It only exists when the page is play-test.html, so it never shows in the live game even after the test file is published.
 - v7.23 (TEST COPY ONLY): two float fixes. (1) Toys that stopped: when two floating things bumped they traded speeds, and the hairball drifts very slowly, so any toy that touched the hairball took its near-zero speed and sat still (the hairball then left with the toy's speed). Now a bump turns both around and each keeps its own speed. Measured over 30 s at rounds 6/9/10: toy time spent at crawling speed 9-12% -> 0%; longest a toy sat still 2.5-5.5 s -> 1.7-2.6 s. This bug is also in the live game (and was in version 5). (2) Drift speed: the per-round increase is halved (floatSpd: round 10 is 1.1 units a frame, was 1.8; round 9 1.02, was 1.65). Average on-screen speed at round 9: 55 -> 38 units a second.
 - 2026-11-12: v7.23 published live at Derek's request after he tried the test copy (v7.21 full-width floating, v7.22 test-only Round button, v7.23 stopping fix and slower drift). Cache name exploding-volcanos-v12. The Round button stays hidden in the live game.
+- v7.24 (TEST COPY ONLY): coins, a toy shop and a lineup the player picks. No real money anywhere; coins only come from playing.
+  - Coins: 5 per round won, 25 extra for finishing all 10, and 20 / 40 / 80 for a badge's Bronze / Silver / Gold level (COIN_ROUND, COIN_WIN, COIN_BADGE). Badge levels already held are paid once, the first time a saved player is loaded.
+  - 8 new toys, bought with coins (SHOP table): Whale 30, Turtle 40, Crab 50, Starfish 60, Penguin 75, Tugboat 90, Submarine 110, Purple Dino 130. Total 585.
+  - My Toys card (start screen button, or tap the coin count): 12 lineup spots (first 3 start the game, then one joins each round), and all 20 toys below. Owned toys are in colour with a tick if they are in the lineup; locked toys are grey with their price. Tap a spot then a toy (or a toy then a spot) to place it; a toy already in the lineup swaps places. Tap a locked toy then Buy. Default puts the standard 12 back.
+  - Coins, owned toys and the lineup are saved per player. A bought toy can also be picked as the player's icon.
+  - The game is still 10 rounds and 12 toys. All prices and payouts are first guesses.
+  - Test page only: a "+50 Coins" button next to the Round button, bottom-left of the start screen.
 
 ## Tested
 Scripted in the preview at 375x812 by stepping the game by hand: Push scores on a held throw,
