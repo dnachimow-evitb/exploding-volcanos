@@ -7,8 +7,9 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v7.4'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v7.5'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
+let card4=null,bdgPg=0,bdgT0=0; // Badges card on the start screen: 0 closed, 1-2 badges, 3 stats
 let howTo=0,howT0=0; // How To Play card on the start screen: 0 closed, 1 The Game, 2 Push, 3 Swipe
 let swipeMode=false,menuStep=0,menuT0=0; // Push or Swipe; start screen step 0 = Push/Swipe, 1 = Easy/Hard
 const cv=document.getElementById('c'),W=380,H=600;let X=cv.getContext('2d');
@@ -50,7 +51,7 @@ function sfxBlock(){blip(170,.14,'sawtooth',.22,70);noise(.12,.18,300,.6);}
 function sfxErupt(){noise(1.1,.55,600,.4,100);blip(150,1.0,'sawtooth',.28,38);setTimeout(()=>noise(.7,.4,300,.5,80),120);}
 function sfxFanfare(){blip(660,.12,'square',.2,990);setTimeout(()=>blip(880,.12,'square',.18,1180),120);setTimeout(()=>blip(1180,.2,'square',.18),250);}
 
-function startRound(carry){const d=diff();craterR=d.cr;need=currentToys.length;collected=0;combo=0;
+function startRound(carry){rdMiss=0;rdBlock=0;rdFirst=true;const d=diff();craterR=d.cr;need=currentToys.length;collected=0;combo=0;
  const single=round>=3;
  objs=currentToys.map((em,i)=>{let x,y;const L=carry?landed[i]:null;
   if(L){x=L.x;y=L.y;}
@@ -64,7 +65,7 @@ function startRound(carry){const d=diff();craterR=d.cr;need=currentToys.length;c
  blk.on=d.blk>0;blk.spd=d.blk;blk.x=110;blk.dir=1;blk.y=292;
  timeLeft=d.time;roundTime=d.time;hbTimer=5+Math.random()*3;hintT=round===1?6:0;
  bannerT=2.6;newToyT=newToyEm?5:0;banner=round===1?'Round 1 — Splash Away!':('Round '+round+'!');}
-function startGame(){round=1;score=0;bestCombo=0;currentToys=[...BASE];newToyEm=null;landed=[];objs=[];ejecta=[];confet=[];collected=0;need=0;combo=0;craterR=DIFF[0].cr;blk.on=false;scoreShown=0;lastScore=0;state='intro';}
+function startGame(){stat('games');streak=0;round=1;score=0;bestCombo=0;currentToys=[...BASE];newToyEm=null;landed=[];objs=[];ejecta=[];confet=[];collected=0;need=0;combo=0;craterR=DIFF[0].cr;blk.on=false;scoreShown=0;lastScore=0;state='intro';}
 function dist(a,b,c,d){return Math.hypot(a-c,b-d);}
 function spawnHairball(){const left=Math.random()<.5;objs.push({hb:true,x:left?70:310,y:450,vx:(Math.random()-.5)*.6,vy:0,bob:Math.random()*6.28,st:'float',sq:0,life:8,r:16});}
 function waterBurst(x,y,big){const n=big?26:12;for(let i=0;i<n;i++){const a=-1.57+(Math.random()-.5)*(big?2.4:2),s=(big?3:2)+Math.random()*(big?9:5);parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-(big?4:2),life:1,r:(big?4:3)+Math.random()*(big?7:4),col:['#bfeaff','#8ed8ff','#ffffff','#5bc0f0'][~~(Math.random()*4)]});}rings.push({x,y,r:6,life:1});}
@@ -75,7 +76,7 @@ function P(e){const r=cv.getBoundingClientRect(),sx=(e.clientX-r.left)/KS,sy=(e.
 function down(e){const wasPlaying=song&&!song.paused;initAudio();const p=P(e);
  if(dist(p.sx,p.sy,W-28,SAFE+28)<25){if(!wasPlaying&&!muted)return;muted=!muted;if(song){if(muted)song.pause();else song.play().catch(()=>{});}return;}
  if((state==='play'||paused)&&dist(p.sx,p.sy,W-74,SAFE+28)<23){paused=!paused;sfxClick();if(!paused){lastNow=performance.now();acc=0;}return;}
- if(paused||state!=='play'){for(const b of[card,card2,card3])if(b&&b.act&&p.sx>b.x&&p.sx<b.x+b.w&&p.sy>b.y&&p.sy<b.y+b.h){press={key:b.key,act:b.act,id:b.id||0};break;}return;}
+ if(paused||state!=='play'){for(const b of[card,card2,card3,card4])if(b&&b.act&&p.sx>b.x&&p.sx<b.x+b.w&&p.sy>b.y&&p.sy<b.y+b.h){press={key:b.key,act:b.act,id:b.id||0};break;}return;}
  if(charging||pendingLaunch||swingT>0)return;
  if(hardMode&&swipeMode&&objs.filter(o=>o.st==='fly').length>=HARD_MAX_AIR)return;
  let best=null,bd=74;objs.forEach(o=>{if(o.st!=='float')return;const d=dist(p.x,p.y,o.x,o.y);if(d<bd){bd=d;best=o;}});
@@ -108,7 +109,7 @@ function step(dt){
  if(pendingLaunch&&swingT<=0)doLaunch();
  if(state==='play'){
    
-   if(!(buildOn&&build>.54))timeLeft-=dt;if(timeLeft<=0){timeLeft=0;state='gameover';return;}
+   if(!(buildOn&&build>.54))timeLeft-=dt;if(timeLeft<=0){timeLeft=0;statMax('bestScore',score);state='gameover';return;}
    hbTimer-=dt;if(hbTimer<=0&&!objs.some(o=>o.hb&&o.st!=='gone')){spawnHairball();hbTimer=8+Math.random()*4;}
  }
  if(blk.on){blk.x+=blk.spd*blk.dir;if(blk.x>298||blk.x<82)blk.dir*=-1;blk.y=292+Math.sin(wave*.05)*8;}
@@ -126,11 +127,11 @@ function step(dt){
   }else if(o.st==='fly'){
    o.vx+=o.drift||0;o.vy+=G;o.x+=o.vx;o.y+=o.vy;o.rot=(o.rot||0)+o.vx*.05;if(swipeMode)wallBounce(o);
    if(Math.random()<.4)parts.push({x:o.x+(Math.random()-.5)*14,y:o.y+8,vx:(Math.random()-.5)*.8,vy:.5,life:.7,r:2+Math.random()*2.5,col:'#dff4ff'});
-   if(blk.on&&!o.blocked&&dist(o.x,o.y,blk.x,blk.y)<30){o.blocked=1;o.vy=Math.abs(o.vy)*.5+1;o.vx*=-.5;shake=3;pop(blk.x,blk.y-36,'Max Got It!','#ffb020');sfxBlock();mood(mxc,'gotcha',1.1);hop(mxc,3.2);mood(noah,'wow',.8);}
+   if(blk.on&&!o.blocked&&dist(o.x,o.y,blk.x,blk.y)<30){o.blocked=1;o.vy=Math.abs(o.vy)*.5+1;o.vx*=-.5;shake=3;rdBlock++;stat('blocks');pop(blk.x,blk.y-36,'Max Got It!','#ffb020');sfxBlock();mood(mxc,'gotcha',1.1);hop(mxc,3.2);mood(noah,'wow',.8);}
    if(catchHit(o.x,o.y,o.vy)){
-     if(o.hb){combo++;bestCombo=Math.max(bestCombo,combo);timeLeft+=5;score+=50;shake=4;flash=.18;flashCol='#ffe9b0';collectedToys.push('🧶');freeze=3;vol.sv+=.5;mood(vol,'yuck',1.3);mood(noah,'cheer',1);hop(noah,3);sparkle(CX,CY-6,10);
+     if(o.hb){stat('hair');streak++;statMax('bestStreak',streak);combo++;bestCombo=Math.max(bestCombo,combo);timeLeft+=5;score+=50;shake=4;flash=.18;flashCol='#ffe9b0';collectedToys.push('🧶');freeze=3;vol.sv+=.5;mood(vol,'yuck',1.3);mood(noah,'cheer',1);hop(noah,3);sparkle(CX,CY-6,10);
        pop(CX,CY-18,'Hairball! +50  +5s','#ffd23f');splash(CX,CY,'#8a5a2a',26);sfxHair();o.st='gone';
-     }else{collected++;combo++;bestCombo=Math.max(bestCombo,combo);collectedToys.push(o.em);
+     }else{stat('toys');streak++;statMax('bestStreak',streak);if(rdFirst&&o.isNew)stat('newFirst');rdFirst=false;if(o.bn)stat('rebounds');collected++;combo++;bestCombo=Math.max(bestCombo,combo);statMax('bestCombo',bestCombo);collectedToys.push(o.em);
        const fpN2=collected/need,fpPrev=(collected-1)/need;
        if(fpN2>=.85&&fpPrev<.85)pop(CX,CY-46,'Gonna Overflow?!','#ff4400');else if(fpN2>=.6&&fpPrev<.6)pop(CX,CY-46,"It's Getting Hotter!",'#ff8a1a');else if(fpN2>=.35&&fpPrev<.35)pop(CX,CY-46,"It's Getting Bigger!",'#ffd23f');
        if(combo===3)pop(190,150,'Look, Daddy, Look!','#7fd0ff');
@@ -140,9 +141,9 @@ function step(dt){
        pop(CX,CY-22,'+'+pts+(mult>1?'  x'+mult+'!':''),'#ffd23f');sfxScore();
        o.st='gone';if(collected>=need){buildOn=true;build=0;sfxRise();setTimeout(roundWin,700);}}
    }else if((o.vy>0&&o.y>=448)||(!swipeMode&&(o.x<22||o.x>358))){
-     combo=0;
+     combo=0;streak=0;
      if(o.hb){o.st='gone';waterBurst(Math.max(40,Math.min(340,o.x)),456,false);}
-     else{o.st='float';o.x=Math.max(58,Math.min(322,o.x));o.y=Math.max(448,Math.min(o.y,486));o.vx=(Math.random()<.5?-1:1)*(0.4+d.drift)*(round>=3?1:.4);o.vy=0;o.blocked=0;
+     else{rdMiss++;stat('misses');o.st='float';o.x=Math.max(58,Math.min(322,o.x));o.y=Math.max(448,Math.min(o.y,486));o.vx=(Math.random()<.5?-1:1)*(0.4+d.drift)*(round>=3?1:.4);o.vy=0;o.blocked=0;
        waterBurst(o.x,o.y-6,false);pop(o.x,o.y-30,'Splash! Try Again!','#dff4ff');sfxPlop();mood(noah,'oops',.9);mood(mxc,'laugh',.8);mood(vol,'aww',.9);}
    }
   }
@@ -157,8 +158,9 @@ function updateEjecta(){if(!ejecta.length)return;for(const e of ejecta){if(!e.al
  ejecta=ejecta.filter(e=>e.alive);}
 function splash(x,y,col,n){for(let i=0;i<n;i++){const a=-1.57+(Math.random()-.5)*2.4,s=2+Math.random()*6;parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-2,life:1,r:3+Math.random()*5,col});}}
 function roundWin(){if(state!=='play')return;
- if(round>=10){score+=150+Math.round(timeLeft)*10;state='win';eruptT=160;bigErupt();return;}
- state='erupt';eruptT=160;score+=need*15+combo*5+Math.round(timeLeft)*10;bigErupt();
+ stat('rounds');if(!rdMiss)stat('perfect');if(diff().blk>0&&!rdBlock)stat('sneak');if(timeLeft>=15)stat('quick');if(hardMode)stat('hardRounds');statMax('bestRound',round);
+ if(round>=10){score+=150+Math.round(timeLeft)*10;stat('wins');statMax('bestScore',score);state='win';eruptT=160;bigErupt();return;}
+ state='erupt';eruptT=160;score+=need*15+combo*5+Math.round(timeLeft)*10;statMax('bestScore',score);bigErupt();
  
  setTimeout(()=>{if(state!=='erupt')return;round++;newToyEm=NEWBY[round]||null;if(newToyEm)currentToys=[...currentToys,newToyEm];
    if(newToyEm){state='newtoy';sfxFanfare();}else{startRound(true);state='play';lastNow=performance.now();}},3500);
@@ -575,7 +577,7 @@ function button(bx,by,bw,bh,t,act,o){o=o||{};const id=o.id||0,down=(press&&press
  X.save();X.translate(cx,cy);X.scale(1+pu,1+pu);X.translate(-cx,-cy);rr(bx,by+8,bw,bh,9);fill(o.colD||C.greenD);rr(bx,by+dy,bw,bh,9);fill(down?(o.colP||'#27a83f'):(o.col||C.green));
  const fz=o.size||22;X.font=fnt(900,fz);const tw=X.measureText(t).width,iw=o.icon?fz*1.2:0,x0=cx-(tw+iw)/2;
  if(o.icon){const ix=x0+fz*.42,iy=cy+dy+1,z=fz*.5;X.beginPath();X.moveTo(ix-z*.6,iy-z*.85);X.lineTo(ix+z*.9,iy);X.lineTo(ix-z*.6,iy+z*.85);X.closePath();X.lineJoin='round';X.lineWidth=3;X.strokeStyle='#fff';X.stroke();fill('#fff');}
- text(t,x0+iw+tw/2,cy+dy+1,fz,'#fff');X.restore();const hit={x:bx-8,y:by-6,w:bw+16,h:bh+18,act,key:uiKey,id};if(id===2)card2=hit;else if(id===3)card3=hit;else card=hit;}
+ text(t,x0+iw+tw/2,cy+dy+1,fz,'#fff');X.restore();const hit={x:bx-8,y:by-6,w:bw+16,h:bh+18,act,key:uiKey,id};if(id===2)card2=hit;else if(id===3)card3=hit;else if(id===4)card4=hit;else card=hit;}
 function cardToy(em,x,y,size,age,delay){const k=EZ.elastic((age-delay)/.7);if(k<=0)return;X.save();X.translate(x,y+Math.sin(NOW*3+x)*3);X.scale(k,k);paintToy(em,size);X.restore();}
 function body(t,y,size,col){text(t,W/2,y,size||15,col||C.navy,{w:800});}
 function check(x,y){circ(x,y,8);fill('#fff');circ(x,y,6.5);fill(C.green);X.strokeStyle='#fff';X.lineWidth=2.4;X.lineCap='round';X.lineJoin='round';X.beginPath();X.moveTo(x-3,y);X.lineTo(x-.8,y+2.4);X.lineTo(x+3.2,y-2.2);X.stroke();}
@@ -588,6 +590,46 @@ function drawNewToyCard(){const cw=328,ch=366,{cx,cy,age}=cardBegin(cw,ch,'New T
  body(TOYNAME[newToyEm]||'New Toy',cy+226,24);body('Joins the tub for round '+round,cy+250,13.5,'#4a6fc4');
  const n=currentToys.length,gap=Math.min(28,(cw-60)/n),sx=W/2-(n-1)*gap/2;currentToys.forEach((em,i)=>{const k=EZ.back((age-.5-i*.04)/.3);if(k<=0)return;X.save();X.translate(sx+i*gap,cy+278);X.scale(k,k);paintToy(em,i===n-1?24:19);X.restore();});
  button((W-220)/2,cy+ch-66,220,56,'Splash On!',()=>{startRound(true);state='play';lastNow=performance.now();});cardEnd();}
+// ── BADGES AND STATS ── lifetime numbers kept on this phone (localStorage). Each badge has three levels: Bronze, Silver, Gold.
+const ST_KEY='evitb-stats-v1';
+let ST={games:0,rounds:0,toys:0,misses:0,hair:0,blocks:0,newFirst:0,sneak:0,perfect:0,quick:0,rebounds:0,hardRounds:0,wins:0,bestScore:0,bestStreak:0,bestRound:0,bestCombo:0};
+try{const sv=JSON.parse(localStorage.getItem(ST_KEY)||'{}');for(const k in ST)if(typeof sv[k]==='number')ST[k]=sv[k];}catch(e){}
+let streak=0,rdMiss=0,rdBlock=0,rdFirst=true,toast=null,toastQ=[]; // streak: scores in a row with no miss (carries across rounds)
+const BADGES=[
+ {id:'newFirst',name:'New Toy First!',how:'Get the new toy in first',t:[1,5,10]},
+ {id:'hair',name:'Hairball Hero',how:'Throw hairballs in',t:[10,20,50]},
+ {id:'sneak',name:'Sneak Past Max',how:'Win a round, no Max blocks',t:[1,5,15]},
+ {id:'bestStreak',name:'Never Miss',how:'Toys in a row, no misses',t:[10,20,40]},
+ {id:'perfect',name:'Perfect Round',how:'Win a round, no misses',t:[1,10,30]},
+ {id:'quick',name:'Beat The Clock',how:'Win with 15 seconds left',t:[1,10,30]},
+ {id:'toys',name:'Volcano Feeder',how:'Toys in the volcano',t:[50,250,1000]},
+ {id:'rounds',name:'Kaboom!',how:'Volcano explosions',t:[10,50,150]},
+ {id:'rebounds',name:'Rebound Champ',how:'Score off a wall (Swipe)',t:[5,25,75]},
+ {id:'hardRounds',name:'Hard Hat',how:'Win rounds in Hard',t:[5,25,75]},
+ {id:'wins',name:'This Is The End!',how:'Finish all 10 rounds',t:[1,3,10]},
+ {id:'bestScore',name:'Big Score',how:'Best score in one game',t:[1000,3000,6000]}];
+const TIER=['','Bronze','Silver','Gold'],tierOf=b=>b.t.filter(v=>ST[b.id]>=v).length;
+function statSet(id,v){if(v<=ST[id])return;const b=BADGES.find(q=>q.id===id),t0=b?tierOf(b):0;ST[id]=v;if(b){const t1=tierOf(b);if(t1>t0)toastQ.push({b,tier:t1});}try{localStorage.setItem(ST_KEY,JSON.stringify(ST));}catch(e){}}
+function stat(id){statSet(id,ST[id]+1);}
+function statMax(id,v){statSet(id,v);}
+const MEDAL=[['#c3cde3','#9aa8c7'],['#e09a5a','#a85f24'],['#dfe6f1','#8e9bb3'],['#ffd23f','#e08a00']];
+function medal(x,y,r,tier){const m=MEDAL[tier];X.save();X.translate(x,y);
+ for(const g of[-1,1]){X.beginPath();X.moveTo(g*r*.1,-r*.5);X.lineTo(g*r*.8,-r*1.4);X.lineTo(g*r*.22,-r*1.4);X.lineTo(-g*r*.3,-r*.6);X.closePath();fill(tier?(g<0?C.lava:'#5b7fd6'):'#aab4cc');}
+ circ(0,r*.14,r);fill(C.navy);circ(0,r*.14,r*.84);fill(m[1]);circ(0,r*.14,r*.66);fill(m[0]);if(tier){star(0,r*.14,r*.46,r*.2);fill('#fff');}X.restore();}
+function drawToast(){if(!toast){if(!toastQ.length||state==='menu')return;toast=toastQ.shift();toast.t0=NOW;sfxFanfare();}
+ const a=NOW-toast.t0;if(a>2.8){toast=null;return;}
+ const k=a<.3?EZ.back(a/.3):a>2.5?1-EZ.in((a-2.5)/.3):1,w=252,h=58,x=(W-w)/2,y=SAFE+88;
+ X.save();X.translate(W/2,y+h/2);X.scale(k,k);X.rotate(-.015);X.translate(-W/2,-(y+h/2));rr(x,y+5,w,h,9);fill(C.deep);rr(x,y,w,h,9);fill('#fff');medal(x+34,y+h/2+3,17,toast.tier);
+ text(TIER[toast.tier]+' Badge!',x+64,y+19,12.5,C.lava,{a:'left'});text(toast.b.name,x+64,y+38,17,C.navy,{a:'left'});X.restore();}
+function drawBadges(){const age=uiT-bdgT0,cw=336,ch=470,{cx,cy}=cardBegin(cw,ch,bdgPg<3?'Badges':'Stats',age);
+ text(bdgPg+' Of 3',cx+cw-20,cy+80,12,'#4a6fc4',{a:'right',w:800});
+ if(bdgPg<3){const got=BADGES.reduce((n,b)=>n+tierOf(b),0);text(got+' Of '+BADGES.length*3+' Earned',cx+20,cy+80,12,'#4a6fc4',{a:'left',w:800});
+  BADGES.slice((bdgPg-1)*6,bdgPg*6).forEach((b,i)=>{const y=cy+118+i*48,tr=tierOf(b),v=ST[b.id],nx=b.t[Math.min(tr,2)],lo=tr?b.t[tr-1]:0,f=tr>=3?1:clamp((v-lo)/(nx-lo),0,1),bx=cx+cw-86,bw=68;
+   medal(cx+36,y-2,15,tr);text(b.name,cx+62,y-9,15.5,C.navy,{a:'left'});text(b.how,cx+62,y+10,11.5,'#4a6fc4',{a:'left',w:800});
+   text(tr>=3?'Gold!':Math.min(v,nx)+' / '+nx,bx+bw,y-9,12,tr>=3?C.amber:C.navy,{a:'right'});X.fillStyle='#d3e2f8';X.fillRect(bx,y+5,bw,8);X.fillStyle=MEDAL[Math.min(tr+1,3)][1];X.fillRect(bx,y+5,bw*f,8);});}
+ else{[['Games Played',ST.games],['Rounds Won',ST.rounds],['Toys In The Volcano',ST.toys],['Misses',ST.misses],['Hairballs',ST.hair],['Blocked By Max',ST.blocks],['Best Score',ST.bestScore],['Best Round',ST.bestRound],['Longest No-Miss Streak',ST.bestStreak],['Best Combo',ST.bestCombo]].forEach((r,i)=>{const y=cy+108+i*28;
+   if(i%2===0){X.fillStyle='#eef4fd';X.fillRect(cx+12,y-14,cw-24,28);}text(r[0],cx+24,y+1,14.5,C.navy,{a:'left',w:800});text(''+r[1],cx+cw-24,y+1,16,C.lava,{a:'right'});});}
+ button((W-214)/2,cy+ch-72,214,50,bdgPg===1?'More Badges':bdgPg===2?'Next: Stats':'Done',()=>{bdgPg=bdgPg<3?bdgPg+1:0;},{size:20});cardEnd();}
 // ── HOW TO PLAY (start screen) ── three pages. The Game (toys, clock, Max, hairball), then Push and Swipe (a small looping demo and three short steps each).
 const HOWTO=[null,
  {name:'The Game',rows:[['toy','The Toys','Throw them all into the volcano.'],['clock','The Clock','Get them in before time runs out.'],['max','Max','He pops up and blocks your throw.'],['hair','The Hairball','Throw it in for 5 more seconds.']],note:'A new toy joins every round.',next:'Next: Push'},
@@ -623,7 +665,7 @@ function drawHowTo(){const pg=HOWTO[howTo],age=uiT-howT0,cw=324,ch=428,{cx,cy}=c
  pg.steps.forEach((st,i)=>{const y=cy+252+i*27;circ(cx+34,y,11);fill(C.lava);text(''+(i+1),cx+34,y+1,14,'#fff');text(st,cx+54,y+1,15,C.navy,{a:'left',w:800});});
  body(pg.note,cy+336,12.5,'#4a6fc4');
  button((W-214)/2,cy+ch-74,214,52,pg.next,()=>{if(howTo===2){howTo=3;}else howTo=0;},{size:21});cardEnd();}
-function goMenu(){paused=false;charging=null;pendingLaunch=null;swingT=0;objs=[];ejecta=[];parts=[];eParts=[];rings=[];pops=[];confet=[];smoke=[];sparks=[];buildOn=false;build=0;shake=0;flash=0;blk.on=false;collected=0;need=0;combo=0;state='menu';menuStep=0;howTo=0;lastNow=performance.now();acc=0;}
+function goMenu(){paused=false;charging=null;pendingLaunch=null;swingT=0;objs=[];ejecta=[];parts=[];eParts=[];rings=[];pops=[];confet=[];smoke=[];sparks=[];buildOn=false;build=0;shake=0;flash=0;blk.on=false;collected=0;need=0;combo=0;state='menu';menuStep=0;howTo=0;bdgPg=0;lastNow=performance.now();acc=0;}
 function drawPauseCard(){const cw=288,ch=286,{cy}=cardBegin(cw,ch,'Paused');body((swipeMode?'Swipe ':'Push ')+(hardMode?'Hard':'Easy')+'  ·  Round '+round+'  ·  Score '+score,cy+100,13.5);
  button((W-208)/2,cy+124,208,58,'Resume',()=>{paused=false;lastNow=performance.now();acc=0;},{icon:1});
  button((W-208)/2,cy+204,208,50,'Start Screen',goMenu,{id:2,size:18,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});cardEnd();}
@@ -651,8 +693,9 @@ function drawMenu(){const t=38;X.fillStyle=C.wall;X.fillRect(0,0,W,HS);X.strokeS
  const bw=232,bx=(W-bw)/2,appear=(k,y,h,fn)=>{if(k<=0)return;X.save();X.translate(W/2,y+h/2);X.scale(k,k);X.translate(-W/2,-(y+h/2));fn();X.restore();};
  if(uiT<.7)card=null;
  if(howTo){drawHowTo();}
+ else if(bdgPg){drawBadges();}
  else if(menuStep===0){const bh=56,gap=16,bk=36,by=ih+(bandH-SAFEB-bh*2-gap*2-bk)*.5; // step 1 of 2: how to throw
-  appear(EZ.back((uiT-1)/.45),by+(bh+gap)*2,bk,()=>button((W-170)/2,by+(bh+gap)*2,170,bk,'How To Play',()=>{howTo=1;howT0=uiT;},{size:16,id:3,col:'#8a5bd6',colD:'#5a359c',colP:'#7648c2'}));
+  appear(EZ.back((uiT-1)/.45),by+(bh+gap)*2,bk,()=>{button(bx,by+(bh+gap)*2,130,bk,'How To Play',()=>{howTo=1;howT0=uiT;},{size:14.5,id:3,col:'#8a5bd6',colD:'#5a359c',colP:'#7648c2'});button(bx+142,by+(bh+gap)*2,90,bk,'Badges',()=>{bdgPg=1;bdgT0=uiT;},{size:14.5,id:4,col:'#12a5a0',colD:'#0b6f6c',colP:'#0e8f8a'});});
   appear(EZ.back((uiT-.7)/.45),by,bh,()=>button(bx,by,bw,bh,'Push',()=>{swipeMode=false;menuStep=1;menuT0=uiT;},{size:28,id:0}));
   appear(EZ.back((uiT-.85)/.45),by+bh+gap,bh,()=>button(bx,by+bh+gap,bw,bh,'Swipe',()=>{swipeMode=true;menuStep=1;menuT0=uiT;},{size:28,id:2,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'}));
  }else{const bh=56,gap=16,bk=36,by=ih+(bandH-SAFEB-bh*2-gap*2-bk)*.5,mt=uiT-menuT0; // step 2 of 2: Easy or Hard (Push Hard only hides the green signal)
@@ -660,7 +703,7 @@ function drawMenu(){const t=38;X.fillStyle=C.wall;X.fillRect(0,0,W,HS);X.strokeS
   appear(EZ.back((mt-.1)/.35),by+bh+gap,bh,()=>button(bx,by+bh+gap,bw,bh,(swipeMode?'Swipe':'Push')+' Hard',()=>{hardMode=true;startGame();},{size:25,id:2,col:C.lava,colD:'#a82a06',colP:'#e2580f'}));
   appear(EZ.back((mt-.2)/.35),by+(bh+gap)*2,bk,()=>button((W-120)/2,by+(bh+gap)*2,120,bk,'Back',()=>{menuStep=0;menuT0=0;swipeMode=false;},{size:16,id:3,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'}));}
  text(VERSION,W-10,HS-SAFEB-12,10,'#d6efff',{a:'right',w:800});}
-function overlay(){card2=null;card3=null;const key=paused?'pause':state;if(key!==uiKey){uiKey=key;uiT=0;card=null;press=null;}
+function overlay(){card2=null;card3=null;card4=null;const key=paused?'pause':state;if(key!==uiKey){uiKey=key;uiT=0;card=null;press=null;}
  if(paused){drawPauseCard();return;}
  if(state==='menu')drawMenu();else if(state==='intro')drawIntroCard();else if(state==='newtoy')drawNewToyCard();else if(state==='win')drawResultCard(true);else if(state==='gameover')drawResultCard(false);else card=null;}
 
@@ -710,7 +753,7 @@ function draw(){X.setTransform(KS*DPR,0,0,KS*DPR,0,0);X.globalAlpha=1;
  water();volcano();maxBlocker();kid();drawObjs();drawRings();tutorial();chargeGuide();drawParts();eruptFX();drawEjecta();drawBanner();drawPops();
  X.restore();hud();X.restore();
  if(flash>0){X.save();X.globalAlpha=Math.min(1,flash);X.fillStyle=flashCol;X.fillRect(0,0,W,HS);X.restore();}
- overlay();drawMute();if(state==='play'||paused)drawPauseBtn();}
+ overlay();drawToast();drawMute();if(state==='play'||paused)drawPauseBtn();}
 // fill the phone; never shorter than 720 logical px, so the wall decor always clears the tub
 function resize(){const vw=window.innerWidth,vh=window.innerHeight,MINH=720;let cw,ch;
  if(vh/vw>=MINH/W){cw=vw;ch=vh;HS=W*vh/vw;}else{ch=vh;cw=vh*W/MINH;HS=MINH;}

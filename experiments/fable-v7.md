@@ -18,6 +18,14 @@ The pause card shows the mode (Push, Swipe Easy, Swipe Hard) and has a Start Scr
 - v7.2: crowding fix for late rounds (8 to 12 toys). Rounds 3+ start with toys spread over both sides instead of one pile in the middle; touching toys slide past each other up and down and are pushed apart harder; a side with more than 3 toys drifts slower; walls always turn a toy inward. Missed toys still land exactly where they fall. Measured in the game at round 10 (12 toys, 30 s, 4 runs each): time a toy spends touching another fell from 14-28% to 10-13%, and the longest two toys stayed stuck together fell from 1.4-3.1 s to 0.3-1.1 s.
 - v7.3: How To Play button on the start screen. Two pages (Push, then Swipe), each a small looping demo plus three short steps.
 - v7.4: How To Play gets a first page, The Game: the toys, the clock, Max blocking, and the hairball (5 more seconds). Now three pages.
+- v7.5: Badges and stats. Lifetime numbers are saved on the phone (localStorage key `evitb-stats-v1`), shared by Push and Swipe.
+  A Badges button on the start screen opens a three-page card (two pages of badges, one of stats). Earning a level shows a banner in the game.
+  12 badges, each Bronze / Silver / Gold:
+  New Toy First! (new toy in first: 1/5/10), Hairball Hero (10/20/50), Sneak Past Max (round won with no Max block, rounds 4+: 1/5/15),
+  Never Miss (scores in a row, carries across rounds: 10/20/40), Perfect Round (1/10/30), Beat The Clock (win with 15 s left: 1/10/30),
+  Volcano Feeder (toys in: 50/250/1000), Kaboom! (rounds won: 10/50/150), Rebound Champ (Swipe wall scores: 5/25/75),
+  Hard Hat (rounds won in Hard: 5/25/75), This Is The End! (all 10 rounds: 1/3/10), Big Score (1000/3000/6000).
+  The thresholds are first guesses and are all in the BADGES table in game-fable-v7.js.
 
 ## Tested
 Scripted in the preview at 375x812 by stepping the game by hand: Push scores on a held throw,
