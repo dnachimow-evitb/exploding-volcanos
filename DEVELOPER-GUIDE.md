@@ -4,7 +4,7 @@ Read this first before changing the game. It says where things are and gives ste
 common jobs (add a toy, change prices, add a badge, publish). The history of *why* things are the way they are
 is in `experiments/fable-v7.md` (one line per version) and, for the art, `experiments/fable-v5.md`.
 
-Last updated: 2026-11-12, at test version v7.31 / live version v7.23.
+Last updated: 2026-11-12, at test version v7.32 / live version v7.23.
 
 ## 1. The files that matter
 
@@ -129,6 +129,12 @@ measured for up to 12 toys only.
 add it to `ST0`, call `stat('id')` (count up) or `statMax('id',value)` (personal best) where it happens,
 add a picture in `badgeIcon`. `best:'Label'` marks a personal-best badge (shown as "Best …" and "Goal: …").
 Six badges per Badges page; a 13th needs a third page.
+
+### Change How To Play
+`HOWTO` table, one entry per page. A page with `rows` is a list of picture + title + sentence (pictures are the
+`r[0]==='…'` branches in `drawHowTo`); a page with `steps` shows the looping throw demo (page 3 is Push,
+page 4 is Swipe: the demo checks `howTo===4`). Page count and Back / Next follow the table length.
+**When a feature is added, check whether How To Play needs a line about it.**
 
 ### Add a start-screen button
 The row under Swipe is drawn in `drawMenu` (step 0) and spans exactly the width of Push/Swipe (232 units).
