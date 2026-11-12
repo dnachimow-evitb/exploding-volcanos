@@ -31,7 +31,8 @@ Keep this file current: tick items off and add decisions as they are made.
 ## Checklist
 
 ### 1. Accounts (Derek)
-- [x] **Joined the Apple Developer Program** as an Individual (Derek, 2026-11-12).
+- [x] **Enrolled in the Apple Developer Program** as an Individual (Derek, 2026-11-12).
+- [ ] **Apple approves the enrollment** (pending on 2026-11-12). The steps below need approval first.
 - [ ] **Register the bundle ID**: developer.apple.com/account/resources/identifiers/add/bundleId >
       App IDs > App > Description "Exploding Volcanoes", Bundle ID *Explicit* `com.explodingvolcanoes.app`,
       no capabilities > Continue > Register.
@@ -75,8 +76,7 @@ Keep this file current: tick items off and add decisions as they are made.
 - [ ] **Privacy policy page** (required for every app) and a **support page**. Both can be simple pages on the
       game's website. The app collects nothing, so the App Privacy answer is "Data Not Collected".
 - [ ] Age rating questionnaire (expected: the lowest rating).
-- [ ] Rights: confirm we own or have commercial rights to the song, the cover art and all images. If any were
-      made with an AI tool, check that the plan used allows commercial use.
+- [x] Rights: Derek confirmed on 2026-11-12 that the rights to the song, cover art and images are covered.
 - [x] Price: **free** (Derek, 2026-11-12).
 - [ ] Optional: Kids category (stricter review; the game already has no ads, tracking or outside links).
 - [ ] EU trader status (Apple asks every developer; "trader" means your contact details are shown in the EU).

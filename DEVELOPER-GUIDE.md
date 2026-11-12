@@ -34,6 +34,8 @@ Links: live `https://dnachimow-evitb.github.io/exploding-volcanos/` , test `.../
 4. **Publish only when he says so:** copy `game-test.js` over `game-fable-v7.js`, bump the `CACHE` name in
    `sw.js`, bump `?v=` in `play-fable-v7.html`, commit, push, confirm the live site serves the new `VERSION`.
 5. Add a line to `experiments/fable-v7.md` for every version.
+6. **The iPhone App Store app does not update when the live game is published.** It packages the live game
+   (`native/`, see `native/APP-STORE.md`) and needs a new TestFlight build and Apple review for each update.
 
 Git: work on branch `model/fable-v7`, fast-forward `main` to it, push both. GitHub Pages serves `main`.
 Tags: `test-vX.YY` for test builds, `fable-v7-vN` for live publishes. Revert points: `before-v7-publish`
