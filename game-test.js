@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v7.27'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v7.28'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -795,9 +795,9 @@ function drawMyToys(){const q=PF.list[PF.cur],cw=344,ch=502,{cx,cy}=cardBegin(cw
   X.save();X.translate(x+24,y+18+(sel?Math.sin(NOW*6)*1.5:0));paintToy(em,30);X.restore();text(i<3?'Start':'Round '+(i-1),x+24,y+39,8,'#4a6fc4',{w:800});
   hits.push({x,y,w:48,h:46,act:()=>{if(selToy&&owns(q,selToy))toyPlace(selToy,i);else if(selSlot>=0&&selSlot!==i){const t=L[selSlot];L[selSlot]=L[i];L[i]=t;pfSave();selSlot=-1;}else{selSlot=selSlot===i?-1:i;selToy=null;}},key:uiKey,id});});
  text('The first 3 start the game. One more joins each round.',W/2,cy+203,10,'#4a6fc4',{w:800});
- // the pool: only the toys that are NOT in the lineup (always 8 while there are 20 toys). Owned ones in colour, locked ones grey with a price.
+ // the pool: only the toys that are NOT in the lineup (always 8 while there are 20 toys). Owned ones come first, in colour; locked ones follow, grey with a price, cheapest first.
  text('Other Toys',W/2,cy+223,12.5,C.navy);
- const pool=ALL_TOYS.filter(e=>!L.includes(e)),gx=cx+(cw-4*78+4)/2;pool.forEach((em,n)=>{const x=gx+(n%4)*78,y=cy+236+(n/4|0)*76,own=owns(q,em),sel=em===selToy,pr=priceOf(em),id=70+ALL_TOYS.indexOf(em);if(sel){rr(x-3,y-3,80,76,10);fill(C.lava);}rr(x,y,74,70,8);fill(sel?'#fff3bf':own?'#eef4fd':'#dfe3ec');
+ const rest=ALL_TOYS.filter(e=>!L.includes(e)),pool=rest.filter(e=>owns(q,e)).concat(rest.filter(e=>!owns(q,e))),gx=cx+(cw-4*78+4)/2;pool.forEach((em,n)=>{const x=gx+(n%4)*78,y=cy+236+(n/4|0)*76,own=owns(q,em),sel=em===selToy,pr=priceOf(em),id=70+ALL_TOYS.indexOf(em);if(sel){rr(x-3,y-3,80,76,10);fill(C.lava);}rr(x,y,74,70,8);fill(sel?'#fff3bf':own?'#eef4fd':'#dfe3ec');
   X.save();X.translate(x+37,y+29+(sel?Math.sin(NOW*6)*1.5:0));paintToy(em,own?44:40,!own);X.restore();
   if(own)text(TOYNAME[em]||'',x+37,y+60,10,'#4a6fc4',{w:800});else{const t=''+pr;X.font=fnt(900,12);const tw=X.measureText(t).width;coin(x+37-tw/2-5,y+59,6);text(t,x+37-tw/2+5,y+59.5,12,q.coins>=pr?C.navy:'#7c879f',{a:'left'});}
   hits.push({x,y,w:74,h:70,act:()=>{if(owns(q,em)&&selSlot>=0)toyPlace(em,selSlot);else{selToy=selToy===em?null:em;if(!owns(q,em))selSlot=-1;}},key:uiKey,id});});
