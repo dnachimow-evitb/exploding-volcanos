@@ -72,11 +72,13 @@ Keep this file current: tick items off and add decisions as they are made.
 ### 3. Store listing (together)
 - [x] **App name "Exploding Volcanoes", subtitle "In The Bathtub"** (Derek, 2026-11-12). Apple allows 30
       characters for each; the full title "Exploding Volcanoes in the Bathtub" is 34.
-- [ ] Description, keywords (100 characters), category (Games > Family or Casual).
+- [x] Description, keywords, category, promotional text, review notes: drafted in `native/STORE-LISTING.md`
+      (2026-11-13) for Derek to edit. Not yet entered in App Store Connect.
 - [x] Screenshots, 6.9-inch iPhone size (1320 x 2868): `native/screenshots/` (start screen, aiming, eruption,
-      Badges, My Toys), made from v7.35. Remake after visible game changes: `npm run build && node scripts/screenshots.js`.
-- [ ] **Privacy policy page** (required for every app) and a **support page**. Both can be simple pages on the
-      game's website. The app collects nothing, so the App Privacy answer is "Data Not Collected".
+      Badges, My Toys), remade from v7.45. Remake after visible game changes: `npm run build && node scripts/screenshots.js`.
+- [x] **Privacy policy and support pages** on the game's website: `privacy.html` and `support.html` at the
+      top of the repo (2026-11-13). Contact shown: dnachimow@gmail.com (Derek's choice). The app collects
+      nothing, so the App Privacy answer is "Data Not Collected".
 - [ ] Age rating questionnaire (expected: the lowest rating).
 - [x] Rights: Derek confirmed on 2026-11-12 that the rights to the song, cover art and images are covered.
 - [x] Price: **free** (Derek, 2026-11-12).
@@ -96,7 +98,6 @@ Made by Derek on 2026-11-12:
 - **Name "Exploding Volcanoes", subtitle "In The Bathtub".**
 
 Still open:
-- Contact email to show on the support page (Apple requires a way to reach the developer).
 - Kids category or not.
 
 ## Commands
