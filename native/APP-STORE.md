@@ -56,10 +56,10 @@ Keep this file current: tick items off and add decisions as they are made.
 - [x] Portrait, iPhone only, no status bar, edge-swipe protection, launch screen, encryption flag.
 - [x] Simulator build check on GitHub's Macs (no Apple account needed). First run passed 2026-11-12
       (Xcode 26, iOS 26.5 SDK, which meets Apple's current upload requirement).
-- [ ] **App icon, 1024 x 1024.** The current one is the 512 home-screen icon enlarged, so it is soft, and
-      the busy cover crop reads poorly at small sizes. Needs a crisp, simpler version. Blocked 2026-11-12:
-      the Google AI Studio project behind Claude's Gemini access is on the free tier, which allows no image
-      requests; Derek can turn on billing there (roughly 10-25 cents an image) or supply an icon.
+- [x] **App icon: the painted cover crop stays** (Derek, 2026-11-13). He was shown two flat icons drawn from the
+      game's own volcano art and prefers the current one. It is the 512 home-screen icon enlarged to 1024, so it
+      is a little soft; a sharper copy needs a larger original of the cover art (the cover file in the repo is
+      1254 px, and the volcano is only about 500 px of it). Do not replace it without asking him.
 - [x] Signed build + upload to TestFlight from GitHub: the `testflight` job in `.github/workflows/ios.yml`.
       **First upload succeeded 2026-11-13: build 11, packaging live v7.45.** It archives unsigned, then signs with
       Apple's cloud-managed distribution certificate through the API key and uploads; no Mac and no certificate
