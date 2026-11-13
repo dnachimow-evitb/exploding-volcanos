@@ -1,6 +1,6 @@
 // Offline cache. Files are served cache-first, so ANY change to the live game
 // needs this name bumped (v5 -> v6 ...) or phones keep the old files.
-const CACHE = 'exploding-volcanos-v14';
+const CACHE = 'exploding-volcanos-v15';
 const ASSETS = ['./', 'index.html', 'game-fable-v7.js', 'manifest.webmanifest', 'icon.svg', 'song.mp3', 'assets/cover-volcanoes.webp'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));

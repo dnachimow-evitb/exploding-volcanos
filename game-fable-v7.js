@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v7.35'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v7.45'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -25,11 +25,11 @@ const CX=190,CY=176,G=0.22,T=58,CHARGE_RATE=0.55,CHARGE_MAX=1.7;
 const windAng=-1.45,swingEnd=1.5,idleAng=0.9,swingDur=0.32;
 const BASE=['🦆','⛵','🦕'],NEWBY={2:'🚚',3:'🚗',4:'🐙',5:'🪣',6:'🦈',7:'🐬',8:'🐸',9:'🦸',10:'🚀'};
 const TOYNAME={'🚚':'Monster Truck','🚗':'Car','🐙':'Octopus','🪣':'Pail','🦈':'Shark','🐬':'Dolphin','🐸':'Froggy','🦸':'Action Figure','🚀':'Rocket'};
-Object.assign(TOYNAME,{'🦆':'Duck','⛵':'Sailboat','🦕':'Dino',whale:'Whale',turtle:'Turtle',sub:'Submarine',crab:'Crab',star:'Starfish',tug:'Tugboat',penguin:'Penguin',pdino:'Purple Dino',jelly:'Jellyfish',ring:'Swim Ring',clown:'Clownfish',seal:'Seal',puffer:'Pufferfish',seahorse:'Seahorse',train:'Train',narwhal:'Narwhal',crayon:'Crayon',banana:'Banana',teddy:'Teddy Bear',zebra:'Zebra',robot:'Robot',guitar:'Guitar',firetruck:'Fire Truck',unicorn:'Unicorn',airplane:'Airplane',helicopter:'Helicopter'});
+Object.assign(TOYNAME,{'🦆':'Duck','⛵':'Sailboat','🦕':'Dino',whale:'Whale',turtle:'Turtle',sub:'Submarine',crab:'Crab',star:'Starfish',tug:'Tugboat',penguin:'Penguin',pdino:'Purple Dino',jelly:'Jellyfish',ring:'Swim Ring',clown:'Clownfish',seal:'Seal',puffer:'Pufferfish',seahorse:'Seahorse',train:'Train',narwhal:'Narwhal',crayon:'Crayon',banana:'Banana',teddy:'Teddy Bear',zebra:'Zebra',robot:'Robot',guitar:'Guitar',firetruck:'Fire Truck',unicorn:'Unicorn',airplane:'Airplane',helicopter:'Helicopter',soldier:'Toy Soldier'});
 // TOY SHOP: toys bought with coins. Coins come only from playing (rounds won, badge levels); there is no real money.
 // A player's LINEUP is 12 spots: the first 3 start the game, then one joins each round. It starts as the default set
 // and the player can put any toy they own into any spot. Coins, owned toys and the lineup are saved per player.
-const SHOP=[['crayon',25],['whale',30],['jelly',35],['turtle',40],['ring',45],['crab',50],['clown',55],['star',60],['banana',65],['seal',70],['penguin',75],['teddy',80],['puffer',85],['tug',90],['zebra',95],['seahorse',100],['robot',105],['sub',110],['airplane',115],['train',120],['guitar',125],['pdino',130],['helicopter',135],['firetruck',140],['narwhal',150],['unicorn',160]]; // keep in price order: locked toys are listed in this order
+const SHOP=[['crayon',25],['whale',30],['jelly',35],['turtle',40],['ring',45],['crab',50],['clown',55],['star',60],['banana',65],['seal',70],['soldier',72],['penguin',75],['teddy',80],['puffer',85],['tug',90],['zebra',95],['seahorse',100],['robot',105],['sub',110],['airplane',115],['train',120],['guitar',125],['pdino',130],['helicopter',135],['firetruck',140],['narwhal',150],['unicorn',160]]; // keep in price order: locked toys are listed in this order
 const TOY_SWAP={speedboat:'train'},swapToy=e=>TOY_SWAP[e]||e; // replaced toys: a saved player who had the old one gets the new one
 const COIN_ROUND=5,COIN_WIN=25,COIN_BADGE=[0,20,40,80]; // per round won, extra for finishing all 10, per badge level
 const DEF_LINE=[...BASE,...Object.values(NEWBY)],ALL_TOYS=DEF_LINE.concat(SHOP.map(q=>q[0])),priceOf=em=>{const q=SHOP.find(z=>z[0]===em);return q?q[1]:0;};
@@ -458,6 +458,15 @@ helicopter(k){const{C,blob,sh,line,gloss}=k;
  blob('#e53935',[C(-46,-1,6.5)],2.4);sh(C(-46,-1,2.2),'#fff');
  sh('M8 -10Q28 -10 33 6L8 6Z','#c8efff',2.5,'#2a2a33');gloss('M12 -6Q18 -7 22 -4L14 2Z');
  line('M-20 13L30 13','#ffd43b',3);},
+soldier(k){const{E,C,blob,sh,line,eye}=k; // classic green plastic army man: one green all over, darker green for shade, on his oval stand
+ blob('#3d7d2e',[E(0,40,29,7)]);
+ line('M-16 9L42 -15','#2f6323',5,2.6);line('M-18 10L-4 4','#2f6323',9,2.6);
+ blob('#58a845',['M-5 10L-19 39L-8 39L3 17Z','M1 10L10 39L21 39L11 10Z','M-11 -15L11 -15L12 15L-10 15Z',C(2,-23,12.5)]);
+ sh('M-19 39L-8 39L-6 33L-16 33Z','#3d7d2e');sh('M10 39L21 39L19 33L9 33Z','#3d7d2e');sh('M-10 9L12 9L12 14L-10 14Z','#3d7d2e');
+ sh('M-10 -15L-3 -15L-4 9L-10 9Z','#4a9539');
+ blob('#3d7d2e',['M-13 -31Q-12 -47 3 -47Q18 -47 19 -31L23 -28L-15 -28Z'],3);sh('M-9 -34Q-7 -43 2 -44Q-4 -40 -4 -34Z','#58a845');
+ eye(8,-22,3.4);line('M5 -15.5Q8.5 -12.5 12 -16','#2f6323',2.2);sh(C(0,-17,2.6),'#8fd07c');
+ line('M10 -2L24 -6','#58a845',7,2.4);line('M-8 -6L-9 5L3 2','#58a845',7,2.4);sh(C(24,-6,4.6),'#4a9539');sh(C(3,2,4.6),'#4a9539');},
 '🧶'(k){const{C,sh,line,eye}=k;let d='';for(let i=0;i<24;i++){const a=i/24*TAU,r=i%2?40:31;d+=(i?'L':'M')+(Math.cos(a)*r).toFixed(1)+' '+(Math.sin(a)*r).toFixed(1);}
  sh(d+'Z','#8a5a2a',5,'#4a2e12');sh(C(0,0,30),'#9a6832');
  line('M-18 -6Q-4 -24 16 -12','#6b4423',2.6);line('M-20 8Q0 -8 20 6','#6b4423',2.6);line('M-12 20Q4 8 18 18','#6b4423',2.6);
@@ -900,7 +909,8 @@ function drawBadges(){const age=uiT-bdgT0,cw=336,ch=470,{cx,cy}=cardBegin(cw,ch,
 // ── MY TOYS (start screen): the player's 12-spot lineup, every toy in the game, and the shop ──
 function openToys(){toysT0=uiT||.001;selSlot=-1;selToy=null;toyPg=0;}
 function toyPlace(em,i){const q=PF.list[PF.cur],L=q.line,j=L.indexOf(em);if(j>=0)L[j]=L[i];L[i]=em;pfSave();selSlot=-1;selToy=null;}
-function toyBuy(){const q=PF.list[PF.cur],em=selToy,pr=priceOf(em);if(!em||owns(q,em)||q.coins<pr)return;q.coins-=pr;q.owned.push(em);pfSave();sfxFanfare();}
+function toyBuy(){const q=PF.list[PF.cur],em=selToy,pr=priceOf(em);if(!em||owns(q,em)||q.coins<pr)return;q.coins-=pr;q.owned.push(em);pfSave();sfxFanfare();
+ {const rest=ALL_TOYS.filter(e=>!q.line.includes(e)),i=rest.filter(e=>owns(q,e)).indexOf(em);toyPg=i<0?0:Math.floor(i/8);}} // jump to the page the new toy is now on (owned toys are listed first, so normally page 1)
 function drawMyToys(){const q=PF.list[PF.cur],cw=344,ch=502,{cx,cy}=cardBegin(cw,ch,'My Toys',uiT-toysT0),L=q.line;
  coin(cx+26,cy+80,9);text(q.coins+' Coins',cx+41,cy+81,15,C.navy,{a:'left'});text(q.name+'’s Lineup',cx+cw-18,cy+81,12,'#4a6fc4',{a:'right',w:800});
  // the 12 spots
@@ -1018,7 +1028,7 @@ k0=lerp(.85,1,EZ.back(uiT/.5)),ih=py+pw+30,bandH=HS-ih; // the taped picture sit
   appear(EZ.back(mt/.35),by,bh,()=>button(bx,by,bw,bh,'Easy',()=>{hardMode=false;startGame();},{size:25,id:0,sub:'With Hints'}));
   appear(EZ.back((mt-.1)/.35),by+bh+gap,bh,()=>button(bx,by+bh+gap,bw,bh,'Hard',()=>{hardMode=true;startGame();},{size:25,id:2,sub:'No Hints',col:C.lava,colD:'#a82a06',colP:'#e2580f'}));
   appear(EZ.back((mt-.2)/.35),by+(bh+gap)*2,bk,()=>button((W-120)/2,by+(bh+gap)*2,120,bk,'Back',()=>{menuStep=0;menuT0=0;swipeMode=false;},{size:16,id:3,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'}));}
- text(VERSION+(TEST?' TEST':''),W-10,HS-SAFEB-12,10,TEST?C.hot:'#d6efff',{a:'right',w:800});if(TEST)text(dbg,10,HS-SAFEB-12,9,'#d6efff',{a:'left',w:800});}
+ text(VERSION+(TEST?' TEST':''),W-16,HS-lblB-12,10,TEST?C.hot:'#d6efff',{a:'right',w:800});if(TEST)text(dbg,16,HS-lblB-12,9,'#d6efff',{a:'left',w:800});}
 function overlay(){card2=null;card3=null;card4=null;hits.length=0;const key=paused?'pause':state;if(key!==uiKey){uiKey=key;uiT=0;card=null;press=null;}
  if(paused){if(homeAsk)drawHomeCard();else drawPauseCard();return;}
  if(state==='menu')drawMenu();else if(state==='intro')drawIntroCard();else if(state==='newtoy')drawNewToyCard();else if(state==='win')drawResultCard(true);else if(state==='gameover')drawResultCard(false);else card=null;}
@@ -1076,20 +1086,33 @@ function draw(){X.setTransform(KS*DPR,0,0,KS*DPR,0,0);X.globalAlpha=1;
 // re-checked twice a second (see watchSize), (2) if the window is still reported short we use the real screen
 // height and pin the game to the top, (3) if the top inset still reads zero we assume one, so the top buttons
 // always sit below the bar.
-let lastSize='',dbg='';
+let lastSize='',dbg='',lblB=0,pinLatch=false,resizeN=0; // lblB: how far the corner labels sit above the bottom edge
 function resize(){const vw=window.innerWidth,MINH=720,ios=/iPhone|iPad|iPod/.test(navigator.userAgent),port=vw<window.innerHeight,
   sa=navigator.standalone===true||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches),homeApp=sa&&ios&&port;
- let vh=window.innerHeight,pin=false,cw,ch;if(homeApp&&Math.abs(screen.width-vw)<2&&screen.height>vh+8){vh=screen.height;pin=true;}
+ let vh=window.innerHeight,pin=false,cw,ch;
+ // pinLatch (v7.44): once pinned, stay pinned. Making the page screen-tall makes the phone report the full height,
+ // and un-pinning on that made it report the short height again: an endless flip that flashed the screen (v7.42).
+ if(homeApp&&Math.abs(screen.width-vw)<2&&(screen.height>vh+8||pinLatch)){vh=screen.height;pin=true;}pinLatch=pin;
  if(vh/vw>=MINH/W){cw=vw;ch=vh;HS=W*vh/vw;}else{ch=vh;cw=vh*W/MINH;HS=MINH;}
  KS=cw/W;DPR=Math.max(1,Math.min(window.devicePixelRatio||1,QCAP,Math.sqrt(2.7e6/(cw*ch))));OY=Math.round((HS-600)*.6);
  const sp=document.getElementById('safe'),sb=document.getElementById('safeb');SAFE=sp?sp.offsetHeight/KS:0;SAFEB=sb?sb.offsetHeight/KS:0;
  const rawSafe=Math.round(SAFE*KS);if(homeApp)SAFE=Math.max(SAFE,(screen.height>=812?54:22)/KS);
- dbg='s'+rawSafe+'>'+Math.round(SAFE*KS)+' h'+window.innerHeight+'/'+screen.height+(sa?' app':' web')+(pin?' pin':'');
- const wEl=document.getElementById('w');wEl.style.position=pin?'fixed':'relative';wEl.style.top=pin?'0':'';wEl.style.left=pin?'0':'';wEl.style.width=cw+'px';wEl.style.height=ch+'px';wEl.classList.toggle('boxed',cw<vw-4);
- cv.style.width=cw+'px';cv.style.height=ch+'px';cv.width=Math.round(cw*DPR);cv.height=Math.round(ch*DPR);bg=null;}
+ lblB=Math.max(SAFEB,homeApp&&screen.height>=812?34/KS:0)+8; // home-screen app: the bottom inset can read zero, which put the version label in the rounded corner / home bar
+ dbg='s'+rawSafe+'>'+Math.round(SAFE*KS)+' h'+window.innerHeight+'/'+screen.height+(sa?' app':' web')+(pin?' pin2':'');
+ const wEl=document.getElementById('w');wEl.style.position=pin?'absolute':'relative';wEl.style.top=pin?'0':'';wEl.style.left=pin?'0':'';
+ // v7.42: the phone clips everything below the window height it reports (812 of 874 on Derek's iPhone), so a
+ // taller game alone was cut off at the bottom. In pin mode the PAGE is made screen-tall as well (the known
+ // workaround for this home-screen bug), so the part below the reported window is real page and gets drawn.
+ {const R=document.documentElement.style,B=document.body.style,px=ch+'px';
+  R.height=pin?px:'';R.minHeight=pin?px:'';R.overflow=pin?'visible':'';
+  B.position=pin?'absolute':'';B.top=pin?'0':'';B.left=pin?'0':'';B.right=pin?'auto':'';B.bottom=pin?'auto':'';B.width=pin?'100%':'';B.height=pin?px:'';B.minHeight=pin?px:'';B.overflow=pin?'visible':'';B.display=pin?'block':'';
+  if(pin&&(window.scrollY||window.scrollX))window.scrollTo(0,0);}
+ wEl.style.width=cw+'px';wEl.style.height=ch+'px';wEl.classList.toggle('boxed',cw<vw-4);
+ cv.style.width=cw+'px';cv.style.height=ch+'px';{const pw=Math.round(cw*DPR),ph=Math.round(ch*DPR);if(cv.width!==pw||cv.height!==ph){cv.width=pw;cv.height=ph;resizeN++;}}bg=null;} // the canvas is only re-made when its size really changes (re-making it blanks it for a frame)
 function sizeKey(){const sp=document.getElementById('safe'),sb=document.getElementById('safeb');return window.innerWidth+'x'+window.innerHeight+'/'+(sp?sp.offsetHeight:0)+'/'+(sb?sb.offsetHeight:0);}
 function watchSize(){const k=sizeKey();if(k!==lastSize){lastSize=k;resize();}}
-window.addEventListener('resize',watchSize);window.addEventListener('orientationchange',()=>setTimeout(watchSize,250));window.addEventListener('pageshow',watchSize);
+window.addEventListener('resize',watchSize);window.addEventListener('orientationchange',()=>setTimeout(watchSize,250));window.addEventListener('pageshow',watchSize);window.addEventListener('scroll',()=>{if(window.scrollY||window.scrollX)window.scrollTo(0,0);});document.addEventListener('touchmove',e=>e.preventDefault(),{passive:false}); // the screen-tall page must never scroll
+
 if(window.visualViewport)window.visualViewport.addEventListener('resize',watchSize);setInterval(watchSize,500);
 buildToys();resize();
 requestAnimationFrame(loop);

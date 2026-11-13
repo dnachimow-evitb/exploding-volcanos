@@ -87,6 +87,7 @@ The pause card shows the mode (Push, Swipe Easy, Swipe Hard) and has a Start Scr
 - v7.44 (TEST COPY ONLY): the v7.42 screen-tall page again, with the flashing fixed. Derek's recording showed v7.42 alternating between `h812/874 app pin2` (game filling the screen, corner label visible: the fix works) and `h874/874 app` (band back): once the page was screen-tall the iPhone reported the full height, the code un-pinned, the phone reported 812 again, and so on twice a second. Now the pin latches (`pinLatch`): once on, it stays on while the app is in portrait. The canvas is also only re-made when its size really changes. Reproduced off-phone with a fake window height that follows the page height: v7.42 flipped 11 times in 4 s, v7.44 once.
 - 2026-11-13: Derek confirmed v7.44 on his iPhone home-screen test app: the corner version label is visible at the bottom (full-screen fix works, no more band).
 - v7.45 (TEST COPY ONLY): the temporary mid-screen version label and measurement line (v7.39, v7.41) are removed. The corner label and the bottom-left debug line stay.
+- 2026-11-13: v7.45 published live at Derek's request ("move to prod"): Toy Soldier (v7.36), jump to the toy's page after buying (v7.37), version label clear of the home bar (v7.38), home-screen app fills the screen with the page made screen-tall and the pin latched (v7.42 to v7.44). Cache name exploding-volcanos-v15.
 
 ## Tested
 Scripted in the preview at 375x812 by stepping the game by hand: Push scores on a held throw,
