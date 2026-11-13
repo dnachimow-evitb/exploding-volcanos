@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v7.42'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v7.43'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -1095,21 +1095,12 @@ function resize(){const vw=window.innerWidth,MINH=720,ios=/iPhone|iPad|iPod/.tes
  const sp=document.getElementById('safe'),sb=document.getElementById('safeb');SAFE=sp?sp.offsetHeight/KS:0;SAFEB=sb?sb.offsetHeight/KS:0;
  const rawSafe=Math.round(SAFE*KS);if(homeApp)SAFE=Math.max(SAFE,(screen.height>=812?54:22)/KS);
  lblB=Math.max(SAFEB,homeApp&&screen.height>=812?34/KS:0)+8; // home-screen app: the bottom inset can read zero, which put the version label in the rounded corner / home bar
- dbg='s'+rawSafe+'>'+Math.round(SAFE*KS)+' h'+window.innerHeight+'/'+screen.height+(sa?' app':' web')+(pin?' pin2':'');
- const wEl=document.getElementById('w');wEl.style.position=pin?'absolute':'relative';wEl.style.top=pin?'0':'';wEl.style.left=pin?'0':'';
- // v7.42: the phone clips everything below the window height it reports (812 of 874 on Derek's iPhone), so a
- // taller game alone was cut off at the bottom. In pin mode the PAGE is made screen-tall as well (the known
- // workaround for this home-screen bug), so the part below the reported window is real page and gets drawn.
- {const R=document.documentElement.style,B=document.body.style,px=ch+'px';
-  R.height=pin?px:'';R.minHeight=pin?px:'';R.overflow=pin?'visible':'';
-  B.position=pin?'absolute':'';B.top=pin?'0':'';B.left=pin?'0':'';B.right=pin?'auto':'';B.bottom=pin?'auto':'';B.width=pin?'100%':'';B.height=pin?px:'';B.minHeight=pin?px:'';B.overflow=pin?'visible':'';B.display=pin?'block':'';
-  if(pin&&(window.scrollY||window.scrollX))window.scrollTo(0,0);}
- wEl.style.width=cw+'px';wEl.style.height=ch+'px';wEl.classList.toggle('boxed',cw<vw-4);
+ dbg='s'+rawSafe+'>'+Math.round(SAFE*KS)+' h'+window.innerHeight+'/'+screen.height+(sa?' app':' web')+(pin?' pin':'');
+ const wEl=document.getElementById('w');wEl.style.position=pin?'fixed':'relative';wEl.style.top=pin?'0':'';wEl.style.left=pin?'0':'';wEl.style.width=cw+'px';wEl.style.height=ch+'px';wEl.classList.toggle('boxed',cw<vw-4);
  cv.style.width=cw+'px';cv.style.height=ch+'px';cv.width=Math.round(cw*DPR);cv.height=Math.round(ch*DPR);bg=null;}
 function sizeKey(){const sp=document.getElementById('safe'),sb=document.getElementById('safeb');return window.innerWidth+'x'+window.innerHeight+'/'+(sp?sp.offsetHeight:0)+'/'+(sb?sb.offsetHeight:0);}
 function watchSize(){const k=sizeKey();if(k!==lastSize){lastSize=k;resize();}}
-window.addEventListener('resize',watchSize);window.addEventListener('orientationchange',()=>setTimeout(watchSize,250));window.addEventListener('pageshow',watchSize);window.addEventListener('scroll',()=>{if(window.scrollY||window.scrollX)window.scrollTo(0,0);});document.addEventListener('touchmove',e=>e.preventDefault(),{passive:false}); // the screen-tall page must never scroll
-
+window.addEventListener('resize',watchSize);window.addEventListener('orientationchange',()=>setTimeout(watchSize,250));window.addEventListener('pageshow',watchSize);
 if(window.visualViewport)window.visualViewport.addEventListener('resize',watchSize);setInterval(watchSize,500);
 buildToys();resize();
 requestAnimationFrame(loop);
