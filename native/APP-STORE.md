@@ -83,7 +83,7 @@ Keep this file current: tick items off and add decisions as they are made.
       Actions > Store listing > Run workflow): subtitle, privacy/support/marketing links, category Games (Family,
       Casual), all 25 age-rating answers None/No, content rights, copyright, description, keywords, promotional
       text, five screenshots, build 11, price free. Run it again after editing `STORE-LISTING.md` or the screenshots.
-- [ ] **Left for Derek on Apple's site:** App Privacy ("Data Not Collected"); countries under Pricing and
+- [x] **Done by Derek on Apple's site (2026-11-13):** App Privacy ("Data Not Collected"); countries under Pricing and
       Availability; name, phone and email under App Review Information (then run the job again to add the review
       notes); Kids category and EU trader status; then Add for Review / Submit.
 - [x] Rights: Derek confirmed on 2026-11-12 that the rights to the song, cover art and images are covered.
@@ -92,8 +92,11 @@ Keep this file current: tick items off and add decisions as they are made.
 - [ ] EU trader status (Apple asks every developer; "trader" means your contact details are shown in the EU).
 
 ### 4. Submit
-- [ ] Submit for review (usually 24 to 48 hours). Apple rejects apps that are "just a website"; a game whose
-      files are all inside the app, with native touches like the above, is the accepted kind.
+- [x] **Submitted for review by Derek on 2026-11-13** (version 1.0, build 11, game v7.45). Apple usually answers
+      in 24 to 48 hours by email. While it is waiting or in review the listing cannot be edited, so do not run the
+      Store listing job. If Apple rejects it, the email says why; fix, upload a new build if the app changed,
+      and resubmit. If approved, the app goes live (unless manual release was chosen).
+- [ ] Apple's decision.
 
 ## Decisions
 Made by Derek on 2026-11-12:
