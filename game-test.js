@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v7.38'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v7.39'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -1028,7 +1028,7 @@ k0=lerp(.85,1,EZ.back(uiT/.5)),ih=py+pw+30,bandH=HS-ih; // the taped picture sit
   appear(EZ.back(mt/.35),by,bh,()=>button(bx,by,bw,bh,'Easy',()=>{hardMode=false;startGame();},{size:25,id:0,sub:'With Hints'}));
   appear(EZ.back((mt-.1)/.35),by+bh+gap,bh,()=>button(bx,by+bh+gap,bw,bh,'Hard',()=>{hardMode=true;startGame();},{size:25,id:2,sub:'No Hints',col:C.lava,colD:'#a82a06',colP:'#e2580f'}));
   appear(EZ.back((mt-.2)/.35),by+(bh+gap)*2,bk,()=>button((W-120)/2,by+(bh+gap)*2,120,bk,'Back',()=>{menuStep=0;menuT0=0;swipeMode=false;},{size:16,id:3,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'}));}
- text(VERSION+(TEST?' TEST':''),W-16,HS-lblB-12,10,TEST?C.hot:'#d6efff',{a:'right',w:800});if(TEST)text(dbg,16,HS-lblB-12,9,'#d6efff',{a:'left',w:800});}
+ text(VERSION+(TEST?' TEST':''),W-16,HS-lblB-12,10,TEST?C.hot:'#d6efff',{a:'right',w:800});if(TEST)text(dbg,16,HS-lblB-12,9,'#d6efff',{a:'left',w:800});if(TEST)text(VERSION+' TEST',W/2,HS/2,18,'#fff',{s:C.navy,sw:6});/* TEMPORARY (v7.39): big label mid-screen so Derek can confirm which build his phone shows; remove once the corner label is sorted */}
 function overlay(){card2=null;card3=null;card4=null;hits.length=0;const key=paused?'pause':state;if(key!==uiKey){uiKey=key;uiT=0;card=null;press=null;}
  if(paused){if(homeAsk)drawHomeCard();else drawPauseCard();return;}
  if(state==='menu')drawMenu();else if(state==='intro')drawIntroCard();else if(state==='newtoy')drawNewToyCard();else if(state==='win')drawResultCard(true);else if(state==='gameover')drawResultCard(false);else card=null;}

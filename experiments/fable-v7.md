@@ -79,6 +79,7 @@ The pause card shows the mode (Push, Swipe Easy, Swipe Hard) and has a Start Scr
 - v7.36 (TEST COPY ONLY): new shop toy, Toy Soldier (72 coins, between Seal and Penguin): the classic green plastic army man, one green all over with darker green shading, helmet, rifle and oval stand, plus the house dot eye and smile. 27 shop toys, 39 toys in all.
 - v7.37 (TEST COPY ONLY): buying a toy on the My Toys card jumps Other Toys to the page the new toy is on (page 1 unless the player owns more than 8 spare toys), so it can be put in the lineup without paging back (Derek's request).
 - v7.38 (TEST COPY ONLY): the version label (and the test page's debug line) sits higher and further in from the corner: 8 units higher everywhere, and in the iPhone home-screen app it also clears an assumed 34-point home-bar area when the bottom inset reads zero. Derek stopped seeing the label in the home-screen test app.
+- v7.39 (TEST COPY ONLY, TEMPORARY): the test page also shows the version in big letters in the middle of the start screen, because Derek still could not see the corner label in the home-screen test app. Remove it once the corner label is confirmed; it must not go live as is (it is wrapped in `if(TEST)`, so it would stay hidden anyway).
 
 ## Tested
 Scripted in the preview at 375x812 by stepping the game by hand: Push scores on a held throw,
