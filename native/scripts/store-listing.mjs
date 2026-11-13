@@ -82,7 +82,7 @@ async function api(method, path, body) {
   let json = null; try { json = text ? JSON.parse(text) : null; } catch (e) {}
   if (!res.ok) {
     const why = json && json.errors ? json.errors.map(e => `${e.code || ''}: ${e.detail || e.title || ''}`).join(' | ') : text.slice(0, 300);
-    const err = new Error(`${method} ${path.split('?')[0]} -> ${res.status} ${why}`); err.status = res.status; throw err;
+    const err = new Error(`${method} ${path.split('?')[0]} -> ${res.status} ${why}`); err.status = res.status; err.errors = (json && json.errors) || []; throw err;
   }
   return json;
 }
@@ -120,22 +120,28 @@ await step('Category: Games (Family, Casual)', async () => {
 });
 
 await step('Age rating answers (all None / No)', async () => {
+  // Apple wants every answer in ONE request (answering one at a time is refused). Yes/no questions get false,
+  // "how often" questions get NONE. If Apple objects to an answer's type it is flipped and the request retried.
   const decl = (await api('GET', `/v1/appInfos/${info.id}/ageRatingDeclaration`)).data;
-  const skip = /Override$|^kidsAgeBand$|^seventeenPlus$|^ageRatingOverride/;
-  const set = [], left = [];
-  for (const k of Object.keys(decl.attributes)) {
-    if (skip.test(k)) continue;
-    const cur = decl.attributes[k];
-    const tries = typeof cur === 'boolean' ? [false] : typeof cur === 'string' ? ['NONE'] : [false, 'NONE'];
-    if (cur === false || cur === 'NONE') { set.push(k); continue; }
-    let ok = false;
-    for (const v of tries) {
-      try { await api('PATCH', `/v1/ageRatingDeclarations/${decl.id}`, { data: { type: 'ageRatingDeclarations', id: decl.id, attributes: { [k]: v } } }); ok = true; break; } catch (e) { if (e.status !== 409 && e.status !== 400 && e.status !== 422) throw e; }
+  const skip = /Override$|^kidsAgeBand$|^seventeenPlus$|^gracRatingClassificationNumber$|Url$/;
+  const YESNO = new Set(['advertising', 'gambling', 'healthOrWellnessTopics', 'lootBox', 'messagingAndChat', 'parentalControls', 'ageAssurance', 'socialMedia', 'socialMediaAgeRestricted', 'unrestrictedWebAccess', 'userGeneratedContent']);
+  const attributes = {}, flipped = {};
+  for (const k of Object.keys(decl.attributes)) if (!skip.test(k)) attributes[k] = typeof decl.attributes[k] === 'boolean' || YESNO.has(k) ? false : 'NONE';
+  let last = null;
+  for (let attempt = 0; attempt < 8; attempt++) {
+    try { await api('PATCH', `/v1/ageRatingDeclarations/${decl.id}`, { data: { type: 'ageRatingDeclarations', id: decl.id, attributes } }); return `${Object.keys(attributes).length} questions`; }
+    catch (e) {
+      last = e; let changed = false;
+      for (const er of e.errors || []) {
+        const k = ((er.source && er.source.pointer) || '').split('/').pop();
+        if (!(k in attributes)) continue;
+        if (!flipped[k]) { flipped[k] = true; attributes[k] = attributes[k] === false ? 'NONE' : false; } else delete attributes[k];
+        changed = true;
+      }
+      if (!changed) throw e;
     }
-    (ok ? set : left).push(k);
   }
-  if (left.length) throw new Error(`${set.length} answered; could not answer: ${left.join(', ')} (answer these on Apple's site)`);
-  return `${set.length} questions`;
+  throw last;
 });
 
 await step('Content rights: no third-party content', async () => {
@@ -183,15 +189,17 @@ await step('Attach the newest build', async () => {
   return `build ${build.attributes.version}`;
 });
 
-await step('Notes and contact for App Review (phone number still needed)', async () => {
-  const attributes = { ...CFG.review, notes: L.notes };
+await step('Notes for App Review', async () => {
+  // Apple refuses review details without a contact phone number, which is not kept in this public repository.
+  // If Derek has already entered his contact details on Apple's site, the notes are added to them.
   let existing = null;
   try { existing = (await api('GET', `/v1/appStoreVersions/${version.id}/appStoreReviewDetail`)).data; } catch (e) { if (e.status !== 404) throw e; }
-  if (existing) await api('PATCH', `/v1/appStoreReviewDetails/${existing.id}`, { data: { type: 'appStoreReviewDetails', id: existing.id, attributes } });
-  else await api('POST', '/v1/appStoreReviewDetails', { data: { type: 'appStoreReviewDetails', attributes, relationships: { appStoreVersion: rel('appStoreVersions', version.id) } } });
+  if (!existing) return 'WAITING: enter name, phone and email under App Review Information on Apple\'s site, then run this again to add the notes';
+  await api('PATCH', `/v1/appStoreReviewDetails/${existing.id}`, { data: { type: 'appStoreReviewDetails', id: existing.id, attributes: { notes: L.notes, demoAccountRequired: false } } });
 });
 
 await step('Price: free', async () => {
+  try { const cur = await api('GET', `/v1/apps/${app.id}/appPriceSchedule/manualPrices?include=appPricePoint&limit=5`); if ((cur.included || []).some(p => Number(p.attributes.customerPrice) === 0)) return 'already free'; } catch (e) {}
   const points = (await api('GET', `/v1/apps/${app.id}/appPricePoints?filter[territory]=USA&limit=200`)).data;
   const free = points.find(p => Number(p.attributes.customerPrice) === 0);
   if (!free) throw new Error('no free price point found');
