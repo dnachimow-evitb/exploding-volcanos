@@ -110,6 +110,17 @@ Made by Derek on 2026-11-12:
 
 Still open:
 
+## Ideas for later versions
+- **Save progress across a family's devices through iCloud** (Derek asked 2026-11-13; not started, wait until
+  1.0 is through review). App Store app only; the website cannot do it. Needs: the iCloud capability on the
+  App ID (Derek, in his developer account), native code to copy the saved players to the family's iCloud
+  key-value store and merge when devices disagree (never lose earned toys, coins or badges), a new TestFlight
+  build tested on two devices, and a privacy-policy line. Before shipping, confirm against Apple's wording
+  that the App Privacy answer can stay "Data Not Collected" (data in the user's own iCloud that the developer
+  cannot read).
+- Monetizing (paid app or in-app purchases): see the Kids category note in the checklist.
+- Real haptics in Swipe mode.
+
 ## Commands
 ```
 cd native
