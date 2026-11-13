@@ -39,7 +39,9 @@ Links: live `https://dnachimow-evitb.github.io/exploding-volcanos/` , test `.../
    (`native/`, see `native/APP-STORE.md`) and needs a new TestFlight build and Apple review for each update.
 
 Git: work on branch `model/fable-v7`, fast-forward `main` to it, push both. GitHub Pages serves `main`.
-Tags: `test-vX.YY` for test builds, `fable-v7-vN` for live publishes. Revert points: `before-v7-publish`
+Tags: `test-vX.YY` for test builds, `fable-v7-vN` for live publishes. **GitHub adds both by itself** after a push to `main`
+(`.github/workflows/tag-versions.yml`, approved by Derek 2026-11-13): Claude's cloud sessions can push branches but
+not tags (the gateway answers "only branch updates are permitted"), so do not push these tags by hand. Revert points: `before-v7-publish`
 (back to version 5) and `before-v5-publish` (back to the original). Exact revert commands are in `README.txt`.
 
 If a Pages build sticks or fails: `gh api -X POST repos/dnachimow-evitb/exploding-volcanos/pages/builds`.

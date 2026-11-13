@@ -1,0 +1,23 @@
+name: Version tags
+
+# Adds test-v7.NN and fable-v7-vNN tags after a push to main (see .github/scripts/tag-versions.sh).
+# Claude's cloud sessions can push branches but not tags, so GitHub makes the tags itself.
+on:
+  push:
+    branches: [main]
+    paths: ['game-test.js', 'game-fable-v7.js', '.github/workflows/tag-versions.yml', '.github/scripts/tag-versions.sh']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency: version-tags
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - run: .github/scripts/tag-versions.sh
