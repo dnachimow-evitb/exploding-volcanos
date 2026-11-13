@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v7.43'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v7.44'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -1086,21 +1086,33 @@ function draw(){X.setTransform(KS*DPR,0,0,KS*DPR,0,0);X.globalAlpha=1;
 // re-checked twice a second (see watchSize), (2) if the window is still reported short we use the real screen
 // height and pin the game to the top, (3) if the top inset still reads zero we assume one, so the top buttons
 // always sit below the bar.
-let lastSize='',dbg='',lblB=0; // lblB: how far the corner labels sit above the bottom edge
+let lastSize='',dbg='',lblB=0,pinLatch=false,resizeN=0; // lblB: how far the corner labels sit above the bottom edge
 function resize(){const vw=window.innerWidth,MINH=720,ios=/iPhone|iPad|iPod/.test(navigator.userAgent),port=vw<window.innerHeight,
   sa=navigator.standalone===true||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches),homeApp=sa&&ios&&port;
- let vh=window.innerHeight,pin=false,cw,ch;if(homeApp&&Math.abs(screen.width-vw)<2&&screen.height>vh+8){vh=screen.height;pin=true;}
+ let vh=window.innerHeight,pin=false,cw,ch;
+ // pinLatch (v7.44): once pinned, stay pinned. Making the page screen-tall makes the phone report the full height,
+ // and un-pinning on that made it report the short height again: an endless flip that flashed the screen (v7.42).
+ if(homeApp&&Math.abs(screen.width-vw)<2&&(screen.height>vh+8||pinLatch)){vh=screen.height;pin=true;}pinLatch=pin;
  if(vh/vw>=MINH/W){cw=vw;ch=vh;HS=W*vh/vw;}else{ch=vh;cw=vh*W/MINH;HS=MINH;}
  KS=cw/W;DPR=Math.max(1,Math.min(window.devicePixelRatio||1,QCAP,Math.sqrt(2.7e6/(cw*ch))));OY=Math.round((HS-600)*.6);
  const sp=document.getElementById('safe'),sb=document.getElementById('safeb');SAFE=sp?sp.offsetHeight/KS:0;SAFEB=sb?sb.offsetHeight/KS:0;
  const rawSafe=Math.round(SAFE*KS);if(homeApp)SAFE=Math.max(SAFE,(screen.height>=812?54:22)/KS);
  lblB=Math.max(SAFEB,homeApp&&screen.height>=812?34/KS:0)+8; // home-screen app: the bottom inset can read zero, which put the version label in the rounded corner / home bar
- dbg='s'+rawSafe+'>'+Math.round(SAFE*KS)+' h'+window.innerHeight+'/'+screen.height+(sa?' app':' web')+(pin?' pin':'');
- const wEl=document.getElementById('w');wEl.style.position=pin?'fixed':'relative';wEl.style.top=pin?'0':'';wEl.style.left=pin?'0':'';wEl.style.width=cw+'px';wEl.style.height=ch+'px';wEl.classList.toggle('boxed',cw<vw-4);
- cv.style.width=cw+'px';cv.style.height=ch+'px';cv.width=Math.round(cw*DPR);cv.height=Math.round(ch*DPR);bg=null;}
+ dbg='s'+rawSafe+'>'+Math.round(SAFE*KS)+' h'+window.innerHeight+'/'+screen.height+(sa?' app':' web')+(pin?' pin2':'');
+ const wEl=document.getElementById('w');wEl.style.position=pin?'absolute':'relative';wEl.style.top=pin?'0':'';wEl.style.left=pin?'0':'';
+ // v7.42: the phone clips everything below the window height it reports (812 of 874 on Derek's iPhone), so a
+ // taller game alone was cut off at the bottom. In pin mode the PAGE is made screen-tall as well (the known
+ // workaround for this home-screen bug), so the part below the reported window is real page and gets drawn.
+ {const R=document.documentElement.style,B=document.body.style,px=ch+'px';
+  R.height=pin?px:'';R.minHeight=pin?px:'';R.overflow=pin?'visible':'';
+  B.position=pin?'absolute':'';B.top=pin?'0':'';B.left=pin?'0':'';B.right=pin?'auto':'';B.bottom=pin?'auto':'';B.width=pin?'100%':'';B.height=pin?px:'';B.minHeight=pin?px:'';B.overflow=pin?'visible':'';B.display=pin?'block':'';
+  if(pin&&(window.scrollY||window.scrollX))window.scrollTo(0,0);}
+ wEl.style.width=cw+'px';wEl.style.height=ch+'px';wEl.classList.toggle('boxed',cw<vw-4);
+ cv.style.width=cw+'px';cv.style.height=ch+'px';{const pw=Math.round(cw*DPR),ph=Math.round(ch*DPR);if(cv.width!==pw||cv.height!==ph){cv.width=pw;cv.height=ph;resizeN++;}}bg=null;} // the canvas is only re-made when its size really changes (re-making it blanks it for a frame)
 function sizeKey(){const sp=document.getElementById('safe'),sb=document.getElementById('safeb');return window.innerWidth+'x'+window.innerHeight+'/'+(sp?sp.offsetHeight:0)+'/'+(sb?sb.offsetHeight:0);}
 function watchSize(){const k=sizeKey();if(k!==lastSize){lastSize=k;resize();}}
-window.addEventListener('resize',watchSize);window.addEventListener('orientationchange',()=>setTimeout(watchSize,250));window.addEventListener('pageshow',watchSize);
+window.addEventListener('resize',watchSize);window.addEventListener('orientationchange',()=>setTimeout(watchSize,250));window.addEventListener('pageshow',watchSize);window.addEventListener('scroll',()=>{if(window.scrollY||window.scrollX)window.scrollTo(0,0);});document.addEventListener('touchmove',e=>e.preventDefault(),{passive:false}); // the screen-tall page must never scroll
+
 if(window.visualViewport)window.visualViewport.addEventListener('resize',watchSize);setInterval(watchSize,500);
 buildToys();resize();
 requestAnimationFrame(loop);
