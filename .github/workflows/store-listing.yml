@@ -1,0 +1,24 @@
+name: Store listing
+
+# Fills in the App Store listing (text, links, screenshots, category, age rating, price, build) from
+# native/STORE-LISTING.md and native/screenshots/ through the App Store Connect API.
+# Run by hand only: Actions > Store listing > Run workflow. It NEVER submits the app for review.
+# Uses the same secrets as the TestFlight upload (ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_P8).
+on:
+  workflow_dispatch:
+
+jobs:
+  fill-in:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Fill in the App Store listing
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+        run: node native/scripts/store-listing.mjs
