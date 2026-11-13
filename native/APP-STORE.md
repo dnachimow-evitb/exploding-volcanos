@@ -79,7 +79,13 @@ Keep this file current: tick items off and add decisions as they are made.
 - [x] **Privacy policy and support pages** on the game's website: `privacy.html` and `support.html` at the
       top of the repo (2026-11-13). Contact shown: dnachimow@gmail.com (Derek's choice). The app collects
       nothing, so the App Privacy answer is "Data Not Collected".
-- [ ] Age rating questionnaire (expected: the lowest rating).
+- [x] **Listing entered in App Store Connect by the Store listing job** (2026-11-13, `native/scripts/store-listing.mjs`,
+      Actions > Store listing > Run workflow): subtitle, privacy/support/marketing links, category Games (Family,
+      Casual), all 25 age-rating answers None/No, content rights, copyright, description, keywords, promotional
+      text, five screenshots, build 11, price free. Run it again after editing `STORE-LISTING.md` or the screenshots.
+- [ ] **Left for Derek on Apple's site:** App Privacy ("Data Not Collected"); countries under Pricing and
+      Availability; name, phone and email under App Review Information (then run the job again to add the review
+      notes); Kids category and EU trader status; then Add for Review / Submit.
 - [x] Rights: Derek confirmed on 2026-11-12 that the rights to the song, cover art and images are covered.
 - [x] Price: **free** (Derek, 2026-11-12).
 - [ ] Optional: Kids category (stricter review; the game already has no ads, tracking or outside links).
