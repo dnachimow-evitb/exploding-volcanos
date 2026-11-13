@@ -65,7 +65,8 @@ Keep this file current: tick items off and add decisions as they are made.
       Apple's cloud-managed distribution certificate through the API key and uploads; no Mac and no certificate
       files. Start one from Actions > iPhone app > Run workflow > tick "Upload to TestFlight" (Claude can start
       it too). The job rebuilds the key file from the `ASC_KEY_P8` secret however it was pasted.
-- [ ] Try it on Derek's iPhone through TestFlight (audio start, haptics, safe areas, saving).
+- [x] Tried on Derek's iPhone through TestFlight, 2026-11-13 (build 11, v7.45): "looks great". He did not
+      report on each check separately (screen fit, audio start, bottom-edge flick in Swipe, saving).
 - [ ] Optional: real haptics in Swipe mode (iPhone web pages cannot vibrate; the app can).
 
 ### 3. Store listing (together)
