@@ -34,6 +34,24 @@
 <div id="safe"></div><div id="safeb"></div>
 <div id="w"><canvas id="c" width="380" height="600"></canvas></div>
 <audio id="song" src="song.mp3" loop preload="auto"></audio>
-<script src="game-test.js?v=21"></script>
+<script>
+// Always run the newest test build. Phones (the home-screen app most of all) keep an old saved copy of this
+// page for a long time, and a fixed game-test.js?v=N address in that old copy pinned them to an old game.
+// So the game file is asked for under a new address on every open, which no saved copy can match.
+(function(){
+  var s=document.createElement('script');s.src='game-test.js?t='+Date.now();document.body.appendChild(s);
+  // Coming back to an app that was left open: if a newer build has been published, reload (start screen only,
+  // so a game in progress is never interrupted).
+  var busy=false;
+  function check(){
+    if(busy||document.visibilityState!=='visible'||typeof VERSION==='undefined')return;busy=true;
+    fetch('game-test.js?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(t){
+      var m=t.match(/const VERSION='([^']+)'/);
+      if(m&&m[1]!==VERSION&&state==='menu')location.replace('play-test.html?t='+Date.now());
+    }).catch(function(){}).then(function(){busy=false;});
+  }
+  document.addEventListener('visibilitychange',check);window.addEventListener('pageshow',function(e){if(e.persisted)check();});
+})();
+</script>
 </body>
 </html>

@@ -4,14 +4,14 @@ Read this first before changing the game. It says where things are and gives ste
 common jobs (add a toy, change prices, add a badge, publish). The history of *why* things are the way they are
 is in `experiments/fable-v7.md` (one line per version) and, for the art, `experiments/fable-v5.md`.
 
-Last updated: 2026-11-12, at test version v7.39 / live version v7.35.
+Last updated: 2026-11-12, at test version v7.40 / live version v7.35.
 
 ## 1. The files that matter
 
 | File | What it is |
 |---|---|
 | `game-test.js` | **The working copy. Make every change here first.** |
-| `play-test.html` | Test page that loads `game-test.js?v=N`. No offline cache. Own saved data. |
+| `play-test.html` | Test page. Loads `game-test.js` under a new address on every open, so it always runs the newest build (no `?v=N` to bump). No offline cache. Own saved data. |
 | `game-fable-v7.js` | **The live game.** Never edit directly; it is overwritten by `game-test.js` when publishing. |
 | `index.html` | Live page. Loads `game-fable-v7.js`, registers `sw.js`. |
 | `sw.js` | Offline cache, cache-first. **Its `CACHE` name must be bumped on every live change.** |
@@ -27,7 +27,8 @@ Links: live `https://dnachimow-evitb.github.io/exploding-volcanos/` , test `.../
 
 ## 2. Workflow (agreed with Derek)
 
-1. Edit `game-test.js`. Bump `VERSION` (top of file) and the `?v=N` number in `play-test.html` every time.
+1. Edit `game-test.js`. Bump `VERSION` (top of file) every time. (`play-test.html` needs no change: since v7.40
+   it fetches the newest `game-test.js` on every open and reloads itself when a newer `VERSION` is published.)
    He checks the small version label in the corner of the start screen to confirm he has the new build.
 2. Commit, push, wait for GitHub Pages, confirm the test link serves the new `VERSION`.
 3. He tries it on his iPhone (home-screen icon "Volcanoes Test").
