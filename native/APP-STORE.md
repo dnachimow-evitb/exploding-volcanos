@@ -88,7 +88,9 @@ Keep this file current: tick items off and add decisions as they are made.
       notes); Kids category and EU trader status; then Add for Review / Submit.
 - [x] Rights: Derek confirmed on 2026-11-12 that the rights to the song, cover art and images are covered.
 - [x] Price: **free** (Derek, 2026-11-12).
-- [ ] Optional: Kids category (stricter review; the game already has no ads, tracking or outside links).
+- [x] Kids category: **not selected** at submission (Derek, 2026-11-13). It can still be opted into later; opting
+      in is permanent. He may monetize later (paid app, in-app purchases); that needs the Paid Apps agreement,
+      tax and bank details, and the listing, privacy and support pages rewritten (they say no ads, nothing to buy).
 - [ ] EU trader status (Apple asks every developer; "trader" means your contact details are shown in the EU).
 
 ### 4. Submit
@@ -107,7 +109,6 @@ Made by Derek on 2026-11-12:
 - **Name "Exploding Volcanoes", subtitle "In The Bathtub".**
 
 Still open:
-- Kids category or not.
 
 ## Commands
 ```
