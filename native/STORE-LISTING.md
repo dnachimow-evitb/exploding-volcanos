@@ -100,8 +100,30 @@ no chat or messaging, no social media features, no advertising. Expected result:
 
 ## Notes for the App Review team (App Review Information > Notes)
 
+Rewritten 2026-11-15 to answer Apple's "Guideline 2.1 - Information Needed - New App Submission" message
+(points 1 to 6). Entered by the Store listing job in `notes` mode.
+
 ```
-Exploding Volcanoes is a self-contained children's game. No login is needed and there is nothing to unlock: tap Push or Swipe on the start screen, then Easy, then "Let's Splash!" to play. All game files are inside the app; it makes no network requests. Coins are earned only by playing and there are no purchases, ads, accounts or data collection.
+Thank you for reviewing Exploding Volcanoes. The information requested under Guideline 2.1 is below.
+
+1. SCREEN RECORDING
+A screen recording made on a physical iPhone running the current iOS is attached in the App Review Information section. It starts with launching the app and shows the typical flow: the start screen, choosing a game mode (Push) and Easy, playing a round until the volcano erupts, then the How To Play, Badges and My Toys cards.
+The app has no account registration, login or account deletion (there are no accounts), no user-generated content, and no paid content or features.
+
+2. PURPOSE AND AUDIENCE
+Exploding Volcanoes is a casual arcade game for young children and their families. The player helps a boy called Noah splash bath toys into a toy volcano before a timer runs out; when every toy is in, the volcano erupts and the next round adds a new toy. There are 10 rounds, 39 toys to collect with coins earned by playing, 12 badges, and up to 4 player profiles on one device. It gives families a simple, friendly game with no ads, no purchases and no data collection. It is based on an original children's song by the developer, which plays as the soundtrack.
+
+3. HOW TO USE THE APP
+No login or setup is needed. Launch the app, tap Push (press and hold a toy, then let go to throw it) or Swipe (flick a toy toward the volcano), then tap Easy, then "Let's Splash!". Get all the toys into the volcano before the clock runs out. "How To Play" on the start screen explains the game with pictures. "Badges" shows achievements and "My Toys" is where coins earned in play are spent on new toys. Nothing is locked behind a purchase or an account.
+
+4. EXTERNAL SERVICES
+None. All game code, artwork and music are inside the app. It makes no network requests and uses no data providers, authentication services, payment processors, analytics, advertising or AI services. Progress is saved only on the device.
+
+5. REGIONAL DIFFERENCES
+None. The app works the same way in every region. It is in English only.
+
+6. REGULATED INDUSTRY AND THIRD-PARTY MATERIAL
+The app is not in a regulated industry. It contains no third-party protected material: the game, the artwork and the song "Exploding Volcanoes in the Bathtub" are the developer's own original work.
 ```
 
 Contact details for App Review (name, phone, email) are entered by Derek and are not shown publicly.

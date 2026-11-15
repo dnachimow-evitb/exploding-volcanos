@@ -89,6 +89,7 @@ async function api(method, path, body) {
 const rel = (type, id) => ({ data: { type, id } });
 const results = [];
 async function step(name, fn) {
+  if (process.argv.includes('--notes') && !name.startsWith('Notes')) return;   // notes mode: only the review notes
   try { const note = await fn(); results.push(['done', name, note || '']); console.log(`OK    ${name}${note ? ' (' + note + ')' : ''}`); }
   catch (e) { results.push(['FAILED', name, e.message]); console.log(`FAIL  ${name}: ${e.message}`); }
 }

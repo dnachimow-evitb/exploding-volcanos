@@ -8,9 +8,9 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: 'status = only read the review status from Apple; fill = enter the listing'
+        description: 'status = only read the review status; notes = update only the App Review notes; fill = enter the whole listing'
         type: choice
-        options: [status, fill]
+        options: [status, notes, fill]
         default: status
 
 jobs:
@@ -27,4 +27,4 @@ jobs:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
           ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
-        run: node native/scripts/store-listing.mjs ${{ inputs.mode == 'fill' && ' ' || '--status' }}
+        run: node native/scripts/store-listing.mjs ${{ inputs.mode == 'fill' && ' ' || inputs.mode == 'notes' && '--notes' || '--status' }}
