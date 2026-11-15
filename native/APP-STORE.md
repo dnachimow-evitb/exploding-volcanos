@@ -98,6 +98,12 @@ Keep this file current: tick items off and add decisions as they are made.
       in 24 to 48 hours by email. While it is waiting or in review the listing cannot be edited, so do not run the
       Store listing job. If Apple rejects it, the email says why; fix, upload a new build if the app changed,
       and resubmit. If approved, the app goes live (unless manual release was chosen).
+- [x] **2026-11-14: Apple answered "Guideline 2.1 - Information Needed - New App Submission"** (status Rejected,
+      but no fault found: the standard request to a new developer). They want a screen recording made on a real
+      iPhone, starting at launch, plus written answers to six points in the review notes.
+      The written answers are in `STORE-LISTING.md` and were entered in the Notes field by the Store listing job
+      (`notes` mode) on 2026-11-15.
+- [ ] Derek: record the screen on his iPhone, attach it under App Review Information, press Resubmit to App Review.
 - [ ] Apple's decision.
 
 ## Decisions
