@@ -103,7 +103,7 @@ Keep this file current: tick items off and add decisions as they are made.
       iPhone, starting at launch, plus written answers to six points in the review notes.
       The written answers are in `STORE-LISTING.md` and were entered in the Notes field by the Store listing job
       (`notes` mode) on 2026-11-15.
-- [ ] Derek: record the screen on his iPhone, attach it under App Review Information, press Resubmit to App Review.
+- [x] Derek resubmitted to App Review on 2026-11-15 (he did not say whether the screen recording was attached).
 - [ ] Apple's decision.
 
 ## Decisions
