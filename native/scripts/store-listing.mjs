@@ -100,6 +100,12 @@ const app = apps.data[0];
 console.log(`App: ${app.attributes.name} (${app.id})`);
 
 const versions = (await api('GET', `/v1/apps/${app.id}/appStoreVersions?filter[platform]=IOS&limit=10`)).data;
+if (process.argv.includes('--status')) {   // read-only: what state is each version in?
+  const out = versions.map(v => `Version ${v.attributes.versionString}: ${v.attributes.appVersionState || v.attributes.appStoreState} (store state ${v.attributes.appStoreState}, created ${String(v.attributes.createdDate).slice(0, 10)}, release ${v.attributes.releaseType})`);
+  console.log(out.join('\n'));
+  if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, '## App Store status\n\n' + out.map(l => '- ' + l).join('\n') + '\n');
+  process.exit(0);
+}
 const editable = (v) => ['PREPARE_FOR_SUBMISSION', 'DEVELOPER_REJECTED', 'REJECTED', 'METADATA_REJECTED', 'INVALID_BINARY'].includes(v.attributes.appStoreState || v.attributes.appVersionState);
 const version = versions.find(editable);
 if (!version) { console.error('::error::No editable App Store version (already submitted or live?). States: ' + versions.map(v => v.attributes.appStoreState).join(', ')); process.exit(1); }

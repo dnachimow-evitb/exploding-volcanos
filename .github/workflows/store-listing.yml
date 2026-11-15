@@ -6,6 +6,12 @@ name: Store listing
 # Uses the same secrets as the TestFlight upload (ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_P8).
 on:
   workflow_dispatch:
+    inputs:
+      mode:
+        description: 'status = only read the review status from Apple; fill = enter the listing'
+        type: choice
+        options: [status, fill]
+        default: status
 
 jobs:
   fill-in:
@@ -16,9 +22,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Fill in the App Store listing
+      - name: Read the status or fill in the App Store listing
         env:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
           ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
-        run: node native/scripts/store-listing.mjs
+        run: node native/scripts/store-listing.mjs ${{ inputs.mode == 'fill' && ' ' || '--status' }}
