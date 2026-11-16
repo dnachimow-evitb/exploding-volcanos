@@ -9,3 +9,14 @@
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&menu.classList.contains('open')){set(false);btn.focus();}});
   window.addEventListener('resize',function(){if(window.innerWidth>1020)set(false);});
 })();
+
+// Links between the site's own pages carry the site version (?v=N), so following one always fetches the current
+// page and never an old copy a phone has saved. Section links within the same page are left alone.
+(function(){
+  var v=document.documentElement.getAttribute('data-v');if(!v)return;
+  var here=location.pathname.split('/').pop()||'index.html';
+  document.querySelectorAll('a[href]').forEach(function(a){
+    var m=(a.getAttribute('href')||'').match(/^(story\.html|album\.html)(#.*)?$/);
+    if(m&&m[1]!==here)a.setAttribute('href',m[1]+'?v='+v+(m[2]||''));
+  });
+})();
