@@ -48,6 +48,20 @@ not tags (the gateway answers "only branch updates are permitted"), so do not pu
 
 If a Pages build sticks or fails: `gh api -X POST repos/dnachimow-evitb/exploding-volcanos/pages/builds`.
 
+### Facts Derek has confirmed for the story pages (use these; invent nothing beyond them)
+- He enjoys writing music. When something catchy turns up while he is strumming, he hits record so he does not
+  forget it. The bath-night volcano song was captured that way, which is why he was recording at all.
+- The whole pile of song ideas (about twenty years of them) was effectively captured the same way.
+- Noah and Max were part of the bath night only, not the earlier ideas.
+- He uploaded his 15 best ideas in one shot; the result is an album. The project/band is also called
+  Exploding Volcanoes because that is what started everything.
+- It never occurred to him to try AI on the old ideas until the first song worked ("what if we do it for this
+  other stuff").
+- He does not have the best voice; he is good enough on guitar, no prodigy; he always thought he could write a
+  compelling tune; his voice and playing were the wall. No time or money for production. Ideas stuck at 85%.
+- He feels real artistic conflict about using AI and wants that said honestly and left unresolved.
+- Not yet supplied (do not invent): album title, track names, where to listen, release status.
+
 ### Who writes what (Derek's rule, 2026-11-16)
 - **Words are written by Claude Haiku. Code and design are done by the session's main model.**
   For any copy a person will read on the website (story, album and future pages), hand the writing to a
