@@ -3,531 +3,376 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Exploding Volcanoes in the Bathtub — the story, the song, the game</title>
-<meta name="description" content="I'm a dad. My boys kept asking to hear a bathtime jam I recorded with them — so I handed my rough cut to AI, and it became a real song and a real game. A story about AI, music, and parenthood." />
-<meta name="theme-color" content="#0d2236" />
-
-<!-- Social / share -->
-<meta property="og:title" content="Exploding Volcanoes in the Bathtub" />
-<meta property="og:description" content="I'm a dad. My boys kept asking to hear our bathtime jam — so I handed my rough cut to AI, and it became a real song and a real game. Where AI, music, and parenthood collide." />
+<title>Exploding Volcanoes in the Bathtub: the story, the song, the game</title>
+<meta name="description" content="A dad, a guitar, and two boys in the tub. How one soggy, giggling bath night became a real song and a free iPhone game." />
+<meta name="theme-color" content="#2a6fdb" />
+<meta name="apple-itunes-app" content="app-id=6834466189" />
 <meta property="og:type" content="website" />
-<meta property="og:image" content="assets/cover-volcanoes.webp" />
+<meta property="og:title" content="Exploding Volcanoes in the Bathtub" />
+<meta property="og:description" content="A dad, a guitar, and two boys in the tub. The story, the song, and the free game." />
+<meta property="og:url" content="https://dnachimow-evitb.github.io/exploding-volcanos/story.html" />
+<meta property="og:image" content="https://dnachimow-evitb.github.io/exploding-volcanos/assets/site/share.jpg" />
 <meta name="twitter:card" content="summary_large_image" />
-
 <link rel="icon" href="icon.svg" type="image/svg+xml" />
-<link rel="manifest" href="manifest.webmanifest" />
-
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
 <style>
-  :root{
-    --water-deep:#0b1d30;
-    --water:#163a5c;
-    --water-lite:#2f6a97;
-    --sky:#7ec8e3;
-    --foam:#eaf6ff;
-    --lava:#ff5a2b;
-    --lava-hot:#ffb23e;
-    --lava-glow:#ff8a3d;
-    --bubble:rgba(255,255,255,.16);
-    --ink:#0b1d30;
-    --paper:#fff7ec;
-    --pink:#ff7aa8;
-    --yellow:#ffd447;
-    --shadow:0 18px 50px rgba(0,0,0,.35);
-    --font:"Trebuchet MS","Segoe UI",system-ui,-apple-system,sans-serif;
-  }
-  *{margin:0;padding:0;box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
-  body{
-    font-family:var(--font);
-    color:var(--paper);
-    background:linear-gradient(180deg,#0a1826 0%, #0d2236 30%, #163a5c 100%);
-    overflow-x:hidden;
-    -webkit-font-smoothing:antialiased;
-  }
-  a{color:inherit;}
-  .wrap{max-width:1080px;margin:0 auto;padding:0 22px;}
-  section{position:relative;}
+/* The story site. One self-contained page: no outside fonts, scripts or trackers.
+   Look: the game's own bathroom. Blue tiles, a taped photo, bath water, lava orange, sticker-white rims. */
+:root{--wall:#2a6fdb;--tile:#3b82ee;--navy:#14296b;--deep:#0d1c54;--water:#2ec4f6;--waterDk:#1aa3e6;--foam:#fff;
+  --lava:#ff5a1f;--lavaDk:#c9360a;--hot:#ffd23f;--go:#2fc24a;--goDk:#1f8f35;--ink:#1b2440;--paper:#fffdf7;
+  --round:ui-rounded,"SF Pro Rounded","Segoe UI","Helvetica Neue",system-ui,sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font:18px/1.6 var(--round);color:var(--ink);background:var(--wall);overflow-x:hidden}
+img{max-width:100%;height:auto;display:block}
+a{color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+.tiles{background-color:var(--wall);background-image:linear-gradient(var(--tile) 3px,transparent 3px),linear-gradient(90deg,var(--tile) 3px,transparent 3px);background-size:76px 76px}
 
-  /* ---------- floating bubbles ---------- */
-  .bubbles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
-  .bubbles i{
-    position:absolute;bottom:-10vh;border-radius:50%;
-    background:radial-gradient(circle at 30% 30%, rgba(255,255,255,.55), var(--bubble) 60%, transparent 72%);
-    box-shadow:inset 0 0 8px rgba(255,255,255,.4);
-    animation:rise linear infinite;
-  }
-  @keyframes rise{
-    0%{transform:translateY(0) translateX(0);opacity:0;}
-    10%{opacity:.9;}
-    90%{opacity:.6;}
-    100%{transform:translateY(-115vh) translateX(24px);opacity:0;}
-  }
+/* top bar */
+.bar{position:sticky;top:0;z-index:20;background:rgba(13,28,84,.94);backdrop-filter:blur(8px);color:#fff}
+.bar .wrap{display:flex;align-items:center;gap:18px;height:58px}
+.brand{font-weight:900;font-size:18px;text-decoration:none;display:flex;align-items:center;gap:9px;white-space:nowrap}
+.brand img{width:32px;height:32px;border-radius:8px}
+.nav{margin-left:auto;display:flex;gap:20px;font-weight:800;font-size:15px}
+.nav a{text-decoration:none;opacity:.85}.nav a:hover{opacity:1}
+.bar .get{background:var(--hot);color:var(--deep);font-weight:900;font-size:15px;padding:8px 15px;border-radius:10px;text-decoration:none;white-space:nowrap;box-shadow:0 3px 0 #b88a00}
+@media(max-width:760px){.nav{display:none}.bar .get{margin-left:auto}}
+@media(max-width:480px){.bar .wrap{gap:10px;padding:0 14px}.brand{font-size:16px;gap:7px;min-width:0}.brand img{width:28px;height:28px}.bar .get{font-size:14px;padding:7px 11px}}
 
-  /* ---------- top bar ---------- */
-  header.bar{
-    position:sticky;top:0;z-index:50;
-    backdrop-filter:blur(8px);
-    background:linear-gradient(180deg,rgba(8,20,34,.85),rgba(8,20,34,.35));
-    border-bottom:1px solid rgba(255,255,255,.08);
-  }
-  .bar .wrap{display:flex;align-items:center;justify-content:space-between;height:60px;}
-  .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.2px;}
-  .brand .mini-volc{font-size:22px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4));}
-  .brand span{font-size:15px;}
-  .navlinks{display:flex;gap:20px;font-size:14px;opacity:.85;}
-  .navlinks a{text-decoration:none;transition:opacity .2s;}
-  .navlinks a:hover{opacity:1;color:var(--yellow);}
-  @media(max-width:640px){.navlinks{display:none;}}
+/* buttons, in the game's chunky style */
+.btn{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;min-height:62px;padding:9px 26px;border-radius:14px;font-weight:900;font-size:21px;line-height:1.1;text-decoration:none;color:#fff;transition:transform .08s,box-shadow .08s}
+.btn small{font-size:12.5px;font-weight:800;opacity:.92;margin-top:3px}
+.btn:active{transform:translateY(4px)}
+.btn.store{background:#111;box-shadow:0 6px 0 #000}.btn.store:active{box-shadow:0 2px 0 #000}
+.btn.play{background:var(--go);box-shadow:0 6px 0 var(--goDk)}.btn.play:active{box-shadow:0 2px 0 var(--goDk)}
+.btn.ghost{background:#fff;color:var(--navy);box-shadow:0 6px 0 var(--deep)}.btn.ghost:active{box-shadow:0 2px 0 var(--deep)}
+.cta{display:flex;flex-wrap:wrap;gap:16px}
+:focus-visible{outline:4px solid var(--hot);outline-offset:3px;border-radius:8px}
 
-  /* ---------- buttons ---------- */
-  .btn{
-    display:inline-flex;align-items:center;gap:10px;
-    font-weight:800;font-size:17px;text-decoration:none;
-    padding:15px 28px;border-radius:999px;border:0;cursor:pointer;
-    background:linear-gradient(180deg,var(--lava-hot),var(--lava));
-    color:#3a1300;box-shadow:0 10px 26px rgba(255,90,43,.5), inset 0 2px 0 rgba(255,255,255,.5);
-    transition:transform .15s ease, box-shadow .15s ease;
-  }
-  .btn:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 16px 34px rgba(255,90,43,.6), inset 0 2px 0 rgba(255,255,255,.5);}
-  .btn:active{transform:translateY(0) scale(.99);}
-  .btn.ghost{
-    background:rgba(255,255,255,.08);color:var(--foam);
-    box-shadow:inset 0 0 0 2px rgba(255,255,255,.25);
-  }
-  .btn.ghost:hover{background:rgba(255,255,255,.14);box-shadow:inset 0 0 0 2px rgba(255,255,255,.45);}
+/* hero */
+.hero{padding:54px 0 0;color:#fff;position:relative;overflow:hidden}
+.hero .wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:44px;align-items:center}
+.tag{display:inline-block;background:var(--deep);color:var(--hot);font-weight:900;font-size:14px;letter-spacing:.06em;text-transform:uppercase;padding:7px 14px;border-radius:999px;margin-bottom:18px}
+h1{font-size:clamp(40px,6.4vw,74px);line-height:.98;font-weight:900;letter-spacing:-.01em;text-shadow:0 5px 0 var(--deep)}
+h1 em{font-style:normal;color:var(--hot)}
+.hero p.lead{font-size:20px;line-height:1.55;font-weight:600;margin:22px 0 26px;max-width:33em;text-shadow:0 2px 0 rgba(13,28,84,.55)}
+.hero p.lead b{color:var(--hot);font-weight:900}
+.photo{position:relative;justify-self:center;transform:rotate(2.2deg);background:#fff;padding:14px 14px 16px;border-radius:6px;box-shadow:10px 14px 0 var(--deep);max-width:440px}
+.photo img{border-radius:3px}
+.photo::before,.photo::after{content:"";position:absolute;top:-16px;width:112px;height:34px;background:var(--hot);box-shadow:0 2px 0 rgba(0,0,0,.18)}
+.photo::before{left:-34px;transform:rotate(-36deg)}.photo::after{right:-34px;transform:rotate(36deg)}
+.photo figcaption{color:var(--navy);font-weight:800;font-size:15px;text-align:center;margin-top:10px;line-height:1.3}
+.shore{position:relative;height:150px;margin-top:26px}
+.shore svg{position:absolute;left:0;bottom:-1px;width:100%;height:92px;display:block}
+.floaters{position:absolute;left:0;right:0;bottom:42px;display:flex;justify-content:space-around;max-width:1080px;margin:0 auto;padding:0 10px}
+.floaters img{width:clamp(64px,11vw,112px);height:auto;animation:bob 3.4s ease-in-out infinite}
+.floaters img:nth-child(2){animation-delay:-.9s}.floaters img:nth-child(3){animation-delay:-1.8s}.floaters img:nth-child(4){animation-delay:-2.5s}.floaters img:nth-child(5){animation-delay:-.4s}.floaters img:nth-child(6){animation-delay:-1.3s}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-10px) rotate(3deg)}}
+@media(max-width:860px){.hero{padding-top:34px}.hero .wrap{grid-template-columns:1fr;gap:38px}.photo{max-width:340px;margin-top:26px}.floaters img:nth-child(n+5){display:none}}
 
-  /* ---------- hero ---------- */
-  .hero{padding:52px 0 40px;text-align:center;z-index:2;}
-  .hero .eyebrow{
-    display:inline-block;font-size:13px;font-weight:800;letter-spacing:2px;text-transform:uppercase;
-    color:var(--yellow);background:rgba(255,212,71,.12);padding:6px 14px;border-radius:999px;margin-bottom:18px;
-  }
-  .hero h1{
-    font-size:clamp(38px,8vw,80px);line-height:.98;letter-spacing:-1px;
-    text-shadow:0 4px 0 rgba(0,0,0,.25), 0 14px 30px rgba(0,0,0,.4);
-  }
-  .hero h1 .hot{
-    background:linear-gradient(180deg,#fff2c8,var(--lava-hot) 55%,var(--lava));
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-    filter:drop-shadow(0 3px 10px rgba(255,120,40,.4));
-  }
-  .hero p.lede{
-    max-width:640px;margin:20px auto 0;font-size:clamp(16px,2.4vw,20px);
-    line-height:1.5;color:#dbe9f6;
-  }
-  .cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:30px;}
+/* water band with the song */
+.water{background:var(--water);padding:8px 0 70px;position:relative}
+.song{background:#fff;border-radius:18px;box-shadow:0 8px 0 var(--deep);padding:22px 24px;display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;max-width:760px;margin:0 auto}
+.song button{width:76px;height:76px;border-radius:50%;border:0;background:var(--lava);box-shadow:0 6px 0 var(--lavaDk);cursor:pointer;display:grid;place-items:center;transition:transform .08s,box-shadow .08s}
+.song button:active{transform:translateY(4px);box-shadow:0 2px 0 var(--lavaDk)}
+.song button svg{width:30px;height:30px;fill:#fff}
+.song h3{font-size:21px;line-height:1.2;font-weight:900;color:var(--navy)}
+.song p{font-size:15.5px;line-height:1.45;margin-top:3px;color:#40507a;font-weight:600}
+.track{height:10px;border-radius:99px;background:#dbe6fb;margin-top:12px;overflow:hidden;cursor:pointer}
+.track i{display:block;height:100%;width:0;background:var(--lava);border-radius:99px}
+.time{font-size:13px;font-weight:800;color:#6b7aa6;margin-top:5px;font-variant-numeric:tabular-nums}
+@media(max-width:520px){.song{grid-template-columns:1fr;text-align:center;justify-items:center}}
 
-  .hero-art{
-    position:relative;margin:38px auto 0;max-width:560px;
-    border-radius:26px;overflow:hidden;box-shadow:var(--shadow);
-    border:4px solid rgba(255,255,255,.9);
-    transform:rotate(-1deg);
-  }
-  .hero-art img{display:block;width:100%;height:auto;}
-  .hero-art .tape{
-    position:absolute;top:-12px;left:50%;transform:translateX(-50%) rotate(-3deg);
-    width:120px;height:26px;background:rgba(255,212,71,.7);
-    box-shadow:0 2px 6px rgba(0,0,0,.25);border-radius:2px;
-  }
-  .art-cap{margin-top:14px;font-size:13px;color:#9fc0da;font-style:italic;}
+/* story sections */
+section.band{padding:78px 0}
+.eyebrow{font-weight:900;font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:var(--lava);margin-bottom:8px}
+h2{font-size:clamp(30px,4.4vw,46px);line-height:1.08;font-weight:900;color:var(--navy);margin-bottom:20px}
+h2 em{font-style:normal;color:var(--lava)}
+.paper{background:var(--paper)}
+.prose{max-width:700px}
+.prose p{margin-bottom:18px}.prose p:last-child{margin-bottom:0}
+.prose b{font-weight:900;color:var(--navy)}
+.pull{font-weight:900;color:var(--lava)}
+.split{display:grid;grid-template-columns:1.2fr .8fr;gap:48px;align-items:center}
+.split .snap{background:#fff;padding:12px;border-radius:6px;box-shadow:8px 10px 0 var(--navy);transform:rotate(-2.4deg);max-width:340px;justify-self:center}
+@media(max-width:860px){.split{grid-template-columns:1fr}.split .snap{max-width:280px}}
 
-  /* ---------- song player ---------- */
-  .song-card{
-    margin:34px auto 0;max-width:560px;
-    background:linear-gradient(180deg,rgba(255,255,255,.1),rgba(255,255,255,.04));
-    border:1px solid rgba(255,255,255,.14);border-radius:20px;
-    padding:20px;display:flex;align-items:center;gap:18px;text-align:left;
-    backdrop-filter:blur(6px);
-  }
-  .song-card .play-song{
-    flex:0 0 auto;width:60px;height:60px;border-radius:50%;border:0;cursor:pointer;
-    background:radial-gradient(circle at 35% 30%,var(--lava-hot),var(--lava));
-    color:#3a1300;font-size:24px;display:grid;place-items:center;
-    box-shadow:0 8px 20px rgba(255,90,43,.5);transition:transform .12s;
-  }
-  .song-card .play-song:hover{transform:scale(1.06);}
-  .song-meta b{display:block;font-size:16px;}
-  .song-meta small{color:#a9c6dd;font-size:13px;}
-  .eq{display:flex;gap:3px;align-items:flex-end;height:22px;margin-top:8px;}
-  .eq span{width:4px;background:var(--lava-hot);border-radius:2px;height:6px;}
-  .eq.playing span{animation:eq .8s ease-in-out infinite;}
-  .eq span:nth-child(2){animation-delay:.15s}.eq span:nth-child(3){animation-delay:.3s}
-  .eq span:nth-child(4){animation-delay:.45s}.eq span:nth-child(5){animation-delay:.1s}
-  @keyframes eq{0%,100%{height:6px}50%{height:22px}}
+/* journey */
+.wallband{color:#fff}
+.wallband h2{color:#fff;text-shadow:0 4px 0 var(--deep)}.wallband h2 em{color:var(--hot)}
+.wallband .eyebrow{color:var(--hot)}
+.wallband .prose p{font-weight:600;text-shadow:0 2px 0 rgba(13,28,84,.5)}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:38px;counter-reset:s}
+.step{background:#fff;color:var(--ink);border-radius:16px;padding:22px 20px 22px;box-shadow:0 8px 0 var(--deep);position:relative;counter-increment:s}
+.step::before{content:"0" counter(s);display:block;font-weight:900;font-size:34px;line-height:1;color:var(--lava);margin-bottom:10px}
+.step h3{font-size:21px;font-weight:900;color:var(--navy);margin-bottom:6px}
+.step p{font-size:16px;line-height:1.5}
+@media(max-width:900px){.steps{grid-template-columns:1fr 1fr}}@media(max-width:520px){.steps{grid-template-columns:1fr}}
+.loop{display:flex;flex-wrap:wrap;gap:10px;margin-top:34px;align-items:center}
+.loop span{background:var(--deep);color:#fff;font-weight:900;font-size:16px;padding:9px 16px;border-radius:999px}
+.loop span.boom{background:var(--lava)}.loop b{color:var(--hot);font-size:20px}
 
-  /* ---------- generic section ---------- */
-  .band{padding:64px 0;position:relative;z-index:2;}
-  .band h2{
-    font-size:clamp(28px,5vw,46px);line-height:1.02;letter-spacing:-.5px;margin-bottom:8px;
-    text-shadow:0 3px 0 rgba(0,0,0,.2);
-  }
-  .band h2 .u{color:var(--yellow);}
-  .band .kicker{font-size:13px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--pink);margin-bottom:14px;}
-  .band p.big{font-size:clamp(16px,2.3vw,19px);line-height:1.6;color:#dbe9f6;max-width:720px;}
-  .band p.big + p.big{margin-top:16px;}
+/* quote */
+.quote{background:var(--deep);color:#fff;padding:70px 0}
+.quote blockquote{max-width:820px;margin:0 auto;font-size:clamp(23px,3.2vw,33px);line-height:1.32;font-weight:900}
+.quote blockquote em{font-style:normal;color:var(--hot)}
+.quote p{max-width:820px;margin:20px auto 0;font-size:18px;font-weight:600;opacity:.9}
 
-  .paper-band{
-    background:
-      radial-gradient(1200px 400px at 50% -10%, rgba(126,200,227,.18), transparent 60%),
-      linear-gradient(180deg,#fff7ec,#ffeede);
-    color:var(--ink);border-radius:38px;margin:14px 12px;
-    box-shadow:var(--shadow);
-  }
-  .paper-band .kicker{color:#d0431f;}
-  .paper-band h2 .u{color:#d0431f;}
-  .paper-band p.big{color:#3a2b20;}
+/* cast */
+.cast{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:34px}
+.who{background:#fff;border-radius:18px;box-shadow:0 8px 0 var(--navy);overflow:hidden}
+.who .pic{aspect-ratio:1/1;background:var(--water);display:grid;place-items:center;overflow:hidden}
+.who .pic img{width:100%;height:100%;object-fit:cover}
+.who .pic.toys{display:flex;gap:2px;justify-content:center;align-items:center;padding:8px}
+.who .pic.toys img{width:27%;height:auto;object-fit:contain}
+.who .pic.one img{width:46%;height:auto;object-fit:contain}
+.who div.txt{padding:18px 20px 22px}
+.who h3{font-size:22px;font-weight:900;color:var(--navy);margin-bottom:4px}
+.who p{font-size:16px;line-height:1.5}
+@media(max-width:900px){.cast{grid-template-columns:1fr 1fr}}@media(max-width:540px){.cast{gap:12px}.who div.txt{padding:12px 13px 16px}.who h3{font-size:18px}.who p{font-size:14.5px;line-height:1.42}}
 
-  /* ---------- journey timeline ---------- */
-  .journey{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:34px;}
-  @media(max-width:820px){.journey{grid-template-columns:1fr 1fr;}}
-  @media(max-width:460px){.journey{grid-template-columns:1fr;}}
-  .step{
-    background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
-    border-radius:20px;padding:22px 18px;position:relative;overflow:hidden;
-    transition:transform .2s ease, background .2s;
-  }
-  .step:hover{transform:translateY(-6px);background:rgba(255,255,255,.1);}
-  .step .n{font-size:12px;font-weight:800;letter-spacing:2px;color:var(--yellow);opacity:.8;}
-  .step .emoji{font-size:40px;margin:8px 0 10px;display:block;filter:drop-shadow(0 4px 6px rgba(0,0,0,.3));}
-  .step h3{font-size:19px;margin-bottom:6px;}
-  .step p{font-size:14px;line-height:1.5;color:#c3d8ea;}
-  .step .arrow{position:absolute;right:-8px;top:50%;transform:translateY(-50%);font-size:22px;color:var(--lava-hot);opacity:.6;}
-  @media(max-width:820px){.step .arrow{display:none;}}
+/* game */
+.gameband{background:var(--water);padding:78px 0 84px;overflow:hidden}
+.gameband h2{color:var(--deep)}
+.phones{display:flex;gap:22px;overflow-x:auto;scroll-snap-type:x mandatory;padding:10px 22px 28px;margin:30px -22px 0;-webkit-overflow-scrolling:touch}
+.phone{flex:0 0 auto;width:230px;scroll-snap-align:center;background:#0b1020;border-radius:34px;padding:9px;box-shadow:0 10px 0 var(--deep)}
+.phone img{border-radius:26px;width:100%}
+.phone figcaption{color:#fff;text-align:center;font-weight:800;font-size:14px;padding:9px 4px 5px}
+.feats{display:grid;grid-template-columns:1fr 1fr;gap:14px 26px;margin:34px 0 34px;list-style:none}
+.feats li{background:#fff;border-radius:14px;padding:15px 18px;box-shadow:0 5px 0 var(--deep);font-size:16.5px;line-height:1.45}
+.feats b{color:var(--navy);font-weight:900}
+@media(max-width:760px){.feats{grid-template-columns:1fr}}
 
-  /* ---------- rhythm strip ---------- */
-  .rhythm{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px;justify-content:center;}
-  .rhythm .pill{
-    padding:12px 20px;border-radius:999px;font-weight:800;font-size:15px;
-    background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);
-  }
-  .rhythm .pill.hot{background:linear-gradient(180deg,var(--lava-hot),var(--lava));color:#3a1300;border:0;}
-  .rhythm .sep{align-self:center;color:var(--lava-hot);font-size:20px;font-weight:900;}
+/* parents */
+.promise{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:30px}
+.promise div{border:3px solid var(--navy);border-radius:16px;padding:18px;background:#fff}
+.promise b{display:block;font-weight:900;font-size:19px;color:var(--navy);margin-bottom:4px}
+.promise span{font-size:15.5px;line-height:1.45;display:block}
+@media(max-width:900px){.promise{grid-template-columns:1fr 1fr}}@media(max-width:480px){.promise{grid-template-columns:1fr}}
 
-  /* ---------- characters ---------- */
-  .cast{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:34px;}
-  @media(max-width:760px){.cast{grid-template-columns:1fr 1fr;}}
-  @media(max-width:440px){.cast{grid-template-columns:1fr;}}
-  .card{
-    background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
-    border-radius:20px;padding:20px;text-align:center;transition:transform .18s;
-  }
-  .card:hover{transform:translateY(-5px) rotate(-1deg);}
-  .card .face{font-size:46px;display:block;margin-bottom:8px;}
-  .card h4{font-size:18px;margin-bottom:4px;}
-  .card p{font-size:13.5px;line-height:1.45;color:#c3d8ea;}
+/* final + footer */
+.final{color:#fff;text-align:center;padding:84px 0 70px}
+.final img{width:150px;margin:0 auto 18px;border-radius:28px;box-shadow:0 8px 0 var(--deep)}
+.final h2{color:#fff;text-shadow:0 4px 0 var(--deep);margin-bottom:10px}
+.final p{font-weight:700;font-size:20px;margin-bottom:28px;text-shadow:0 2px 0 rgba(13,28,84,.5)}
+.final .cta{justify-content:center}
+footer{background:var(--deep);color:#c9d6f7;padding:34px 0 44px;font-size:15px;text-align:center}
+footer p{margin-bottom:8px}footer a{font-weight:800;color:#fff}
 
-  /* ---------- game showcase ---------- */
-  .game-band{
-    background:
-      radial-gradient(900px 500px at 80% 20%, rgba(255,138,61,.22), transparent 60%),
-      linear-gradient(180deg,#12293f,#0b1d30);
-    border-radius:38px;margin:14px 12px;box-shadow:var(--shadow);
-    border:1px solid rgba(255,255,255,.08);
-  }
-  .game-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:36px;align-items:center;}
-  @media(max-width:760px){.game-grid{grid-template-columns:1fr;}}
-  .game-features{list-style:none;margin-top:20px;display:grid;gap:12px;}
-  .game-features li{display:flex;gap:12px;align-items:flex-start;font-size:15.5px;line-height:1.45;color:#dbe9f6;}
-  .game-features li b{color:#fff;}
-  .game-features .ic{font-size:22px;flex:0 0 auto;}
-  .phone{
-    justify-self:center;width:min(280px,80vw);aspect-ratio:9/16;
-    background:linear-gradient(180deg,#0d2236,#163a5c);
-    border-radius:34px;border:8px solid #05101c;box-shadow:var(--shadow), inset 0 0 0 2px rgba(255,255,255,.06);
-    position:relative;overflow:hidden;display:grid;place-items:center;text-align:center;padding:24px;
-  }
-  .phone .notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:90px;height:18px;background:#05101c;border-radius:12px;}
-  .phone .volc{font-size:74px;filter:drop-shadow(0 6px 12px rgba(255,120,40,.5));animation:wobble 3s ease-in-out infinite;}
-  @keyframes wobble{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
-  .phone .ttl{font-weight:900;font-size:20px;line-height:1.05;margin-top:12px;
-    background:linear-gradient(180deg,#fff2c8,var(--lava-hot));-webkit-background-clip:text;background-clip:text;color:transparent;}
-  .phone .sub{font-size:12px;color:#a9c6dd;margin-top:8px;}
-  .phone .toys{position:absolute;inset:0;pointer-events:none;}
-  .phone .toys span{position:absolute;font-size:26px;animation:bob 2.4s ease-in-out infinite;}
-  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-
-  /* ---------- big quote ---------- */
-  .quote{
-    text-align:center;max-width:820px;margin:0 auto;
-    font-size:clamp(22px,4vw,34px);line-height:1.25;font-weight:800;letter-spacing:-.3px;
-  }
-  .quote .hot{color:var(--lava-hot);}
-  .quote small{display:block;margin-top:18px;font-size:15px;font-weight:600;color:#a9c6dd;letter-spacing:0;}
-
-  /* ---------- final CTA ---------- */
-  .final{text-align:center;padding:80px 0 40px;z-index:2;position:relative;}
-  .final .big-volc{font-size:90px;filter:drop-shadow(0 8px 16px rgba(255,120,40,.5));animation:wobble 3s ease-in-out infinite;display:inline-block;}
-  .final h2{font-size:clamp(30px,6vw,56px);margin:10px 0 8px;}
-  .final p{color:#dbe9f6;max-width:560px;margin:0 auto 26px;font-size:17px;line-height:1.5;}
-
-  footer{
-    text-align:center;padding:36px 22px 60px;color:#7fa0bb;font-size:13px;z-index:2;position:relative;
-    border-top:1px solid rgba(255,255,255,.08);margin-top:20px;
-  }
-  footer a{color:var(--yellow);text-decoration:none;}
-  footer .pow{color:var(--lava-hot);font-weight:800;}
-
-  /* reveal on scroll */
-  .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease, transform .7s ease;}
-  .reveal.in{opacity:1;transform:none;}
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease}
+.reveal.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.floaters img{animation:none}html{scroll-behavior:auto}}
 </style>
 </head>
 <body>
 
-<div class="bubbles" id="bubbles" aria-hidden="true"></div>
-
 <header class="bar">
   <div class="wrap">
-    <div class="brand"><span class="mini-volc">🌋</span><span>Exploding Volcanoes</span></div>
-    <nav class="navlinks">
+    <a class="brand" href="#top"><img src="apple-touch-icon.png" alt="" width="32" height="32" />Exploding Volcanoes</a>
+    <nav class="nav" aria-label="Sections">
       <a href="#story">The Story</a>
       <a href="#journey">The Journey</a>
-      <a href="#movement">The Movement</a>
+      <a href="#cast">The Cast</a>
       <a href="#game">The Game</a>
+      <a href="#parents">For Parents</a>
     </nav>
+    <a class="get" href="https://apps.apple.com/app/id6834466189">Get The App</a>
   </div>
 </header>
 
-<!-- ===================== HERO ===================== -->
-<section class="hero">
+<main id="top">
+
+<section class="hero tiles">
   <div class="wrap">
-    <span class="eyebrow">🛁 AI · Music · Parenthood</span>
-    <h1>Exploding&nbsp;Volcanoes<br><span class="hot">in the Bathtub</span></h1>
-    <p class="lede">
-      I'm a dad. One soggy, giggling night with my guitar and my two boys in the tub, we made
-      something they couldn't let disappear — so with a little help from AI, I turned it into a
-      <b>real song</b> and a <b>real game</b>. This is how it happened.
-    </p>
-    <div class="cta-row">
-      <a class="btn" href="index.html">▶&nbsp; Play the Game</a>
-      <a class="btn ghost" href="#story">Read the Story</a>
-    </div>
-
-    <div class="hero-art reveal">
-      <span class="tape"></span>
-      <img src="assets/cover-volcanoes.webp" alt="Noah and Max laughing in a bubble-filled bathtub as a googly-eyed volcano erupts between them, toys everywhere and Daddy's guitar leaning on the tub" />
-    </div>
-    <p class="art-cap">That's Noah and Max — and yes, that's my guitar leaning on the tub.</p>
-
-    <!-- SONG PLAYER -->
-    <div class="song-card reveal">
-      <button class="play-song" id="playSong" aria-label="Play the song">▶</button>
-      <div class="song-meta">
-        <b>“Exploding Volcanoes in the Bathtub”</b>
-        <small>The actual track. It started as me messing around on guitar — AI helped me finish it.</small>
-        <div class="eq" id="eq"><span></span><span></span><span></span><span></span><span></span></div>
+    <div>
+      <span class="tag">AI · Music · Parenthood</span>
+      <h1>Exploding Volcanoes <em>in the Bathtub</em></h1>
+      <p class="lead">I'm a dad. One soggy, giggling night with my guitar and my two boys in the tub, we made something they couldn't let disappear. So with a little help from AI, I turned it into <b>a real song</b> and <b>a real game</b>. This is how it happened.</p>
+      <div class="cta">
+        <a class="btn store" href="https://apps.apple.com/app/id6834466189">Download on the App Store<small>Free for iPhone</small></a>
+        <a class="btn play" href="./">Play In Your Browser<small>Nothing to install</small></a>
       </div>
     </div>
-    <audio id="song" src="song.mp3" preload="none" loop></audio>
+    <figure class="photo">
+      <img src="assets/site/cover-900.webp" width="900" height="900" alt="Cartoon cover art: two laughing boys in a bubble bath around an erupting toy volcano, with a guitar leaning on the tub." />
+      <figcaption>That's Noah and Max. And yes, that's my guitar leaning on the tub.</figcaption>
+    </figure>
+  </div>
+  <div class="shore" aria-hidden="true">
+    <div class="floaters">
+      <img src="assets/site/toy-duck.webp" alt="" width="240" height="240" />
+      <img src="assets/site/toy-octopus.webp" alt="" width="240" height="240" />
+      <img src="assets/site/toy-boat.webp" alt="" width="240" height="240" />
+      <img src="assets/site/toy-dino.webp" alt="" width="240" height="240" />
+      <img src="assets/site/toy-soldier.webp" alt="" width="240" height="240" />
+      <img src="assets/site/toy-shark.webp" alt="" width="240" height="240" />
+    </div>
+    <svg viewBox="0 0 1440 92" preserveAspectRatio="none"><path fill="#2ec4f6" d="M0 40 Q90 10 180 38 T360 38 T540 38 T720 38 T900 38 T1080 38 T1260 38 T1440 38 V92 H0Z"/><g fill="#fff"><circle cx="60" cy="34" r="13"/><circle cx="92" cy="26" r="9"/><circle cx="300" cy="42" r="11"/><circle cx="520" cy="30" r="14"/><circle cx="548" cy="38" r="8"/><circle cx="790" cy="42" r="10"/><circle cx="1010" cy="28" r="13"/><circle cx="1038" cy="38" r="8"/><circle cx="1230" cy="42" r="11"/><circle cx="1390" cy="30" r="13"/></g></svg>
   </div>
 </section>
 
-<!-- ===================== STORY ===================== -->
-<section class="band" id="story">
-  <div class="wrap paper-band" style="padding:56px 34px;">
+<section class="water" aria-label="The song">
+  <div class="wrap">
+    <div class="song reveal">
+      <button id="playbtn" type="button" aria-label="Play the song">
+        <svg id="ico-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>
+        <svg id="ico-pause" viewBox="0 0 24 24" aria-hidden="true" style="display:none"><path d="M6 4.5h4.4v15H6zM13.6 4.5H18v15h-4.4z"/></svg>
+      </button>
+      <div>
+        <h3>“Exploding Volcanoes in the Bathtub”</h3>
+        <p>The actual track. It started as me messing around on guitar. AI helped me finish it.</p>
+        <div class="track" id="track" role="slider" aria-label="Song position" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"><i id="fill"></i></div>
+        <div class="time" id="time">0:00</div>
+      </div>
+    </div>
+    <audio id="song" src="song.mp3" preload="none"></audio>
+  </div>
+</section>
+
+<section class="band paper" id="story">
+  <div class="wrap split">
+    <div class="prose reveal">
+      <div class="eyebrow">The Story</div>
+      <h2>It started with <em>splashing.</em></h2>
+      <p>One ordinary night, I sat on the edge of the tub with my guitar while my two boys, <b>Noah and Max</b>, did what kids do: splash, shriek, and turn bathwater into weather. I started strumming along, narrating the chaos as it happened. When the water heaved over the side, I called it what it obviously was: <span class="pull">an exploding volcano.</span></p>
+      <p>No studio, no band, no second take. Just my phone catching a loud, rough, off-the-cuff jam, my guitar, and two kids as pure forces of nature yelling <b>“Look, Daddy, look!”</b></p>
+      <p>It was the kind of fleeting moment I'd normally lose to time. This one, I didn't.</p>
+    </div>
+    <figure class="snap reveal"><img src="assets/site/dad-guitar.webp" width="400" height="400" alt="Detail from the cover art: a guitar covered in stickers leaning against the bathtub." /></figure>
+  </div>
+</section>
+
+<section class="band tiles wallband" id="journey">
+  <div class="wrap">
+    <div class="prose reveal">
+      <div class="eyebrow">The Journey</div>
+      <h2>From a rough take to <em>the real thing.</em></h2>
+      <p>Here's the part I didn't plan. Noah and Max kept asking to hear “the song”, like it was any other track on Spotify. But all I had was a rough, rambling 8-minute cut on my phone. So, half as a joke, I fed it to AI to see what it would do.</p>
+      <p>What came back blew me away. A couple of years ago this is where the moment would've ended: a clip buried on my iPhone. Instead, that messy recording went in one end, and a song I'm genuinely proud of came out the other.</p>
+    </div>
+    <div class="steps">
+      <div class="step reveal"><h3>The Jam</h3><p>Me on guitar, my boys splashing, narrating it live. Raw, unpolished, of-the-moment.</p></div>
+      <div class="step reveal"><h3>The AI</h3><p>I ran the rough recording through AI music (Suno): the bridge from my mess to something real.</p></div>
+      <div class="step reveal"><h3>The Song</h3><p>Out came a produced track with a hook my kids now shout: “This is the end, this is the end.” Pow! Pow!</p></div>
+      <div class="step reveal"><h3>The Game</h3><p>Then I built the song into a game we can actually play together. The moment, made forever.</p></div>
+    </div>
+    <div class="loop reveal" aria-label="How every round goes"><span>Build up</span><b>→</b><span>Overflow</span><b>→</b><span class="boom">ERUPT!</span><b>→</b><span>Reset</span><b>→</b><span>Again!</span></div>
+  </div>
+</section>
+
+<section class="quote">
+  <div class="wrap reveal">
+    <blockquote>I'm a dad with a guitar. And AI let me turn a soggy, giggling bathtub moment into <em>a produced song</em> and <em>a game my kids can play.</em></blockquote>
+    <p>That's the combination I can't stop thinking about: AI + music + parenthood, closing the gap between a fleeting family moment and something finished, something that lasts.</p>
+  </div>
+</section>
+
+<section class="band paper" id="cast">
+  <div class="wrap">
     <div class="reveal">
-      <div class="kicker">The Story</div>
-      <h2>It started with <span class="u">splashing</span>.</h2>
-      <p class="big">
-        One ordinary night, I sat on the edge of the tub with my guitar while my two boys —
-        <b>Noah</b> and <b>Max</b> — did what kids do: splash, shriek, and turn bathwater into weather.
-        I started strumming along, narrating the chaos as it happened. When the water heaved over
-        the side, I called it what it obviously was: <b>an exploding volcano</b>.
-      </p>
-      <p class="big">
-        No studio, no band, no second take — just my phone catching a loud, rough, off-the-cuff jam,
-        my guitar, and two kids as pure forces of nature yelling <i>“Look, Daddy, look!”</i>
-      </p>
-      <p class="big">
-        It was the kind of fleeting moment I'd normally lose to time. This one, I didn't.
-      </p>
+      <div class="eyebrow">The Cast</div>
+      <h2>Everyone in <em>the tub.</em></h2>
     </div>
-  </div>
-</section>
-
-<!-- ===================== JOURNEY ===================== -->
-<section class="band" id="journey">
-  <div class="wrap">
-    <div class="reveal">
-      <div class="kicker">The Journey</div>
-      <h2>From a rough take to <span class="u">the real thing</span>.</h2>
-      <p class="big">
-        Here's the part I didn't plan. Noah and Max kept asking to hear <i>“the song”</i> — like it
-        was any other track on Spotify. But all I had was a rough, rambling <b>8-minute cut</b> on my
-        phone. So, half as a joke, I fed it to AI to see what it would do.
-      </p>
-      <p class="big">
-        What came back blew me away. A couple of years ago this is where the moment would've ended —
-        a clip buried on my iPhone. Instead, that messy recording went in one end, and a song
-        I'm genuinely proud of came out the other.
-      </p>
-    </div>
-
-    <div class="journey">
-      <div class="step reveal">
-        <span class="n">STEP 01</span>
-        <span class="emoji">🎸</span>
-        <h3>The Jam</h3>
-        <p>Me on guitar, my boys splashing, narrating it live. Raw, unpolished, of-the-moment.</p>
-        <span class="arrow">➜</span>
-      </div>
-      <div class="step reveal">
-        <span class="n">STEP 02</span>
-        <span class="emoji">🤖</span>
-        <h3>The AI</h3>
-        <p>I ran the rough recording through AI music (Suno) — the bridge from my mess to something real.</p>
-        <span class="arrow">➜</span>
-      </div>
-      <div class="step reveal">
-        <span class="n">STEP 03</span>
-        <span class="emoji">🎵</span>
-        <h3>The Song</h3>
-        <p>Out came a produced track with a hook my kids now shout: <i>“This is the end, this is the end.”</i> Pow! Pow!</p>
-        <span class="arrow">➜</span>
-      </div>
-      <div class="step reveal">
-        <span class="n">STEP 04</span>
-        <span class="emoji">🎮</span>
-        <h3>The Game</h3>
-        <p>Then I built the song into a game we can actually play together. The moment, made forever.</p>
-      </div>
-    </div>
-
-    <div class="rhythm reveal" aria-label="the signature rhythm">
-      <span class="pill">Build&nbsp;up</span><span class="sep">→</span>
-      <span class="pill">Overflow</span><span class="sep">→</span>
-      <span class="pill hot">ERUPT&nbsp;💥</span><span class="sep">→</span>
-      <span class="pill">Reset</span><span class="sep">→</span>
-      <span class="pill">Again!</span>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== MOVEMENT ===================== -->
-<section class="band" id="movement">
-  <div class="wrap">
-    <div class="quote reveal">
-      I'm a dad with a guitar. And AI let me turn a soggy, giggling bathtub moment into a
-      <span class="hot">produced song and a game my kids can play</span>.
-      <small>That's the combination I can't stop thinking about — <b>AI + music + parenthood</b> — closing the gap between a fleeting family moment and something finished, something that lasts.</small>
-    </div>
-  </div>
-</section>
-
-<section class="band" style="padding-top:20px;">
-  <div class="wrap">
     <div class="cast">
-      <div class="card reveal"><span class="face">🧒</span><h4>Noah</h4><p>The main splasher. Messy dark hair, giant grin — the exploding volcano himself.</p></div>
-      <div class="card reveal"><span class="face">👦</span><h4>Max</h4><p>Ginger, freckled little brother. The mischievous rival who tries to block your shots.</p></div>
-      <div class="card reveal"><span class="face">🎸</span><h4>Me (Dad)</h4><p>The guy on the guitar, the narrator, the one-man audience — and the one who stitched it all together with AI.</p></div>
-      <div class="card reveal"><span class="face">🌋</span><h4>The Volcano</h4><p>Googly-eyed, grinning, and always about to blow. Fill it up until it just can’t hold on.</p></div>
-      <div class="card reveal"><span class="face">🧶</span><h4>The Hairball</h4><p>“A bit of hair on my volcano again.” Gross, goofy, and worth bonus points.</p></div>
-      <div class="card reveal"><span class="face">🦆</span><h4>The Toys</h4><p>Ducks, dinos, boats, monster trucks, sharks, rockets — the ammunition of the tub.</p></div>
+      <article class="who reveal"><div class="pic"><img src="assets/site/noah.webp" width="400" height="400" alt="Noah as he appears in the game: dark spiky hair, arms up, huge grin." /></div><div class="txt"><h3>Noah</h3><p>The main splasher. Messy dark hair, giant grin: the exploding volcano himself.</p></div></article>
+      <article class="who reveal"><div class="pic"><img src="assets/site/max.webp" width="400" height="400" alt="Max as he appears in the game: ginger hair, freckles, arms up, laughing." /></div><div class="txt"><h3>Max</h3><p>Ginger, freckled little brother. The mischievous rival who tries to block your shots.</p></div></article>
+      <article class="who reveal"><div class="pic"><img src="assets/site/dad-guitar.webp" width="400" height="400" alt="The guitar leaning on the tub." /></div><div class="txt"><h3>Me (Dad)</h3><p>The guy on the guitar, the narrator, the one-man audience, and the one who stitched it all together with AI.</p></div></article>
+      <article class="who reveal"><div class="pic"><img src="assets/site/volcano.webp" width="400" height="400" alt="The game's smiling volcano erupting in the bath." /></div><div class="txt"><h3>The Volcano</h3><p>Googly-eyed, grinning, and always about to blow. Fill it up until it just can't hold on.</p></div></article>
+      <article class="who reveal"><div class="pic one"><img src="assets/site/toy-hairball.webp" width="240" height="240" alt="The hairball from the game." /></div><div class="txt"><h3>The Hairball</h3><p>“A bit of hair on my volcano again.” Gross, goofy, and worth bonus points.</p></div></article>
+      <article class="who reveal"><div class="pic toys"><img src="assets/site/toy-truck.webp" width="240" height="240" alt="" /><img src="assets/site/toy-rocket.webp" width="240" height="240" alt="" /><img src="assets/site/toy-unicorn.webp" width="240" height="240" alt="" /></div><div class="txt"><h3>The Toys</h3><p>Ducks, dinos, boats, monster trucks, sharks, rockets: the ammunition of the tub.</p></div></article>
     </div>
   </div>
 </section>
 
-<!-- ===================== GAME ===================== -->
-<section class="band" id="game">
-  <div class="wrap game-band" style="padding:52px 34px;">
-    <div class="game-grid">
-      <div class="reveal">
-        <div class="kicker" style="color:var(--lava-hot)">The Companion Game</div>
-        <h2>Splash it. Fill it. <span class="u" style="color:var(--lava-hot)">Blow it up.</span></h2>
-        <p class="big">
-          I built this so my boys — and yours — can play the song. Help Noah splash floating bath
-          toys into the volcano hoop. Fill it to the brim and it <b>ERUPTS</b> — toys rain back into
-          the tub for the next round. Ten rounds of escalating, joyful chaos, all scored to our song.
-        </p>
-        <ul class="game-features">
-          <li><span class="ic">🎯</span><span><b>Splash to score.</b> Hold to charge, release to launch — the arc turns green when you’re on target.</span></li>
-          <li><span class="ic">🧸</span><span><b>A snowballing collection.</b> Every round adds a new toy, from ducks to monster trucks.</span></li>
-          <li><span class="ic">🙅</span><span><b>Watch out for Max.</b> Your little brother swats shots out of the air.</span></li>
-          <li><span class="ic">🧶</span><span><b>Grab the hairball</b> for bonus points and extra time. Gross = good.</span></li>
-          <li><span class="ic">🎵</span><span><b>Scored to the song</b> — build, overflow, erupt, reset, again.</span></li>
-        </ul>
-        <div class="cta-row" style="justify-content:flex-start;margin-top:26px;">
-          <a class="btn" href="index.html">▶&nbsp; Play Now — it’s free</a>
-        </div>
-        <p style="font-size:13px;color:#9fc0da;margin-top:12px;">Works in your browser. Add it to your home screen to play like an app.</p>
-      </div>
-
-      <div class="phone reveal" aria-hidden="true">
-        <div class="notch"></div>
-        <div class="toys">
-          <span style="top:16%;left:14%;">🦆</span>
-          <span style="top:24%;right:12%;animation-delay:.4s">🦖</span>
-          <span style="bottom:22%;left:16%;animation-delay:.8s">🚤</span>
-          <span style="bottom:16%;right:16%;animation-delay:.2s">🚀</span>
-          <span style="top:50%;left:8%;animation-delay:.6s">🦈</span>
-        </div>
-        <div>
-          <span class="volc">🌋</span>
-          <div class="ttl">EXPLODING VOLCANOES<br>IN THE BATHTUB!</div>
-          <div class="sub">Tap Play to start splashing →</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== FINAL CTA ===================== -->
-<section class="final">
+<section class="gameband" id="game">
   <div class="wrap">
-    <span class="big-volc">🌋</span>
-    <h2>This is the end, this is the&nbsp;end…</h2>
-    <p>…so go make it erupt. One splash at a time. From our tub to yours. 💙</p>
-    <div class="cta-row">
-      <a class="btn" href="index.html">▶&nbsp; Play the Game</a>
-      <a class="btn ghost" href="#top" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">Back to the top</a>
+    <div class="prose reveal">
+      <div class="eyebrow" style="color:var(--deep)">The Game</div>
+      <h2>Splash it. Fill it. <em style="color:var(--lavaDk)">Blow it up.</em></h2>
+      <p>I built this so my boys, and yours, can play the song. Help Noah splash floating bath toys into the volcano. Get them all in and it <b>ERUPTS</b>, and a new toy joins the tub for the next round. Ten rounds of escalating, joyful chaos, all scored to our song.</p>
+    </div>
+    <div class="phones" tabindex="0" aria-label="Screenshots of the game. Scroll sideways for more.">
+      <figure class="phone"><img src="assets/site/shot-1-start.webp" width="660" height="1434" loading="lazy" alt="The start screen: pick Push or Swipe." /><figcaption>Pick how you throw</figcaption></figure>
+      <figure class="phone"><img src="assets/site/shot-2-aim.webp" width="660" height="1434" loading="lazy" alt="Aiming a toy: a green arc into the volcano and a Let Go sign." /><figcaption>Green means let go</figcaption></figure>
+      <figure class="phone"><img src="assets/site/shot-3-eruption.webp" width="660" height="1434" loading="lazy" alt="The volcano erupting while Noah and Max cheer." /><figcaption>Kaboom!</figcaption></figure>
+      <figure class="phone"><img src="assets/site/shot-4-badges.webp" width="660" height="1434" loading="lazy" alt="The Badges card with bronze, silver and gold medals." /><figcaption>12 badges to earn</figcaption></figure>
+      <figure class="phone"><img src="assets/site/shot-5-my-toys.webp" width="660" height="1434" loading="lazy" alt="The My Toys card where coins buy new toys." /><figcaption>39 toys to collect</figcaption></figure>
+    </div>
+    <ul class="feats">
+      <li class="reveal"><b>Two ways to throw.</b> Push: press and hold, then let go. Swipe: flick the toy at the volcano and bank it off the wall for double points.</li>
+      <li class="reveal"><b>A snowballing collection.</b> Every round adds a new toy. Earn coins by playing and pick your own lineup from 39 toys.</li>
+      <li class="reveal"><b>Watch out for Max.</b> Your little brother swats shots out of the air.</li>
+      <li class="reveal"><b>Grab the hairball</b> for bonus points and extra time. Gross = good.</li>
+      <li class="reveal"><b>Badges and players.</b> 12 badges in bronze, silver and gold, and up to four players on one phone, each with their own toys.</li>
+      <li class="reveal"><b>Scored to the song.</b> Build, overflow, erupt, reset, again.</li>
+    </ul>
+    <div class="cta reveal">
+      <a class="btn store" href="https://apps.apple.com/app/id6834466189">Download on the App Store<small>Free for iPhone</small></a>
+      <a class="btn ghost" href="./">Play In Your Browser<small>Works on any phone or computer</small></a>
     </div>
   </div>
 </section>
+
+<section class="band paper" id="parents">
+  <div class="wrap">
+    <div class="prose reveal">
+      <div class="eyebrow">For Parents</div>
+      <h2>Made the way I'd want it <em>for my own kids.</em></h2>
+      <p>Because it was. Here is what you get, and what you don't.</p>
+    </div>
+    <div class="promise">
+      <div class="reveal"><b>No ads</b><span>Not one, anywhere in the game.</span></div>
+      <div class="reveal"><b>Nothing to buy</b><span>Coins only come from playing. No real money, ever.</span></div>
+      <div class="reveal"><b>Nothing collected</b><span>No accounts, no sign-up, no tracking. Progress stays on your device.</span></div>
+      <div class="reveal"><b>Works offline</b><span>The iPhone app needs no internet. Good for cars and planes.</span></div>
+    </div>
+    <p class="reveal" style="margin-top:26px;font-size:16px">The details are in the <a href="privacy.html"><b>privacy policy</b></a>. Questions or ideas for a new bath toy? See <a href="support.html"><b>support</b></a>.</p>
+  </div>
+</section>
+
+<section class="final tiles">
+  <div class="wrap reveal">
+    <img src="icon-512.png" width="512" height="512" alt="The Exploding Volcanoes app icon." />
+    <h2>This is the end, this is the end…</h2>
+    <p>…so go make it erupt. One splash at a time. From our tub to yours.</p>
+    <div class="cta">
+      <a class="btn store" href="https://apps.apple.com/app/id6834466189">Download on the App Store<small>Free for iPhone</small></a>
+      <a class="btn play" href="./">Play In Your Browser<small>Nothing to install</small></a>
+    </div>
+  </div>
+</section>
+
+</main>
 
 <footer>
-  <p>Made with a guitar, a bathtub, my two boys, and a little AI. <span class="pow">Pow! Pow!</span></p>
-  <p style="margin-top:8px;">— Noah &amp; Max's dad &nbsp;•&nbsp; <a href="index.html">Play the game</a></p>
+  <div class="wrap">
+    <p>Made with a guitar, a bathtub, my two boys, and a little AI. Pow! Pow!</p>
+    <p>Noah &amp; Max's dad &nbsp;·&nbsp; <a href="./">Play the game</a> &nbsp;·&nbsp; <a href="privacy.html">Privacy</a> &nbsp;·&nbsp; <a href="support.html">Support</a> &nbsp;·&nbsp; <a href="mailto:dnachimow@gmail.com">dnachimow@gmail.com</a></p>
+  </div>
 </footer>
 
 <script>
-  // ---- bubbles ----
-  (function(){
-    const box = document.getElementById('bubbles');
-    const N = window.innerWidth < 640 ? 14 : 26;
-    for(let i=0;i<N;i++){
-      const b=document.createElement('i');
-      const s=6+Math.random()*34;
-      b.style.width=b.style.height=s+'px';
-      b.style.left=(Math.random()*100)+'vw';
-      b.style.animationDuration=(9+Math.random()*14)+'s';
-      b.style.animationDelay=(-Math.random()*18)+'s';
-      box.appendChild(b);
-    }
-  })();
-
-  // ---- song player ----
-  (function(){
-    const audio=document.getElementById('song');
-    const btn=document.getElementById('playSong');
-    const eq=document.getElementById('eq');
-    btn.addEventListener('click',()=>{
-      if(audio.paused){
-        audio.play().then(()=>{btn.textContent='❚❚';eq.classList.add('playing');})
-          .catch(()=>{btn.textContent='▶';});
-      } else {
-        audio.pause();btn.textContent='▶';eq.classList.remove('playing');
-      }
-    });
-    audio.addEventListener('ended',()=>{btn.textContent='▶';eq.classList.remove('playing');});
-  })();
-
-  // ---- reveal on scroll ----
-  (function(){
-    const io=new IntersectionObserver((entries)=>{
-      entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
-    },{threshold:.12});
-    document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
-  })();
+// Song player
+(function(){
+  var a=document.getElementById('song'),b=document.getElementById('playbtn'),f=document.getElementById('fill'),t=document.getElementById('time'),tr=document.getElementById('track'),
+      ip=document.getElementById('ico-play'),iz=document.getElementById('ico-pause');
+  function fmt(s){s=Math.max(0,Math.floor(s||0));return Math.floor(s/60)+':'+('0'+s%60).slice(-2);}
+  function ui(){var on=!a.paused;ip.style.display=on?'none':'';iz.style.display=on?'':'none';b.setAttribute('aria-label',on?'Pause the song':'Play the song');}
+  b.addEventListener('click',function(){if(a.paused)a.play().catch(function(){});else a.pause();});
+  a.addEventListener('play',ui);a.addEventListener('pause',ui);a.addEventListener('ended',ui);
+  a.addEventListener('timeupdate',function(){var d=a.duration||0,p=d?a.currentTime/d*100:0;f.style.width=p+'%';tr.setAttribute('aria-valuenow',Math.round(p));t.textContent=fmt(a.currentTime)+(d?' / '+fmt(d):'');});
+  function seek(x){var r=tr.getBoundingClientRect(),d=a.duration;if(d)a.currentTime=Math.min(1,Math.max(0,(x-r.left)/r.width))*d;}
+  tr.addEventListener('click',function(e){seek(e.clientX);});
+  tr.addEventListener('keydown',function(e){if(!a.duration)return;if(e.key==='ArrowRight')a.currentTime=Math.min(a.duration,a.currentTime+5);if(e.key==='ArrowLeft')a.currentTime=Math.max(0,a.currentTime-5);});
+})();
+// Fade sections in as they scroll into view
+(function(){
+  var els=document.querySelectorAll('.reveal');
+  if(!('IntersectionObserver' in window)){els.forEach(function(e){e.classList.add('in');});return;}
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{rootMargin:'0px 0px -8% 0px'});
+  els.forEach(function(e){io.observe(e);});
+})();
 </script>
 </body>
 </html>

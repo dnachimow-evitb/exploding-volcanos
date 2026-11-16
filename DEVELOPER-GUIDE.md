@@ -19,6 +19,7 @@ Last updated: 2026-11-12, at test version v7.45 / live version v7.45.
 | `assets/cover-volcanoes.webp` | Start-screen cover art. |
 | `game-fable-v5.js`, `game.js` + `original.html` | Older versions, kept for reverting. Do not delete. |
 | `.nojekyll` | Makes GitHub Pages publish files as-is. Without it builds were failing. |
+| `story.html`, `assets/site/` | **The story website** (rebuilt 2026-11-16): hero, the song player, Derek's story, the cast, game screenshots, App Store link, a For Parents section. One self-contained page, no outside fonts or scripts. The words are Derek's own; do not rewrite his story copy without asking. `assets/site/` holds its images: toys, Noah, Max and the volcano exported from the game, crops of the cover, and web-sized copies of `native/screenshots/`. `privacy.html` and `support.html` are its companion pages. |
 | `native/` | **The iPhone App Store app** (Capacitor wrapper that packages the live game). Roadmap, checklist and decisions: `native/APP-STORE.md`. Built on GitHub's Macs by `.github/workflows/ios.yml`. |
 
 The whole game is one JavaScript file drawing to one `<canvas>`. No build step, no libraries.
