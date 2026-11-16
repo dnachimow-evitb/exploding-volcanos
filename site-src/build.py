@@ -13,7 +13,7 @@ pages, so a phone that saved an old copy still loads the current one (that bit u
 import re
 from pathlib import Path
 
-VERSION = 14
+VERSION = 15
 SITE = "https://dnachimow-evitb.github.io/exploding-volcanos/"
 APP = "https://apps.apple.com/app/id6834466189"
 here = Path(__file__).parent
