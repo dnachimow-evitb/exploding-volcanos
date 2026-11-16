@@ -16,11 +16,20 @@ a{color:inherit}
 .bar .wrap{display:flex;align-items:center;gap:18px;height:58px}
 .brand{font-weight:900;font-size:18px;text-decoration:none;display:flex;align-items:center;gap:9px;white-space:nowrap}
 .brand img{width:32px;height:32px;border-radius:8px}
-.nav{margin-left:auto;display:flex;gap:20px;font-weight:800;font-size:15px}
-.nav a{text-decoration:none;opacity:.85}.nav a:hover{opacity:1}
+.nav{margin-left:auto;display:flex;gap:18px;font-weight:800;font-size:15px}
+.nav a{text-decoration:none;opacity:.85;white-space:nowrap}.nav a:hover{opacity:1}
 .bar .get{background:var(--hot);color:var(--deep);font-weight:900;font-size:15px;padding:8px 15px;border-radius:10px;text-decoration:none;white-space:nowrap;box-shadow:0 3px 0 #b88a00}
-@media(max-width:760px){.nav{display:none}.bar .get{margin-left:auto}}
-@media(max-width:480px){.bar .wrap{gap:10px;padding:0 14px}.brand{font-size:16px;gap:7px;min-width:0}.brand img{width:28px;height:28px}.bar .get{font-size:14px;padding:7px 11px}}
+/* phones and narrow windows: the menu becomes a second row of pills that scrolls sideways, so every page keeps its navigation */
+@media(max-width:1020px){
+  .bar .wrap{flex-wrap:wrap;height:auto;padding-top:9px;padding-bottom:0;row-gap:8px}
+  .bar .get{margin-left:auto}
+  .nav{order:3;flex:0 0 calc(100% + 44px);margin:0 -22px;padding:0 22px 10px;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .nav::-webkit-scrollbar{display:none}
+  .nav a{flex:0 0 auto;opacity:1;background:rgba(255,255,255,.12);padding:6px 13px;border-radius:999px;font-size:14px;white-space:nowrap}
+}
+section[id],main[id]{scroll-margin-top:66px}
+@media(max-width:1020px){section[id],main[id]{scroll-margin-top:108px}}
+@media(max-width:480px){.bar .wrap{column-gap:10px;padding-left:14px;padding-right:14px}.nav{flex-basis:calc(100% + 28px);margin:0 -14px;padding:0 14px 10px}.brand{font-size:16px;gap:7px;min-width:0}.brand img{width:28px;height:28px}.bar .get{font-size:14px;padding:7px 11px}}
 
 /* buttons, in the game's chunky style */
 .btn{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;min-height:62px;padding:9px 26px;border-radius:14px;font-weight:900;font-size:21px;line-height:1.1;text-decoration:none;color:#fff;transition:transform .08s,box-shadow .08s}
@@ -148,6 +157,7 @@ footer p{margin-bottom:8px}footer a{font-weight:800;color:#fff}
 
 /* ── chapter two: the album (album.html) and its teaser on the story page ── */
 .bar .nav a.here{opacity:1;color:var(--hot)}
+@media(max-width:1020px){.bar .nav a.here{background:var(--hot);color:var(--deep)}}
 .night{background:var(--deep);color:#fff}
 .albumhero{padding:64px 0 74px;position:relative;overflow:hidden}
 .albumhero .wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
@@ -162,6 +172,7 @@ footer p{margin-bottom:8px}footer a{font-weight:800;color:#fff}
 .chapter{max-width:720px}
 .chapter h2{margin-bottom:14px}
 .chapter + .chapter{margin-top:58px}
+.chapter[id]{scroll-margin-top:90px}@media(max-width:1020px){.chapter[id]{scroll-margin-top:124px}}
 .said{font-size:clamp(26px,4vw,40px);line-height:1.15;font-weight:900;color:var(--lava);margin:8px 0 0}
 .sides{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:8px}
 .sides div{border-radius:16px;padding:22px 22px 24px;background:#fff;color:var(--ink);box-shadow:0 8px 0 #060d2e}
