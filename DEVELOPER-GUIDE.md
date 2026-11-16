@@ -67,6 +67,9 @@ If a Pages build sticks or fails: `gh api -X POST repos/dnachimow-evitb/explodin
 
 ### Who writes what (Derek's rule, 2026-11-16)
 - **Words are written by Claude Haiku. Code and design are done by the session's main model.**
+  Update 2026-11-16: Derek found a Haiku passage awkward and said to pick a better model for the wording when
+  needed. Use a larger model through the same subagent route (`model: "opus"`) for short personal prose that
+  has to sound like him; Haiku is fine for plainer copy. Tell him which model wrote what.
   For any copy a person will read on the website (story, album and future pages), hand the writing to a
   Haiku subagent (`Agent` tool with `model: "haiku"`), giving it Derek's facts and his existing pages as the
   voice to match. Do not write or rewrite that copy yourself.

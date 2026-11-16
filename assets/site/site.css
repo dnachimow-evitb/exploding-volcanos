@@ -205,3 +205,13 @@ footer p{margin-bottom:8px}footer a{font-weight:800;color:#fff}
 .next h2{color:#fff;margin-bottom:8px}
 .next p{font-weight:600;color:#dfe7ff;max-width:36em}
 @media(max-width:760px){.next .wrap{grid-template-columns:1fr}}
+
+/* the bridge between the song and the game (story.html #experiment) */
+.bridge{padding:64px 0 70px}
+.fromto{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-top:30px}
+.fromto a{display:flex;flex-direction:column;background:#fff;color:var(--navy);text-decoration:none;font-weight:900;font-size:22px;line-height:1.1;padding:13px 22px 15px;border-radius:14px;box-shadow:0 6px 0 var(--deep)}
+.fromto a small{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--lava);margin-bottom:3px}
+.fromto a.to{background:var(--hot)}
+.fromto a.to small{color:var(--lavaDk)}
+.fromto b{color:var(--hot);font-size:30px;line-height:1;text-shadow:0 3px 0 var(--deep)}
+@media(max-width:480px){.fromto{gap:9px;flex-wrap:nowrap}.fromto a{font-size:18px;padding:10px 14px 12px}.fromto b{font-size:24px}}
