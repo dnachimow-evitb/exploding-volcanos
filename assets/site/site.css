@@ -290,3 +290,18 @@ footer p{margin-bottom:8px}footer a{font-weight:800;color:#fff}
 
 .quote + .next{padding-top:0}
 .quote + .next .wrap{border-top:1px solid rgba(255,255,255,.16);padding-top:54px}
+
+/* album hero: the pile shown as a phone's list of recordings, each stopped at 85% (replaced the sticky notes) */
+.memos{background:#fff;color:var(--ink);border-radius:22px;box-shadow:0 10px 0 #060d2e;padding:16px 16px 14px;max-width:430px;width:100%;justify-self:center}
+.mh{display:flex;justify-content:space-between;align-items:baseline;padding:2px 4px 10px;border-bottom:2px solid #eef1f7}
+.mh b{font-size:21px;font-weight:900;color:var(--navy)}.mh span{font-weight:900;color:#6b7aa6}
+.memos ul{list-style:none}
+.memos li{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:11px 4px;border-bottom:1px solid #eef1f7}
+.memos .pl{width:34px;height:34px;border-radius:50%;background:var(--lava);position:relative;display:block}
+.memos .pl::after{content:"";position:absolute;left:13px;top:10px;border-left:11px solid #fff;border-top:7px solid transparent;border-bottom:7px solid transparent}
+.memos li b{display:block;font-size:15px;font-weight:900;color:var(--navy);line-height:1.1;margin-bottom:3px}
+.memos li svg{width:100%;height:24px;display:block;fill:#9aa7c4}
+.memos li svg .rest{fill:#dbe2f2}
+.memos li span{font-weight:900;font-size:14px;color:var(--lavaDk)}
+.memos .more{font-weight:800;font-size:14px;color:#6b7aa6;text-align:center;padding:11px 0 10px;border-bottom:2px solid #eef1f7}
+.memos .memocap{font-weight:900;font-size:15px;line-height:1.3;color:var(--navy);text-align:center;padding:12px 6px 2px}
