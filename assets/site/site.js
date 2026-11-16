@@ -20,3 +20,12 @@
     if(m&&m[1]!==here)a.setAttribute('href',m[1]+'?v='+v+(m[2]||''));
   });
 })();
+
+// Side rail (wide screens): light up the part of the story that is on screen.
+(function(){
+  var links=document.querySelectorAll('.rail a[data-s]');if(!links.length||!('IntersectionObserver' in window))return;
+  var order=[].map.call(links,function(a){return a.getAttribute('data-s');}),seen={};
+  function paint(){var cur=null;order.forEach(function(id){if(seen[id])cur=id;});[].forEach.call(links,function(a){a.classList.toggle('on',a.getAttribute('data-s')===cur);});}
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){seen[e.target.id]=e.isIntersecting;});paint();},{rootMargin:'-45% 0px -45% 0px'});
+  order.forEach(function(id){var el=document.getElementById(id);if(el)io.observe(el);});
+})();
