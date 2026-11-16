@@ -48,6 +48,17 @@ not tags (the gateway answers "only branch updates are permitted"), so do not pu
 
 If a Pages build sticks or fails: `gh api -X POST repos/dnachimow-evitb/exploding-volcanos/pages/builds`.
 
+### Who writes what (Derek's rule, 2026-11-16)
+- **Words are written by Claude Haiku. Code and design are done by the session's main model.**
+  For any copy a person will read on the website (story, album and future pages), hand the writing to a
+  Haiku subagent (`Agent` tool with `model: "haiku"`), giving it Derek's facts and his existing pages as the
+  voice to match. Do not write or rewrite that copy yourself.
+- Haiku may only use facts Derek has given. Tell it so, and ask it to list what it was tempted to invent.
+- If Haiku's draft drops or distorts something Derek said, send it back to Haiku with the correction, or
+  restore Derek's own words verbatim and tell him. Do not substitute your own phrasing.
+- Derek's own sentences (the story sections of `story.html`) are his; neither model rewrites them unasked.
+- Short functional labels that are part of building a page (button text, alt text, form labels) are code.
+
 ## 3. Map of `game-test.js`
 
 Sections are marked with `// ── NAME ──` comments, in this order:
