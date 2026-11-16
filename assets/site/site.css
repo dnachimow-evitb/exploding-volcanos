@@ -305,3 +305,47 @@ footer p{margin-bottom:8px}footer a{font-weight:800;color:#fff}
 .memos li span{font-weight:900;font-size:14px;color:var(--lavaDk)}
 .memos .more{font-weight:800;font-size:14px;color:#6b7aa6;text-align:center;padding:11px 0 10px;border-bottom:2px solid #eef1f7}
 .memos .memocap{font-weight:900;font-size:15px;line-height:1.3;color:var(--navy);text-align:center;padding:12px 6px 2px}
+
+/* ── 2026-11-16 split into a homepage and three chapter pages ── */
+/* chapter banner at the top of each chapter page */
+.chapterhead{color:#fff;padding:54px 0 62px;position:relative;overflow:hidden}
+.chapterhead .wrap{position:relative}
+.chapterhead h1{font-size:clamp(52px,9vw,104px)}
+.chapterhead .lead{font-size:clamp(19px,2.4vw,24px);line-height:1.45;font-weight:700;max-width:26em;margin-top:18px;text-shadow:0 2px 0 rgba(13,28,84,.55);position:relative;z-index:1}
+.chapterhead .bignum{position:absolute;right:22px;top:50%;transform:translateY(-52%);font-weight:900;font-size:clamp(170px,30vw,330px);line-height:.8;color:transparent;-webkit-text-stroke:4px rgba(255,210,63,.75);pointer-events:none}
+@media(max-width:760px){.chapterhead{padding:36px 0 44px}.chapterhead .bignum{font-size:150px;right:10px;top:auto;bottom:-18px;transform:none;-webkit-text-stroke:3px rgba(255,210,63,.4)}}
+.albumhero .tag{background:#060d2e}
+
+/* homepage: the three chapters */
+#chapters .intro{font-size:20px;font-weight:700;color:var(--navy);max-width:30em;margin-top:-6px}
+.chapters{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:36px}
+.chap{display:flex;flex-direction:column;background:#fff;border-radius:20px;box-shadow:0 9px 0 var(--navy);overflow:hidden;text-decoration:none;color:var(--ink);transition:transform .12s,box-shadow .12s}
+.chap:hover{transform:translateY(-4px);box-shadow:0 13px 0 var(--navy)}
+.chap:active{transform:translateY(4px);box-shadow:0 5px 0 var(--navy)}
+.chap .art{aspect-ratio:16/11;overflow:hidden;display:grid;place-items:center}
+.chap .art img{width:100%;height:100%;object-fit:cover}
+.chap.c1 .art{background:var(--water)}
+.chap.c2 .art{background:var(--wall)}.chap.c2 .art img{object-position:50% 34%}
+.chap.c3 .art{background:var(--deep);padding:16px 18px}
+.chap .txt{padding:20px 22px 24px;display:flex;flex-direction:column;flex:1}
+.chap .k{font-weight:900;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--lava)}
+.chap h3{font-size:32px;line-height:1.05;font-weight:900;color:var(--navy);margin:3px 0 10px}
+.chap p{font-size:16.5px;line-height:1.5;margin-bottom:18px}
+.chap .go{margin-top:auto;align-self:flex-start;background:var(--go);color:#fff;font-weight:900;font-size:16px;padding:10px 16px;border-radius:11px;box-shadow:0 4px 0 var(--goDk)}
+.chap.c3 .go{background:var(--lava);box-shadow:0 4px 0 var(--lavaDk)}
+.chap.c1 .go{background:#5b7fd6;box-shadow:0 4px 0 #34509c}
+.mini{width:100%;display:grid;gap:8px}
+.mini div{display:grid;grid-template-columns:auto 1fr auto;gap:9px;align-items:center;background:#fff;border-radius:10px;padding:6px 10px}
+.mini i{width:18px;height:18px;border-radius:50%;background:var(--lava);display:block}
+.mini svg{width:100%;height:20px;display:block;fill:#9aa7c4}.mini svg .rest{fill:#dbe2f2}
+.mini b{font-size:12px;font-weight:900;color:var(--lavaDk)}
+@media(max-width:900px){.chapters{grid-template-columns:1fr;max-width:520px}.chap .art{aspect-ratio:16/9}}
+
+/* chapter two opens on tiles, so its first section (The Experiment) sits on paper to stand apart from the banner */
+.chapterhead + .bridge{background:var(--paper);color:var(--ink)}
+.chapterhead + .bridge h2{color:var(--navy);text-shadow:none}.chapterhead + .bridge h2 em{color:var(--lava)}
+.chapterhead + .bridge .eyebrow{color:var(--lava)}
+.chapterhead + .bridge .prose p{text-shadow:none;font-weight:400}
+.chapterhead + .bridge .beat .num{-webkit-text-stroke-color:var(--lava)}
+.chapterhead + .bridge .fromto b{color:var(--lava);text-shadow:none}
+.chapterhead + .bridge .fromto a{box-shadow:0 6px 0 var(--navy);border:2px solid #e6ebf7}

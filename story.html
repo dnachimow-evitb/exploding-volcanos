@@ -1,35 +1,33 @@
 <!DOCTYPE html>
-<html lang="en" data-v="12">
+<html lang="en" data-v="13">
 <head>
+<!-- BUILT FILE. Do not edit: change site-src/ and run `python3 site-src/build.py`. -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Exploding Volcanoes in the Bathtub: the story, the song, the game</title>
-<meta name="description" content="A dad, a guitar, and two boys in the tub. How one soggy, giggling bath night became a real song and a free iPhone game." />
+<title>Exploding Volcanoes in the Bathtub: a song, a game and an album</title>
+<meta name="description" content="A dad, a guitar, and two boys in the tub. How one soggy bath night became a real song, a free iPhone game, and then an album." />
 <meta name="theme-color" content="#2a6fdb" />
 <meta name="apple-itunes-app" content="app-id=6834466189" />
 <meta property="og:type" content="website" />
-<meta property="og:title" content="Exploding Volcanoes in the Bathtub" />
-<meta property="og:description" content="A dad, a guitar, and two boys in the tub. The story, the song, and the free game." />
+<meta property="og:title" content="Exploding Volcanoes in the Bathtub: a song, a game and an album" />
+<meta property="og:description" content="A dad, a guitar, and two boys in the tub. How one soggy bath night became a real song, a free iPhone game, and then an album." />
 <meta property="og:url" content="https://dnachimow-evitb.github.io/exploding-volcanos/story.html" />
 <meta property="og:image" content="https://dnachimow-evitb.github.io/exploding-volcanos/assets/site/share.jpg" />
 <meta name="twitter:card" content="summary_large_image" />
 <link rel="icon" href="icon.svg" type="image/svg+xml" />
 <link rel="apple-touch-icon" href="apple-touch-icon.png" />
-<link rel="stylesheet" href="assets/site/site.css?v=12" /><!-- bump the three version numbers (data-v on <html>, ?v= here and on site.js) on EVERY page whenever a page, site.css or site.js changes: phones keep old copies otherwise -->
-
+<link rel="stylesheet" href="assets/site/site.css?v=13" />
 </head>
 <body>
 
 <header class="bar">
   <div class="wrap">
     <a class="brand" href="#top"><img src="apple-touch-icon.png" alt="" width="32" height="32" />Exploding Volcanoes</a>
-    <nav class="nav" aria-label="Sections">
-      <a href="#story" class="here">The Story</a>
-      <a href="#song">The Song</a>
-      <a href="#game">The Game</a>
-      <a href="#cast">The Cast</a>
-      <a href="#parents">For Parents</a>
-      <a href="album.html">The Album</a>
+    <nav class="nav" aria-label="Site">
+      <a href="#top" class="here" aria-current="page">Home</a>
+      <a href="the-song.html?v=13">The Song</a>
+      <a href="the-game.html?v=13">The Game</a>
+      <a href="album.html?v=13">The Album</a>
     </nav>
     <a class="get" href="https://apps.apple.com/app/id6834466189">Get The App</a>
     <button class="menu-btn" id="menubtn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="menu"><i></i><i></i><i></i></button>
@@ -37,10 +35,13 @@
   <div class="menu" id="menu" hidden>
     <div class="wrap">
       <ul>
-        <li><a class="top here" href="#top">The Story<small>Chapter One</small></a>
-          <div class="subs"><a href="#story">01 · The Jam</a><a href="#journey">02 · The AI</a><a href="#song">03 · The Song</a><a href="#experiment">The Experiment</a><a href="#game">04 · The Game</a><a href="#cast">The Cast</a><a href="#parents">For Parents</a></div></li>
-        <li><a class="top" href="album.html">The Album<small>Chapter Two</small></a>
-          <div class="subs"><a href="album.html#pile">The Pile</a><a href="album.html#upload">The Upload</a><a href="album.html#conflict">The Conflict</a><a href="album.html#name">The Name</a></div></li>
+        <li><a class="top here" href="#top">Home<small>The Whole Story</small></a></li>
+        <li><a class="top" href="the-song.html?v=13">The Song<small>Chapter One</small></a>
+          <div class="subs"><a href="the-song.html?v=13#story">01 · The Jam</a><a href="the-song.html?v=13#journey">02 · The AI</a><a href="the-song.html?v=13#song">03 · The Song</a></div></li>
+        <li><a class="top" href="the-game.html?v=13">The Game<small>Chapter Two</small></a>
+          <div class="subs"><a href="the-game.html?v=13#experiment">01 · The Experiment</a><a href="the-game.html?v=13#game">02 · The Game</a><a href="the-game.html?v=13#cast">03 · The Cast</a><a href="the-game.html?v=13#parents">For Parents</a></div></li>
+        <li><a class="top" href="album.html?v=13">The Album<small>Chapter Three</small></a>
+          <div class="subs"><a href="album.html?v=13#pile">The Pile</a><a href="album.html?v=13#upload">The Upload</a><a href="album.html?v=13#conflict">The Conflict</a><a href="album.html?v=13#name">The Name</a></div></li>
         <li><a class="top" href="./">Play The Game<small>Free</small></a></li>
         <li><a class="top" href="https://apps.apple.com/app/id6834466189">Get The iPhone App<small>App Store</small></a></li>
       </ul>
@@ -49,25 +50,19 @@
   </div>
 </header>
 
-<nav class="rail" aria-label="The story in four parts">
-  <a href="#story" data-s="story"><b>01</b><span>The Jam</span></a>
-  <a href="#journey" data-s="journey"><b>02</b><span>The AI</span></a>
-  <a href="#song" data-s="song"><b>03</b><span>The Song</span></a>
-  <a href="#game" data-s="game"><b>04</b><span>The Game</span></a>
-</nav>
-
 <main id="top">
+
 <section class="hero tiles">
   <div class="wrap">
     <div>
       <span class="tag">AI · Music · Parenthood</span>
       <h1>Exploding Volcanoes <em>in the Bathtub</em></h1>
-      <p class="lead">I'm a dad. One soggy, giggling night with my guitar and my two boys in the tub, we made something they couldn't let disappear. So with a little help from AI, I turned it into <b>a real song</b> and <b>a real game</b>. This is how it happened.</p>
+      <p class="lead">I'm a dad. One soggy, giggling night with my guitar and my two boys in the tub, we made something they couldn't let disappear. So with a little help from AI, I turned it into <b>a real song</b> and <b>a real game</b>, and that led to <b>an album</b>. This is how it happened.</p>
       <div class="cta">
         <a class="btn store" href="https://apps.apple.com/app/id6834466189">Download on the App Store<small>Free for iPhone</small></a>
         <a class="btn play" href="./">Play In Your Browser<small>Nothing to install</small></a>
       </div>
-      <p class="herolinks"><a href="#song">Hear the song</a><span aria-hidden="true">·</span><a href="#story">Read how it happened</a></p>
+      <p class="herolinks"><a href="the-song.html?v=13#song">Hear the song</a><span aria-hidden="true">·</span><a href="#chapters">See the three chapters</a></p>
     </div>
     <figure class="photo">
       <img src="assets/site/cover-900.webp" width="900" height="900" alt="Cartoon cover art: two laughing boys in a bubble bath around an erupting toy volcano, with a guitar leaning on the tub." />
@@ -87,169 +82,33 @@
   </div>
 </section>
 
-<section class="band paper" id="story">
-  <div class="wrap">
-    <header class="beat reveal">
-      <span class="num" aria-hidden="true">01</span>
-      <div><div class="eyebrow">The Jam</div><h2>It started with <em>splashing.</em></h2></div>
-    </header>
-    <div class="split">
-      <div class="prose reveal">
-      <p>One ordinary night, I sat on the edge of the tub with my guitar while my two boys, <b>Noah and Max</b>, did what kids do: splash, shriek, and turn bathwater into weather. I started strumming along, narrating the chaos as it happened. When the water heaved over the side, I called it what it obviously was: <span class="pull">an exploding volcano.</span></p>
-      <p>I enjoy writing music, and when something catchy turns up while I'm strumming, I hit record so I don't lose it. That night, when we found something catchy in the middle of the splashing, I did exactly that.</p>
-      <p>No studio, no band, no second take. Just my phone catching a loud, rough, off-the-cuff jam, my guitar, and two kids as pure forces of nature yelling <b>“Look, Daddy, look!”</b></p>
-      <p>It was the kind of fleeting moment I'd normally lose to time. This one, I didn't.</p>
-      </div>
-      <figure class="snap reveal">
-        <img src="assets/site/dad-guitar.webp" width="400" height="400" alt="Detail from the cover art: a guitar covered in stickers leaning against the bathtub." />
-        <figcaption>Me on guitar, my boys splashing, narrating it live. Raw, unpolished, of-the-moment.</figcaption>
-      </figure>
-    </div>
-  </div>
-</section>
-
-<section class="band tiles wallband" id="journey">
-  <div class="wrap">
-    <header class="beat reveal">
-      <span class="num" aria-hidden="true">02</span>
-      <div><div class="eyebrow">The AI</div><h2>From a rough take to <em>the real thing.</em></h2></div>
-    </header>
-    <div class="prose reveal">
-      <p>Here's the part I didn't plan. Noah and Max kept asking to hear “the song”, like it was any other track on Spotify. But all I had was a rough, rambling 8-minute cut on my phone. So, half as a joke, I fed it to AI to see what it would do.</p>
-      <p>What came back blew me away. A couple of years ago this is where the moment would've ended: a clip buried on my iPhone. Instead, that messy recording went in one end, and a song I'm genuinely proud of came out the other.</p>
-    </div>
-    <div class="morph reveal" role="img" aria-label="An 8-minute rough phone recording goes through AI and comes out as a finished song.">
-      <div class="take rough"><small>On My Phone</small><b>8 minutes</b><svg viewBox="0 0 235 48" aria-hidden="true"><rect x="0" y="16.5" width="4" height="15.0" rx="2"/><rect x="7" y="10.7" width="4" height="26.7" rx="2"/><rect x="14" y="14.0" width="4" height="20.1" rx="2"/><rect x="21" y="9.5" width="4" height="28.9" rx="2"/><rect x="28" y="9.1" width="4" height="29.8" rx="2"/><rect x="35" y="19.8" width="4" height="8.5" rx="2"/><rect x="42" y="20.7" width="4" height="6.5" rx="2"/><rect x="49" y="5.1" width="4" height="37.8" rx="2"/><rect x="56" y="16.1" width="4" height="15.9" rx="2"/><rect x="63" y="16.5" width="4" height="14.9" rx="2"/><rect x="70" y="2.1" width="4" height="43.8" rx="2"/><rect x="77" y="12.1" width="4" height="23.9" rx="2"/><rect x="84" y="5.1" width="4" height="37.8" rx="2"/><rect x="91" y="11.9" width="4" height="24.1" rx="2"/><rect x="98" y="8.9" width="4" height="30.3" rx="2"/><rect x="105" y="18.1" width="4" height="11.7" rx="2"/><rect x="112" y="8.9" width="4" height="30.1" rx="2"/><rect x="119" y="4.5" width="4" height="39.0" rx="2"/><rect x="126" y="11.1" width="4" height="25.9" rx="2"/><rect x="133" y="6.9" width="4" height="34.2" rx="2"/><rect x="140" y="8.2" width="4" height="31.5" rx="2"/><rect x="147" y="19.8" width="4" height="8.4" rx="2"/><rect x="154" y="6.6" width="4" height="34.8" rx="2"/><rect x="161" y="9.8" width="4" height="28.5" rx="2"/><rect x="168" y="15.3" width="4" height="17.4" rx="2"/><rect x="175" y="20.4" width="4" height="7.2" rx="2"/><rect x="182" y="4.6" width="4" height="38.9" rx="2"/><rect x="189" y="12.0" width="4" height="24.0" rx="2"/><rect x="196" y="7.3" width="4" height="33.3" rx="2"/><rect x="203" y="4.3" width="4" height="39.4" rx="2"/><rect x="210" y="7.4" width="4" height="33.1" rx="2"/><rect x="217" y="3.5" width="4" height="41.0" rx="2"/><rect x="224" y="13.5" width="4" height="21.0" rx="2"/><rect x="231" y="5.8" width="4" height="36.4" rx="2"/></svg><span>Rough and rambling</span></div>
-      <div class="via"><i>→</i><b>AI</b><i>→</i></div>
-      <div class="take done"><small>The Song</small><b>3:29</b><svg viewBox="0 0 235 48" aria-hidden="true"><rect x="0" y="16.4" width="4" height="15.1" rx="2"/><rect x="7" y="10.8" width="4" height="26.3" rx="2"/><rect x="14" y="6.3" width="4" height="35.3" rx="2"/><rect x="21" y="3.3" width="4" height="41.5" rx="2"/><rect x="28" y="3.2" width="4" height="41.5" rx="2"/><rect x="35" y="4.5" width="4" height="39.1" rx="2"/><rect x="42" y="10.4" width="4" height="27.3" rx="2"/><rect x="49" y="14.2" width="4" height="19.5" rx="2"/><rect x="56" y="12.8" width="4" height="22.4" rx="2"/><rect x="63" y="8.6" width="4" height="30.7" rx="2"/><rect x="70" y="4.4" width="4" height="39.2" rx="2"/><rect x="77" y="4.8" width="4" height="38.5" rx="2"/><rect x="84" y="4.5" width="4" height="39.0" rx="2"/><rect x="91" y="7.9" width="4" height="32.3" rx="2"/><rect x="98" y="11.5" width="4" height="24.9" rx="2"/><rect x="105" y="16.3" width="4" height="15.3" rx="2"/><rect x="112" y="12.5" width="4" height="23.1" rx="2"/><rect x="119" y="7.6" width="4" height="32.7" rx="2"/><rect x="126" y="4.9" width="4" height="38.3" rx="2"/><rect x="133" y="2.8" width="4" height="42.4" rx="2"/><rect x="140" y="5.0" width="4" height="38.0" rx="2"/><rect x="147" y="10.2" width="4" height="27.6" rx="2"/><rect x="154" y="13.6" width="4" height="20.8" rx="2"/><rect x="161" y="14.6" width="4" height="18.8" rx="2"/><rect x="168" y="8.5" width="4" height="30.9" rx="2"/><rect x="175" y="6.2" width="4" height="35.5" rx="2"/><rect x="182" y="5.0" width="4" height="37.9" rx="2"/><rect x="189" y="3.6" width="4" height="40.8" rx="2"/><rect x="196" y="8.1" width="4" height="31.8" rx="2"/><rect x="203" y="12.6" width="4" height="22.9" rx="2"/><rect x="210" y="15.1" width="4" height="17.8" rx="2"/><rect x="217" y="10.1" width="4" height="27.8" rx="2"/><rect x="224" y="7.3" width="4" height="33.4" rx="2"/><rect x="231" y="3.1" width="4" height="41.8" rx="2"/></svg><span>Finished</span></div>
-    </div>
-    <p class="kick reveal">I ran the rough recording through AI music (Suno): the bridge from my mess to something real.</p>
-  </div>
-</section>
-
-<section class="songband" id="song">
-  <svg class="wavetop" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 28 Q90 4 180 26 T360 26 T540 26 T720 26 T900 26 T1080 26 T1260 26 T1440 26 V60 H0Z"/></svg>
-  <div class="wrap">
-    <header class="beat reveal">
-      <span class="num" aria-hidden="true">03</span>
-      <div><div class="eyebrow">The Song</div><h2>“Exploding Volcanoes <em>in the Bathtub”</em></h2></div>
-    </header>
-    <div class="outcome reveal"><span class="stamp">Outcome One</span></div>
-    <div class="song reveal">
-      <button id="playbtn" type="button" aria-label="Play the song">
-        <svg id="ico-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>
-        <svg id="ico-pause" viewBox="0 0 24 24" aria-hidden="true" style="display:none"><path d="M6 4.5h4.4v15H6zM13.6 4.5H18v15h-4.4z"/></svg>
-      </button>
-      <div>
-        <h3>Press play</h3>
-        <p>The actual track. It started as me messing around on guitar. AI helped me finish it.</p>
-        <div class="track" id="track" role="slider" aria-label="Song position" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"><i id="fill"></i></div>
-        <div class="time" id="time">0:00</div>
-      </div>
-    </div>
-    <audio id="songaudio" src="song.mp3" preload="none"></audio>
-    <p class="kick dark reveal">Out came a produced track with a hook my kids now shout: “This is the end, this is the end.” Pow! Pow!</p>
-  </div>
-</section>
-
-<section class="band tiles wallband bridge" id="experiment">
-  <div class="wrap">
-    <div class="prose reveal">
-      <div class="eyebrow">The Experiment</div>
-      <h2>Then I got <em>curious.</em></h2>
-      <p>Once we had the song, I wasn't ready to stop. I work in tech and AI for a living, so I opened Claude Code and tried those same skills on something much sillier. Mostly, I wanted to see how far I could push it.</p>
-    </div>
-    <div class="fromto reveal" aria-label="From the song to the game">
-      <a href="#journey"><small>First</small>The Song</a>
-      <b aria-hidden="true">→</b>
-      <a href="#game" class="to"><small>Then</small>The Game</a>
-    </div>
-  </div>
-</section>
-
-<section class="gameband" id="game">
-  <div class="wrap">
-    <header class="beat reveal">
-      <span class="num" aria-hidden="true">04</span>
-      <div><div class="eyebrow">The Game</div><h2>Splash it. Fill it. <em style="color:var(--lavaDk)">Blow it up.</em></h2></div>
-    </header>
-    <div class="outcome reveal"><span class="stamp">Outcome Two</span></div>
-    <div class="prose reveal">
-      <p class="kick dark" style="margin-top:0">Then I built the song into a game we can actually play together. The moment, made forever.</p>
-      <p>I built this so my boys, and yours, can play the song. Help Noah splash floating bath toys into the volcano. Get them all in and it <b>ERUPTS</b>, and a new toy joins the tub for the next round. Ten rounds of escalating, joyful chaos, all scored to our song.</p>
-    </div>
-    <div class="phones" tabindex="0" aria-label="Screenshots of the game. Scroll sideways for more.">
-      <figure class="phone"><img src="assets/site/shot-1-start.webp" width="660" height="1434" loading="lazy" alt="The start screen: pick Push or Swipe." /><figcaption>Pick how you throw</figcaption></figure>
-      <figure class="phone"><img src="assets/site/shot-2-aim.webp" width="660" height="1434" loading="lazy" alt="Aiming a toy: a green arc into the volcano and a Let Go sign." /><figcaption>Green means let go</figcaption></figure>
-      <figure class="phone"><img src="assets/site/shot-3-eruption.webp" width="660" height="1434" loading="lazy" alt="The volcano erupting while Noah and Max cheer." /><figcaption>Kaboom!</figcaption></figure>
-      <figure class="phone"><img src="assets/site/shot-4-badges.webp" width="660" height="1434" loading="lazy" alt="The Badges card with bronze, silver and gold medals." /><figcaption>12 badges to earn</figcaption></figure>
-      <figure class="phone"><img src="assets/site/shot-5-my-toys.webp" width="660" height="1434" loading="lazy" alt="The My Toys card where coins buy new toys." /><figcaption>39 toys to collect</figcaption></figure>
-    </div>
-    <ul class="feats">
-      <li class="reveal"><b>Two ways to throw.</b> Push: press and hold, then let go. Swipe: flick the toy at the volcano and bank it off the wall for double points.</li>
-      <li class="reveal"><b>A snowballing collection.</b> Every round adds a new toy. Earn coins by playing and pick your own lineup from 39 toys.</li>
-      <li class="reveal"><b>Watch out for Max.</b> Your little brother swats shots out of the air.</li>
-      <li class="reveal"><b>Grab the hairball</b> for bonus points and extra time. Gross = good.</li>
-      <li class="reveal"><b>Badges and players.</b> 12 badges in bronze, silver and gold, and up to four players on one phone, each with their own toys.</li>
-      <li class="reveal"><b>Scored to the song.</b> Build, overflow, erupt, reset, again.</li>
-    </ul>
-    <div class="loop onwater reveal" aria-label="How every round goes"><span>Build up</span><b>→</b><span>Overflow</span><b>→</b><span class="boom">ERUPT!</span><b>→</b><span>Reset</span><b>→</b><span>Again!</span></div>
-    <div class="cta reveal">
-      <a class="btn store" href="https://apps.apple.com/app/id6834466189">Download on the App Store<small>Free for iPhone</small></a>
-      <a class="btn ghost" href="./">Play In Your Browser<small>Works on any phone or computer</small></a>
-    </div>
-  </div>
-</section>
-
-<section class="band paper" id="cast">
+<section class="band paper" id="chapters">
   <div class="wrap">
     <div class="reveal">
-      <div class="eyebrow">The Cast</div>
-      <h2>Everyone in <em>the tub.</em></h2>
+      <div class="eyebrow">In Three Chapters</div>
+      <h2>A song, a game, <em>and an album.</em></h2>
+      <p class="intro">Each time, I figured that was the whole story. It wasn't.</p>
     </div>
-    <div class="cast">
-      <article class="who reveal"><div class="pic"><img src="assets/site/noah.webp" width="400" height="400" alt="Noah as he appears in the game: dark spiky hair, arms up, huge grin." /></div><div class="txt"><h3>Noah</h3><p>The main splasher. Messy dark hair, giant grin: the exploding volcano himself.</p></div></article>
-      <article class="who reveal"><div class="pic"><img src="assets/site/max.webp" width="400" height="400" alt="Max as he appears in the game: ginger hair, freckles, arms up, laughing." /></div><div class="txt"><h3>Max</h3><p>Ginger, freckled little brother. The mischievous rival who tries to block your shots.</p></div></article>
-      <article class="who reveal"><div class="pic"><img src="assets/site/dad-guitar.webp" width="400" height="400" alt="The guitar leaning on the tub." /></div><div class="txt"><h3>Me (Dad)</h3><p>The guy on the guitar, the narrator, the one-man audience, and the one who stitched it all together with AI.</p></div></article>
-      <article class="who reveal"><div class="pic"><img src="assets/site/volcano.webp" width="400" height="400" alt="The game's smiling volcano erupting in the bath." /></div><div class="txt"><h3>The Volcano</h3><p>Googly-eyed, grinning, and always about to blow. Fill it up until it just can't hold on.</p></div></article>
-      <article class="who reveal"><div class="pic one"><img src="assets/site/toy-hairball.webp" width="240" height="240" alt="The hairball from the game." /></div><div class="txt"><h3>The Hairball</h3><p>“A bit of hair on my volcano again.” Gross, goofy, and worth bonus points.</p></div></article>
-      <article class="who reveal"><div class="pic toys"><img src="assets/site/toy-truck.webp" width="240" height="240" alt="" /><img src="assets/site/toy-rocket.webp" width="240" height="240" alt="" /><img src="assets/site/toy-unicorn.webp" width="240" height="240" alt="" /></div><div class="txt"><h3>The Toys</h3><p>Ducks, dinos, boats, monster trucks, sharks, rockets: the ammunition of the tub.</p></div></article>
+    <div class="chapters">
+      <a class="chap c1 reveal" href="the-song.html?v=13">
+        <div class="art"><img src="assets/site/dad-guitar.webp" width="400" height="400" alt="" loading="lazy" /></div>
+        <div class="txt"><span class="k">Chapter One</span><h3>The Song</h3>
+          <p>It started as a bath-night jam and a rough 8 minutes on my phone. Then, half as a joke, I fed it to AI.</p>
+          <span class="go">Read Chapter One</span></div>
+      </a>
+      <a class="chap c2 reveal" href="the-game.html?v=13">
+        <div class="art"><img src="assets/site/shot-3-eruption.webp" width="660" height="1434" alt="" loading="lazy" /></div>
+        <div class="txt"><span class="k">Chapter Two</span><h3>The Game</h3>
+          <p>I wanted to see how far I could push it, so I built the song into a game my boys can play. Yours can too, free, with no ads and nothing to buy.</p>
+          <span class="go">Read Chapter Two</span></div>
+      </a>
+      <a class="chap c3 reveal" href="album.html?v=13">
+        <div class="art"><div class="mini"><div><i></i><svg viewBox="0 0 130 26" aria-hidden="true"><rect x="0" y="1.9" width="3.4" height="22.2" rx="1.7"/><rect x="6" y="4.0" width="3.4" height="18.0" rx="1.7"/><rect x="12" y="3.2" width="3.4" height="19.6" rx="1.7"/><rect x="18" y="1.9" width="3.4" height="22.2" rx="1.7"/><rect x="24" y="8.0" width="3.4" height="9.9" rx="1.7"/><rect x="30" y="4.5" width="3.4" height="17.1" rx="1.7"/><rect x="36" y="1.9" width="3.4" height="22.2" rx="1.7"/><rect x="42" y="2.2" width="3.4" height="21.6" rx="1.7"/><rect x="48" y="5.1" width="3.4" height="15.9" rx="1.7"/><rect x="54" y="8.9" width="3.4" height="8.2" rx="1.7"/><rect x="60" y="6.6" width="3.4" height="12.8" rx="1.7"/><rect x="66" y="1.1" width="3.4" height="23.9" rx="1.7"/><rect x="72" y="9.5" width="3.4" height="7.0" rx="1.7"/><rect x="78" y="7.5" width="3.4" height="11.1" rx="1.7"/><rect x="84" y="1.5" width="3.4" height="23.1" rx="1.7"/><rect x="90" y="6.2" width="3.4" height="13.5" rx="1.7"/><rect x="96" y="8.5" width="3.4" height="9.0" rx="1.7"/><rect x="102" y="7.5" width="3.4" height="11.0" rx="1.7"/><rect x="108" y="1.9" width="3.4" height="22.3" rx="1.7"/><rect class="rest" x="114" y="7.3" width="3.4" height="11.4" rx="1.7"/><rect class="rest" x="120" y="6.4" width="3.4" height="13.1" rx="1.7"/><rect class="rest" x="126" y="4.5" width="3.4" height="16.9" rx="1.7"/></svg><b>85%</b></div><div><i></i><svg viewBox="0 0 130 26" aria-hidden="true"><rect x="0" y="8.9" width="3.4" height="8.1" rx="1.7"/><rect x="6" y="3.9" width="3.4" height="18.1" rx="1.7"/><rect x="12" y="4.5" width="3.4" height="17.1" rx="1.7"/><rect x="18" y="5.9" width="3.4" height="14.1" rx="1.7"/><rect x="24" y="8.4" width="3.4" height="9.1" rx="1.7"/><rect x="30" y="3.0" width="3.4" height="20.1" rx="1.7"/><rect x="36" y="2.8" width="3.4" height="20.3" rx="1.7"/><rect x="42" y="5.6" width="3.4" height="14.7" rx="1.7"/><rect x="48" y="5.7" width="3.4" height="14.6" rx="1.7"/><rect x="54" y="8.3" width="3.4" height="9.5" rx="1.7"/><rect x="60" y="10.5" width="3.4" height="5.1" rx="1.7"/><rect x="66" y="7.0" width="3.4" height="12.0" rx="1.7"/><rect x="72" y="4.9" width="3.4" height="16.1" rx="1.7"/><rect x="78" y="9.8" width="3.4" height="6.3" rx="1.7"/><rect x="84" y="3.0" width="3.4" height="20.1" rx="1.7"/><rect x="90" y="8.3" width="3.4" height="9.4" rx="1.7"/><rect x="96" y="8.3" width="3.4" height="9.4" rx="1.7"/><rect x="102" y="10.1" width="3.4" height="5.8" rx="1.7"/><rect x="108" y="1.0" width="3.4" height="24.0" rx="1.7"/><rect class="rest" x="114" y="3.5" width="3.4" height="19.0" rx="1.7"/><rect class="rest" x="120" y="2.2" width="3.4" height="21.6" rx="1.7"/><rect class="rest" x="126" y="4.6" width="3.4" height="16.7" rx="1.7"/></svg><b>85%</b></div><div><i></i><svg viewBox="0 0 130 26" aria-hidden="true"><rect x="0" y="1.4" width="3.4" height="23.2" rx="1.7"/><rect x="6" y="9.2" width="3.4" height="7.7" rx="1.7"/><rect x="12" y="10.3" width="3.4" height="5.4" rx="1.7"/><rect x="18" y="1.0" width="3.4" height="24.0" rx="1.7"/><rect x="24" y="8.7" width="3.4" height="8.5" rx="1.7"/><rect x="30" y="9.4" width="3.4" height="7.3" rx="1.7"/><rect x="36" y="4.3" width="3.4" height="17.4" rx="1.7"/><rect x="42" y="7.2" width="3.4" height="11.6" rx="1.7"/><rect x="48" y="2.0" width="3.4" height="21.9" rx="1.7"/><rect x="54" y="8.3" width="3.4" height="9.4" rx="1.7"/><rect x="60" y="1.4" width="3.4" height="23.2" rx="1.7"/><rect x="66" y="7.5" width="3.4" height="11.1" rx="1.7"/><rect x="72" y="4.8" width="3.4" height="16.4" rx="1.7"/><rect x="78" y="1.6" width="3.4" height="22.7" rx="1.7"/><rect x="84" y="4.0" width="3.4" height="18.0" rx="1.7"/><rect x="90" y="1.7" width="3.4" height="22.6" rx="1.7"/><rect x="96" y="3.8" width="3.4" height="18.5" rx="1.7"/><rect x="102" y="10.0" width="3.4" height="5.9" rx="1.7"/><rect x="108" y="2.1" width="3.4" height="21.7" rx="1.7"/><rect class="rest" x="114" y="4.9" width="3.4" height="16.2" rx="1.7"/><rect class="rest" x="120" y="7.5" width="3.4" height="10.9" rx="1.7"/><rect class="rest" x="126" y="8.7" width="3.4" height="8.6" rx="1.7"/></svg><b>85%</b></div><div><i></i><svg viewBox="0 0 130 26" aria-hidden="true"><rect x="0" y="1.7" width="3.4" height="22.6" rx="1.7"/><rect x="6" y="1.5" width="3.4" height="23.0" rx="1.7"/><rect x="12" y="2.0" width="3.4" height="22.0" rx="1.7"/><rect x="18" y="9.7" width="3.4" height="6.6" rx="1.7"/><rect x="24" y="4.9" width="3.4" height="16.2" rx="1.7"/><rect x="30" y="6.5" width="3.4" height="13.1" rx="1.7"/><rect x="36" y="5.5" width="3.4" height="15.1" rx="1.7"/><rect x="42" y="9.3" width="3.4" height="7.5" rx="1.7"/><rect x="48" y="8.7" width="3.4" height="8.6" rx="1.7"/><rect x="54" y="6.3" width="3.4" height="13.4" rx="1.7"/><rect x="60" y="8.4" width="3.4" height="9.2" rx="1.7"/><rect x="66" y="6.2" width="3.4" height="13.6" rx="1.7"/><rect x="72" y="10.3" width="3.4" height="5.5" rx="1.7"/><rect x="78" y="9.7" width="3.4" height="6.6" rx="1.7"/><rect x="84" y="3.8" width="3.4" height="18.5" rx="1.7"/><rect x="90" y="6.5" width="3.4" height="13.0" rx="1.7"/><rect x="96" y="5.6" width="3.4" height="14.7" rx="1.7"/><rect x="102" y="3.5" width="3.4" height="18.9" rx="1.7"/><rect x="108" y="7.1" width="3.4" height="11.8" rx="1.7"/><rect class="rest" x="114" y="10.0" width="3.4" height="6.1" rx="1.7"/><rect class="rest" x="120" y="3.1" width="3.4" height="19.9" rx="1.7"/><rect class="rest" x="126" y="4.9" width="3.4" height="16.2" rx="1.7"/></svg><b>85%</b></div></div></div>
+        <div class="txt"><span class="k">Chapter Three</span><h3>The Album</h3>
+          <p>Twenty years of half-finished song ideas, my fifteen best, one upload. And a part I still can't settle.</p>
+          <span class="go">Read Chapter Three</span></div>
+      </a>
     </div>
-  </div>
-</section>
-
-<section class="band paper" id="parents">
-  <div class="wrap">
-    <div class="prose reveal">
-      <div class="eyebrow">For Parents</div>
-      <h2>Made the way I'd want it <em>for my own kids.</em></h2>
-      <p>Because it was. Here is what you get, and what you don't.</p>
-    </div>
-    <div class="promise">
-      <div class="reveal"><b>No ads</b><span>Not one, anywhere in the game.</span></div>
-      <div class="reveal"><b>Nothing to buy</b><span>Coins only come from playing. No real money, ever.</span></div>
-      <div class="reveal"><b>Nothing collected</b><span>No accounts, no sign-up, no tracking. Progress stays on your device.</span></div>
-      <div class="reveal"><b>Works offline</b><span>The iPhone app needs no internet. Good for cars and planes.</span></div>
-    </div>
-    <p class="reveal" style="margin-top:26px;font-size:16px">The details are in the <a href="privacy.html"><b>privacy policy</b></a>. Questions or ideas for a new bath toy? See <a href="support.html"><b>support</b></a>.</p>
-  </div>
-</section>
-
-<section class="quote">
-  <div class="wrap reveal">
-    <blockquote>I'm a dad with a guitar. And AI let me turn a soggy, giggling bathtub moment into <em>a produced song</em> and <em>a game my kids can play.</em></blockquote>
-    <p>That's the combination I can't stop thinking about: AI + music + parenthood, closing the gap between a fleeting family moment and something finished, something that lasts.</p>
-  </div>
-</section>
-
-<section class="next" aria-label="The next chapter">
-  <div class="wrap reveal">
-    <div>
-      <div class="eyebrow">Chapter Two</div>
-      <h2>Okay, so now it's an album.</h2>
-      <p>First came the one song, then the game, and I figured that was the whole story. It wasn't.</p>
-    </div>
-    <a class="btn ghost" href="album.html">Read The Next Part<small>The album</small></a>
   </div>
 </section>
 
@@ -270,32 +129,13 @@
 <footer>
   <div class="wrap">
     <p>Made with a guitar, a bathtub, my two boys, and a little AI. Pow! Pow!</p>
-    <p>Noah &amp; Max's dad &nbsp;·&nbsp; <a href="./">Play the game</a> &nbsp;·&nbsp; <a href="album.html">The album</a> &nbsp;·&nbsp; <a href="privacy.html">Privacy</a> &nbsp;·&nbsp; <a href="support.html">Support</a> &nbsp;·&nbsp; <a href="mailto:dnachimow@gmail.com">dnachimow@gmail.com</a></p>
+    <p>Noah &amp; Max's dad &nbsp;·&nbsp; <a href="the-song.html?v=13">The Song</a> &nbsp;·&nbsp; <a href="the-game.html?v=13">The Game</a> &nbsp;·&nbsp; <a href="album.html?v=13">The Album</a> &nbsp;·&nbsp; <a href="./">Play the game</a> &nbsp;·&nbsp; <a href="privacy.html">Privacy</a> &nbsp;·&nbsp; <a href="support.html">Support</a> &nbsp;·&nbsp; <a href="mailto:dnachimow@gmail.com">dnachimow@gmail.com</a></p>
   </div>
 </footer>
 
 <script>
-// Song player
-(function(){
-  var a=document.getElementById('songaudio'),b=document.getElementById('playbtn'),f=document.getElementById('fill'),t=document.getElementById('time'),tr=document.getElementById('track'),
-      ip=document.getElementById('ico-play'),iz=document.getElementById('ico-pause');
-  function fmt(s){s=Math.max(0,Math.floor(s||0));return Math.floor(s/60)+':'+('0'+s%60).slice(-2);}
-  function ui(){var on=!a.paused;ip.style.display=on?'none':'';iz.style.display=on?'':'none';b.setAttribute('aria-label',on?'Pause the song':'Play the song');}
-  b.addEventListener('click',function(){if(a.paused)a.play().catch(function(){});else a.pause();});
-  a.addEventListener('play',ui);a.addEventListener('pause',ui);a.addEventListener('ended',ui);
-  a.addEventListener('timeupdate',function(){var d=a.duration||0,p=d?a.currentTime/d*100:0;f.style.width=p+'%';tr.setAttribute('aria-valuenow',Math.round(p));t.textContent=fmt(a.currentTime)+(d?' / '+fmt(d):'');});
-  function seek(x){var r=tr.getBoundingClientRect(),d=a.duration;if(d)a.currentTime=Math.min(1,Math.max(0,(x-r.left)/r.width))*d;}
-  tr.addEventListener('click',function(e){seek(e.clientX);});
-  tr.addEventListener('keydown',function(e){if(!a.duration)return;if(e.key==='ArrowRight')a.currentTime=Math.min(a.duration,a.currentTime+5);if(e.key==='ArrowLeft')a.currentTime=Math.max(0,a.currentTime-5);});
-})();
-// Fade sections in as they scroll into view
-(function(){
-  var els=document.querySelectorAll('.reveal');
-  if(!('IntersectionObserver' in window)){els.forEach(function(e){e.classList.add('in');});return;}
-  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{rootMargin:'0px 0px -8% 0px'});
-  els.forEach(function(e){io.observe(e);});
-})();
+(function(){var m={"story": "the-song.html", "journey": "the-song.html", "song": "the-song.html", "experiment": "the-game.html", "game": "the-game.html", "cast": "the-game.html", "parents": "the-game.html"},h=location.hash.slice(1);if(m[h])location.replace(m[h]+'?v=13#'+h);})();
 </script>
-<script src="assets/site/site.js?v=12"></script>
+<script src="assets/site/site.js?v=13"></script>
 </body>
 </html>

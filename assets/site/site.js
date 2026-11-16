@@ -1,4 +1,4 @@
-// Story website: the hamburger menu (phones and narrow windows). Shared by story.html and album.html.
+// Story website scripts, shared by every page built from site-src/. First: the hamburger menu.
 (function(){
   var btn=document.getElementById('menubtn'),menu=document.getElementById('menu');
   if(!btn||!menu)return;
@@ -10,16 +10,6 @@
   window.addEventListener('resize',function(){if(window.innerWidth>1020)set(false);});
 })();
 
-// Links between the site's own pages carry the site version (?v=N), so following one always fetches the current
-// page and never an old copy a phone has saved. Section links within the same page are left alone.
-(function(){
-  var v=document.documentElement.getAttribute('data-v');if(!v)return;
-  var here=location.pathname.split('/').pop()||'index.html';
-  document.querySelectorAll('a[href]').forEach(function(a){
-    var m=(a.getAttribute('href')||'').match(/^(story\.html|album\.html)(#.*)?$/);
-    if(m&&m[1]!==here)a.setAttribute('href',m[1]+'?v='+v+(m[2]||''));
-  });
-})();
 
 // Side rail (wide screens): light up the part of the story that is on screen.
 (function(){
@@ -28,4 +18,12 @@
   function paint(){var cur=null;order.forEach(function(id){if(seen[id])cur=id;});[].forEach.call(links,function(a){a.classList.toggle('on',a.getAttribute('data-s')===cur);});}
   var io=new IntersectionObserver(function(es){es.forEach(function(e){seen[e.target.id]=e.isIntersecting;});paint();},{rootMargin:'-45% 0px -45% 0px'});
   order.forEach(function(id){var el=document.getElementById(id);if(el)io.observe(el);});
+})();
+
+// Fade sections in as they scroll into view.
+(function(){
+  var els=document.querySelectorAll('.reveal');
+  if(!('IntersectionObserver' in window)){[].forEach.call(els,function(e){e.classList.add('in');});return;}
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{rootMargin:'0px 0px -8% 0px'});
+  [].forEach.call(els,function(e){io.observe(e);});
 })();
