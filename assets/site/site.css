@@ -19,17 +19,33 @@ a{color:inherit}
 .nav{margin-left:auto;display:flex;gap:18px;font-weight:800;font-size:15px}
 .nav a{text-decoration:none;opacity:.85;white-space:nowrap}.nav a:hover{opacity:1}
 .bar .get{background:var(--hot);color:var(--deep);font-weight:900;font-size:15px;padding:8px 15px;border-radius:10px;text-decoration:none;white-space:nowrap;box-shadow:0 3px 0 #b88a00}
-/* phones and narrow windows: the menu becomes a second row of pills that scrolls sideways, so every page keeps its navigation */
+/* phones and narrow windows: the inline links give way to a hamburger button that opens the full site menu */
+.menu-btn{display:none;width:44px;height:44px;border:0;border-radius:10px;background:rgba(255,255,255,.12);cursor:pointer;position:relative;flex:0 0 auto}
+.menu-btn i{position:absolute;left:11px;right:11px;height:3px;border-radius:2px;background:#fff;transition:transform .2s,opacity .2s,top .2s}
+.menu-btn i:nth-child(1){top:14px}.menu-btn i:nth-child(2){top:20.5px}.menu-btn i:nth-child(3){top:27px}
+.menu-btn[aria-expanded="true"] i:nth-child(1){top:20.5px;transform:rotate(45deg)}
+.menu-btn[aria-expanded="true"] i:nth-child(2){opacity:0}
+.menu-btn[aria-expanded="true"] i:nth-child(3){top:20.5px;transform:rotate(-45deg)}
+.menu{display:none;position:absolute;left:0;right:0;top:100%;background:var(--deep);border-top:1px solid rgba(255,255,255,.14);box-shadow:0 18px 30px rgba(0,0,0,.35);max-height:calc(100vh - 58px);max-height:calc(100dvh - 58px);overflow-y:auto;-webkit-overflow-scrolling:touch}
+.menu.open{display:block}
+.bar .menu .wrap{display:block;height:auto;padding-top:10px;padding-bottom:22px}
+.menu ul{list-style:none}
+.menu .top{display:flex;align-items:center;justify-content:space-between;font-weight:900;font-size:21px;text-decoration:none;padding:13px 2px;border-bottom:1px solid rgba(255,255,255,.12)}
+.menu .top.here{color:var(--hot)}
+.menu .top small{font-size:12px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--hot);opacity:.9}
+.menu .subs{display:grid;grid-template-columns:1fr 1fr;gap:2px 14px;padding:8px 2px 12px 14px;border-bottom:1px solid rgba(255,255,255,.12)}
+.menu .subs a{font-weight:700;font-size:16px;text-decoration:none;color:#dfe7ff;padding:8px 0}
+.menu .foot{display:flex;flex-wrap:wrap;gap:8px 20px;padding:16px 2px 0;font-size:15px;font-weight:700}
+.menu .foot a{color:#c9d6f7}
 @media(max-width:1020px){
-  .bar .wrap{flex-wrap:wrap;height:auto;padding-top:9px;padding-bottom:0;row-gap:8px}
+  .bar{position:sticky}
+  .nav{display:none}
   .bar .get{margin-left:auto}
-  .nav{order:3;flex:0 0 calc(100% + 44px);margin:0 -22px;padding:0 22px 10px;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-  .nav::-webkit-scrollbar{display:none}
-  .nav a{flex:0 0 auto;opacity:1;background:rgba(255,255,255,.12);padding:6px 13px;border-radius:999px;font-size:14px;white-space:nowrap}
+  .menu-btn{display:block}
 }
 section[id],main[id]{scroll-margin-top:66px}
-@media(max-width:1020px){section[id],main[id]{scroll-margin-top:108px}}
-@media(max-width:480px){.bar .wrap{column-gap:10px;padding-left:14px;padding-right:14px}.nav{flex-basis:calc(100% + 28px);margin:0 -14px;padding:0 14px 10px}.brand{font-size:16px;gap:7px;min-width:0}.brand img{width:28px;height:28px}.bar .get{font-size:14px;padding:7px 11px}}
+
+@media(max-width:480px){.bar .wrap{gap:9px;padding:0 14px}.brand{font-size:15px;gap:7px;min-width:0}.brand img{width:28px;height:28px}.bar .get{font-size:13.5px;padding:7px 9px}.bar .menu .wrap{padding:10px 16px 24px}}
 
 /* buttons, in the game's chunky style */
 .btn{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;min-height:62px;padding:9px 26px;border-radius:14px;font-weight:900;font-size:21px;line-height:1.1;text-decoration:none;color:#fff;transition:transform .08s,box-shadow .08s}
@@ -157,7 +173,6 @@ footer p{margin-bottom:8px}footer a{font-weight:800;color:#fff}
 
 /* ── chapter two: the album (album.html) and its teaser on the story page ── */
 .bar .nav a.here{opacity:1;color:var(--hot)}
-@media(max-width:1020px){.bar .nav a.here{background:var(--hot);color:var(--deep)}}
 .night{background:var(--deep);color:#fff}
 .albumhero{padding:64px 0 74px;position:relative;overflow:hidden}
 .albumhero .wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
@@ -172,7 +187,7 @@ footer p{margin-bottom:8px}footer a{font-weight:800;color:#fff}
 .chapter{max-width:720px}
 .chapter h2{margin-bottom:14px}
 .chapter + .chapter{margin-top:58px}
-.chapter[id]{scroll-margin-top:90px}@media(max-width:1020px){.chapter[id]{scroll-margin-top:124px}}
+.chapter[id]{scroll-margin-top:90px}
 .said{font-size:clamp(26px,4vw,40px);line-height:1.15;font-weight:900;color:var(--lava);margin:8px 0 0}
 .sides{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:8px}
 .sides div{border-radius:16px;padding:22px 22px 24px;background:#fff;color:var(--ink);box-shadow:0 8px 0 #060d2e}
