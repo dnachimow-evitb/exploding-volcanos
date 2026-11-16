@@ -65,7 +65,14 @@ If a Pages build sticks or fails: `gh api -X POST repos/dnachimow-evitb/explodin
 - He works in technology and AI for a living. Once they had the song, he applied those same skills in a
   different way to make the game, using Claude Code, to see how far he could push it. (No job title, employer
   or other detail supplied.)
-- Not yet supplied (do not invent): album title, track names, where to listen, release status.
+- The album is on Suno: https://suno.com/s/BB8lxmcuPdgzCYWk (Derek's link, 2026-11-16). Read from that page: album
+  title "Exploding Volcanoes", by @dnachimow, **11 tracks, about 34 minutes** (list in `site-src/album-tracks.json`).
+  Track 1 is the bath-night song. 10 of the 11 are not public on Suno (reachable by the link). The album page
+  plays them through Suno's own embed player (`https://suno.com/embed/<id>`), loaded only when a track is tapped;
+  Suno does not serve the audio files to anonymous visitors, so they are not hosted on this site.
+- OPEN: the page copy says fifteen ideas were uploaded; the album has 11 tracks. Ask Derek before changing either.
+- Do NOT use the Suno album's cover image: it is a personal photo of a child with another person in view.
+  Track artwork (generated images, copied to `assets/album/`) is fine.
 
 ### After every change to the site or game, give Derek a fresh link (his rule, 2026-11-16)
 End the reply with the full, tappable URL of what changed, carrying the new version so his phone does not show

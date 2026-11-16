@@ -349,3 +349,27 @@ footer p{margin-bottom:8px}footer a{font-weight:800;color:#fff}
 .chapterhead + .bridge .beat .num{-webkit-text-stroke-color:var(--lava)}
 .chapterhead + .bridge .fromto b{color:var(--lava);text-shadow:none}
 .chapterhead + .bridge .fromto a{box-shadow:0 6px 0 var(--navy);border:2px solid #e6ebf7}
+
+/* album page: the player (track list + Suno's embed, loaded on tap) */
+.listen{background:#060d2e;color:#fff;padding:64px 0 70px}
+.listen .eyebrow{color:var(--hot)}
+.listen h2{color:#fff;margin-bottom:4px}
+.listen .meta{font-weight:800;color:#c9d6f7;margin-bottom:26px}
+.deck{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:26px;align-items:start}
+.stage{position:sticky;top:78px;border-radius:18px;overflow:hidden;background:#14296b;box-shadow:0 8px 0 #000;min-height:240px}
+.stage iframe{display:block;width:100%;height:240px;border:0}
+.poster{display:grid;grid-template-columns:150px 1fr;gap:20px;align-items:center;padding:22px;min-height:240px}
+.poster img{border-radius:12px;width:150px;height:150px;object-fit:cover}
+.poster p{font-weight:900;font-size:24px;line-height:1.2}
+.tracks{list-style:none;display:grid;gap:8px}
+.trk{width:100%;display:grid;grid-template-columns:26px 46px 1fr auto;gap:12px;align-items:center;text-align:left;background:rgba(255,255,255,.07);color:#fff;border:0;border-radius:12px;padding:8px 14px 8px 10px;font:inherit;cursor:pointer;transition:background .12s}
+.trk:hover{background:rgba(255,255,255,.14)}
+.trk .n{font-weight:900;font-size:15px;color:#9fb1e6;text-align:center}
+.trk img{width:46px;height:46px;border-radius:8px;object-fit:cover}
+.trk .t{font-weight:800;font-size:17px;line-height:1.2}
+.trk .d{font-weight:800;font-size:14px;color:#9fb1e6;font-variant-numeric:tabular-nums}
+.trk.on{background:var(--hot);color:var(--deep)}.trk.on .n,.trk.on .d{color:var(--deep)}
+.listen .via{margin-top:22px;font-size:14.5px;color:#9fb1e6;font-weight:600;display:block}
+.listen .via a{color:#fff;font-weight:800}
+@media(max-width:1020px){.deck{grid-template-columns:1fr}.stage{position:static}}
+@media(max-width:560px){.stage iframe{height:420px}.poster{grid-template-columns:96px 1fr;gap:14px;padding:16px;min-height:0}.poster img{width:96px;height:96px}.poster p{font-size:20px}.stage{min-height:0}.trk{grid-template-columns:22px 40px 1fr auto;gap:10px;padding:7px 12px 7px 8px}.trk img{width:40px;height:40px}.trk .t{font-size:16px}}

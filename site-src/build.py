@@ -13,7 +13,7 @@ pages, so a phone that saved an old copy still loads the current one (that bit u
 import re
 from pathlib import Path
 
-VERSION = 13
+VERSION = 14
 SITE = "https://dnachimow-evitb.github.io/exploding-volcanos/"
 APP = "https://apps.apple.com/app/id6834466189"
 here = Path(__file__).parent
@@ -40,8 +40,8 @@ PAGES = [
     dict(file="album.html", key="album", nav="The Album", menu="The Album", sub="Chapter Three",
          title="The Album | Exploding Volcanoes",
          desc="Chapter three. First came one song, then the game. Then I went back to twenty years of half-finished song ideas.",
-         theme="#0d1c54",
-         beats=[], more=[("pile", "The Pile"), ("upload", "The Upload"), ("conflict", "The Conflict"), ("name", "The Name")]),
+         theme="#0d1c54", script="album.js",
+         beats=[], more=[("listen", "Listen"), ("pile", "The Pile"), ("upload", "The Upload"), ("conflict", "The Conflict"), ("name", "The Name")]),
 ]
 FILES = [p["file"] for p in PAGES]
 
