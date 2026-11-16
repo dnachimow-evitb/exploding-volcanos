@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-v="8">
+<html lang="en" data-v="9">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -15,7 +15,7 @@
 <meta name="twitter:card" content="summary_large_image" />
 <link rel="icon" href="icon.svg" type="image/svg+xml" />
 <link rel="apple-touch-icon" href="apple-touch-icon.png" />
-<link rel="stylesheet" href="assets/site/site.css?v=8" /><!-- bump the three version numbers (data-v on <html>, ?v= here and on site.js) on EVERY page whenever a page, site.css or site.js changes: phones keep old copies otherwise -->
+<link rel="stylesheet" href="assets/site/site.css?v=9" /><!-- bump the three version numbers (data-v on <html>, ?v= here and on site.js) on EVERY page whenever a page, site.css or site.js changes: phones keep old copies otherwise -->
 
 </head>
 <body>
@@ -26,8 +26,8 @@
     <nav class="nav" aria-label="Sections">
       <a href="#story" class="here">The Story</a>
       <a href="#journey">The Journey</a>
-      <a href="#cast">The Cast</a>
       <a href="#experiment">The Experiment</a>
+      <a href="#cast">The Cast</a>
       <a href="#game">The Game</a>
       <a href="#parents">For Parents</a>
       <a href="album.html">The Album</a>
@@ -39,7 +39,7 @@
     <div class="wrap">
       <ul>
         <li><a class="top here" href="#top">The Story<small>Chapter One</small></a>
-          <div class="subs"><a href="#story">How It Started</a><a href="#journey">The Journey</a><a href="#cast">The Cast</a><a href="#experiment">The Experiment</a><a href="#game">The Game</a><a href="#parents">For Parents</a></div></li>
+          <div class="subs"><a href="#story">How It Started</a><a href="#journey">The Journey</a><a href="#experiment">The Experiment</a><a href="#cast">The Cast</a><a href="#game">The Game</a><a href="#parents">For Parents</a></div></li>
         <li><a class="top" href="album.html">The Album<small>Chapter Two</small></a>
           <div class="subs"><a href="album.html#pile">The Pile</a><a href="album.html#upload">The Upload</a><a href="album.html#conflict">The Conflict</a><a href="album.html#name">The Name</a></div></li>
         <li><a class="top" href="./">Play The Game<small>Free</small></a></li>
@@ -138,6 +138,21 @@
   </div>
 </section>
 
+<section class="band tiles wallband bridge" id="experiment">
+  <div class="wrap">
+    <div class="prose reveal">
+      <div class="eyebrow">The Experiment</div>
+      <h2>Then I got <em>curious.</em></h2>
+      <p>Once we had the song, I wasn't ready to stop. I work in tech and AI for a living, so I opened Claude Code and tried those same skills on something much sillier. Mostly, I wanted to see how far I could push it.</p>
+    </div>
+    <div class="fromto reveal" aria-label="From the song to the game">
+      <a href="#journey"><small>First</small>The Song</a>
+      <b aria-hidden="true">→</b>
+      <a href="#game" class="to"><small>Then</small>The Game</a>
+    </div>
+  </div>
+</section>
+
 <section class="band paper" id="cast">
   <div class="wrap">
     <div class="reveal">
@@ -151,21 +166,6 @@
       <article class="who reveal"><div class="pic"><img src="assets/site/volcano.webp" width="400" height="400" alt="The game's smiling volcano erupting in the bath." /></div><div class="txt"><h3>The Volcano</h3><p>Googly-eyed, grinning, and always about to blow. Fill it up until it just can't hold on.</p></div></article>
       <article class="who reveal"><div class="pic one"><img src="assets/site/toy-hairball.webp" width="240" height="240" alt="The hairball from the game." /></div><div class="txt"><h3>The Hairball</h3><p>“A bit of hair on my volcano again.” Gross, goofy, and worth bonus points.</p></div></article>
       <article class="who reveal"><div class="pic toys"><img src="assets/site/toy-truck.webp" width="240" height="240" alt="" /><img src="assets/site/toy-rocket.webp" width="240" height="240" alt="" /><img src="assets/site/toy-unicorn.webp" width="240" height="240" alt="" /></div><div class="txt"><h3>The Toys</h3><p>Ducks, dinos, boats, monster trucks, sharks, rockets: the ammunition of the tub.</p></div></article>
-    </div>
-  </div>
-</section>
-
-<section class="band tiles wallband bridge" id="experiment">
-  <div class="wrap">
-    <div class="prose reveal">
-      <div class="eyebrow">The Experiment</div>
-      <h2>Then I got <em>curious.</em></h2>
-      <p>Once we had the song, I wasn't ready to stop. I work in tech and AI for a living, so I opened Claude Code and tried those same skills on something much sillier. Mostly, I wanted to see how far I could push it.</p>
-    </div>
-    <div class="fromto reveal" aria-label="From the song to the game">
-      <a href="#journey"><small>First</small>The Song</a>
-      <b aria-hidden="true">→</b>
-      <a href="#game" class="to"><small>Then</small>The Game</a>
     </div>
   </div>
 </section>
@@ -270,6 +270,6 @@
   els.forEach(function(e){io.observe(e);});
 })();
 </script>
-<script src="assets/site/site.js?v=8"></script>
+<script src="assets/site/site.js?v=9"></script>
 </body>
 </html>
