@@ -104,7 +104,11 @@ Keep this file current: tick items off and add decisions as they are made.
       The written answers are in `STORE-LISTING.md` and were entered in the Notes field by the Store listing job
       (`notes` mode) on 2026-11-15.
 - [x] Derek resubmitted to App Review on 2026-11-15 with the screen recording attached.
-- [ ] Apple's decision.
+- [x] **APPROVED. Version 1.0 (build 11, game v7.45) is on the App Store.** Apple's status read
+      READY_FOR_DISTRIBUTION / READY_FOR_SALE at the 2026-11-16 00:10 UTC check (it was still Waiting for Review
+      at 18:10 UTC on 2026-11-15). Apple app ID 6834466189; store link https://apps.apple.com/app/id6834466189
+      (a new app can take up to a day to show in every country and in search).
+      The 6-hourly status check was switched off after this.
 
 ## Decisions
 Made by Derek on 2026-11-12:
