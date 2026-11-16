@@ -65,6 +65,11 @@ If a Pages build sticks or fails: `gh api -X POST repos/dnachimow-evitb/explodin
   or other detail supplied.)
 - Not yet supplied (do not invent): album title, track names, where to listen, release status.
 
+### After every change to the site or game, give Derek a fresh link (his rule, 2026-11-16)
+End the reply with the full, tappable URL of what changed, carrying the new version so his phone does not show
+a saved copy: `.../story.html?v=N` or `.../album.html?v=N` (N = the site's `data-v`, add `#section` when one
+section changed), `.../play-test.html` for the test game, the bare site address for the live game.
+
 ### Who writes what (Derek's rule, 2026-11-16)
 - **Words are written by Claude Haiku. Code and design are done by the session's main model.**
   Update 2026-11-16: Derek found a Haiku passage awkward and said to pick a better model for the wording when
