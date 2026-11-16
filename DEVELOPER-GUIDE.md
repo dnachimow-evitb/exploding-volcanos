@@ -60,6 +60,9 @@ If a Pages build sticks or fails: `gh api -X POST repos/dnachimow-evitb/explodin
 - He does not have the best voice; he is good enough on guitar, no prodigy; he always thought he could write a
   compelling tune; his voice and playing were the wall. No time or money for production. Ideas stuck at 85%.
 - He feels real artistic conflict about using AI and wants that said honestly and left unresolved.
+- He works in technology and AI for a living. Once they had the song, he applied those same skills in a
+  different way to make the game, using Claude Code, to see how far he could push it. (No job title, employer
+  or other detail supplied.)
 - Not yet supplied (do not invent): album title, track names, where to listen, release status.
 
 ### Who writes what (Derek's rule, 2026-11-16)
