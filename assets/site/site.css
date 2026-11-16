@@ -215,3 +215,6 @@ footer p{margin-bottom:8px}footer a{font-weight:800;color:#fff}
 .fromto a.to small{color:var(--lavaDk)}
 .fromto b{color:var(--hot);font-size:30px;line-height:1;text-shadow:0 3px 0 var(--deep)}
 @media(max-width:480px){.fromto{gap:9px;flex-wrap:nowrap}.fromto a{font-size:18px;padding:10px 14px 12px}.fromto b{font-size:24px}}
+
+/* two paper bands in a row (The Cast, then For Parents): a hairline keeps them apart */
+.band.paper + .band.paper{border-top:3px solid #e6ebf7}
