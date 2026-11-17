@@ -7,8 +7,9 @@ is in `experiments/fable-v7.md` (one line per version) and, for the art, `experi
 Last updated: 2026-11-17, at test version v7.50 / live version v7.45.
 
 **Next major version (v8, Multiplayer mode: a new mode beside the main game, which it does not replace): design in `experiments/v8-design.md`, work list in
-`experiments/v8-backlog.md`.** As of 2026-11-17 the design is a draft waiting for Derek's review; build nothing
-from it until he has answered the decisions in its section 13. New ideas from him go in the backlog's Ideas inbox.
+`experiments/v8-backlog.md`.** As of 2026-11-17 the design is draft 2, waiting for Derek's go-ahead; build nothing
+from it until he gives it (its section 14 lists what is needed from him). His fixed points: two devices is
+required, powers are limited and earned, and the goal of the whole version is to make the game stickier. New ideas from him go in the backlog's Ideas inbox.
 
 ## 1. The files that matter
 

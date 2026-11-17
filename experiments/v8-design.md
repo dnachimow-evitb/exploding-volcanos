@@ -1,199 +1,229 @@
 # Version 8: Multiplayer mode (design for review)
 
-Status: **DRAFT for Derek to review. Nothing here is built.** Written 2026-11-17 at test v7.50 / live v7.45.
+Status: **DRAFT 2 for Derek to review. Nothing here is built.** Written 2026-11-17 at test v7.50 / live v7.45.
 The work list that goes with it is `experiments/v8-backlog.md`.
 
-Every number in this document is a starting guess. The plan is built around trying it with real players and
-changing the numbers (section 9).
+Draft 2 changes (Derek, 2026-11-17): two devices is required, not optional; Max's powers are limited and
+earned; the whole version is judged by one goal, making the game stickier.
 
-## 1. The idea
+Every number in this document is a starting guess, to be changed after real play (section 10).
 
-Today there is one way to play: you are Noah, there are ten rounds, and from round 4 Max pops up as a nuisance
-the computer controls.
+## 1. The goal
 
-Version 8 adds a second way to play, **Multiplayer** (Derek's name for it, 2026-11-17):
+Today the game is ten rounds, and then you are done. Version 8 has one job: **give players a reason to come
+back tomorrow.** Everything below is there because it adds something to earn, collect, defend or beat that
+does not run out.
 
-- One person is Noah and throws toys at the volcano. One person is Max and stops them.
-- There are no levels to climb. You pick one stage, play it, and somebody wins.
-- Max gets gear of his own. Noah's gear is for looks; Max's gear changes what he can do.
-- Either side can be played by the computer, so one child can play as Max on their own.
+Two things deliver that:
 
-**Multiplayer does not replace anything** (Derek, 2026-11-17). The ten-round game stays exactly as it is, with
-Push and Swipe where they are now. Multiplayer is one more mode beside it. This document calls the existing
-game "the main game"; it does not need a new name on screen.
+- **Multiplayer:** Noah against Max, two people, two devices. A human opponent never plays the same way twice.
+- **A reward loop that never ends** (section 7): power charges, ranks, prizes from the volcano, a daily
+  round, a running score against each rival.
 
-## 2. What is in Version 8, and what is not
+**Multiplayer does not replace anything.** The ten-round game stays exactly as it is, with Push and Swipe
+where they are now. This document calls it "the main game".
 
-| In 8.0 | Not in 8.0 (parked, see section 11) |
+## 2. Decided so far
+
+| Decided | By |
 |---|---|
-| Multiplayer on **one device**, two people touching the same screen | Two phones playing each other |
-| Play as Max against a computer Noah | iPad-sized layout |
-| Play as Noah against a smarter computer Max, on any stage | Powers for Noah |
-| Stage picker (1 to 10) | Tournaments, best-of-five |
-| Max's gear: 5 powers, plus Dress Max using the 12 pieces Noah already has | New characters |
-| Coins, badges and stats for the new mode | |
-| New start screen, How To Play pages, App Store update | |
-
-Two phones is the biggest thing left out, on purpose. Section 7 explains why and what it would take.
+| The new mode is called Multiplayer and sits beside the main game | Derek |
+| It must work across **two devices** | Derek |
+| Max's powers are limited in number, with ways to earn more | Derek |
+| Stickiness is the measure of every feature | Derek |
+| Two people sharing one screen is dropped from 8.0 (parked) | Claude, follows from two devices |
 
 ## 3. How a match works
 
-1. **Setup.** Pick who is Noah and who is Max (each is one of the saved players, or Computer). Pick a stage.
-   Pick Push or Swipe for Noah. Max picks one power.
-2. **Play.** One round on the clock.
-3. **Noah wins** if every toy goes in and the volcano erupts. **Max wins** if the clock runs out first.
-4. **Result card:** who won, toys in, blocks made, time left. Buttons: Rematch, Swap Sides, Home.
+1. **Connect.** One player taps Start A Game and gets a four-letter code. The other taps Join and types it.
+2. **Setup.** The host picks the stage, and who is Noah and who is Max. Each player packs their bag (section 5).
+3. **Play.** One round on the clock.
+4. **Noah wins** if every toy goes in and the volcano erupts. **Max wins** if the clock runs out first.
+5. **Result:** who won, what each player earned, the running score between the two. Rematch, Swap Sides, Home.
 
 **Stages** reuse the ten rounds' difficulty table: stage 1 is 3 toys and a big crater, stage 10 is 12 toys and
-a small crater that drifts. The clock is longer than in the main game (start at 1.5 times), because a person
-playing Max blocks far more than the computer does today.
+a small crater that drifts. The clock runs longer than in the main game (start at 1.5 times), because a
+person playing Max blocks far more than the computer does today.
 
-**The hairball** stays: Noah gets 5 more seconds for landing it, and Max can block it like a toy.
+Either side can also be the computer, so one child can play as Max alone, on any stage.
 
 ## 4. Playing as Max
 
 You asked whether Max is "simply left and right". I measured the game to answer that.
 
 **What I found.** A thrown toy passes Max's height about a third of the way from where it started toward the
-volcano. A toy thrown from the far left passes Max well to the left; from the far right, well to the right.
-So Max has to be on the same side as the toy, and Noah has toys on both sides. Left and right is already a
-real contest, like a goalkeeper reading a penalty.
+volcano. So Max has to be on the same side as the toy, and Noah has toys on both sides. Left and right is
+already a real contest, like a goalkeeper reading a penalty.
 
-**The problem.** A Push throw takes Noah about 1.3 seconds of holding, in full view of the person playing
-Max. If Max could move freely and block everything he touched, he would block nearly every throw. Left and
-right with nothing else makes Max too strong.
+**The problem.** A Push throw takes Noah about 1.3 seconds of holding, in full view of Max. If Max could move
+freely and block everything he touched, he would block nearly every throw.
 
-**The design.** Max keeps one simple control and gets one rule that gives Noah his openings:
+**The design:**
 
-- **Steer.** Slide a finger left and right in Max's strip. Max swims toward the finger at a limited speed, so
-  he cannot teleport across the tub.
-- **Blocks happen by themselves.** If a toy reaches Max, he swats it back into the water. No timing needed,
-  so a small child can play Max.
-- **The dunk.** After every block Max goes under the water for about a second (bubbles show where he is) and
-  cannot block. This is Noah's window: throw one toy to draw the block, then get the next one in behind it.
-- **The power button.** Max's gear gives him one special move. It charges up over about 12 seconds, faster
-  when he blocks. When the button glows, tap it.
+- **Steer.** Drag anywhere on the screen. Max swims toward your finger at a limited speed.
+- **Blocks happen by themselves.** If a toy reaches Max, he swats it back. A small child can play Max.
+- **The dunk.** After every block Max goes under for about a second and cannot block. This is Noah's
+  opening: throw one toy to draw the block, then get the next one in behind it.
+- **Powers.** Tap a power in the bag to use it (section 5).
 
-That gives Max two things to do (steer, tap the power) and gives both players something to think about.
 Noah wins by switching sides and throwing in pairs. Max wins by reading which toy is the real one.
 
-Later, as an option for older players: a **Hard Max** where blocks are not automatic and you tap to jump.
+## 5. Powers: limited, earned, worth saving
 
-## 5. Max's gear
+Powers are **charges you own and spend**. Use one in a match and it is gone. This is the heart of the
+stickiness: every match earns the things that make the next match more fun.
 
-Max picks **one power** per match. The first is free; the rest are bought with coins like toys.
+- **The bag.** Before a match each player packs up to **3 charges**, any mix. Unused charges come home.
+- **One free move.** Max always has one Big Splash per match, so a player with an empty bag is never helpless.
+- **Both boys get them.** If only Max had powers, the Noah player would have nothing to save up for.
 
-| Power | What it does | Kind |
+**Max's powers**
+
+| Power | What it does |
+|---|---|
+| **Big Splash** | A wave shoves the floating toys toward the walls; Noah's aim wobbles for 2 seconds. |
+| **Pool Noodle** | Max's reach is 40% wider for 10 seconds. |
+| **Flippers** | Max swims 30% faster for 10 seconds. |
+| **Bucket** | The next block is a catch. Max keeps the toy for 4 seconds before dumping it back. |
+| **Squirt Blaster** | A jet straight up from Max knocks down any toy flying above him. |
+| **Bubble Bath** | Bubbles cover the bottom of the tub for 3 seconds and hide the toys. |
+
+**Noah's tricks**
+
+| Trick | What it does |
+|---|---|
+| **Decoy Duck** | A fake throw. Max swats it and gets dunked for nothing. |
+| **Rocket Throw** | The next toy flies twice as fast. |
+| **Double Throw** | The next throw sends two toys at once, one from each side. |
+
+**How charges are earned** (several small sources, so there is always one close):
+
+- Every finished multiplayer match pays one random charge; winning pays a second.
+- The prize from the volcano (section 7).
+- The Daily Bath (section 7).
+- Each new rank (section 7).
+- A power bubble that floats by in the main game from round 4: throw it in the volcano to keep it. This
+  ties the two modes together. Playing the ten rounds stocks you up for multiplayer.
+- Coins, at about 15 a charge, so coins never stop being useful once the toys are all bought.
+
+## 6. Two devices
+
+**How they connect.** A four-letter room code, typed on the letter keys the game already has. Behind it is a
+small relay: a service that passes messages between the two devices and keeps nothing. It works on the
+website and in the App Store app, on the same Wi-Fi or across the country. Grandparents can play.
+
+**Why this way.** I compared three:
+
+| Way | Verdict |
+|---|---|
+| **Room code through a relay** | **Chosen.** Works everywhere the game does. I can build and test it here with two browser windows. |
+| Apple's nearby link | App only. Every test would need a TestFlight build on two of your phones. Possible later as an offline extra. |
+| Game Center | App only, and children's accounts are often blocked from multiplayer. |
+
+**What each player sees.** The same tub, on their own full screen. No shared strip, no fingers in the way.
+
+**Lag.** Noah's device runs the match. Max's device sends where Max is steering about 20 times a second and
+draws Max moving at once, without waiting for an answer, so steering feels instant. Max's limited swim speed
+hides the rest.
+
+**If a player drops.** The match pauses with "Waiting For Max". After 10 seconds the computer takes over,
+so nobody is left stuck, and the player who stayed still earns their reward.
+
+**Safety, for a children's game.** No chat. Nothing typed during a match; the other player sees only your
+saved player name and toy. No matching with strangers: the only way in is a code someone gave you.
+
+**What it costs.** The relay runs on Cloudflare's free plan. By my arithmetic from their published limits
+that covers roughly a thousand one-minute matches a day; past that it is 5 dollars a month. To be rechecked
+when it is built.
+
+**What changes in the small print.** The privacy policy and the store listing each gain a line: online play
+passes messages through a relay; nothing is stored. Apple counts data as "collected" only if it is kept
+longer than needed to handle the request in real time, so the "Data Not Collected" answer should stand. I
+will check that against Apple's wording again before the app is submitted. "Works without an internet
+connection" stays true for the main game and for playing against the computer.
+
+## 7. The loop that never ends
+
+Play, earn, spend, come back. Each piece below gives a different reason to open the game again.
+
+| Piece | What it is | Why it brings people back |
 |---|---|---|
-| **Big Splash** (free) | Max slaps the water. A wave shoves the floating toys toward the walls and Noah's aim wobbles for 2 seconds. | Tap |
-| **Pool Noodle** | Max's reach is about 40% wider. | Always on |
-| **Flippers** | Max swims about 30% faster. | Always on |
-| **Bucket** | The next block is a catch. Max keeps the toy for 4 seconds before dumping it back. | Tap |
-| **Squirt Blaster** | A jet straight up from Max knocks down any toy flying above him, however high. | Tap |
-| **Bubble Bath** | Bubbles cover the bottom of the tub for 3 seconds and hide the toys. | Tap |
+| **Power charges** | Section 5 | Something to stock up, and a reason to play one more match |
+| **Two ranks** | Every player has a Noah rank and a Max rank. Every match adds stars. Ranks have no top. Each new rank pays a prize. | A number that only goes up, in both roles |
+| **Prize from the volcano** | After any win, in either mode, the eruption throws out a prize bubble: coins, a charge, or, rarely, a golden toy. | You never know what you will get |
+| **Golden toys** | A gold version of each of the 39 toys. They only come from prize bubbles. A page shows "7 Of 39". | A collection that takes months |
+| **The Daily Bath** | One special round a day, the same for everyone, with a twist (tiny crater, all ducks, Max has a noodle). Clearing it stamps a card; seven stamps pay a big prize. | A reason to open the game every day |
+| **Rivals** | The game keeps the score between you and each person you have played: "You 12, Grandpa 9". | Nobody walks away from a rivalry they are losing |
+| **Keep going after round 10** | The main game no longer stops. Round 11, 12 and on, harder each time, with a best-round record. | Removes "and then you are done" |
 
-Always-on powers have no button; that is the trade for being simpler.
+**What I am leaving out on purpose.** No real money, no ads, no notifications, and nothing is taken away for
+missing a day: a missed Daily Bath leaves the stamp card where it was. Sticky because there is more to do,
+not because the game nags.
 
-**Dress Max.** The drawing code for Noah's hat, goggles and the rest already works on any head, so Max can
-wear the same 12 pieces for very little work. A player owns a piece once and can put it on either boy.
-
-## 6. Who can play
-
-| Noah | Max | What it is |
-|---|---|---|
-| Person | Person | The headline mode: two people, one device |
-| Computer | Person | **Be Max.** New for a child playing alone |
-| Person | Computer | One staged round against a Max who actually follows your throws |
-| Person | Computer | The main game: the ten rounds, unchanged |
-
-The computer Noah picks a toy, winds up where you can see it, and sometimes fakes one side then throws from
-the other. The stage sets how accurate and how sneaky he is.
-
-**Two people on one screen.** Noah plays at the bottom, as now. Max's strip goes at the top of the screen,
-replacing the score bar, so the two players' fingers never cross and nobody's hand covers the tub. If the
-two sit facing each other across the phone, Max's labels flip to read the right way up for him.
-
-## 7. Two phones: why it is not in 8.0
-
-There are three ways to connect two devices. Each has a cost that changes the product, so this is your call.
-
-| Way | Works on | Needs | Cost |
-|---|---|---|---|
-| **Nearby** (Apple's device-to-device link) | App Store app only | Native code, a "find devices on your network" permission prompt | No server, no accounts, works with no internet. Slow to build: I cannot run two iPhones here, so every try is a TestFlight build on your phones. |
-| **Online with a room code** | Website and app | A small always-on service to introduce the two phones | The privacy policy, the App Store privacy answers and "nothing is collected" all have to change. Something to pay for or keep running. |
-| **Game Center** | App Store app only | Native code, Game Center sign-in | Apple runs it, but children's accounts are often blocked from multiplayer. |
-
-My recommendation: ship 8.0 on one device, and build it so a second phone can be added without a rewrite
-(section 10). If you want two phones next, Nearby fits this game best: it keeps the "no accounts, nothing
-collected, works offline" promise the store listing makes.
+Later pieces, once these are in: weekly quests, tub and volcano themes to unlock, tournaments.
 
 ## 8. Screens
 
-**Start screen.** It stays as it is: "Pick A Game Mode", Push and Swipe, then Easy or Hard. One thing is
-added: a **Multiplayer** button, which opens the match setup card. Where it sits needs a look on a real
-phone, because the lower half of the start screen is already full (a third big button under Swipe, or a
-wide button in place of the small row with that row moved down). The row of
-small buttons stays (How To Play, Badges, My Toys, Noah); "Noah" becomes "Dress Up" and covers both boys.
+**Start screen.** It stays as it is, plus a **Multiplayer** button. Its place needs a look on a real phone,
+because the lower half of that screen is already full.
 
-**Match setup.** One card: Noah's player, Max's player, stage, Push or Swipe, Max's power, Go.
+**Multiplayer home.** Start A Game, Join A Game, Play The Computer, the Daily Bath, your two ranks, your bag.
 
-**During a match.** Max's strip across the top with his power button; the clock; a "toys left" count;
-Noah's toys at the bottom as now. Home and pause stay.
+**During a match.** The clock, toys left, your bag of charges along the bottom edge, the other player's name.
 
-**Result.** Winner lettering in the style of the eruption ("Kaboom! Noah Wins!" or "Max Saved Bath Time!"),
-then the result card.
+**Result.** Winner lettering in the style of the eruption, then the prize bubble, then the card.
 
-## 9. Getting the balance right
+**Dress-up.** The "Noah" button becomes "Dress Up" and covers both boys. Max can wear the same 12 pieces.
 
-I can make the rules work. I cannot tell you from here whether it is fun, or fair between a six-year-old and
-a dad. So the plan has balance built in:
+## 9. Coins, badges and stats
 
-- **A tuning panel on the test page only**: Max's speed, reach, dunk time, power charge time, the clock.
-  You change a number, play again, and tell me which felt right.
-- **First playable as early as possible** (milestone 2 in the backlog), before any gear, coins or polish.
-  If the core is not fun with two people, we find out in days and change it cheaply.
+Coins are paid for matches (5 to the winner, 2 to the loser, none for a match under 20 seconds, so nobody
+farms coins by quitting). New badges for the new mode: blocks made as Max, matches won on each side, days
+of the Daily Bath, golden toys found. Stats are kept per saved player, as now.
+
+## 10. Getting the balance right
+
+I can make the rules work. I cannot tell from here whether it is fun, or fair between a six-year-old and a
+dad. So:
+
+- **A tuning panel on the test page only:** Max's speed, reach, dunk time, the clock. Change a number, play
+  again, tell me which felt right.
+- **Max against the computer is built first.** I can test that alone, and you can try Max on one phone
+  before the two-device part exists.
 - **A handicap for mixed ages:** Max's speed as Slow, Normal or Fast on the setup card.
-- **Swap Sides** on the result card, so a pair can each play both roles and compare.
+- **Swap Sides** after every match.
 
-## 10. How it is built
+## 11. How it is built
 
-- **A mode switch.** The game learns there are two rule sets, the main game and Multiplayer, sharing the same
-  tub, toys, physics and art. The main game must play exactly as it does today; I will check that before anything else.
-- **Controllers.** Each boy is driven by a "controller": a person's finger, the computer, or (later) another
-  phone. The game only sees what the controller wants to do. This is what makes a second phone an add-on.
-- **Two fingers at once.** Today the game follows one finger. It will follow each finger separately and
-  give it to Noah or Max by where it started.
-- **Fair randomness.** Anything random that affects play (which way a toy drifts, where the hairball
-  appears) moves to a repeatable source, which a two-phone version needs.
-- **Saved data.** Each player gains Max's owned powers, Max's outfit, and duel stats. Old saves keep working.
-- **Testing.** I can drive two fingers in a browser and check rules and layout. Feel, haptics and two real
-  people need your phone.
+- **A mode switch.** The main game and Multiplayer share the tub, toys, physics and art. The main game must
+  play exactly as it does today; I check that first.
+- **Controllers.** Each boy is driven by a controller: a finger, the computer, or the other device.
+- **The relay.** A few dozen lines of code on Cloudflare, deployed by GitHub the way the iPhone app is built.
+- **Fair randomness.** Anything random that affects play moves to a repeatable source, so both devices and
+  every player's Daily Bath see the same thing.
+- **Saved data.** Each player gains charges, ranks, golden toys, the stamp card, rivals and Max's outfit.
+  Old saves keep working.
+- **Testing.** Two browser windows here cover the rules, the connection logic and the layout. Feel, real
+  network lag and two real people need two phones.
 
-## 11. Parked for later
+## 12. Parked
 
-Two phones (section 7). An iPad layout (the app is iPhone-only today and runs small on an iPad; a shared
-screen is much nicer large). Powers for Noah. Best-of-three and tournaments. A second player steering Max
-during the main game. Hard Max with a jump button.
+Two people on one screen. An iPad layout. Apple's nearby link as an offline extra. Tournaments. A second
+player steering Max during the main game. Hard Max with a jump button.
 
-## 12. Releasing it
+## 13. Releasing it
 
-- **Version numbers.** Test builds run v8.0, v8.1 and so on, as v7 did. The App Store version becomes 2.0.
-- **The live game is not touched** until you say publish. A revert point is tagged first, as for v5 and v7.
+- **Version numbers.** Test builds run v8.0, v8.1 and so on. The App Store version becomes 2.0.
+- **The live game is not touched** until you say publish. A revert point is tagged first.
 - **The App Store app** needs a new build, new screenshots, new listing text and another Apple review.
-- **Store wording to recheck:** "up to four players" and "nothing to buy" stay true; "ten rounds" needs the
-  new mode added.
 
-## 13. Decisions I need from you
+## 14. What I need from you
 
-1. **Dress Noah (v7.46 to v7.50) is still test-only.** Publish it as the last v7 release once you have tried
-   it on your phone, or hold it for v8? *I recommend publishing it first:* it gets real play on the prices,
-   and v8 starts from a clean, live base.
-2. **One device first, two phones later?** *Recommended: yes* (section 7).
-3. **Max's control: steer, automatic blocks, the dunk, one power button?** *Recommended: yes*, and tune it
-   with the panel (section 4).
-4. **Max's powers cost coins, with Big Splash free?** *Recommended: yes.* The other choice is everything
-   unlocked in a duel, so a sibling with fewer coins is never at a disadvantage.
-5. ~~The name.~~ **Decided 2026-11-17: the mode is called Multiplayer; the main game is not renamed or replaced.**
-6. **Do duels pay coins?** *Recommended:* a small amount (5 to the winner, 2 to the loser), none for matches
-   shorter than 20 seconds, so nobody farms coins by losing on purpose.
-7. **The six powers in section 5:** any to cut, change or add?
+1. **A go-ahead on this draft**, or changes. Everything not listed below I have decided; veto anything.
+2. **Dress Noah (v7.46 to v7.50): publish it as the last v7 release, or hold it for v8?** I recommend
+   publishing it once you have tried it on your phone, so v8 starts from a clean live base.
+3. **A free Cloudflare account**, and two keys added to GitHub the way you added the Apple ones. About ten
+   minutes. Not needed until the two-device milestone; I will give exact steps then.
+4. **Your OK on the small-print change** in section 6 (one line each in the privacy policy and the listing).
+5. **Two phones and two people** when the first playable build is ready. The second phone can be anything
+   with a browser.

@@ -1,67 +1,91 @@
 # Version 8 backlog: Multiplayer mode
 
-The design is `experiments/v8-design.md`. **Nothing is built yet; the design is waiting for Derek's review.**
-Work top to bottom. Tick an item when it is on the test page and noted in the version history.
+The design is `experiments/v8-design.md` (draft 2). **Nothing is built yet; the design is waiting for Derek's
+go-ahead.** Work top to bottom. Tick an item when it is on the test page and noted in the version history.
 Size: S = under an hour of building, M = a session, L = several sessions. "Derek" marks items only he can do.
 
+The goal of the whole version (Derek, 2026-11-17): make the game stickier. Judge every item by that.
+
 ## Milestone 0: Before starting
-- [ ] **V8-01** (Derek) Answer the decisions in section 13 of the design (number 5, the name, is decided: Multiplayer).
+- [ ] **V8-01** (Derek) Go-ahead on design draft 2, or changes (design section 14).
 - [ ] **V8-02** (Derek) Try Dress Noah (v7.50) on the iPhone test app; say whether to publish it as the last v7.
 - [ ] **V8-03** S. If yes: publish v7.50 live (copy the test file, bump the cache name, history line).
-- [ ] **V8-04** S. Decide the live file name (`game-fable-v8.js`
-      alongside v7, as was done for v5 to v7) and note what `native/` must change to package it.
+- [ ] **V8-04** S. Decide the live file name (`game-fable-v8.js` alongside v7, as was done for v5 to v7) and
+      note what `native/` must change to package it.
 
 ## Milestone 1: Framework (nothing a player can see)
 - [ ] **V8-10** M. Mode switch: main game and Multiplayer rule sets over the same tub, toys, physics and art.
-- [ ] **V8-11** M. Controllers: Noah and Max each driven by finger, computer or (later) remote. Depends V8-10.
-- [ ] **V8-12** M. Two fingers at once: follow each finger separately, assign by where it started.
-- [ ] **V8-13** S. Repeatable randomness for everything that affects play.
-- [ ] **V8-14** S. Check the main game plays exactly as v7.50 (scripted run of rounds 1, 4 and 10, Push and Swipe).
+- [ ] **V8-11** M. Controllers: Noah and Max each driven by a finger, the computer or the other device.
+- [ ] **V8-12** S. Repeatable randomness for everything that affects play.
+- [ ] **V8-13** S. Check the main game plays exactly as v7.50 (scripted run of rounds 1, 4 and 10, Push and Swipe).
 
-## Milestone 2: First playable duel, one device (the fun test)
-- [ ] **V8-20** M. Max steered by a finger in a strip across the top; limited swim speed. Depends V8-11, V8-12.
+## Milestone 2: Be Max, against the computer (first fun test, one phone)
+- [ ] **V8-20** M. Max steered by dragging; limited swim speed. Depends V8-11.
 - [ ] **V8-21** S. Automatic block, then the dunk (under water about 1 second, bubbles, cannot block).
-- [ ] **V8-22** S. Win and lose: eruption = Noah wins, clock out = Max wins. Plain result card with Rematch.
-- [ ] **V8-23** S. Stage picker 1 to 10 from the existing difficulty table, clock at 1.5 times.
-- [ ] **V8-24** M. Tuning panel, test page only: Max speed, reach, dunk time, clock, toys in the air at once.
-- [ ] **V8-25** (Derek) Play it with two people. Report what felt unfair or dull. **Stop here and adjust the
-      design if the core is not fun.**
+- [ ] **V8-22** M. Computer Noah: picks a toy, winds up visibly, fakes sides; skill by stage.
+- [ ] **V8-23** S. Win and lose: eruption = Noah wins, clock out = Max wins. Plain result card with Rematch.
+- [ ] **V8-24** S. Stage picker 1 to 10 from the existing difficulty table, clock at 1.5 times.
+- [ ] **V8-25** M. Tuning panel, test page only: Max speed, reach, dunk time, clock.
+- [ ] **V8-26** S. A plain Multiplayer button on the test start screen to reach all this.
+- [ ] **V8-27** (Derek) Play Max on the iPhone test app. Report what felt unfair or dull.
 
-## Milestone 3: Computer players
-- [ ] **V8-30** M. Computer Noah (for Be Max): picks a toy, winds up visibly, fakes sides; skill by stage.
-- [ ] **V8-31** S. Smarter computer Max for a staged round: follows throws with a reaction delay.
-- [ ] **V8-32** S. Setup card: who is Noah, who is Max (saved player or Computer), Push or Swipe, handicap.
+## Milestone 3: Two devices
+- [ ] **V8-30** (Derek) Free Cloudflare account; two keys added to GitHub secrets. Claude gives the steps.
+- [ ] **V8-31** M. The relay: passes messages between two devices in a room, stores nothing. Deployed by a
+      GitHub workflow. Depends V8-30. Check the free-plan limits again at build time.
+- [ ] **V8-32** M. Start A Game (four-letter code) and Join A Game (type it on the game's letter keys).
+- [ ] **V8-33** L. Match over the connection: Noah's device runs it; Max's device sends steering and draws
+      Max at once; snapshots keep both screens the same. Depends V8-11, V8-12.
+- [ ] **V8-34** S. Setup card: stage, who is Noah, handicap (Max Slow / Normal / Fast).
+- [ ] **V8-35** S. A dropped player: "Waiting For Max", then the computer takes over after 10 seconds.
+- [ ] **V8-36** S. Smarter computer Max (follows throws with a reaction delay), used for take-over and solo.
+- [ ] **V8-37** (Derek) Play it on two phones with two people. **Stop here and adjust the design if the core
+      is not fun.**
 
-## Milestone 4: Max's gear
-- [ ] **V8-40** M. Power button and charge meter; Big Splash (free). Depends V8-21.
-- [ ] **V8-41** S. Pool Noodle and Flippers (always on).
-- [ ] **V8-42** M. Bucket, Squirt Blaster, Bubble Bath.
-- [ ] **V8-43** M. Shop and pick-a-power on the dress-up card; saved per player (three places, see the guide).
-- [ ] **V8-44** S. Dress Max: the 12 existing pieces on Max; outfit saved per player; shown in the main game too.
-- [ ] **V8-45** S. Draw each power in Max's hands in the game (the noodle, the bucket and so on).
+## Milestone 4: Powers and charges
+- [ ] **V8-40** M. Charges owned per player; the bag (pack up to 3); spend on use; unused come home.
+- [ ] **V8-41** M. Max: Big Splash (one free per match), Pool Noodle, Flippers.
+- [ ] **V8-42** M. Max: Bucket, Squirt Blaster, Bubble Bath.
+- [ ] **V8-43** M. Noah: Decoy Duck, Rocket Throw, Double Throw.
+- [ ] **V8-44** S. Earning: one charge per finished match, a second for winning; buy with coins.
+- [ ] **V8-45** S. Power bubble in the main game from round 4.
+- [ ] **V8-46** S. Draw each power in the boy's hands in the game.
 
-## Milestone 5: The rest of the game around it
-- [ ] **V8-50** M. Start screen: add a Multiplayer button; Push, Swipe, Easy and Hard stay as they are. Placement to be tried on a real phone.
-- [ ] **V8-51** S. Coins for duels, with the anti-farming rule Derek chooses.
-- [ ] **V8-52** M. Duel stats per player and new badges (for example blocks as Max, duel wins on each side).
-- [ ] **V8-53** S. How To Play pages for Multiplayer and for Max's controls.
-- [ ] **V8-54** S. Swap Sides on the result card; labels flip for a Max sitting across the phone.
+## Milestone 5: The loop that never ends
+- [ ] **V8-50** S. Keep going after round 10 in the main game; best-round record.
+- [ ] **V8-51** M. Prize bubble from the volcano after any win (coins, a charge, rarely a golden toy).
+- [ ] **V8-52** M. Golden toys: gold version of each toy, a collection page, "7 Of 39".
+- [ ] **V8-53** M. Two ranks per player (Noah, Max): stars per match, no top, a prize at each rank.
+- [ ] **V8-54** M. The Daily Bath: one seeded round a day with a twist; stamp card; seven stamps pay a prize.
+      Missing a day takes nothing away.
+- [ ] **V8-55** S. Rivals: running score against each person played, shown on the result card.
 
-## Milestone 6: Polish and release
-- [ ] **V8-60** M. Winner lettering, sounds, moods for both boys, haptics where the phone allows.
-- [ ] **V8-61** (Derek) Full check on the iPhone test app; then on TestFlight.
-- [ ] **V8-62** S. Publish live when Derek says so (revert tag first).
-- [ ] **V8-63** M. App Store 2.0: new build, five new screenshots, listing text, review notes.
-- [ ] **V8-64** S. Website: the game chapter mentions the new mode (wording by the writing model, Derek's facts only).
-- [ ] **V8-65** S. Update DEVELOPER-GUIDE.md: file map, modes, controllers, recipes for a new power.
+## Milestone 6: The rest of the game around it
+- [ ] **V8-60** M. Multiplayer home screen; final place for the Multiplayer button on the start screen.
+- [ ] **V8-61** S. Coins for matches (5 winner, 2 loser, none under 20 seconds).
+- [ ] **V8-62** M. New badges and stats (blocks as Max, wins on each side, Daily Bath days, golden toys).
+- [ ] **V8-63** S. Dress Up: the "Noah" button covers both boys; Max wears the 12 existing pieces.
+- [ ] **V8-64** S. How To Play pages for Multiplayer, Max's controls, powers and the Daily Bath.
 
-## Later (needs its own decision)
-- [ ] **V8-90** L. Two phones. Nearby (app only), online with a room code, or Game Center: design section 7.
+## Milestone 7: Polish and release
+- [ ] **V8-70** M. Winner lettering, sounds, moods for both boys, haptics where the phone allows.
+- [ ] **V8-71** S. Privacy policy and support page: the line about online play (wording by the writing model).
+- [ ] **V8-72** (Derek) Full check on the iPhone test app; then on TestFlight, two devices.
+- [ ] **V8-73** S. Publish live when Derek says so (revert tag first).
+- [ ] **V8-74** M. App Store 2.0: new build, screenshots, listing text, review notes; recheck Apple's
+      definition of "collect" before answering App Privacy.
+- [ ] **V8-75** S. Website: the game chapter mentions the new mode (wording by the writing model, Derek's facts only).
+- [ ] **V8-76** S. Update DEVELOPER-GUIDE.md: file map, modes, controllers, the relay, recipes for a new power.
+
+## Later (each needs its own decision)
+- [ ] **V8-90** M. Two people on one screen.
 - [ ] **V8-91** L. iPad layout (the app is iPhone-only today).
-- [ ] **V8-92** M. Powers for Noah.
-- [ ] **V8-93** M. Best-of-three and tournaments for up to 4 players.
-- [ ] **V8-94** S. A second player steers Max during the main game.
-- [ ] **V8-95** M. Hard Max: blocks are not automatic, tap to jump.
+- [ ] **V8-92** L. Apple's nearby link as an offline way to connect (app only).
+- [ ] **V8-93** M. Weekly quests.
+- [ ] **V8-94** M. Tub and volcano themes to unlock.
+- [ ] **V8-95** M. Tournaments for up to 4 players.
+- [ ] **V8-96** S. A second player steers Max during the main game.
+- [ ] **V8-97** M. Hard Max: blocks are not automatic, tap to jump.
 
 ## Ideas inbox
 New ideas from Derek go here first, dated, before they are sorted into a milestone.
