@@ -4,7 +4,7 @@ Read this first before changing the game. It says where things are and gives ste
 common jobs (add a toy, change prices, add a badge, publish). The history of *why* things are the way they are
 is in `experiments/fable-v7.md` (one line per version) and, for the art, `experiments/fable-v5.md`.
 
-Last updated: 2026-11-17, at test version v8.0 / live version v7.45.
+Last updated: 2026-11-17, at test version v8.1 / live version v7.45.
 
 **Next major version (v8, Multiplayer mode: a new mode beside the main game, which it does not replace): design in `experiments/v8-design.md`, work list in
 `experiments/v8-backlog.md`.** Derek gave the go-ahead on draft 2 on 2026-11-17; what is built so far is in
@@ -137,7 +137,7 @@ Conventions:
 ## 4. Saved data (per phone, `localStorage`)
 
 - Live key `evitb-profiles-v1`, test key `evitb-test-profiles-v1` (seeded once from the live one).
-- Shape: `{cur, list:[{name, icon, st:{…stats}, coins, owned:[toy keys], line:[12 toy keys], gear:[gear keys owned], wear:[gear keys Noah has on]}]}`, up to 4 players.
+- Shape: `{cur, list:[{name, icon, st:{…stats}, coins, owned:[toy keys], line:[12 toy keys], gear:[gear keys owned], wear:[gear keys Noah has on], mxBest: highest Multiplayer stage beaten as Max}]}`, up to 4 players.
 - Loading is defensive: unknown stats are dropped, a bad lineup resets to default (`lineFix`), missing `coins`
   is back-paid from badges already held. **When adding a field, add it in three places:** the load `map`,
   the default "Player 1" object, and the new-player object in `pfNameDone`. Give old saves a sensible default.

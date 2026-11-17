@@ -25,11 +25,14 @@ The goal of the whole version (Derek, 2026-11-17): make the game stickier. Judge
 - [x] **V8-21** S. (v8.0) Automatic block, then the dunk (under water about 1 second, bubbles, cannot block).
 - [x] **V8-22** M. (v8.0) Computer Noah: picks a toy, winds up visibly, fakes sides; skill by stage.
 - [x] **V8-23** S. (v8.0) Win and lose: eruption = Noah wins, clock out = Max wins. Plain result card with Rematch.
-- [x] **V8-24** S. (v8.0) Stage picker 1 to 10 from the existing difficulty table; clock x1.3 after simulated matches.
+- [x] **V8-24** S. (v8.0) Stage picker 1 to 10 from the existing difficulty table; clock x1.5 (v8.1) after simulated matches.
 - [x] **V8-25** M. (v8.0) Tuning panel, test page only: Max speed, reach, dunk time, clock.
 - [x] **V8-26** S. (v8.0) A plain Multiplayer button on the test start screen to reach all this.
 - [ ] **V8-27** (Derek) Play Max on the iPhone test app. Report what felt unfair or dull. **<- waiting on this**
-- [ ] **V8-28** S. Max is partly hidden behind Noah in the middle of the tub; decide how to keep him in view.
+- [x] **V8-28** S. (v8.1) Max's lane moved up the tub so the boys no longer hide each other.
+- [x] **V8-29** M. (v8.1) Intro card, steering marker, dunk ring, stand-here ring on stages 1 to 3, stage ladder
+      with Next Stage and best stage saved per player.
+- [ ] **V8-2A** S. Stage 10 is easier for Max than stage 9 (the computer Noah struggles with the smallest crater).
 
 ## Milestone 3: Two devices
 - [ ] **V8-30** (Derek) Free Cloudflare account; two keys added to GitHub secrets. Claude gives the steps.

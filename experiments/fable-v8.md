@@ -33,3 +33,26 @@ devices is OK (he sets up the account when asked); the one-line privacy and list
     both endings, the result card. Main game re-checked: a Push throw and a Swipe throw both score in round 1, and
     the computer Max still sweeps by himself in round 4. Not tried on a real iPhone.
   - Known: when Max is in the middle of the tub he is partly hidden behind Noah.
+- v8.1 (TEST ONLY): a deeper pass on what it is like to be Max, made before Derek's first try (he asked whether v8.0 had
+  been thought through enough; it had not).
+  - **Max's lane moved up the tub** (`DUEL_Y` 246; the main game keeps 292). At 292 Max and Noah stand in the same spot,
+    so one always hid the other. Now Max is in front of the volcano and both boys are in view. `crossX` works out where
+    a throw passes the lane from the flight maths instead of a fixed fraction.
+  - Intro card before a match ("You Are Max!": drag to swim, block until the clock hits 0, stage / toys / seconds, Go!).
+  - Hints while playing Max: a small marker on the water where he is swimming to; while dunked, a ring that empties as
+    he comes back, then a splash and a rising note; on stages 1 to 3 only, a dashed "stand here" ring where the throw
+    being wound up will pass (gold, green when he is close enough) and an arrow pointing the way.
+  - A wake when he swims; a buzz on each block (where the phone allows); the last five seconds tick.
+  - **A ladder to climb:** the best stage beaten as Max is saved per player (`mxBest`), shown as ten boxes on the
+    Multiplayer card (tap one to pick it), and the result card offers Next Stage after a win. The card opens on the
+    next stage not yet beaten.
+  - Defaults changed after the lane moved (throws pass the higher lane closer together, which helps Max): speed 1.3,
+    dunk 1.6 s, clock x1.5. Simulated matches, 40 a stage: a sharp Max wins about 98% at stage 1 falling to 70 to 88%
+    at stages 4 to 9; a slow, forgetful Max wins 80% at stage 1 falling to 20 to 43% at stages 5 to 9; a Max who
+    never moves wins 0 to 8%. Stage 10 is easier for Max than stage 9 (95% / 40%): the computer Noah struggles with
+    the smallest crater. Not yet fixed.
+  - Checked in a browser with the real buttons and a real drag: the ladder, the intro card, a match Max wins (best
+    stage saved, Next Stage), a match Noah wins (eruption then card), pause and Go Home during a match. Main game
+    re-checked as in v8.0. Not tried on a real iPhone.
+  - Still unknown until people play: whether a speed of 1.3 feels sluggish, whether the dunk feels like a fair cost
+    or like losing control, and whether following the dotted line is fun for more than a few matches without powers.
