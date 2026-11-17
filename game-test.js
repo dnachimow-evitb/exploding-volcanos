@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v8.6'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v8.7'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -88,7 +88,10 @@ function paintToy(em,size,grey){if(grey&&toyGrey[em]){const z=size*1.5;X.drawIma
 
 function catchHit(x,y,vy){return vy>0&&Math.abs(x-CX)<craterR*1.35&&y>CY-craterR*.7&&y<CY+craterR;}
 function ideal(o){return{vx:(CX-o.x)/T,vy:(CY-o.y-0.5*G*T*T)/T};}
-function handPos(){const kx=190,base=372,s=splashSide,sX=kx+18*s,sY=base-20,ex=sX+s*Math.cos(armAng)*26,ey=sY+Math.sin(armAng)*26;return{x:ex+s*Math.cos(armAng+0.5)*22,y:ey+Math.sin(armAng+0.5)*22};}
+// When you play Max, Noah is DRAWN lower in the tub (v8.7) so Max's whole body is in view above him. This is a picture
+// only: Noah never touches the toys, and the lane, the block rule, the throws and the toys are exactly where they were.
+const noahBase=()=>372+(duel&&duel.role==='max'?60:0);
+function handPos(){const kx=190,base=noahBase(),s=splashSide,sX=kx+18*s,sY=base-20,ex=sX+s*Math.cos(armAng)*26,ey=sY+Math.sin(armAng)*26;return{x:ex+s*Math.cos(armAng+0.5)*22,y:ey+Math.sin(armAng+0.5)*22};}
 
 // ── AUDIO ──
 let AC=null,muted=false;
@@ -885,7 +888,7 @@ function powIcon(k,z){X.save();X.lineCap='round';X.lineJoin='round';const ol=w=>
  else{[[-.35,.2,.62],[.5,-.25,.46],[.38,.6,.3]].forEach(q=>{circ(q[0]*z,q[1]*z,q[2]*z);ol(2.2);fill('#eaf8ff');circ((q[0]-q[2]*.3)*z,(q[1]-q[2]*.3)*z,q[2]*z*.2);fill('#fff');});}
  X.restore();}
 
-function kid(){const wr=PF.list[PF.cur].wear,flo=wr.includes('floaties'),kx=190,base=372,s=splashSide,er=(state==='erupt'||state==='win'),wl=base+8,busy=charging||pendingLaunch||swingT>0;
+function kid(){const wr=PF.list[PF.cur].wear,flo=wr.includes('floaties'),kx=190,base=noahBase(),s=splashSide,er=(state==='erupt'||state==='win'),wl=base+8,busy=charging||pendingLaunch||swingT>0;
  const cheer=er||(noah.mood==='cheer'&&!busy),hopY=noah.hop+(er?-Math.abs(Math.sin(NOW*7))*4:0),hy=base-44+Math.sin(NOW*2.2)*.8;
  const tl=charging?-s*(.05+.07*Math.min(1,charging.c/1.2)):swingT>0?s*.14:0;noah.lean+=(tl-noah.lean)*.25;noah.ab=(noah.ab||0)+((busy?1:0)-(noah.ab||0))*.3;
  foam(kx,wl,40,false);X.save();X.beginPath();X.rect(-20,-500,W+40,wl+500);X.clip();X.translate(kx,wl+12);X.rotate(noah.lean);X.translate(-kx,-(wl+12)+hopY);

@@ -173,3 +173,15 @@ devices is OK (he sets up the account when asked); the one-line privacy and list
   - Checked in a browser by playing all eleven lessons with real drags and taps, then: the reward and the saved flag,
     Play As Max going straight to the bag the second time, the Max School button, and Skip. Not on a real iPhone.
   - Max still cannot jump: height never decides a block, so a jump would have nothing to do.
+- v8.7 (TEST ONLY): Derek: when playing as Max there must be more distance between Max and Noah so Max's whole
+  body can be seen, **without changing the physics at all**.
+  - When you play Max, Noah is drawn 60 units lower in the tub, down among the floating toys (`noahBase`). Max's
+    whole body is now clear above him. It is a picture change only: Noah's body never takes part in play (throws
+    start from the toy, not from his hand), and the lane, the block rule, the throws and the toys did not move.
+    In the main game Noah is where he always was.
+  - Proof the rules did not change: `experiments/sim/fp.js` plays three scripted matches (stages 2, 6, 9) with a fixed
+    seed and prints a fingerprint of every toy and Max position through the match. It is identical before and after:
+    `[[2,2521,18,0,4216522139],[6,3421,25,6,418616597],[9,3676,28,11,3725102286]]`. Use it for any future change that
+    is meant to be visual only.
+  - Seen in a browser with Max in the middle and at each side during a wind-up, and the main game at round 4.
+    Noah's name tag and lower body are now partly behind the toys when you play Max. Not tried on a real iPhone.
