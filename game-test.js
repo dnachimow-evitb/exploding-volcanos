@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v8.4'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v8.5'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -28,6 +28,7 @@ const MAX_L=82,MAX_R=298; // how far Max can swim (the same span the computer Ma
 // itself. The emptier it is, the slower he swims (down to TIRED of full speed). He never stops answering the finger,
 // and a toy that touches him is always blocked. Noah's opening is a tired Max who cannot get across in time.
 const TUNE0={spd:2.2,reach:25,tire:.35,rest:11,clock:1.3},TUNE={...TUNE0},TIRED=.2;
+const BUCKET_T=6,BLAST_W=32,SPLASH_T=2.4; // powers: seconds a caught toy stays in the Bucket; half-width of the Squirt Blaster's jet; seconds the Big Splash wave runs
 const DIVE_SPD=9,DIVE_T=.32; // a dive: this fast (units a frame) for at most this long
 // POWERS: charges a player owns and spends (saved per player as pw:{key:count}). Up to 3 are packed for a match and one
 // Big Splash is always free. A charge is only used up when its button is tapped, so unused ones are never lost.
@@ -145,16 +146,16 @@ function duelEnd(w){const D=duel;if(D.mx.held){D.mx.held.o.st='float';D.mx.held=
 // DIVE: tap a spot and Max lunges there fast. It costs the same energy as a block, and he needs that much left.
 function maxDive(x){const m=duel.mx;if(state!=='play'||paused)return;if(m.e<TUNE.tire){if(NOW-duel.tired>1.2){duel.tired=NOW;pop(blk.x,blk.y-40,'Too Tired To Dive!','#ffd23f');blip(200,.12,'sawtooth',.12,120);}return;}m.dive=DIVE_T;m.dx=clamp(x,MAX_L,MAX_R);m.tx=m.dx;m.e-=TUNE.tire;waterBurst(blk.x,blk.y+78,true);blip(300,.16,'triangle',.18,760);haptic(1);mood(mxc,'gotcha',.5);}
 // what the toy does when Max gets it (a block, or the Squirt Blaster)
-function maxBlock(o,free){const D=duel,m=D.mx;D.blocks++;haptic(2);o.blocked=1;if(!free)m.e=Math.max(0,m.e-TUNE.tire); // a block tires him (the Squirt Blaster's do not)
- if(m.bucket>0&&!m.held){m.bucket=0;m.held={o,t:4};o.st='held';pop(blk.x,blk.y-40,'In The Bucket!','#ffb020');sfxBlock();mood(mxc,'gotcha',1.1);hop(mxc,3.2);mood(noah,'wow',.8);combo=0;streak=0;return;} // caught: out of play for 4 seconds
- o.vy=Math.abs(o.vy)*.5+1;o.vx=free?(o.x<CX?-3:3):o.vx*-.5;shake=3;rdBlock++;pop(blk.x,blk.y-36,'Max Got It!','#ffb020');sfxBlock();mood(mxc,'gotcha',1.1);hop(mxc,3.2);mood(noah,'wow',.8);}
+function maxBlock(o,free,jet){const D=duel,m=D.mx;D.blocks++;haptic(2);o.blocked=1;if(!free)m.e=Math.max(0,m.e-TUNE.tire); // a block tires him, and so does a hit with the Squirt Blaster (jet)
+ if(m.bucket>0&&!m.held){m.bucket=0;m.held={o,t:BUCKET_T};if(!free)m.e=Math.min(1,m.e+TUNE.tire);o.st='held';pop(blk.x,blk.y-40,'In The Bucket!','#ffb020');sfxBlock();mood(mxc,'gotcha',1.1);hop(mxc,3.2);mood(noah,'wow',.8);combo=0;streak=0;return;} // caught: out of play for 4 seconds
+ o.vy=Math.abs(o.vy)*.5+1;o.vx=jet?(o.x<CX?-3:3):o.vx*-.5;shake=3;rdBlock++;pop(blk.x,blk.y-36,'Max Got It!','#ffb020');sfxBlock();mood(mxc,'gotcha',1.1);hop(mxc,3.2);mood(noah,'wow',.8);}
 function usePower(k,free){const D=duel,m=D.mx,q=PF.list[PF.cur];if(state!=='play'||paused)return;
  if(free){if(!D.free)return;D.free=0;}else{const i=D.bag.findIndex(b=>b.k===k);if(i<0||!(q.pw[k]>0))return;D.bag.splice(i,1);q.pw[k]--;pfSave();}
  pop(blk.x,blk.y-58,POWNAME[k]+'!','#7fe0ff');haptic(2);blip(440,.18,'square',.16,1100);
- if(k==='splash'){D.wave=1.3;D.waveDir=blk.x<CX-12?-1:blk.x>CX+12?1:(objs.filter(o=>o.st==='float'&&o.x<CX).length*2>=objs.filter(o=>o.st==='float').length?-1:1);shake=7;flash=.16;flashCol='#dff4ff';for(let i=-2;i<=2;i++)waterBurst(blk.x+i*38,blk.y+84,true);rings.push({x:blk.x,y:blk.y+84,r:10,life:1,big:true});sfxSplash();
-  if(charging&&charging.cpu){charging=null;D.cpu.wait=1.1;}else if(charging){charging=null;} // the wave knocks the toy out of Noah's hand
+ if(k==='splash'){D.wave=SPLASH_T;D.waveDir=blk.x<CX-12?-1:blk.x>CX+12?1:(objs.filter(o=>o.st==='float'&&o.x<CX).length*2>=objs.filter(o=>o.st==='float').length?-1:1);shake=7;flash=.16;flashCol='#dff4ff';for(let i=-2;i<=2;i++)waterBurst(blk.x+i*38,blk.y+84,true);rings.push({x:blk.x,y:blk.y+84,r:10,life:1,big:true});sfxSplash();
+  if(charging&&charging.cpu){charging=null;D.cpu.wait=SPLASH_T*.8;}else if(charging){charging=null;} // the wave knocks the toy out of Noah's hand
  }else if(k==='noodle')m.noodle=10;else if(k==='flip')m.flip=10;else if(k==='bucket')m.bucket=12;else if(k==='bubble')m.bub=5;
- else if(k==='blast'){D.jet=.4;sfxSplash();objs.forEach(o=>{if(o.st==='fly'&&!o.blocked&&Math.abs(o.x-blk.x)<46&&o.y<blk.y+60)maxBlock(o,true);});}}
+ else if(k==='blast'){D.jet=.4;sfxSplash();objs.forEach(o=>{if(o.st==='fly'&&!o.blocked&&Math.abs(o.x-blk.x)<BLAST_W&&o.y<blk.y+60)maxBlock(o,false,true);});}}
 function duelStep(dt){const D=duel,m=D.mx;D.t+=dt;
  // Max: a dive in progress, or swimming toward where he is steered at a limited speed (Flippers: faster)
  {const x0=blk.x;if(m.dive>0){m.dive-=dt;blk.x+=clamp(m.dx-blk.x,-DIVE_SPD,DIVE_SPD);if(Math.abs(m.dx-blk.x)<1)m.dive=0;}else{const sp=TUNE.spd*lerp(TIRED,1,m.e)*(m.flip>0?1.7:1);blk.x+=clamp(m.tx-blk.x,-sp,sp);}
@@ -814,7 +815,7 @@ function maxGear(mx,hY,wl){const m=duel.mx;X.save();X.lineCap='round';
  if(m.noodle>0&&(m.noodle>2||Math.sin(NOW*18)>0)){const R=maxReach()+6;X.beginPath();X.moveTo(mx-R,hY-2);X.quadraticCurveTo(mx,hY-16,mx+R,hY-2);X.lineWidth=16;X.strokeStyle='#fff';X.stroke();X.lineWidth=10;X.strokeStyle='#ff6fa8';X.stroke();}
  if(m.flip>0&&(m.flip>2||Math.sin(NOW*18)>0))for(const g of[-1,1]){X.beginPath();X.moveTo(mx+g*30,wl+2);X.lineTo(mx+g*52,wl-16);X.lineTo(mx+g*56,wl+2);X.closePath();X.lineJoin='round';X.lineWidth=5;X.strokeStyle='#fff';X.stroke();fill(C.green);}
  if(m.bucket>0||m.held){X.save();X.translate(mx,hY-22+Math.sin(NOW*6)*1.5);X.rotate(m.held?0:PI);paintToy('🪣',40);X.restore();if(m.held){X.save();X.translate(mx,hY-40);paintToy(m.held.o.hb?'🧶':m.held.o.em,22);X.restore();text(Math.ceil(m.held.t)+'',mx+28,hY-22,14,'#fff',{s:C.navy});}}
- if(duel.jet>0){const h=hY+10;X.fillStyle='#fff';X.fillRect(mx-22,60,44,h-60);X.fillStyle=C.waterLt;X.fillRect(mx-15,60,30,h-60);}
+ if(duel.jet>0){const h=hY+10;X.fillStyle='#fff';X.fillRect(mx-BLAST_W*.55,60,BLAST_W*1.1,h-60);X.fillStyle=C.waterLt;X.fillRect(mx-BLAST_W*.36,60,BLAST_W*.72,h-60);}
  X.restore();}
 // Bubble Bath: bubbles over the bottom of the tub hide the toys
 function drawBubbles(){const b=duel&&duel.mx.bub;if(!(b>0))return;const k=Math.min(1,b/.4,(5-b)/.3+.2);for(let i=0;i<34;i++){const x=28+(i*53%330)+Math.sin(NOW*1.3+i)*6,y=436+(i*29%62)+Math.cos(NOW*1.7+i*2)*5,r=(17+(i*7%12))*k;circ(x,y,r);fill('#fff');X.lineWidth=2.5;X.strokeStyle=C.waterLt;X.stroke();circ(x-r*.3,y-r*.3,r*.22);fill(C.waterLt);}}

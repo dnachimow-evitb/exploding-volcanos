@@ -130,3 +130,28 @@ devices is OK (he sets up the account when asked); the one-line privacy and list
     Multiplayer; Max cannot wear the dress-up pieces yet; Noah's tricks and the power bubble in the main game are not
     built; power balance has not been simulated (the scripted players do not use powers); late stages may be too hard
     for a slow player without powers; none of it has run on a phone.
+- v8.5 (TEST ONLY): **power balance, measured.** Derek asked for the gap named in v8.4 to be closed. Scripted Max
+  players now use powers (`experiments/sim/pow.js`): timed powers spread evenly through the match; Big Splash when a
+  throw is out of reach and he is too tired to dive; Squirt Blaster when a toy has got past him. Each power packed
+  three times, 150 matches in each of four situations (sharp Max at stages 7 and 9, slow Max at stages 3 and 5).
+  "Lift" is the average rise in Max's win rate over packing nothing (about 49% in these four).
+  - **Before:** Squirt Blaster +28 (for the slow Max at stage 5, 39% became 81%), Flippers +20, Bubble Bath +19,
+    Pool Noodle +18, Big Splash +11, Bucket +3. The Blaster undid a score every time for no energy; the Bucket was
+    just a block with a short delay.
+  - **Changes:** Squirt Blaster jet narrower (half-width 32, was 46) and a hit now costs energy like a block.
+    Bucket holds the toy 6 seconds (was 4) and a catch costs no energy. Big Splash wave runs 2.4 seconds (was 1.3).
+  - **After:** Bubble Bath +22, Pool Noodle +20, Squirt Blaster +19, Flippers +18, Bucket +16, Big Splash +15. With
+    150 matches a cell these are within noise of each other (about 4 to 5 points either way). Big Splash is the
+    lowest, and one is free every match.
+  - **A full bag (three powers plus the free Big Splash), 100 matches a cell:** sharp Max at stage 8: 51% with nothing,
+    67 to 79% with a full bag; at stage 10: 49% to 65 to 71%. Powers help a lot but do not make him unbeatable.
+    Slow Max at stage 5: 39% to 63 to 70%. **Slow Max at stage 8: 11% to only 16 to 20%**, and at stage 10: 10% to
+    18 to 31%. So the late stages stay very hard for a slower player even with a full bag. Not changed in this
+    build; a difficulty choice for the computer Noah (as the main game has Easy and Hard) is the likely fix.
+  - Limits of the method: the scripted players use each power by a simple rule, so a clever person may get more out
+    of one than they do (most likely the Bucket and Big Splash, which reward timing); and no simulation says which
+    powers are fun.
+  - The scripts that produced every balance number in this file are kept in `experiments/sim/` (they drive the test
+    page in a headless browser; `lib.js` loads the game from disk with no server). Run from that folder, for example
+    `node pow.js '[[null,0],["bucket",3]]' '[["sharp",7],["slow",5]]' 150`.
+  - Re-checked in a browser after the changes: the v8.4 bug list, packing and buying, dive, a full match; main game.
