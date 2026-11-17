@@ -4,7 +4,7 @@ Read this first before changing the game. It says where things are and gives ste
 common jobs (add a toy, change prices, add a badge, publish). The history of *why* things are the way they are
 is in `experiments/fable-v7.md` (one line per version) and, for the art, `experiments/fable-v5.md`.
 
-Last updated: 2026-11-17, at test version v8.5 / live version v7.45.
+Last updated: 2026-11-17, at test version v8.6 / live version v7.45.
 
 **Next major version (v8, Multiplayer mode: a new mode beside the main game, which it does not replace): design in `experiments/v8-design.md`, work list in
 `experiments/v8-backlog.md`.** Derek gave the go-ahead on draft 2 on 2026-11-17; what is built so far is in
@@ -140,7 +140,7 @@ Conventions:
 ## 4. Saved data (per phone, `localStorage`)
 
 - Live key `evitb-profiles-v1`, test key `evitb-test-profiles-v1` (seeded once from the live one).
-- Shape: `{cur, list:[{name, icon, st:{…stats}, coins, owned:[toy keys], line:[12 toy keys], gear:[gear keys owned], wear:[gear keys Noah has on], mxBest: highest Multiplayer stage beaten as Max, mxN: matches played as Max, pw:{power key: charges owned}}]}`, up to 4 players.
+- Shape: `{cur, list:[{name, icon, st:{…stats}, coins, owned:[toy keys], line:[12 toy keys], gear:[gear keys owned], wear:[gear keys Noah has on], mxBest: highest Multiplayer stage beaten as Max, mxN: matches played as Max, mxTut: Max School (0 never, 1 skipped, 2 finished), pw:{power key: charges owned}}]}`, up to 4 players.
 - Loading is defensive: unknown stats are dropped, a bad lineup resets to default (`lineFix`), missing `coins`
   is back-paid from badges already held. **When adding a field, add it in three places:** the load `map`,
   the default "Player 1" object, and the new-player object in `pfNameDone`. Give old saves a sensible default.
@@ -205,6 +205,7 @@ Done once so far: `speedboat` became `train` in v7.31 (too similar to the tugboa
    timer down in `duelStep` (the list `['noodle','flip','bucket','bub']`).
 3. Draw it: its small picture in `powIcon`, and what it looks like on Max in `maxGear`.
 4. Saving needs nothing: `pwFix` gives every player a count for every key in `POW` (new keys start at 1).
+   Give it a lesson in Max School: a row in `TUT` with `k` set to its key, and its script in `tutStep`.
 5. Measure it: `experiments/sim/pow.js` plays scripted matches with a power packed three times. At v8.5 the six
    powers each lift Max's win rate by 15 to 22 points; keep a new one in that band (how to run: `experiments/fable-v8.md`, v8.5).
 

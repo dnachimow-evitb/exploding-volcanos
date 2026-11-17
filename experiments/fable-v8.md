@@ -155,3 +155,21 @@ devices is OK (he sets up the account when asked); the one-line privacy and list
     page in a headless browser; `lib.js` loads the game from disk with no server). Run from that folder, for example
     `node pow.js '[[null,0],["bucket",3]]' '[["sharp",7],["slow",5]]' 150`.
   - Re-checked in a browser after the changes: the v8.4 bug list, packing and buying, dive, a full match; main game.
+- v8.6 (TEST ONLY): Derek, after trying v8.5: "Can Max jump or dive?" and "we also need the tutorial for how to use
+  the Max blocking toys". The dive existed (a quick tap away from Max) but the game was not teaching it.
+  - **Max School**: eleven hands-on lessons, each waits for the player to do the thing: Swim, Block, Block Again,
+    Dive, Energy, then one for each power (Big Splash, Pool Noodle, Flippers, Bucket, Squirt Blaster, Bubble Bath).
+    Noah's throws are scripted and wait until Max is in place; the clock is stopped; energy stays full except in the
+    Energy lesson; powers are lent, not spent. A power lesson shows a bouncing "Tap" arrow over its button. The
+    Squirt Blaster lesson holds Max in the middle, lets one toy past him and slows time while it is overhead.
+    A missed step repeats with a hint. Skip is top left; Home and pause work.
+  - A player who has never seen it is taken there by Play As Max the first time (`mxTut`: 0 never, 1 skipped,
+    2 finished). Finishing it the first time pays three random powers. It can be replayed any time from the
+    Max School button on the Multiplayer card.
+  - The old "You Are Max!" rules card is gone; matches open straight on Pack Your Bag. "Two phones: coming next"
+    was removed from the Multiplayer card to make room for the button.
+  - Code: `TUT` (lesson table), `startTut`, `tutSet`, `tutStep` (the script for each lesson), `tutWind` / `tutHold`
+    (a scripted throw that waits), `tutEnd`, `drawTutEnd`, `playMax`.
+  - Checked in a browser by playing all eleven lessons with real drags and taps, then: the reward and the saved flag,
+    Play As Max going straight to the bag the second time, the Max School button, and Skip. Not on a real iPhone.
+  - Max still cannot jump: height never decides a block, so a jump would have nothing to do.

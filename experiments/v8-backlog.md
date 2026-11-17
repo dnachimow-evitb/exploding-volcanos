@@ -35,7 +35,8 @@ The goal of the whole version (Derek, 2026-11-17): make the game stickier. Judge
 - [x] **V8-2E** M. (v8.5) Power balance measured with scripted players that use powers; Blaster, Bucket and Big Splash changed.
 - [ ] **V8-2F** S. Late stages (8 to 10) stay very hard for a slower player even with a full bag (16 to 31% in simulation).
       Likely fix: an Easy / Normal / Hard choice for the computer Noah. Needs Derek's view after he plays.
-- [ ] **V8-2C** (Derek) Play v8.5: does energy feel fair, is the dive easy to trigger, are the powers fun? **<- waiting on this**
+- [x] **V8-2G** M. (v8.6) Max School: eleven hands-on lessons (swim, block, dive, energy, each power); first-time players are sent there.
+- [ ] **V8-2C** (Derek) Play v8.6: does energy feel fair, is the dive easy to trigger, are the powers fun? **<- waiting on this**
 - [x] **V8-28** S. (v8.1) Max's lane moved up the tub so the boys no longer hide each other.
 - [x] **V8-29** M. (v8.1) Intro card, steering marker, dunk ring, stand-here ring on stages 1 to 3, stage ladder
       with Next Stage and best stage saved per player.
