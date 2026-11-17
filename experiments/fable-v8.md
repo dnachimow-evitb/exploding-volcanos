@@ -56,3 +56,16 @@ devices is OK (he sets up the account when asked); the one-line privacy and list
     re-checked as in v8.0. Not tried on a real iPhone.
   - Still unknown until people play: whether a speed of 1.3 feels sluggish, whether the dunk feels like a fair cost
     or like losing control, and whether following the dotted line is fun for more than a few matches without powers.
+- v8.2 (TEST ONLY): after Derek's first try of v8.1 on his iPhone. He said: sometimes hard to see Max (not terrible);
+  unclear what makes Max block, and whether height matters; unclear why Max "disappears" after a block; asked whether
+  Max can jump; asked where the special powers are.
+  - **The block rule is now what it looks like:** a rising toy that touches Max, anywhere from his raised hands down
+    to his chest, is blocked (`maxHit`). Before, only a circle around his hands counted, so a weak throw could pass
+    through his head unblocked. Height never matters to the player.
+  - **The dunk is visible:** he sinks to his eyes and stays in view, with dizzy stars, the word "Dunked!", and a ring
+    that empties as he recovers. v8.1 hid him completely, which read as Max vanishing. A big splash on every block.
+  - The intro card says the rule in four lines (drag to swim; a toy that hits Max is blocked; each block dunks him for a
+    moment; hold out until the clock hits 0). Max's name tag is drawn again on top of Noah.
+  - The taller block zone helped Max, so reach went from 30 to 25. Simulated, 40 matches a stage: sharp Max 98% at
+    stage 1 to 60 to 70% at stages 7 to 9; slow, forgetful Max about 70 to 80% early, 25 to 38% at stages 7 to 9.
+  - Max cannot jump, and powers are not built yet (backlog milestone 4). Asked Derek what should come next.
