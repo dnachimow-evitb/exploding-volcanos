@@ -62,8 +62,10 @@ freely and block everything he touched, he would block nearly every throw.
 
 - **Steer.** Drag anywhere on the screen. Max swims toward your finger at a limited speed.
 - **Blocks happen by themselves.** If a toy reaches Max, he swats it back. A small child can play Max.
-- **The dunk.** After every block Max goes under for about a second and cannot block. This is Noah's
-  opening: throw one toy to draw the block, then get the next one in behind it.
+- **Energy** (changed 2026-11-17; the first design had Max dunked under water after each block, and Derek did
+  not want to lose control of him). Every block and every dive uses some of Max's energy bar, and it refills
+  by itself. A tired Max swims slowly. This is Noah's opening: wear him out, then throw to the far side.
+- **Dive.** Tap a spot and Max lunges there. It costs energy.
 - **Powers.** Tap a power in the bag to use it (section 5).
 
 Noah wins by switching sides and throwing in pairs. Max wins by reading which toy is the real one.

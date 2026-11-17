@@ -69,3 +69,35 @@ devices is OK (he sets up the account when asked); the one-line privacy and list
   - The taller block zone helped Max, so reach went from 30 to 25. Simulated, 40 matches a stage: sharp Max 98% at
     stage 1 to 60 to 70% at stages 7 to 9; slow, forgetful Max about 70 to 80% early, 25 to 38% at stages 7 to 9.
   - Max cannot jump, and powers are not built yet (backlog milestone 4). Asked Derek what should come next.
+- v8.3 (TEST ONLY): Derek's answers after v8.2 (2026-11-17): build powers next (before two devices); give Max a dive;
+  **replace the dunk** (he does not want to lose control of Max).
+  - **Energy replaces the dunk.** Max has one energy bar under his name (green, amber, red, "Tired!"). Every block and
+    every dive costs 35% of it; it refills from empty in 11 seconds. The emptier it is, the slower he swims, down to
+    20% of full speed. He always answers the finger and a toy that touches him is always blocked. Noah's opening is
+    a tired Max who cannot get across in time. His full swim speed went up from 1.3 to 2.2, so a fresh Max is quick.
+  - **Dive:** a quick tap (under a quarter of a second, finger barely moving) makes Max lunge to that spot. Costs the
+    same energy as a block; needs that much left. A drag still just steers.
+  - **Why something had to replace the dunk** (simulated, 24 to 30 matches a stage): with no cost for a block, a sharp
+    Max won 96 to 100% at every stage even at a swim speed of 0.8, and a slow, forgetful one still won most. The
+    lane where throws pass him is only about 160 units wide and a Push wind-up shows him the throw for over a second.
+  - **Computer Noah winds up quicker at higher stages** (1.3 s at stage 1 to about 0.7 s at stage 10), like a Swipe
+    player. Without this, tiring alone did not stop a sharp Max.
+  - **Powers and the bag** (backlog V8-40 to V8-42, V8-44, V8-46): six powers owned as charges per player (`pw`); a
+    player new to them starts with one of each. Pack Your Bag card before every match: up to 3; tap a power to pack,
+    tap a slot to take out; a power you have none of can be bought for 15 coins. One Big Splash is free every match.
+    In the match they are buttons along the bottom; a charge is used up only when tapped.
+    Big Splash (a wave carries the floating toys to the walls and knocks the toy out of Noah's hand), Pool Noodle
+    (reach x1.7 for 10 s), Flippers (swim x1.7 for 10 s), Bucket (the next block within 12 s is a catch: the toy is out
+    of play for 4 s, then tipped out by a wall), Squirt Blaster (a jet straight up knocks down any toy flying above
+    him; costs no energy), Bubble Bath (4 s of bubbles over the toys; the computer Noah misses three throws in four).
+    A match of 20 seconds or more pays one random charge, and a second for winning; shown on the result card.
+  - The rules card shows for a player's first two matches as Max (`mxN`), then matches open on the bag card.
+  - Chosen defaults: speed 2.2, reach 25, tire 35%, rest 11 s, clock x1.3. Simulated, 30 matches a stage, no powers
+    used: a sharp Max wins 100% at stages 1 to 2, 87% at 4 to 5, 57% at 8, 40 to 50% at 9 to 10; a slow, forgetful Max
+    wins 80% at stage 1, about 40% at stages 4 to 6, and 3 to 20% at stages 7 to 10; a Max who never moves, 3%.
+    So the late stages are meant to need powers. Not yet confirmed by real play.
+  - Tuning panel rows are now Max Speed, Max Reach, Tire Per Block, Rest To Full, Clock.
+  - Checked in a browser with the real buttons, taps and drags: rules card, bag (pack, unpack, buy), dive on a tap, no
+    dive on a drag, every power's button, the bucket catching a toy, charges earned and saved, Next Stage. Main game
+    re-checked (Push and Swipe score, computer Max sweeps in round 4). Not tried on a real iPhone.
+  - Not built yet: Noah's three tricks (they need a person playing Noah), the power bubble in the main game.

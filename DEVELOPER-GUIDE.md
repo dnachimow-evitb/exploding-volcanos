@@ -4,7 +4,7 @@ Read this first before changing the game. It says where things are and gives ste
 common jobs (add a toy, change prices, add a badge, publish). The history of *why* things are the way they are
 is in `experiments/fable-v7.md` (one line per version) and, for the art, `experiments/fable-v5.md`.
 
-Last updated: 2026-11-17, at test version v8.2 / live version v7.45.
+Last updated: 2026-11-17, at test version v8.3 / live version v7.45.
 
 **Next major version (v8, Multiplayer mode: a new mode beside the main game, which it does not replace): design in `experiments/v8-design.md`, work list in
 `experiments/v8-backlog.md`.** Derek gave the go-ahead on draft 2 on 2026-11-17; what is built so far is in
@@ -137,7 +137,7 @@ Conventions:
 ## 4. Saved data (per phone, `localStorage`)
 
 - Live key `evitb-profiles-v1`, test key `evitb-test-profiles-v1` (seeded once from the live one).
-- Shape: `{cur, list:[{name, icon, st:{…stats}, coins, owned:[toy keys], line:[12 toy keys], gear:[gear keys owned], wear:[gear keys Noah has on], mxBest: highest Multiplayer stage beaten as Max}]}`, up to 4 players.
+- Shape: `{cur, list:[{name, icon, st:{…stats}, coins, owned:[toy keys], line:[12 toy keys], gear:[gear keys owned], wear:[gear keys Noah has on], mxBest: highest Multiplayer stage beaten as Max, mxN: matches played as Max, pw:{power key: charges owned}}]}`, up to 4 players.
 - Loading is defensive: unknown stats are dropped, a bad lineup resets to default (`lineFix`), missing `coins`
   is back-paid from badges already held. **When adding a field, add it in three places:** the load `map`,
   the default "Player 1" object, and the new-player object in `pfNameDone`. Give old saves a sensible default.
@@ -195,6 +195,14 @@ Done once so far: `speedboat` became `train` in v7.31 (too similar to the tugboa
 5. Check how pieces look TOGETHER. A red cap plus a black mustache read as Mario (Derek, 2026-11-17) and were
    redrawn in v7.47; keep Noah clear of any well-known character. The foam finger was redrawn in v7.49 for reading as a
    rude gesture: its finger sits at the edge of a fist with knuckles beside it, never alone in the middle.
+
+### Add a power for Max (Multiplayer, v8.3)
+1. Add a row to `POW` (top of the file): `['key','Name',seconds]`. The Pack Your Bag card shows 6 in two rows of 3.
+2. Say what it does in `usePower` (a timer on `duel.mx` for a lasting power, or an instant effect), and count the
+   timer down in `duelStep` (the list `['noodle','flip','bucket','bub']`).
+3. Draw it: its small picture in `powIcon`, and what it looks like on Max in `maxGear`.
+4. Saving needs nothing: `pwFix` gives every player a count for every key in `POW` (new keys start at 1).
+5. Re-run simulated matches if it changes how often Max blocks (the method is described in `experiments/fable-v8.md`).
 
 ### Change the default 12 toys or the number of rounds
 `BASE` (3 starting toys) + `NEWBY` (round 2..10) make `DEF_LINE`, which must stay 12 long. More rounds also

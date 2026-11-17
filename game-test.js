@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v8.2'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v8.3'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -15,15 +15,25 @@ let testRound=1; // TEST PAGE ONLY: which round a new game starts on (the small 
 // MULTIPLAYER (v8): a second rule set beside the main game; it never changes how the main game plays.
 // duel = null in the main game. In a match it holds the stage, which boy this device plays (role), who drives each
 // boy (noah / max: 'touch' = a finger here, 'cpu' = the computer; 'net' = the other device, not built yet), Max's
-// state (mx: tx = where he is steering to, dunk = seconds left under water, sink = 0..1 for drawing) and the
+// state (mx: tx = where he is steering to, e = his energy 0..1, dive = a dive in progress, timers for his powers) and the
 // computer Noah's state (cpu). Design: experiments/v8-design.md. Work list: experiments/v8-backlog.md.
 let duel=null,mpT0=0,mpStage=3; // mpT0: Multiplayer card on the start screen (time it opened, 0 = closed); mpStage: stage picked on it
 const DUEL_Y=246; // Max's lane in a match: higher up the tub than in the main game (292), where he and Noah stand in the same spot and one hides the other
 const MAX_L=82,MAX_R=298; // how far Max can swim (the same span the computer Max sweeps in the main game)
 // TUNE: the numbers that decide whether a match is fair. First guesses; the test page can change them (Multiplayer card).
-// spd = Max's swim speed (units a frame); reach = how close a toy must pass for a block; dunk = seconds under water
-// after a block (he cannot block or move); clock = the stage's time multiplied by this.
-const TUNE0={spd:1.3,reach:25,dunk:1.6,clock:1.5},TUNE={...TUNE0}; // v8.1: chosen from simulated matches (see experiments/fable-v8.md); not yet from real play
+// spd = Max's swim speed when fresh (units a frame); reach = how close to Max a toy must pass to be blocked;
+// tire = how much of his energy one block or one dive costs (0..1); rest = seconds to refill from empty;
+// clock = the stage's time multiplied by this.
+// ENERGY (v8.3, replaces the dunk): Max has one energy bar. Every block and every dive uses some; it refills by
+// itself. The emptier it is, the slower he swims (down to TIRED of full speed). He never stops answering the finger,
+// and a toy that touches him is always blocked. Noah's opening is a tired Max who cannot get across in time.
+const TUNE0={spd:2.2,reach:25,tire:.35,rest:11,clock:1.3},TUNE={...TUNE0},TIRED=.2;
+const DIVE_SPD=9,DIVE_T=.32; // a dive: this fast (units a frame) for at most this long
+// POWERS: charges a player owns and spends (saved per player as pw:{key:count}). Up to 3 are packed for a match and one
+// Big Splash is always free. A charge is only used up when its button is tapped, so unused ones are never lost.
+// [key, name, seconds it lasts (0 = instant)]. What each does is in usePower; its picture is in powIcon.
+const POW=[['splash','Big Splash',0],['noodle','Pool Noodle',10],['flip','Flippers',10],['bucket','Bucket',12],['blast','Squirt Blaster',0],['bubble','Bubble Bath',4]],POW_PRICE=15,POWNAME=Object.fromEntries(POW.map(q=>[q[0],q[1]]));
+function pwFix(o){const r={};for(const q of POW)r[q[0]]=o&&typeof o[q[0]]==='number'?clamp(o[q[0]]|0,0,99):1;return r;} // a player new to powers starts with one of each
 // repeatable randomness for everything that affects play (toy positions, drift, hairball, the computer's choices).
 // Effects keep Math.random. Two devices and the Daily Bath will need both sides to draw the same numbers.
 let RS=(Date.now()^0x9e3779b9)>>>0;function rnd(){RS=RS+0x6D2B79F5|0;let t=Math.imul(RS^RS>>>15,1|RS);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}
@@ -114,39 +124,62 @@ function dist(a,b,c,d){return Math.hypot(a-c,b-d);}
 // ── MULTIPLAYER: one staged round, Noah against Max ──
 // Where a good throw of toy o passes Max's lane (from the same flight maths as the throw itself).
 function crossX(o){const iv=ideal(o),q=iv.vy*iv.vy-2*G*(o.y-DUEL_Y),t=q>0?(-iv.vy-Math.sqrt(q))/G:T*.45;return o.x+iv.vx*t;}
-function startDuel(stage,role,now){duel={stage,role,lastSec:99,noah:role==='noah'?'touch':'cpu',max:role==='max'?'touch':'cpu',blocks:0,over:null,drag:false,mx:{tx:CX,dunk:0,sink:0},cpu:{wait:1.5,bad:false,fakeAt:0,side:0,avoid:0,late:0}};
- RS=(Date.now()>>>0)||1;swipeMode=false;hardMode=false;streak=0;round=stage;score=0;bestCombo=0;currentToys=PF.list[PF.cur].line.slice(0,stage+2);LINE={};newToyEm=null;landed=[];objs=[];ejecta=[];confet=[];scoreShown=0;lastScore=0;mpT0=0;
+let lastPack=[]; // what was packed last time, offered again on the next bag card
+function startDuel(stage,role,now){const q=PF.list[PF.cur];
+ duel={stage,role,lastSec:99,noah:role==='noah'?'touch':'cpu',max:role==='max'?'touch':'cpu',blocks:0,over:null,drag:false,t:0,pack:[],sel:null,bag:[],free:1,earned:[],wave:0,jet:0,
+  mx:{tx:CX,dive:0,dx:CX,e:1,noodle:0,flip:0,bucket:0,held:null,bub:0},cpu:{wait:1.5,bad:false,fakeAt:0,side:0,avoid:0,late:0}};
+ {const have={...q.pw};for(const k of lastPack)if(have[k]>0&&duel.pack.length<3){have[k]--;duel.pack.push(k);}}
+ RS=(Date.now()>>>0)||1;swipeMode=false;hardMode=false;streak=0;round=stage;score=0;bestCombo=0;currentToys=q.line.slice(0,stage+2);LINE={};newToyEm=null;landed=[];objs=[];ejecta=[];confet=[];scoreShown=0;lastScore=0;mpT0=0;
  startRound(false);blk.on=true;blk.spd=0;blk.x=CX;blk.dir=1;timeLeft=roundTime=Math.round(diff().time*TUNE.clock);tutOn=false;hintT=0;
- state='duelintro';if(now)duelGo();} // now: skip the intro card (Play Again, Next Stage)
-function duelGo(){banner='Stage '+duel.stage+(duel.role==='max'?': Block The Toys!':': Splash Away!');bannerT=3;state='play';lastNow=performance.now();acc=0;}
-// THE BLOCK RULE in a match (v8.2): a rising toy that touches Max, anywhere from his raised hands down to his chest,
-// is blocked. Height never matters to the player: if it would pass through him, he gets it. Not while he is dunked.
-function maxHit(o){return duel.mx.dunk<=0&&o.vy<0&&Math.abs(o.x-blk.x)<TUNE.reach&&o.y>blk.y-TUNE.reach&&o.y<blk.y+74;}
-function duelEnd(w){if(w==='max'&&duel.role==='max'){const q=PF.list[PF.cur];if(duel.stage>(q.mxBest||0)){q.mxBest=duel.stage;pfSave();}}duel.over=w;charging=null;pendingLaunch=null;swingT=0;state='duelend';mood(mxc,'laugh',6);hop(mxc,3.2);mood(noah,'oops',2.5);sfxFanfare();}
-function duelStep(dt){const D=duel,m=D.mx;
- // Max: under water after a block (cannot block, cannot move), otherwise swims toward where he is steered at a limited speed
- if(m.dunk>0){m.dunk-=dt;if(m.dunk<=0){waterBurst(blk.x,blk.y+78,false);blip(520,.12,'sine',.16,940);mood(mxc,'cheeky',.6);hop(mxc,2.4);}} // back up: a splash and a rising note, so the player knows he can block again
- else{const x0=blk.x;blk.x=clamp(blk.x+clamp(m.tx-blk.x,-TUNE.spd,TUNE.spd),MAX_L,MAX_R);if(Math.abs(blk.x-x0)>.9&&Math.random()<.3)parts.push({x:blk.x-Math.sign(blk.x-x0)*24,y:blk.y+80,vx:-Math.sign(blk.x-x0)*(.6+Math.random()),vy:-1-Math.random()*1.5,life:.8,r:2+Math.random()*2.5,col:'#dff4ff'});} // a little wake when he swims
- m.sink+=((m.dunk>0?1:0)-m.sink)*.35;
+ state=role==='max'&&(q.mxN||0)<2?'duelintro':'duelbag';if(now)duelGo();} // the rules card for a player's first two matches, then the bag; now: straight in (tests)
+function duelGo(){const q=PF.list[PF.cur];q.mxN=(q.mxN||0)+1;pfSave();lastPack=duel.pack.slice();duel.bag=duel.pack.map(k=>({k}));banner='Stage '+duel.stage+(duel.role==='max'?': Block The Toys!':': Splash Away!');bannerT=3;state='play';lastNow=performance.now();acc=0;}
+// THE BLOCK RULE in a match: a rising toy that touches Max, anywhere from his raised hands down to his chest, is
+// blocked. Height never matters to the player: if it would pass through him, he gets it. The Pool Noodle widens him.
+const maxReach=()=>TUNE.reach*(duel.mx.noodle>0?1.7:1);
+function maxHit(o){return o.vy<0&&Math.abs(o.x-blk.x)<maxReach()&&o.y>blk.y-TUNE.reach&&o.y<blk.y+74;}
+// a match that lasted at least 20 seconds pays one random charge, and a second for winning
+function duelReward(won){const q=PF.list[PF.cur],D=duel;if(D.t<20)return;for(let i=0;i<(won?2:1);i++){const k=POW[~~(rnd()*POW.length)][0];q.pw[k]++;D.earned.push(k);}pfSave();}
+function duelEnd(w){const D=duel;if(D.mx.held){D.mx.held.o.st='float';D.mx.held=null;}if(w==='max'&&D.role==='max'){const q=PF.list[PF.cur];if(D.stage>(q.mxBest||0))q.mxBest=D.stage;}duelReward(w===D.role);pfSave();D.over=w;charging=null;pendingLaunch=null;swingT=0;state='duelend';mood(mxc,'laugh',6);hop(mxc,3.2);mood(noah,'oops',2.5);sfxFanfare();}
+// DIVE: tap a spot and Max lunges there fast. It costs the same energy as a block, and he needs that much left.
+function maxDive(x){const m=duel.mx;if(m.e<TUNE.tire||state!=='play')return;m.dive=DIVE_T;m.dx=clamp(x,MAX_L,MAX_R);m.tx=m.dx;m.e-=TUNE.tire;waterBurst(blk.x,blk.y+78,true);blip(300,.16,'triangle',.18,760);haptic(1);mood(mxc,'gotcha',.5);}
+// what the toy does when Max gets it (a block, or the Squirt Blaster)
+function maxBlock(o,free){const D=duel,m=D.mx;D.blocks++;haptic(2);o.blocked=1;if(!free)m.e=Math.max(0,m.e-TUNE.tire); // a block tires him (the Squirt Blaster's do not)
+ if(m.bucket>0){m.bucket=0;m.held={o,t:4};o.st='held';pop(blk.x,blk.y-40,'In The Bucket!','#ffb020');sfxBlock();mood(mxc,'gotcha',1.1);hop(mxc,3.2);mood(noah,'wow',.8);combo=0;streak=0;return;} // caught: out of play for 4 seconds
+ o.vy=Math.abs(o.vy)*.5+1;o.vx*=-.5;shake=3;rdBlock++;pop(blk.x,blk.y-36,'Max Got It!','#ffb020');sfxBlock();mood(mxc,'gotcha',1.1);hop(mxc,3.2);mood(noah,'wow',.8);}
+function usePower(k,free){const D=duel,m=D.mx,q=PF.list[PF.cur];if(state!=='play')return;
+ if(free){if(!D.free)return;D.free=0;}else{const i=D.bag.findIndex(b=>b.k===k);if(i<0||!(q.pw[k]>0))return;D.bag.splice(i,1);q.pw[k]--;pfSave();}
+ pop(blk.x,blk.y-58,POWNAME[k]+'!','#7fe0ff');haptic(2);blip(440,.18,'square',.16,1100);
+ if(k==='splash'){D.wave=1.1;shake=7;flash=.16;flashCol='#dff4ff';for(let i=-2;i<=2;i++)waterBurst(blk.x+i*38,blk.y+84,true);rings.push({x:blk.x,y:blk.y+84,r:10,life:1,big:true});sfxSplash();
+  if(charging&&charging.cpu){charging=null;D.cpu.wait=1.1;}else if(charging){charging=null;} // the wave knocks the toy out of Noah's hand
+ }else if(k==='noodle')m.noodle=10;else if(k==='flip')m.flip=10;else if(k==='bucket')m.bucket=12;else if(k==='bubble')m.bub=4;
+ else if(k==='blast'){D.jet=.4;sfxSplash();objs.forEach(o=>{if(o.st==='fly'&&!o.blocked&&Math.abs(o.x-blk.x)<38&&o.y<blk.y+60)maxBlock(o,true);});}}
+function duelStep(dt){const D=duel,m=D.mx;D.t+=dt;
+ // Max: a dive in progress, or swimming toward where he is steered at a limited speed (Flippers: faster)
+ {const x0=blk.x;if(m.dive>0){m.dive-=dt;blk.x+=clamp(m.dx-blk.x,-DIVE_SPD,DIVE_SPD);if(Math.abs(m.dx-blk.x)<1)m.dive=0;}else{const sp=TUNE.spd*lerp(TIRED,1,m.e)*(m.flip>0?1.7:1);blk.x+=clamp(m.tx-blk.x,-sp,sp);}
+  blk.x=clamp(blk.x,MAX_L,MAX_R);const dx=blk.x-x0;if(Math.abs(dx)>.9&&Math.random()<(m.dive>0||m.flip>0?.9:.3))parts.push({x:blk.x-Math.sign(dx)*24,y:blk.y+80,vx:-Math.sign(dx)*(.6+Math.random()),vy:-1-Math.random()*1.5,life:.8,r:2+Math.random()*2.5,col:'#dff4ff'});} // a wake
+ m.e=Math.min(1,m.e+dt/Math.max(.5,TUNE.rest));
+ for(const k of['noodle','flip','bucket','bub'])if(m[k]>0)m[k]-=dt;if(D.jet>0)D.jet-=dt;
+ if(D.wave>0){D.wave-=dt;objs.forEach(o=>{if(o.st==='float'){o.x=clamp(o.x+(o.x<CX?-1:1)*2.6,46,334);o.vx=(o.x<CX?1:-1)*Math.abs(o.vx);}});} // Big Splash: the wave carries the toys to the walls
+ if(m.held){m.held.t-=dt;if(m.held.t<=0){const o=m.held.o;o.st='float';o.x=rnd()<.5?64:316;o.y=462;o.vx=(o.x<CX?1:-1)*floatSpd(diff());o.vy=0;o.blocked=0;waterBurst(o.x,o.y-6,false);sfxPlop();m.held=null;}} // the bucket is tipped out by a wall
  {const sec=Math.ceil(timeLeft);if(sec!==D.lastSec){D.lastSec=sec;if(sec<=5&&sec>0)blip(sec<=3?880:660,.09,'square',.12);}} // the last five seconds tick
  if(D.noah==='cpu')cpuNoah(dt);}
 // COMPUTER NOAH. He throws the way a Push player does (hold, let go when it will score), so the person playing Max
-// can read him. The stage sets his skill (k = 0 at stage 1 .. 1 at stage 10): how long he waits between throws, how
+// can read him. The stage sets his skill (k = 0 at stage 1 .. 1 at stage 10): how quickly he winds up, how long he waits between throws, how
 // often he lets go too early, how often he picks the toy furthest from Max, and how often he starts on one side and
-// switches to the other (a fake). When Max is under water he hurries.
+// switches to the other (a fake). While Max is tired he hurries.
 function cpuNoah(dt){const D=duel,c=D.cpu,k=(round-1)/9;
- if(charging){const o=charging.o;
+ if(charging){const o=charging.o;charging.c=Math.min(CHARGE_MAX,charging.c+dt*CHARGE_RATE*(lerp(1,1.8,k)-1)); // higher stages: a quicker wind-up (1.3 seconds at stage 1 down to about 0.7 at stage 10)
   if(c.fakeAt&&charging.c>=c.fakeAt){charging=null;c.fakeAt=0;c.avoid=c.side;c.wait=.1;return;}
   const go=c.bad?charging.c>=.8:hitsAt(o,charging.c);
   if(go&&(c.late-=dt)<=0){pendingLaunch={o,f:c.bad?charging.c:assist(o,charging.c)};charging=null;swingT=swingDur;swingHit=false;c.wait=lerp(1.5,.3,k)*(.7+rnd()*.6);}
   else if(charging.c>=CHARGE_MAX){charging=null;c.wait=.3;} // never found the shot (a toy right under the crater): try another
   return;}
  if(pendingLaunch||swingT>0)return;
- c.wait-=dt*(D.mx.dunk>0?3:1);if(c.wait>0)return;
+ c.wait-=dt*(D.mx.e<.5?2.2:1);if(c.wait>0)return; // he hurries while Max is tired
  const fl=objs.filter(o=>o.st==='float'&&!(o.born&&NOW<o.born+.3)&&(!o.hb||rnd()<.5));if(!fl.length)return;
  let pool=fl;if(c.avoid){const q=fl.filter(o=>(o.x<CX?-1:1)!==c.avoid);if(q.length)pool=q;c.avoid=0;}
  let o=pool[~~(rnd()*pool.length)];if(rnd()<lerp(.2,.9,k))o=pool.reduce((a,b)=>Math.abs(crossX(b)-blk.x)>Math.abs(crossX(a)-blk.x)?b:a);
- c.side=o.x<CX?-1:1;c.bad=rnd()<lerp(.3,.04,k);c.fakeAt=fl.length>1&&rnd()<lerp(0,.3,k)?.55+rnd()*.3:0;c.late=rnd()*lerp(.12,.02,k);
+ c.side=o.x<CX?-1:1;c.bad=rnd()<(D.mx.bub>0?.75:lerp(.3,.04,k));c.fakeAt=fl.length>1&&rnd()<lerp(0,.3,k)?.55+rnd()*.3:0;c.late=rnd()*lerp(.12,.02,k);
  charging={o,c:.3,sx:o.x,sy:o.y,fx:o.x,fy:o.y,lx:o.x,ly:o.y,lt:0,peak:0,len:0,tc:.3,cpu:true};splashSide=c.side;}
 function spawnHairball(){const left=rnd()<.5;objs.push({hb:true,x:left?70:310,y:450,vx:(rnd()-.5)*.6,vy:0,bob:rnd()*6.28,st:'float',sq:0,life:8,r:16});}
 function waterBurst(x,y,big){const n=big?26:12;for(let i=0;i<n;i++){const a=-1.57+(Math.random()-.5)*(big?2.4:2),s=(big?3:2)+Math.random()*(big?9:5);parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-(big?4:2),life:1,r:(big?4:3)+Math.random()*(big?7:4),col:['#bfeaff','#8ed8ff','#ffffff','#5bc0f0'][~~(Math.random()*4)]});}rings.push({x,y,r:6,life:1});}
@@ -159,13 +192,14 @@ function down(e){const wasPlaying=song&&!song.paused;initAudio();const p=P(e);
  if((state==='play'||paused)&&dist(p.sx,p.sy,W-120,SAFE+28)<22){sfxClick();askHome();return;} // home button: asks first, then back to the start screen
  if((state==='play'||paused)&&dist(p.sx,p.sy,W-74,SAFE+28)<23){paused=!paused;homeAsk=0;sfxClick();if(!paused){lastNow=performance.now();acc=0;}return;}
  if(paused||state!=='play'){for(const b of[card,card2,card3,card4,...hits])if(b&&b.act&&p.sx>b.x&&p.sx<b.x+b.w&&p.sy>b.y&&p.sy<b.y+b.h){press={key:b.key,act:b.act,id:b.id||0};break;}return;}
- if(duel&&duel.role==='max'){duel.drag=true;duel.mx.tx=clamp(p.x,MAX_L,MAX_R);return;} // playing Max: the finger steers him, it never grabs a toy
+ if(duel&&duel.role==='max'){const b=duelBar().find(b=>p.sx>b.x-4&&p.sx<b.x+b.w+4&&p.sy>b.y-4&&p.sy<b.y+b.h+4);if(b){usePower(b.k,b.free);return;} // a power button
+  duel.drag=true;duel.mx.tx=clamp(p.x,MAX_L,MAX_R);duel.tap={t:performance.now(),x:p.x,sx:p.sx,sy:p.sy,far:0};return;} // playing Max: the finger steers him, it never grabs a toy
  if(charging||pendingLaunch||swingT>0)return;
  if(hardMode&&swipeMode&&objs.filter(o=>o.st==='fly').length>=HARD_MAX_AIR)return;
  let best=null,bd=74;objs.forEach(o=>{if(o.st!=='float')return;const d=dist(p.x,p.y,o.x,o.y);if(d<bd){bd=d;best=o;}});
  if(best){charging={o:best,c:0.3,sx:p.x,sy:p.y,fx:p.x,fy:p.y,lx:p.x,ly:p.y,lt:performance.now(),peak:0,len:0,tc:0.3};hintT=0;splashSide=best.x<190?-1:1;haptic(1);}}
 function release(){if(press){const p=press;press=null;pressUntil=NOW+.12;pressId=p.id||0;sfxClick();setTimeout(()=>{if(p.key===uiKey)p.act();},90);return;}
- if(duel&&duel.role==='max'){duel.drag=false;return;} // the throw in progress belongs to the other side
+ if(duel&&duel.role==='max'){const tp=duel.tap;duel.drag=false;duel.tap=null;if(tp&&performance.now()-tp.t<260&&tp.far<16)maxDive(tp.x);return;} // a quick tap is a dive; the throw in progress belongs to the other side
  if(!charging)return;
  if(!swipeMode){pendingLaunch={o:charging.o,f:assist(charging.o,charging.c)};charging=null;swingT=swingDur;swingHit=false;return;}
  if(charging.len<SWIPE_MIN){charging=null;tutOn=true;tutT=0;return;}
@@ -176,7 +210,7 @@ function doLaunch(){if(!pendingLaunch)return;const o=pendingLaunch.o,f=pendingLa
 cv.addEventListener('pointerdown',e=>{e.preventDefault();down(e);});
 window.addEventListener('pointerup',release);
 window.addEventListener('pointercancel',release);
-window.addEventListener('pointermove',e=>{if(duel&&duel.role==='max'){if(duel.drag&&state==='play')duel.mx.tx=clamp(P(e).x,MAX_L,MAX_R);return;}if(charging&&swipeMode)swipeMove(P(e));});
+window.addEventListener('pointermove',e=>{if(duel&&duel.role==='max'){if(duel.drag&&state==='play'){const q=P(e);duel.mx.tx=clamp(q.x,MAX_L,MAX_R);if(duel.tap)duel.tap.far=Math.max(duel.tap.far,Math.hypot(q.sx-duel.tap.sx,q.sy-duel.tap.sy));}return;}if(charging&&swipeMode)swipeMove(P(e));});
 
 // ── PHYSICS ──
 function step(dt){
@@ -212,7 +246,8 @@ function step(dt){
   }else if(o.st==='fly'){
    o.vx+=o.drift||0;o.vy+=G;o.x+=o.vx;o.y+=o.vy;o.rot=(o.rot||0)+o.vx*.05;if(swipeMode)wallBounce(o);
    if(Math.random()<.4)parts.push({x:o.x+(Math.random()-.5)*14,y:o.y+8,vx:(Math.random()-.5)*.8,vy:.5,life:.7,r:2+Math.random()*2.5,col:'#dff4ff'});
-   if(blk.on&&!o.blocked&&(duel?maxHit(o):dist(o.x,o.y,blk.x,blk.y)<30)){if(duel){duel.blocks++;duel.mx.dunk=TUNE.dunk;haptic(2);waterBurst(blk.x,blk.y+78,true);}o.blocked=1;o.vy=Math.abs(o.vy)*.5+1;o.vx*=-.5;shake=3;rdBlock++;stat('blocks');pop(blk.x,blk.y-36,'Max Got It!','#ffb020');sfxBlock();mood(mxc,'gotcha',1.1);hop(mxc,3.2);mood(noah,'wow',.8);}
+   if(blk.on&&!o.blocked&&duel&&maxHit(o))maxBlock(o);
+   else if(blk.on&&!o.blocked&&!duel&&dist(o.x,o.y,blk.x,blk.y)<30){o.blocked=1;o.vy=Math.abs(o.vy)*.5+1;o.vx*=-.5;shake=3;rdBlock++;stat('blocks');pop(blk.x,blk.y-36,'Max Got It!','#ffb020');sfxBlock();mood(mxc,'gotcha',1.1);hop(mxc,3.2);mood(noah,'wow',.8);}
    if(catchHit(o.x,o.y,o.vy)){
      if(o.hb){stat('hair');streak++;statMax('bestStreak',streak);combo++;bestCombo=Math.max(bestCombo,combo);timeLeft+=5;score+=50;shake=4;flash=.18;flashCol='#ffe9b0';collectedToys.push('🧶');freeze=3;vol.sv+=.5;mood(vol,'yuck',1.3);mood(noah,'cheer',1);hop(noah,3);sparkle(CX,CY-6,10);
        pop(CX,CY-18,'Hairball! +50  +5s','#ffd23f');splash(CX,CY,'#8a5a2a',26);sfxHair();o.st='gone';
@@ -243,7 +278,7 @@ function updateEjecta(){if(!ejecta.length)return;for(const e of ejecta){if(!e.al
  ejecta=ejecta.filter(e=>e.alive);}
 function splash(x,y,col,n){for(let i=0;i<n;i++){const a=-1.57+(Math.random()-.5)*2.4,s=2+Math.random()*6;parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-2,life:1,r:3+Math.random()*5,col});}}
 function roundWin(){if(state!=='play')return;
- if(duel){duel.over='noah';charging=null;pendingLaunch=null;state='erupt';eruptT=160;bigErupt();setTimeout(()=>{if(duel&&state==='erupt'){state='duelend';sfxFanfare();}},3500);return;} // a match: the eruption, then the result card (no coins or main-game stats yet)
+ if(duel){duelReward(duel.role==='noah');duel.over='noah';charging=null;pendingLaunch=null;state='erupt';eruptT=160;bigErupt();setTimeout(()=>{if(duel&&state==='erupt'){state='duelend';sfxFanfare();}},3500);return;} // a match: the eruption, then the result card (no coins or main-game stats yet)
  {const c=COIN_ROUND+(round>=10?COIN_WIN:0);addCoins(c);pop(CX,CY-104,'+'+c+' Coins','#ffd23f');}
  stat('rounds');if(!rdMiss)stat('perfect');if(diff().blk>0&&!rdBlock)stat('sneak');if(timeLeft>=15)stat('quick');if(hardMode)stat('hardRounds');statMax('bestRound',round);
  if(round>=10){score+=150+Math.round(timeLeft)*10;stat('wins');statMax('bestScore',score);state='win';eruptT=160;bigErupt();return;}
@@ -763,23 +798,45 @@ function foamFinger(hx,hy,sg){X.save();X.translate(hx,hy);X.rotate(sg*.22); // v
  rr(sg*12-6.5,-50,13,38,6.5);shp(C.gold);for(const q of[1.5,-6,-13.5]){circ(sg*q,-18.5,5);shp(C.gold);}rr(-19,-19,38,30,8);shp(C.gold);rr(-14,10,28,8,3);shp(C.amber);
  if(PASS){X.lineCap='round';X.strokeStyle=C.amber;X.lineWidth=2.2;for(const q of[5.2,-2.2,-9.7]){X.beginPath();X.moveTo(sg*q,-19);X.lineTo(sg*q,-11);X.stroke();}text('#1',0,-1,13,C.navy);}X.restore();}
 function nameTag(t,x,y,col){X.font=fnt(900,11);const w=X.measureText(t).width+18;rr(x-w/2,y-9,w,18,5);fill('#fff');text(t,x,y+.5,11,col);}
-function drawMax(mx,hY){const sink=duel?duel.mx.sink:0,headY=hY+38,wob=Math.sin(wave*.22)*2,wl=headY+44,er=(state==='erupt'||state==='win'),m=mxc.mood,hopY=mxc.hop+(er?-Math.abs(Math.sin(NOW*7+1))*4:0),hd=headY+Math.sin(NOW*2.4+1)*.5,wig=m==='gotcha'?Math.sin(NOW*30)*3:0;
- foam(mx,wl,33,false);X.save();X.beginPath();X.rect(-20,-500,W+40,wl+500);X.clip();X.translate(0,hopY+sink*36); // dunked (v8.2): he sinks to his eyes and stays in view; v8.1 hid him completely, which read as Max vanishing
+function drawMax(mx,hY){const headY=hY+38,wob=Math.sin(wave*.22)*2,wl=headY+44,er=(state==='erupt'||state==='win'),m=mxc.mood,hopY=mxc.hop+(er?-Math.abs(Math.sin(NOW*7+1))*4:0),hd=headY+Math.sin(NOW*2.4+1)*.5,wig=m==='gotcha'?Math.sin(NOW*30)*3:0;
+ foam(mx,wl,33,false);X.save();X.beginPath();X.rect(-20,-500,W+40,wl+500);X.clip();X.translate(0,hopY);
  sticker(()=>{[[-1,wob],[1,-wob]].forEach(a=>{const sg=a[0],hy2=hY+a[1];lin([[mx+16*sg,headY+22],[mx+35*sg,headY+2],[mx+(27-wig)*sg,hy2+5]],10.5,C.skin);circ(mx+(27-wig)*sg,hy2,10);shp(C.skin);});
   rr(mx-21,headY+12,42,80,19);shp(C.skin);if(PASS){ell(mx,headY+17,13,6);fill(C.skinD);}
-  kidHead(mx,hd,22,C.hairM,'#a84f16',{mood:sink>.3?'wow':(er||m==='gotcha'||m==='laugh')?'laugh':m==='aww'?'wow':'cheeky',freckles:true,flip:true,look:lookAt(mx,headY),blink:sink>.3||mxc.blink>0});});
- X.restore();lapWater(mx,wl,33);foam(mx,wl,33,true);if(sink>.4&&duel){const f=clamp(duel.mx.dunk/Math.max(.1,TUNE.dunk),0,1),cy=hY+14; // dizzy stars, a ring that empties as he recovers, and the word
-  for(let i=0;i<3;i++){const a=NOW*5+i*TAU/3;star(mx+Math.cos(a)*27,cy+Math.sin(a)*8,6.5,3);X.lineJoin='round';X.lineWidth=3;X.strokeStyle=C.navy;X.stroke();fill(C.gold);}
-  X.lineCap='round';X.lineWidth=8;X.strokeStyle=C.navy;circ(mx,cy,12);X.stroke();X.lineWidth=4.5;X.strokeStyle='#fff';X.beginPath();X.arc(mx,cy,12,-PI/2,-PI/2+TAU*f);X.stroke();text('Dunked!',mx,cy-27,13,'#fff',{s:C.navy});}
+  kidHead(mx,hd,22,C.hairM,'#a84f16',{mood:(er||m==='gotcha'||m==='laugh')?'laugh':m==='aww'?'wow':'cheeky',freckles:true,flip:true,look:lookAt(mx,headY),blink:mxc.blink>0});});
+ X.restore();lapWater(mx,wl,33);foam(mx,wl,33,true);if(duel&&state==='play')maxGear(mx,hY,wl);
  nameTag('Max',mx,wl+22,'#c2530f');}
 function maxBlocker(){if(blk.on)drawMax(blk.x,blk.y);}
-// Playing Max: (1) a marker on the water where he is swimming to, (2) while he is under water, a ring that empties as
-// he comes back, (3) on stages 1 to 3 only, a "stand here" ring where the throw being wound up will pass.
+// what Max's powers look like on him (both players see these)
+function maxGear(mx,hY,wl){const m=duel.mx;X.save();X.lineCap='round';
+ if(m.noodle>0&&(m.noodle>2||Math.sin(NOW*18)>0)){const R=maxReach()+6;X.beginPath();X.moveTo(mx-R,hY-2);X.quadraticCurveTo(mx,hY-16,mx+R,hY-2);X.lineWidth=16;X.strokeStyle='#fff';X.stroke();X.lineWidth=10;X.strokeStyle='#ff6fa8';X.stroke();}
+ if(m.flip>0&&(m.flip>2||Math.sin(NOW*18)>0))for(const g of[-1,1]){X.beginPath();X.moveTo(mx+g*30,wl+2);X.lineTo(mx+g*52,wl-16);X.lineTo(mx+g*56,wl+2);X.closePath();X.lineJoin='round';X.lineWidth=5;X.strokeStyle='#fff';X.stroke();fill(C.green);}
+ if(m.bucket>0||m.held){X.save();X.translate(mx,hY-22+Math.sin(NOW*6)*1.5);X.rotate(m.held?0:PI);paintToy('🪣',40);X.restore();if(m.held){X.save();X.translate(mx,hY-40);paintToy(m.held.o.em,22);X.restore();text(Math.ceil(m.held.t)+'',mx+28,hY-22,14,'#fff',{s:C.navy});}}
+ if(duel.jet>0){const h=hY+10;X.fillStyle='#fff';X.fillRect(mx-17,60,34,h-60);X.fillStyle=C.waterLt;X.fillRect(mx-11,60,22,h-60);}
+ X.restore();}
+// Bubble Bath: bubbles over the bottom of the tub hide the toys
+function drawBubbles(){const b=duel&&duel.mx.bub;if(!(b>0))return;const k=Math.min(1,b/.4,(4-b)/.3+.2);for(let i=0;i<34;i++){const x=28+(i*53%330)+Math.sin(NOW*1.3+i)*6,y=436+(i*29%62)+Math.cos(NOW*1.7+i*2)*5,r=(17+(i*7%12))*k;circ(x,y,r);fill('#fff');X.lineWidth=2.5;X.strokeStyle=C.waterLt;X.stroke();circ(x-r*.3,y-r*.3,r*.22);fill(C.waterLt);}}
+// Playing Max: (1) a marker on the water where he is swimming to, (2) his energy bar under his name, (3) on stages 1 to
+// 3 only, a "stand here" ring where the throw being wound up will pass.
 function duelHints(){if(state!=='play')return;const m=duel.mx,wl=blk.y+82;X.save();X.lineCap='round';
- if(duel.stage<=3&&charging&&m.dunk<=0){const cx=crossX(charging.o),ok=Math.abs(cx-blk.x)<TUNE.reach*.7;X.setLineDash([8,7]);X.lineDashOffset=-NOW*30;X.lineWidth=7;X.strokeStyle=C.navy;ell(cx,wl-2,30,10);X.stroke();X.lineWidth=3.5;X.strokeStyle=ok?C.go:C.gold;X.stroke();X.setLineDash([]);
+ if(duel.stage<=3&&charging){const cx=crossX(charging.o),ok=Math.abs(cx-blk.x)<maxReach()*.8;X.setLineDash([8,7]);X.lineDashOffset=-NOW*30;X.lineWidth=7;X.strokeStyle=C.navy;ell(cx,wl-2,30,10);X.stroke();X.lineWidth=3.5;X.strokeStyle=ok?C.go:C.gold;X.stroke();X.setLineDash([]);
   if(!ok){const g=cx>blk.x?1:-1,ax=blk.x+g*(44+((NOW*2)%1)*8);arrowHead(ax,blk.y+40,g>0?0:PI,11,C.gold);}}
- if(m.dunk<=0&&Math.abs(m.tx-blk.x)>8){X.beginPath();X.moveTo(m.tx-8,wl+10);X.lineTo(m.tx,wl+1);X.lineTo(m.tx+8,wl+10);X.strokeStyle=C.navy;X.lineWidth=7;X.stroke();X.strokeStyle='#fff';X.lineWidth=3.5;X.stroke();}
- X.restore();nameTag('Max',blk.x,wl+22,'#c2530f');} // his name again, on top of Noah, so the player can always find him
+ if(Math.abs(m.tx-blk.x)>8){X.beginPath();X.moveTo(m.tx-8,wl+10);X.lineTo(m.tx,wl+1);X.lineTo(m.tx+8,wl+10);X.strokeStyle=C.navy;X.lineWidth=7;X.stroke();X.strokeStyle='#fff';X.lineWidth=3.5;X.stroke();}
+ X.restore();nameTag('Max',blk.x,wl+22,'#c2530f'); // his name again, on top of Noah, so the player can always find him
+ {const f=m.e,x=blk.x-30,y=wl+35,low=f<TUNE.tire;rr(x-2,y-2,64,14,5);fill(C.navy);rr(x,y,60,10,3.5);fill('#c9d8f2');if(f>.02){rr(x,y,Math.max(6,60*f),10,3.5);fill(low?C.lavaDk:f<.6?C.amber:C.go);}text(low?'Tired!':'Energy',blk.x,y+20,low?12:10,low?C.hot:'#fff',{s:C.navy});} // his energy bar: green, amber, red
+}
+// the power buttons along the bottom of the screen (screen coordinates): the free Big Splash, then what was packed
+function duelBar(){if(!duel||duel.role!=='max'||state!=='play')return[];const D=duel,list=(D.free?[{k:'splash',free:true}]:[]).concat(D.bag.map(b=>({k:b.k}))),sz=54,gap=10,x0=W/2-(list.length*sz+(list.length-1)*gap)/2,y=HS-Math.max(SAFEB,6)-sz-8;return list.map((b,i)=>({...b,x:x0+i*(sz+gap),y,w:sz,h:sz}));}
+function drawDuelBar(){duelBar().forEach(b=>{rr(b.x,b.y+4,b.w,b.h,10);fill(C.deep);rr(b.x,b.y,b.w,b.h,10);fill('#fff');X.save();X.translate(b.x+b.w/2,b.y+b.h/2-4);powIcon(b.k,15);X.restore();text(b.free?'Free':POWNAME[b.k].split(' ').pop(),b.x+b.w/2,b.y+b.h-8,8.5,b.free?C.lavaDk:C.navy);});}
+// a small picture of each power, centred on 0,0, about z units in radius
+function powIcon(k,z){X.save();X.lineCap='round';X.lineJoin='round';const ol=w=>{X.lineWidth=w||2.4;X.strokeStyle=C.navy;X.stroke();};
+ if(k==='splash'){X.beginPath();X.moveTo(-z*1.1,z*.7);X.quadraticCurveTo(-z*.9,-z*.9,z*.1,-z*.8);X.quadraticCurveTo(z*.9,-z*.7,z*.7,-z*.05);X.quadraticCurveTo(z*.2,-z*.4,z*.05,z*.1);X.quadraticCurveTo(z*.6,z*.1,z*1.1,z*.7);X.closePath();ol();fill(C.water);circ(z*.95,-z*.75,z*.16);ol(2);fill(C.water);circ(-z*.2,-z*1.05,z*.13);ol(2);fill(C.water);}
+ else if(k==='noodle'){X.beginPath();X.arc(0,z*.75,z*1.05,PI*1.13,PI*1.87);X.lineWidth=z*.62;X.strokeStyle=C.navy;X.stroke();X.lineWidth=z*.4;X.strokeStyle='#ff6fa8';X.stroke();}
+ else if(k==='flip'){X.rotate(.35);X.beginPath();X.moveTo(-z*.28,-z);X.lineTo(z*.28,-z);X.lineTo(z*.85,z*.75);X.quadraticCurveTo(0,z*1.15,-z*.85,z*.75);X.closePath();ol();fill(C.green);X.strokeStyle=C.greenD;X.lineWidth=2;for(const g of[-.35,0,.35]){X.beginPath();X.moveTo(g*z*.5,-z*.3);X.lineTo(g*z*1.4,z*.7);X.stroke();}}
+ else if(k==='bucket'){paintToy('🪣',z*2.3);}
+ else if(k==='blast'){rr(-z*.95,-z*.6,z*1.6,z*.62,z*.2);ol();fill(C.lava);rr(-z*.7,-z*.1,z*.5,z*.9,z*.14);ol();fill(C.lavaDk);rr(z*.6,-z*.47,z*.42,z*.34,z*.08);ol(2);fill(C.gold);X.beginPath();X.moveTo(z*1.1,-z*.3);X.lineTo(z*1.25,-z*.3);X.lineWidth=z*.3;X.strokeStyle=C.water;X.stroke();}
+ else{[[-.35,.2,.62],[.5,-.25,.46],[.38,.6,.3]].forEach(q=>{circ(q[0]*z,q[1]*z,q[2]*z);ol(2.2);fill('#eaf8ff');circ((q[0]-q[2]*.3)*z,(q[1]-q[2]*.3)*z,q[2]*z*.2);fill('#fff');});}
+ X.restore();}
+
 function kid(){const wr=PF.list[PF.cur].wear,flo=wr.includes('floaties'),kx=190,base=372,s=splashSide,er=(state==='erupt'||state==='win'),wl=base+8,busy=charging||pendingLaunch||swingT>0;
  const cheer=er||(noah.mood==='cheer'&&!busy),hopY=noah.hop+(er?-Math.abs(Math.sin(NOW*7))*4:0),hy=base-44+Math.sin(NOW*2.2)*.8;
  const tl=charging?-s*(.05+.07*Math.min(1,charging.c/1.2)):swingT>0?s*.14:0;noah.lean+=(tl-noah.lean)*.25;noah.ab=(noah.ab||0)+((busy?1:0)-(noah.ab||0))*.3;
@@ -794,7 +851,7 @@ function kid(){const wr=PF.list[PF.cur].wear,flo=wr.includes('floaties'),kx=190,
 
 // ── TOYS ──
 function toyFloat(em,x,by,size,rot,sx,sy,hb){ell(x,by+size*.38,size*.52,size*.13);fill(C.waterDk);X.save();X.translate(x,by);X.rotate(rot);X.scale(sx,sy);paintToy(em,size);X.restore();}
-function drawObjs(){const anyHeld=charging||pendingLaunch;objs.map((o,i)=>[o,i]).sort((a,b)=>((a[0].st==='fly')-(b[0].st==='fly'))||(a[0].y-b[0].y)).forEach(([o,i])=>{if(o.st==='gone')return;if(o.born&&NOW<o.born)return;
+function drawObjs(){const anyHeld=charging||pendingLaunch;objs.map((o,i)=>[o,i]).sort((a,b)=>((a[0].st==='fly')-(b[0].st==='fly'))||(a[0].y-b[0].y)).forEach(([o,i])=>{if(o.st==='gone'||o.st==='held')return;if(o.born&&NOW<o.born)return;
  const fly=o.st==='fly',held=(charging&&charging.o===o)||(pendingLaunch&&pendingLaunch.o===o),bk=o.born?EZ.back((NOW-o.born)/.38):1,em=o.hb?'🧶':o.em,size=o.hb?36:(need>8?30:need>5?33:36);
  let nudge=0;if(!anyHeld&&idleT>3.5&&!fly){const ph=(idleT*1.1-i*.33)%3.2;if(ph>0&&ph<.42)nudge=-Math.sin(ph/.42*PI)*9;}
  const by=o.y+((fly||held)?0:Math.sin(wave*.045+o.bob)*3.2)+nudge,canGrab=o.st==='float'&&!anyHeld&&swingT<=0&&!(duel&&duel.role==='max'),sq=o.sq||0;
@@ -900,8 +957,8 @@ const PF_KEY=TEST?'evitb-test-profiles-v1':PF_LIVE,PF_MAX=4,PF_ICONS=['🦆','�
 const ST0={games:0,rounds:0,toys:0,misses:0,hair:0,blocks:0,newFirst:0,sneak:0,perfect:0,quick:0,rebounds:0,hardRounds:0,wins:0,bestScore:0,bestStreak:0,bestRound:0,bestCombo:0};
 function pfFix(o){const r={...ST0};if(o)for(const k in ST0)if(typeof o[k]==='number')r[k]=o[k];return r;}
 let PF={cur:0,list:[]},ST;
-try{const sv=JSON.parse(localStorage.getItem(PF_KEY)||(TEST&&localStorage.getItem(PF_LIVE))||'null');if(sv&&Array.isArray(sv.list)&&sv.list.length){PF.list=sv.list.slice(0,PF_MAX).map((q,i)=>({name:String(q.name||'Player '+(i+1)).slice(0,10),icon:ALL_TOYS.includes(swapToy(q.icon))?swapToy(q.icon):PF_ICONS[i],st:pfFix(q.st),coins:typeof q.coins==='number'?Math.max(0,q.coins|0):null,owned:Array.isArray(q.owned)?[...new Set(q.owned.map(swapToy))].filter(e=>priceOf(e)):[],line:Array.isArray(q.line)?q.line.map(swapToy):q.line,gear:gearFix(q.gear),wear:gearFix(q.wear,gearFix(q.gear)),mxBest:clamp(q.mxBest|0,0,10)}));PF.cur=clamp(sv.cur|0,0,PF.list.length-1);}}catch(e){}
-if(!PF.list.length){let old=null;try{old=JSON.parse(localStorage.getItem(ST_KEY)||'null');}catch(e){}PF.list=[{name:'Player 1',icon:PF_ICONS[0],st:pfFix(old),coins:null,owned:[],line:null,gear:[],wear:[],mxBest:0}];}
+try{const sv=JSON.parse(localStorage.getItem(PF_KEY)||(TEST&&localStorage.getItem(PF_LIVE))||'null');if(sv&&Array.isArray(sv.list)&&sv.list.length){PF.list=sv.list.slice(0,PF_MAX).map((q,i)=>({name:String(q.name||'Player '+(i+1)).slice(0,10),icon:ALL_TOYS.includes(swapToy(q.icon))?swapToy(q.icon):PF_ICONS[i],st:pfFix(q.st),coins:typeof q.coins==='number'?Math.max(0,q.coins|0):null,owned:Array.isArray(q.owned)?[...new Set(q.owned.map(swapToy))].filter(e=>priceOf(e)):[],line:Array.isArray(q.line)?q.line.map(swapToy):q.line,gear:gearFix(q.gear),wear:gearFix(q.wear,gearFix(q.gear)),mxBest:clamp(q.mxBest|0,0,10),mxN:Math.max(0,q.mxN|0),pw:pwFix(q.pw)}));PF.cur=clamp(sv.cur|0,0,PF.list.length-1);}}catch(e){}
+if(!PF.list.length){let old=null;try{old=JSON.parse(localStorage.getItem(ST_KEY)||'null');}catch(e){}PF.list=[{name:'Player 1',icon:PF_ICONS[0],st:pfFix(old),coins:null,owned:[],line:null,gear:[],wear:[],mxBest:0,mxN:0,pw:pwFix(null)}];}
 ST=PF.list[PF.cur].st;
 const owns=(q,em)=>DEF_LINE.includes(em)||q.owned.includes(em);
 function lineFix(q){const L=q.line;if(!(Array.isArray(L)&&L.length===12&&new Set(L).size===12&&L.every(e=>owns(q,e))))q.line=DEF_LINE.slice();}
@@ -913,7 +970,7 @@ function pfAdd(){if(PF.list.length<PF_MAX)nameEd={mode:'add',txt:'',t0:uiT};}
 function pfRename(){const n=PF.list[PF.cur].name;nameEd={mode:'rename',txt:/^Player \d$/.test(n)?'':n.replace(/[^A-Za-z]/g,'').slice(0,10),t0:uiT};} // a default "Player 1" starts blank
 function pfDelete(){if(PF.list.length>1)pfDel=uiT||.001;}
 function pfType(ch){const e=nameEd;if(!e)return;if(ch==='<')e.txt=e.txt.slice(0,-1);else if(e.txt.length<10)e.txt+=e.txt.length?ch.toLowerCase():ch.toUpperCase();}
-function pfNameDone(){const e=nameEd;if(!e||!e.txt)return;if(e.mode==='add'){const icon=PF_ICONS.find(c=>!PF.list.some(q=>q.icon===c))||PF_ICONS[0];PF.list.push({name:e.txt,icon,st:pfFix(null),coins:0,owned:[],line:DEF_LINE.slice(),gear:[],wear:[],mxBest:0});pfPick(PF.list.length-1);pfToy=uiT||.001;}else{PF.list[PF.cur].name=e.txt;pfSave();}nameEd=null;}
+function pfNameDone(){const e=nameEd;if(!e||!e.txt)return;if(e.mode==='add'){const icon=PF_ICONS.find(c=>!PF.list.some(q=>q.icon===c))||PF_ICONS[0];PF.list.push({name:e.txt,icon,st:pfFix(null),coins:0,owned:[],line:DEF_LINE.slice(),gear:[],wear:[],mxBest:0,mxN:0,pw:pwFix(null)});pfPick(PF.list.length-1);pfToy=uiT||.001;}else{PF.list[PF.cur].name=e.txt;pfSave();}nameEd=null;}
 function pfDeleteDone(){pfDel=0;if(PF.list.length<2)return;PF.list.splice(PF.cur,1);pfPick(Math.min(PF.cur,PF.list.length-1));}
 window.addEventListener('keydown',ev=>{if(!nameEd)return;if(ev.key==='Backspace'){pfType('<');ev.preventDefault();}else if(ev.key==='Enter')pfNameDone();else if(/^[a-zA-Z]$/.test(ev.key))pfType(ev.key);});
 function drawNameCard(){const e=nameEd,cw=336,ch=408,{cx,cy}=cardBegin(cw,ch,e.mode==='add'?'New Player':'Rename',uiT-e.t0);
@@ -1110,30 +1167,49 @@ function drawHowTo(){const pg=HOWTO[howTo],age=uiT-howT0,cw=324,ch=428,{cx,cy}=c
 function tuneSave(){if(TEST)try{localStorage.setItem('evitb-test-tune',JSON.stringify(TUNE));}catch(e){}}
 if(TEST)try{const t=JSON.parse(localStorage.getItem('evitb-test-tune')||'null');if(t)for(const k in TUNE0)if(typeof t[k]==='number')TUNE[k]=t[k];}catch(e){}
 function nudgeBtn(x,y,t,act,id,on){const dn=press&&press.id===id,d=dn?2:0;rr(x,y+3,34,28,7);fill(on?'#34509c':'#aab4cc');rr(x,y+d,34,28,7);fill(on?(dn?'#4a6cc0':'#5b7fd6'):'#c9d1e2');text(t,x+17,y+14.5+d,19,'#fff');if(on)hits.push({x:x-4,y:y-4,w:42,h:38,act,key:uiKey,id});}
-const TUNE_ROWS=[['spd','Max Speed',.25,1,7,v=>v.toFixed(2)],['reach','Max Reach',2,14,60,v=>''+v],['dunk','Dunk Time',.1,0,3,v=>v.toFixed(1)+' s'],['clock','Clock',.1,.3,3,v=>'x '+v.toFixed(1)]];
-function drawMulti(){const q=PF.list[PF.cur],O=30,cw=336,ch=(TEST?516:318)+O,{cx,cy:cy0}=cardBegin(cw,ch,'Multiplayer',uiT-mpT0),cy=cy0+O;
+const TUNE_ROWS=[['spd','Max Speed',.1,.5,7,v=>v.toFixed(1)],['reach','Max Reach',1,14,60,v=>''+v],['tire','Tire Per Block',.05,0,1,v=>Math.round(v*100)+'%'],['rest','Rest To Full',1,1,30,v=>v+' s'],['clock','Clock',.1,.3,3,v=>'x '+v.toFixed(1)]];
+function drawMulti(){const q=PF.list[PF.cur],O=30,cw=336,ch=(TEST?552:318)+O,{cx,cy:cy0}=cardBegin(cw,ch,'Multiplayer',uiT-mpT0),cy=cy0+O;
  // the ten stages: a tick on each one this player has beaten as Max
  for(let i=1;i<=10;i++){const x=cx+cw/2-135+(i-1)*30,y=cy0+158,won=i<=(q.mxBest||0),cur=i===mpStage;if(cur){rr(x-13,y-13,26,26,7);fill(C.lava);}rr(x-10.5,y-10.5,21,21,5);fill(won?C.green:'#dfe3ec');text(''+i,x,y+.5,11.5,won?'#fff':'#7c879f');hits.push({x:x-15,y:y-15,w:30,h:30,act:()=>{mpStage=i;},key:uiKey,id:130+i});}
  body('Be Max. Block Noah’s toys!',cy0+88,16);
  text('Stage',cx+34,cy0+128,17,C.navy,{a:'left'});nudgeBtn(cx+116,cy0+113,'−',()=>{mpStage--;},100,mpStage>1);text(''+mpStage,cx+173,cy0+128,22,C.lava);nudgeBtn(cx+196,cy0+113,'+',()=>{mpStage++;},101,mpStage<10);text((mpStage+2)+' Toys',cx+cw-30,cy0+128,12.5,'#4a6fc4',{a:'right',w:800});
  button((W-244)/2,cy+158,244,56,'Play As Max',()=>startDuel(mpStage,'max'),{size:23,icon:1});
  body('Two phones: coming next.',cy+240,12,'#4a6fc4');
- if(TEST){X.fillStyle='#eef4fd';X.fillRect(cx+12,cy+258,cw-24,178);text('Tuning (Test Page Only)',cx+24,cy+274,12,C.lavaDk,{a:'left'});
+ if(TEST){X.fillStyle='#eef4fd';X.fillRect(cx+12,cy+258,cw-24,214);text('Tuning (Test Page Only)',cx+24,cy+274,12,C.lavaDk,{a:'left'});
   hits.push({x:cx+cw-92,y:cy+262,w:76,h:26,act:()=>{Object.assign(TUNE,TUNE0);tuneSave();},key:uiKey,id:120});text('Reset',cx+cw-24,cy+274,12,'#5b7fd6',{a:'right'});
   TUNE_ROWS.forEach((r,i)=>{const y=cy+290+i*36,v=TUNE[r[0]],set=d=>{TUNE[r[0]]=Math.round(clamp(v+d,r[3],r[4])*100)/100;tuneSave();};text(r[1],cx+24,y+15,14,C.navy,{a:'left',w:800});nudgeBtn(cx+158,y,'−',()=>set(-r[2]),110+i*2,v>r[3]);text(r[5](v),cx+226,y+15,15,C.navy);nudgeBtn(cx+260,y,'+',()=>set(r[2]),111+i*2,v<r[4]);});}
  button((W-180)/2,cy0+ch-66,180,44,'Close',()=>{mpT0=0;},{size:17,id:7,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});cardEnd();}
 function drawDuelIntro(){const D=duel,mx=D.role==='max',cw=324,ch=440,{cx,cy,age}=cardBegin(cw,ch,mx?'You Are Max!':'You Are Noah!');
  X.save();X.translate(W/2,cy+128);const k=EZ.elastic((age-.1)/.8);X.scale(k,k);sticker(()=>{if(mx)kidHead(0,4,32,C.hairM,'#a84f16',{mood:'cheeky',freckles:true,flip:true});else kidHead(0,4,32,C.hairN,'#2b1a12',{mood:'happy',wear:PF.list[PF.cur].wear});});X.restore();
  // the two things to know, each with a small moving picture
- (mx?[['Drag to swim left and right.'],['A toy that hits Max is blocked.'],['Each block dunks him for a moment.'],['Hold out until the clock hits 0!']]:[['Throw every toy in the volcano.'],['A toy that hits Max is blocked.'],['Each block dunks him for a moment.'],['Beat the clock!']]).forEach((r,i)=>{const y=cy+196+i*34;circ(cx+34,y,12);fill(C.lava);text(''+(i+1),cx+34,y+1,15,'#fff');text(r[0],cx+54,y+1,13.5,C.navy,{a:'left',w:800});});
+ (mx?[['Drag to swim. Tap a spot to dive.'],['A toy that hits Max is blocked.'],['Blocks and dives tire him out.'],['Hold out until the clock hits 0!']]:[['Throw every toy in the volcano.'],['A toy that hits Max is blocked.'],['Blocks and dives tire him out.'],['Beat the clock!']]).forEach((r,i)=>{const y=cy+196+i*34;circ(cx+34,y,12);fill(C.lava);text(''+(i+1),cx+34,y+1,15,'#fff');text(r[0],cx+54,y+1,13.5,C.navy,{a:'left',w:800});});
  text('Stage '+D.stage+'   ·   '+need+' Toys   ·   '+Math.round(roundTime)+' Seconds',W/2,cy+336,12,'#4a6fc4',{w:800});
- button((W-220)/2,cy+ch-82,220,58,'Go!',duelGo,{size:26});cardEnd();}
-function drawDuelCard(){const D=duel,mw=D.over==='max',you=D.over===D.role,cw=324,ch=388,{cx,cy,age}=cardBegin(cw,ch,mw?'Max Wins!':'Noah Wins!');
+ button((W-220)/2,cy+ch-82,220,58,'Next',()=>{state='duelbag';},{size:26});cardEnd();}
+// PACK YOUR BAG: up to 3 charges for this match. Tap a power to pack one, tap a slot to take it out. A power you have
+// none of can be bought with coins. Nothing leaves the player's stock until it is used in the match.
+function drawBag(){const D=duel,q=PF.list[PF.cur],cw=336,ch=500,{cx,cy}=cardBegin(cw,ch,'Pack Your Bag');
+ coin(cx+26,cy+80,9);text(q.coins+' Coins',cx+41,cy+81,15,C.navy,{a:'left'});text('Stage '+D.stage,cx+cw-18,cy+81,12,'#4a6fc4',{a:'right',w:800});
+ const left=k=>q.pw[k]-D.pack.filter(e=>e===k).length;
+ for(let i=0;i<3;i++){const x=W/2-99+i*70,y=cy+98,k=D.pack[i],dn=press&&press.id===150+i;rr(x,y+3,58,58,10);fill(k?C.deep:'#c9d1e2');rr(x,y+(dn?2:0),58,58,10);fill(k?'#fff3bf':'#eef4fd');if(k){X.save();X.translate(x+29,y+29);powIcon(k,17);X.restore();hits.push({x,y,w:58,h:58,act:()=>{D.pack.splice(i,1);},key:uiKey,id:150+i});}else text(''+(i+1),x+29,y+30,20,'#aab4cc');}
+ text('Plus one free Big Splash every match.',W/2,cy+176,11,'#4a6fc4',{w:800});
+ POW.forEach((p,n)=>{const k=p[0],x=cx+(cw-3*100+6)/2+(n%3)*100,y=cy+190+(n/3|0)*94,have=left(k),sel=D.sel===k,id=160+n;if(sel){rr(x-3,y-3,100,94,10);fill(C.lava);}rr(x,y,94,88,8);fill(sel?'#fff3bf':have>0?'#eef4fd':'#dfe3ec');
+  X.save();X.translate(x+47,y+29+(sel?Math.sin(NOW*6)*1.5:0));powIcon(k,17);X.restore();text(p[1],x+47,y+60,p[1].length>11?9.5:10.5,C.navy,{w:800});
+  if(have>0)text('x'+have,x+47,y+75,12,C.greenD);else{const t=''+POW_PRICE;X.font=fnt(900,12);const tw=X.measureText(t).width;coin(x+47-tw/2-5,y+74.5,6);text(t,x+47-tw/2+5,y+75,12,q.coins>=POW_PRICE?C.navy:'#7c879f',{a:'left'});}
+  hits.push({x,y,w:94,h:88,act:()=>{if(left(k)>0&&D.pack.length<3){D.pack.push(k);D.sel=null;sfxTick();}else D.sel=D.sel===k?null:k;},key:uiKey,id});});
+ const sk=D.sel,can=sk&&q.coins>=POW_PRICE;
+ body(sk?(can?'Buy 1 '+POWNAME[sk]+' for '+POW_PRICE+' coins?':POWNAME[sk]+': you need '+(POW_PRICE-q.coins)+' more coins.'):D.pack.length<3?'Tap a power to pack it.':'Bag is full. Tap a slot to take one out.',cy+396,13.5);
+ const x0=W/2-(80+8+92+8+124)/2,yb=cy+ch-70,B={col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'};
+ button(x0,yb,80,46,'Back',()=>{goMenu();mpT0=.001;},{size:15,id:7,...B});
+ button(x0+88,yb,92,46,'Buy',()=>{if(!can)return;q.coins-=POW_PRICE;q.pw[sk]++;pfSave();sfxFanfare();},{size:17,id:19,col:can?'#e08a00':'#aab4cc',colD:can?'#a85f24':'#8793ad',colP:can?'#c97800':'#aab4cc'});
+ button(x0+188,yb,124,46,'Go!',duelGo,{size:21});cardEnd();}
+function drawDuelCard(){const D=duel,mw=D.over==='max',you=D.over===D.role,cw=324,ch=436,{cx,cy,age}=cardBegin(cw,ch,mw?'Max Wins!':'Noah Wins!');
  X.save();X.translate(W/2,cy+134);burstShape(96,68,14,NOW*.3);fill(C.hot);burstShape(80,56,14,NOW*.3+.11);fill('#fff3bf');const k=EZ.elastic((age-.15)/.8);X.scale(k,k);X.rotate(Math.sin(NOW*3)*.05);
  sticker(()=>{if(mw)kidHead(0,4,30,C.hairM,'#a84f16',{mood:'laugh',freckles:true,flip:true});else kidHead(0,4,30,C.hairN,'#2b1a12',{mood:'laugh',wear:PF.list[PF.cur].wear});});X.restore();
  body(mw?(you?'You saved bath time!':'Max saved bath time!'):(you?'Kaboom! You did it!':'Kaboom! The volcano blew.'),cy+214,17);
  body('Blocks '+D.blocks+'   ·   Toys In '+collected+' Of '+need+'   ·   Stage '+D.stage,cy+238,12.5,'#4a6fc4');
- {const nx=mw&&you&&D.stage<10;button((W-232)/2,cy+258,232,52,nx?'Next Stage':'Play Again',()=>{if(nx)mpStage=D.stage+1;startDuel(nx?D.stage+1:D.stage,D.role,true);},{icon:1,size:21});}
+ if(D.earned.length){X.font=fnt(900,13);const t='You Earned',tw=X.measureText(t).width,w=tw+10+D.earned.length*34,x=W/2-w/2;text(t,x,cy+272,13,C.navy,{a:'left'});D.earned.forEach((k,i)=>{const kk=EZ.back((age-.6-i*.2)/.3);if(kk<=0)return;X.save();X.translate(x+tw+26+i*34,cy+271);X.scale(kk,kk);powIcon(k,12);X.restore();});}
+ else text('Play 20 seconds or more to earn a power.',W/2,cy+272,11,'#4a6fc4',{w:800});
+ {const nx=mw&&you&&D.stage<10;button((W-232)/2,cy+306,232,52,nx?'Next Stage':'Play Again',()=>{if(nx)mpStage=D.stage+1;startDuel(nx?D.stage+1:D.stage,D.role);},{icon:1,size:21});}
  const x0=W/2-(110+12+110)/2,B={col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'};button(x0,cy+ch-62,110,38,'Stage',()=>{goMenu();mpT0=.001;},{size:15,id:2,...B});button(x0+122,cy+ch-62,110,38,'Home',goMenu,{size:15,id:3,...B});cardEnd();}
 function askHome(){if(homeAsk)return;homeWasPaused=paused;homeAsk=(paused?uiT:0)+1;paused=true;}
 function drawHomeCard(){const cw=300,ch=282,{cy}=cardBegin(cw,ch,'Go Home?',uiT-(homeAsk-1));body('This game will end.',cy+96,16);body('Your badges are safe.',cy+119,13,'#4a6fc4');
@@ -1192,7 +1268,7 @@ k0=lerp(.85,1,EZ.back(uiT/.5)),ih=py+pw+30,bandH=HS-ih; // the taped picture sit
  text(VERSION+(TEST?' TEST':''),W-16,HS-lblB-12,10,TEST?C.hot:'#d6efff',{a:'right',w:800});if(TEST)text(dbg,16,HS-lblB-12,9,'#d6efff',{a:'left',w:800});}
 function overlay(){card2=null;card3=null;card4=null;hits.length=0;const key=paused?'pause':state;if(key!==uiKey){uiKey=key;uiT=0;card=null;press=null;}
  if(paused){if(homeAsk)drawHomeCard();else drawPauseCard();return;}
- if(state==='menu')drawMenu();else if(state==='intro')drawIntroCard();else if(state==='newtoy')drawNewToyCard();else if(state==='win')drawResultCard(true);else if(state==='gameover')drawResultCard(false);else if(state==='duelend')drawDuelCard();else if(state==='duelintro')drawDuelIntro();else card=null;}
+ if(state==='menu')drawMenu();else if(state==='intro')drawIntroCard();else if(state==='newtoy')drawNewToyCard();else if(state==='win')drawResultCard(true);else if(state==='gameover')drawResultCard(false);else if(state==='duelend')drawDuelCard();else if(state==='duelintro')drawDuelIntro();else if(state==='duelbag')drawBag();else card=null;}
 
 // ── ERUPTION LETTERING ──
 function big(t,dy,size,col){text(t,0,dy+size*.09,size,C.navy,{s:C.navy,sw:size*.36});text(t,0,dy,size,col,{s:C.navy,sw:size*.3});}
@@ -1237,8 +1313,8 @@ function draw(){X.setTransform(KS*DPR,0,0,KS*DPR,0,0);X.globalAlpha=1;
  if(state==='menu'){overlay();drawMute();return;}
  X.fillStyle=C.wall;X.fillRect(0,0,W,HS);X.save();const pz=1+EZ.in(punch)*.05,sk=shake>.3;if(sk||pz>1.001){const px=W/2,py=OY+290;X.translate(px+(sk?(Math.random()-.5)*shake:0),py+(sk?(Math.random()-.5)*shake:0));X.scale(pz,pz);X.translate(-px,-py);}
  backdrop();X.save();X.translate(0,OY);
- water();volcano();maxBlocker();kid();if(duel&&duel.role==='max')duelHints();drawObjs();drawRings();tutorial();chargeGuide();drawParts();eruptFX();drawEjecta();drawBanner();drawPops();
- X.restore();hud();X.restore();
+ water();volcano();maxBlocker();kid();if(duel&&duel.role==='max')duelHints();drawObjs();drawBubbles();drawRings();tutorial();chargeGuide();drawParts();eruptFX();drawEjecta();drawBanner();drawPops();
+ X.restore();hud();drawDuelBar();X.restore();
  if(flash>0){X.save();X.globalAlpha=Math.min(1,flash);X.fillStyle=flashCol;X.fillRect(0,0,W,HS);X.restore();}
  overlay();drawToast();drawMute();if(state==='play'||paused)drawPauseBtn();}
 // fill the phone; never shorter than 720 logical px, so the wall decor always clears the tub

@@ -28,7 +28,10 @@ The goal of the whole version (Derek, 2026-11-17): make the game stickier. Judge
 - [x] **V8-24** S. (v8.0) Stage picker 1 to 10 from the existing difficulty table; clock x1.5 (v8.1) after simulated matches.
 - [x] **V8-25** M. (v8.0) Tuning panel, test page only: Max speed, reach, dunk time, clock.
 - [x] **V8-26** S. (v8.0) A plain Multiplayer button on the test start screen to reach all this.
-- [ ] **V8-27** (Derek) Play Max on the iPhone test app. Report what felt unfair or dull. **<- waiting on this**
+- [x] **V8-27** (Derek) Played v8.1 on his iPhone 2026-11-17. Result: block rule unclear, dunk read as vanishing,
+      wanted a move for Max and the powers. Answers: powers before two devices; a dive; replace the dunk.
+- [x] **V8-2B** M. (v8.3) Energy bar replaces the dunk; dive on a quick tap; computer Noah winds up quicker at high stages.
+- [ ] **V8-2C** (Derek) Play v8.3: does energy feel fair, is the dive easy to trigger, are the powers fun? **<- waiting on this**
 - [x] **V8-28** S. (v8.1) Max's lane moved up the tub so the boys no longer hide each other.
 - [x] **V8-29** M. (v8.1) Intro card, steering marker, dunk ring, stand-here ring on stages 1 to 3, stage ladder
       with Next Stage and best stage saved per player.
@@ -47,14 +50,14 @@ The goal of the whole version (Derek, 2026-11-17): make the game stickier. Judge
 - [ ] **V8-37** (Derek) Play it on two phones with two people. **Stop here and adjust the design if the core
       is not fun.**
 
-## Milestone 4: Powers and charges
-- [ ] **V8-40** M. Charges owned per player; the bag (pack up to 3); spend on use; unused come home.
-- [ ] **V8-41** M. Max: Big Splash (one free per match), Pool Noodle, Flippers.
-- [ ] **V8-42** M. Max: Bucket, Squirt Blaster, Bubble Bath.
+## Milestone 4: Powers and charges (moved ahead of two devices by Derek, 2026-11-17)
+- [x] **V8-40** M. (v8.3) Charges owned per player; the bag (pack up to 3); spend on use; unused come home.
+- [x] **V8-41** M. (v8.3) Max: Big Splash (one free per match), Pool Noodle, Flippers.
+- [x] **V8-42** M. (v8.3) Max: Bucket, Squirt Blaster, Bubble Bath.
 - [ ] **V8-43** M. Noah: Decoy Duck, Rocket Throw, Double Throw.
-- [ ] **V8-44** S. Earning: one charge per finished match, a second for winning; buy with coins.
+- [x] **V8-44** S. (v8.3) Earning: one charge per finished match, a second for winning; buy with coins.
 - [ ] **V8-45** S. Power bubble in the main game from round 4.
-- [ ] **V8-46** S. Draw each power in the boy's hands in the game.
+- [x] **V8-46** S. (v8.3, Max's) Draw each power in the boy's hands in the game.
 
 ## Milestone 5: The loop that never ends
 - [ ] **V8-50** S. Keep going after round 10 in the main game; best-round record.
