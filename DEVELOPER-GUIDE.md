@@ -4,7 +4,7 @@ Read this first before changing the game. It says where things are and gives ste
 common jobs (add a toy, change prices, add a badge, publish). The history of *why* things are the way they are
 is in `experiments/fable-v7.md` (one line per version) and, for the art, `experiments/fable-v5.md`.
 
-Last updated: 2026-11-17, at test version v8.3 / live version v7.45.
+Last updated: 2026-11-17, at test version v8.4 / live version v7.45.
 
 **Next major version (v8, Multiplayer mode: a new mode beside the main game, which it does not replace): design in `experiments/v8-design.md`, work list in
 `experiments/v8-backlog.md`.** Derek gave the go-ahead on draft 2 on 2026-11-17; what is built so far is in
@@ -129,6 +129,9 @@ Conventions:
 - **Text style (Derek's rule):** Title Case On Every Word for titles, buttons and labels; sentence case only
   for full sentences. Nothing faded or see-through in the game art. Few rounded shapes.
 - **The version label stays on the live start screen** (bottom-right corner). Derek wants it there; do not hide it.
+- **A button's action runs about 90 ms after the tap and can run twice on a fast double tap.** Re-check inside the
+  action (enough coins, value still in range); never trust a value captured when the button was drawn. Found in
+  review at v8.4 (stage picker, Buy on the bag card).
 - **No system pop-ups** (`prompt`, `confirm`, `alert`): they do not open in the iPhone home-screen app.
 - The `TEST` flag is true only on `play-test.html`. Test-only tools (the "+50" coin and "Rd N" start-round
   buttons beside Push and Swipe, the debug line bottom-left) are wrapped in `if(TEST…)`, so they stay hidden

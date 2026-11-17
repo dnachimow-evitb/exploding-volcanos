@@ -31,7 +31,8 @@ The goal of the whole version (Derek, 2026-11-17): make the game stickier. Judge
 - [x] **V8-27** (Derek) Played v8.1 on his iPhone 2026-11-17. Result: block rule unclear, dunk read as vanishing,
       wanted a move for Max and the powers. Answers: powers before two devices; a dive; replace the dunk.
 - [x] **V8-2B** M. (v8.3) Energy bar replaces the dunk; dive on a quick tap; computer Noah winds up quicker at high stages.
-- [ ] **V8-2C** (Derek) Play v8.3: does energy feel fair, is the dive easy to trigger, are the powers fun? **<- waiting on this**
+- [x] **V8-2D** M. (v8.4) Review before testing: five bugs from an independent read and a dozen gaps fixed; coins for matches (V8-61) done.
+- [ ] **V8-2C** (Derek) Play v8.4: does energy feel fair, is the dive easy to trigger, are the powers fun? **<- waiting on this**
 - [x] **V8-28** S. (v8.1) Max's lane moved up the tub so the boys no longer hide each other.
 - [x] **V8-29** M. (v8.1) Intro card, steering marker, dunk ring, stand-here ring on stages 1 to 3, stage ladder
       with Next Stage and best stage saved per player.
@@ -70,7 +71,7 @@ The goal of the whole version (Derek, 2026-11-17): make the game stickier. Judge
 
 ## Milestone 6: The rest of the game around it
 - [ ] **V8-60** M. Multiplayer home screen; final place for the Multiplayer button on the start screen.
-- [ ] **V8-61** S. Coins for matches (5 winner, 2 loser, none under 20 seconds).
+- [x] **V8-61** S. (v8.4) Coins for matches (5 winner, 2 loser, none under 20 seconds).
 - [ ] **V8-62** M. New badges and stats (blocks as Max, wins on each side, Daily Bath days, golden toys).
 - [ ] **V8-63** S. Dress Up: the "Noah" button covers both boys; Max wears the 12 existing pieces.
 - [ ] **V8-64** S. How To Play pages for Multiplayer, Max's controls, powers and the Daily Bath.

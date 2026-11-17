@@ -101,3 +101,32 @@ devices is OK (he sets up the account when asked); the one-line privacy and list
     dive on a drag, every power's button, the bucket catching a toy, charges earned and saved, Next Stage. Main game
     re-checked (Push and Swipe score, computer Max sweeps in round 4). Not tried on a real iPhone.
   - Not built yet: Noah's three tricks (they need a person playing Noah), the power bubble in the main game.
+- v8.4 (TEST ONLY): Derek asked for a review of everything new before he tests. Two passes: Claude's own through
+  each feature, and an independent read of the whole diff since v7.45 by a second reviewer (a subagent given the
+  code, not the reasoning). The reviewer reproduced five bugs; all are fixed here.
+  - **Bugs fixed (from the independent review):** (1) a second Bucket overwrote the toy already in the bucket, which
+    stayed out of play for the rest of the match, so Noah could not win; (2) fingers were not told apart, so a second
+    finger on a power button or pause stopped the steering finger and could fire a dive (even while paused); (3) a fast
+    double tap ran a button's action twice with stale values: stage could go to 0 (crash) or 11, and Buy could take
+    coins below zero; (4) if the last toy went in with under a third of a second left, Max was given the win;
+    (5) a toy hit by the Squirt Blaster on its way down into the crater counted as a block and still scored.
+  - **Gaps fixed (from Claude's pass):** powers had names but no explanation anywhere (the bag card now says what the
+    tapped power does, and Buy works on it); a tap near Max dived and wasted energy (a tap now dives only when it is
+    more than 40 units from him, otherwise it steers); a dive with no energy did nothing and said nothing (now "Too
+    Tired To Dive!", and Max looks worn out when low); nothing in play taught the dive (stages 1 to 3 show "Tap Here
+    To Dive!" when the throw is too far to swim to); Big Splash sent the toys to both walls, which spread Noah's
+    throws and helped him (it now sweeps every toy to Max's side); matches paid no coins although powers cost coins
+    (now 5 for a win, 2 for a loss, matches of 20 seconds or more, shown on the result card); the power buttons could
+    sit in the iPhone home-bar strip (moved up, labels larger); the pause card said "Push Easy, Round, Score" during
+    a match; a hairball in the Bucket showed an empty bucket; Bubble Bath 5 s (was 4), Squirt Blaster jet wider;
+    tuning numbers are saved under a new name so values changed on an older build cannot skew this one.
+  - The review found the main game unchanged when no match is on, no state leaking between a match and the main game,
+    old saves loading correctly, no button id clashes and no load-order problems.
+  - Simulated again, 30 matches a stage, no powers: sharp Max 100 / 97 / 90 / 43 / 30% at stages 1 / 3 / 5 / 7 / 9;
+    slow, forgetful Max 87 / 60 / 37 / 7 / 3%.
+  - Checked in a browser: each bug above re-run and now correct; packing, info line, buying, near tap, far tap, tired
+    tap, a full match, coins and powers on the result card; main game re-checked. Not tried on a real iPhone.
+  - **Known gaps, not fixed in this build:** no badges or lifetime stats for matches; no How To Play page for
+    Multiplayer; Max cannot wear the dress-up pieces yet; Noah's tricks and the power bubble in the main game are not
+    built; power balance has not been simulated (the scripted players do not use powers); late stages may be too hard
+    for a slow player without powers; none of it has run on a phone.
