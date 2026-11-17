@@ -4,7 +4,7 @@ Read this first before changing the game. It says where things are and gives ste
 common jobs (add a toy, change prices, add a badge, publish). The history of *why* things are the way they are
 is in `experiments/fable-v7.md` (one line per version) and, for the art, `experiments/fable-v5.md`.
 
-Last updated: 2026-11-17, at test version v7.49 / live version v7.45.
+Last updated: 2026-11-17, at test version v7.50 / live version v7.45.
 
 ## 1. The files that matter
 
@@ -173,7 +173,8 @@ Done once so far: `speedboat` became `train` in v7.31 (too similar to the tugboa
 
 ### Add something for Noah to wear (Dress Noah, v7.46)
 1. Add a row to `GEAR` (top of the file): `['cape',90,'Cape']` (key, price, name). Keep it in price order. The Dress Noah card
-   shows 4 to a row and has two rows (8 pieces, full since v7.48); a ninth needs pages (`drawNoah`), not a taller card.
+   shows 8 to a page (two rows of 4) with arrows in its top line, so nothing needs resizing (12 pieces at v7.50).
+   If the new piece sits where another one does (head, eyes, neck), add it to `GEAR_SLOT` so the two swap.
 2. Draw it. On the head: in `kidHead`, behind `wr.includes('key')`. Shapes that stick out past the head (hat,
    goggle frames) go BEFORE `if(!PASS)return` and use `shp()` so they get the white sticker rim; details inside
    the face (lenses, mustache) go after it. Head coordinates: before that line use `x`, `y` and the radius `r`;

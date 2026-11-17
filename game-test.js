@@ -7,12 +7,12 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v7.49'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v7.50'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
 let testRound=1; // TEST PAGE ONLY: which round a new game starts on (the small Round button on the start screen)
-let noahT0=0,selGear=null; // Dress Noah card (time it opened, 0 = closed); the locked piece currently picked on it
+let noahT0=0,selGear=null,gearPg=0; // Dress Noah card (time it opened, 0 = closed); the locked piece currently picked on it
 let toyPg=0; // page of Other Toys on the My Toys card (8 per page)
 let toysT0=0,selSlot=-1,selToy=null; // My Toys card (time it opened, 0 = closed); the spot / toy currently picked on it
 let nameEd=null,pfDel=0; // in-game name keyboard {mode,txt,t0}; delete question (time it opened, 0 = closed)
@@ -35,7 +35,10 @@ const TOY_SWAP={speedboat:'train'},swapToy=e=>TOY_SWAP[e]||e; // replaced toys: 
 // NOAH'S GEAR: things Noah wears, bought with coins like toys: [key, price, name]. What a player owns (gear) and
 // what Noah has on (wear) are saved per player. Any number can be worn at once. The drawing is in kidHead (hat,
 // goggles, mustache) and foamFinger; a new piece needs a row here and its drawing there.
-const GEAR=[['nose',30,'Clown Nose'],['hat',40,'Hat'],['bow',50,'Bow Tie'],['goggles',60,'Goggles'],['floaties',70,'Floaties'],['stache',80,'Mustache'],['snorkel',90,'Snorkel'],['finger',100,'Foam Finger']],NOWEAR=[]; // in price order; the card shows 4 to a row
+const GEAR=[['nose',30,'Clown Nose'],['hat',40,'Hat'],['bow',50,'Bow Tie'],['goggles',60,'Goggles'],['floaties',70,'Floaties'],['stache',80,'Mustache'],['snorkel',90,'Snorkel'],['finger',100,'Foam Finger'],['shades',110,'Sunglasses'],['lei',120,'Flower Lei'],['crown',140,'Crown'],['duck',160,'Duck Hat']],NOWEAR=[]; // in price order; the card shows 8 to a page
+// pieces that sit in the same place: putting one on takes the other(s) off
+const GEAR_SLOT={hat:'head',crown:'head',duck:'head',goggles:'eyes',shades:'eyes',bow:'neck',lei:'neck'};
+function gearOn(q,k){const sl=GEAR_SLOT[k];q.wear=q.wear.filter(e=>e!==k&&!(sl&&GEAR_SLOT[e]===sl));q.wear.push(k);}
 const gearFix=(a,ok)=>GEAR.map(g=>g[0]).filter(k=>Array.isArray(a)&&a.includes(k)&&(!ok||ok.includes(k)));
 const COIN_ROUND=5,COIN_WIN=25,COIN_BADGE=[0,20,40,80]; // per round won, extra for finishing all 10, per badge level
 const DEF_LINE=[...BASE,...Object.values(NEWBY)],ALL_TOYS=DEF_LINE.concat(SHOP.map(q=>q[0])),priceOf=em=>{const q=SHOP.find(z=>z[0]===em);return q?q[1]:0;};
@@ -671,13 +674,18 @@ function kidHead(x,y,r,hairC,browC,o){const m=o.mood,lk=o.look||[0,0],k=r/27;
   rr(x-r*.055,y-r*1.86,r*.11,r*.3,r*.04);shp(C.navy);ell(x,y-r*1.84,r*(.12+.5*sp),r*.1);shp(C.lava);circ(x,y-r*1.84,r*.1);shp(C.gold);
   dome();shp('#8a5bd6');if(PASS){X.save();dome();X.clip();ell(x,y-r*.56,r*.42,r*1.1);fill(C.gold);for(const g of[-1,1]){ell(x+g*r*1.2,y-r*.56,r*.42,r*1.1);fill('#12a5a0');}X.restore();}
   rr(x-r*1.12,y-r*.74,r*2.24,r*.22,r*.08);shp(C.navy);}
+ if(wr.includes('crown')){X.beginPath();X.moveTo(x-r*.98,y-r*.6);[[-1.04,-1.72],[-.72,-1.42],[-.5,-1.78],[-.25,-1.42],[0,-1.86],[.25,-1.42],[.5,-1.78],[.72,-1.42],[1.04,-1.72],[.98,-.6]].forEach(q=>X.lineTo(x+r*q[0],y+r*q[1]));X.closePath();shp(C.gold);
+  if(PASS){X.fillStyle=C.amber;X.fillRect(x-r*.98,y-r*.86,r*1.96,r*.26);[[-.6,'#e0457a'],[0,'#12a5a0'],[.6,'#8a5bd6']].forEach(q=>{circ(x+r*q[0],y-r*1.08,r*.11);fill(q[1]);});}}
+ if(wr.includes('duck')&&PASS){X.save();X.translate(x,y-r*1.36);X.rotate(Math.sin(NOW*2.2)*.09);paintToy('🦆',r*1.5);X.restore();} // the duck toy riding on his head (it carries its own white rim)
+ const shd=wr.includes('shades');if(shd){X.save();X.translate(x,y+2*k);X.scale(k,k);lin([[-27,-1],[27,-1]],3.4,'#1c1c28');for(const s of[-1,1]){rr(s*10.8-9.6,-6.5,19.2,15.5,5.5);shp('#1c1c28');}X.restore();}
  if(gog){X.save();X.translate(x,y+2*k);X.scale(k,k);rr(-27.5,-2.5,55,8,3);shp(C.navy);for(const s of[-1,1]){rr(s*10.5-10,-8,20,19,7.5);shp('#12a5a0');}X.restore();}
  if(wr.includes('snorkel')){const g=o.side||1;X.save();X.translate(x,y+2*k);X.scale(k,k);lin([[g*8,15.5],[g*25,17.5],[g*34,9],[g*34,-38]],6,C.amber);lin([[g*34,-38],[g*34,-47]],6,C.lavaDk);if(PASS){rr(g*8-5,11.5,10,8,3);fill(C.navy);}X.restore();} // tube up the side of the head (side: +1 right, -1 left)
  if(!PASS)return;X.save();X.translate(x,y+2*k);X.scale(k,k);X.lineCap='round';X.lineJoin='round';
  if(gog)for(const s of[-1,1]){rr(s*10.5-7.2,-5.2,14.4,13.4,5);fill('#d6f3ff');}
  if(o.freckles){X.fillStyle='#c9703a';[[-18,7],[-14,10.5],[-20,11.5],[14,10.5],[18,7],[20,11.5]].forEach(f=>{circ(f[0],f[1],1.3);X.fill();});}
  for(const s of[-1,1]){const ex=s*10.5;X.strokeStyle='#2a160c';X.lineWidth=3.4;
-  if(m==='laugh'){X.beginPath();X.arc(ex,5,5.6,PI*1.1,PI*1.9);X.stroke();}
+  if(shd){X.strokeStyle='#fff';X.lineWidth=2.2;X.beginPath();X.moveTo(ex-5,3);X.lineTo(ex-1,-3);X.stroke();} // sunglasses hide the eyes: just a glint
+  else if(m==='laugh'){X.beginPath();X.arc(ex,5,5.6,PI*1.1,PI*1.9);X.stroke();}
   else if(o.blink){X.beginPath();X.moveTo(ex-5,2);X.lineTo(ex+5,2);X.stroke();}
   else{const px=ex+lk[0]*1.8,py=1.5+lk[1]*1.8;circ(px,py,m==='wow'?4.8:4.1);fill('#2a160c');circ(px+1.3,py-1.6,1.4);fill('#fff');}
   X.strokeStyle=browC;X.lineWidth=3.4;X.beginPath();
@@ -692,6 +700,8 @@ function kidHead(x,y,r,hairC,browC,o){const m=o.mood,lk=o.look||[0,0],k=r/27;
 // bow tie under the chin; arm floaties: a puffy band round the upper arm from shoulder a towards elbow b (call inside sticker())
 function bowTie(x,y,z){for(const g of[-1,1]){X.beginPath();X.moveTo(x,y);X.lineTo(x+g*13*z,y-7.5*z);X.lineTo(x+g*13*z,y+7.5*z);X.closePath();shp('#e0457a');}circ(x,y,3.6*z);shp('#a3264f');}
 function floatie(a,b,z){z=z||1;const P=t=>[lerp(a[0],b[0],t),lerp(a[1],b[1],t)];lin([P(.32),P(.74)],18*z,C.lava);if(PASS){X.beginPath();X.moveTo(...P(.45));X.lineTo(...P(.61));X.lineCap='butt';X.strokeStyle='#fff';X.lineWidth=18*z;X.stroke();}}
+// flower lei round the neck (same place as the bow tie)
+function lei(x,y,z){[[-20,-13],[-16,-4],[-9,3],[0,6],[9,3],[16,-4],[20,-13]].forEach((q,i)=>{const c=['#ff6fa8',C.gold,'#8a5bd6'][i%3];circ(x+q[0]*z,y+q[1]*z,5.4*z);shp(c);if(PASS){circ(x+q[0]*z,y+q[1]*z,1.9*z);fill(i%3===1?C.lava:'#fff3bf');}});}
 // foam finger: a big foam hand on Noah's free hand (hx,hy = his hand; sg = which side; call inside sticker())
 function foamFinger(hx,hy,sg){X.save();X.translate(hx,hy);X.rotate(sg*.22); // v7.49: a FIST with the pointing finger at its outer edge and three folded knuckles beside it. A lone finger in the middle of a palm read as a rude gesture; do not centre it again.
  rr(sg*12-6.5,-50,13,38,6.5);shp(C.gold);for(const q of[1.5,-6,-13.5]){circ(sg*q,-18.5,5);shp(C.gold);}rr(-19,-19,38,30,8);shp(C.gold);rr(-14,10,28,8,3);shp(C.amber);
@@ -713,7 +723,7 @@ function kid(){const wr=PF.list[PF.cur].wear,flo=wr.includes('floaties'),kx=190,
   if(!cheer){const rest=(sg,ph)=>[[kx+18*sg,base-18],[kx+35*sg,base+1],[kx+41*sg,base-14+Math.sin(NOW*2.4+ph)*2.5]],arm=q=>{lin(q,12,C.skin);if(flo)floatie(q[0],q[1]);circ(q[2][0],q[2][1]-1,9.5);shp(C.skin);};{const q=rest(-s,1.3);arm(q);if(wr.includes('finger'))foamFinger(q[2][0],q[2][1]-1,-s);}
    const sX=kx+18*s,sY=base-20,ex=sX+s*Math.cos(armAng)*26,ey=sY+Math.sin(armAng)*26,hx=ex+s*Math.cos(armAng+0.5)*22,hy2=ey+Math.sin(armAng+0.5)*22,r=rest(s,0),b=noah.ab||0,mix=(u,v)=>[lerp(u[0],v[0],b),lerp(u[1],v[1],b)];arm([mix(r[0],[sX,sY]),mix(r[1],[ex,ey]),mix(r[2],[hx,hy2])]);}
   else[-1,1].forEach(sg=>{const wg=Math.sin(NOW*9+sg)*4,hx=kx+42*sg+wg,hy2=hy-22;lin([[kx+18*sg,base-20],[kx+38*sg,hy+12],[hx,hy2]],12,C.skin);if(flo)floatie([kx+18*sg,base-20],[kx+38*sg,hy+12]);circ(hx,hy2-2,9.5);shp(C.skin);if(sg===-s&&wr.includes('finger'))foamFinger(hx,hy2-2,sg);});
-  const nm=noah.mood;kidHead(kx,hy,27,C.hairN,'#2b1a12',{mood:cheer?'laugh':charging?'focus':nm==='throw'?'throw':(nm==='wow'||nm==='oops')?'wow':'happy',look:lookAt(kx,hy),blink:noah.blink>0,wear:wr,side:s});if(wr.includes('bow'))bowTie(kx,base-10,1);});
+  const nm=noah.mood;kidHead(kx,hy,27,C.hairN,'#2b1a12',{mood:cheer?'laugh':charging?'focus':nm==='throw'?'throw':(nm==='wow'||nm==='oops')?'wow':'happy',look:lookAt(kx,hy),blink:noah.blink>0,wear:wr,side:s});if(wr.includes('bow'))bowTie(kx,base-10,1);if(wr.includes('lei'))lei(kx,base-11,1);});
  X.restore();lapWater(kx,wl,40);foam(kx,wl,40,true);nameTag('Noah',kx,wl+24,'#1f5fd0');}
 
 // ── TOYS ──
@@ -958,20 +968,23 @@ function drawMyToys(){const q=PF.list[PF.cur],cw=344,ch=502,{cx,cy}=cardBegin(cw
  button(x0+88,yb,92,46,'Default',()=>{q.line=DEF_LINE.slice();pfSave();selSlot=-1;selToy=null;},{size:15,id:19,col:'#8a5bd6',colD:'#5a359c',colP:'#7648c2'});
  button(x0+188,yb,124,46,'Buy',toyBuy,{size:19,col:can?C.green:'#aab4cc',colD:can?C.greenD:'#8793ad',colP:can?'#27a83f':'#aab4cc'});cardEnd();}
 // ── DRESS NOAH (start screen): buy gear with coins and choose what Noah wears in the game ──
-function openNoah(){noahT0=uiT||.001;selGear=null;}
-function gearTap(k){const q=PF.list[PF.cur];if(q.gear.includes(k)){const i=q.wear.indexOf(k);if(i>=0)q.wear.splice(i,1);else q.wear.push(k);selGear=null;pfSave();sfxTick();}else selGear=selGear===k?null:k;}
-function gearBuy(){const q=PF.list[PF.cur],g=GEAR.find(z=>z[0]===selGear);if(!g||q.gear.includes(g[0])||q.coins<g[1])return;q.coins-=g[1];q.gear.push(g[0]);q.wear.push(g[0]);selGear=null;pfSave();sfxFanfare();} // a new piece goes straight on
+function openNoah(){noahT0=uiT||.001;selGear=null;gearPg=0;}
+function gearTap(k){const q=PF.list[PF.cur];if(q.gear.includes(k)){const i=q.wear.indexOf(k);if(i>=0)q.wear.splice(i,1);else gearOn(q,k);selGear=null;pfSave();sfxTick();}else selGear=selGear===k?null:k;}
+function gearBuy(){const q=PF.list[PF.cur],g=GEAR.find(z=>z[0]===selGear);if(!g||q.gear.includes(g[0])||q.coins<g[1])return;q.coins-=g[1];q.gear.push(g[0]);gearOn(q,g[0]);selGear=null;pfSave();sfxFanfare();} // a new piece goes straight on
 function noahBust(x,y,z,wear,mood){const r=27*z;sticker(()=>{rr(x-25*z,y+9*z,50*z,92*z,22*z);shp(C.skin);if(PASS){ell(x,y+15*z,15*z,7*z);fill(C.skinD);}
   for(const sg of[-1,1]){const q=[[x+18*sg*z,y+26*z],[x+35*sg*z,y+45*z],[x+41*sg*z,y+30*z+Math.sin(NOW*2.4+sg)*2.5*z]];lin(q,12*z,C.skin);if(wear.includes('floaties'))floatie(q[0],q[1],z);circ(q[2][0],q[2][1]-z,9.5*z);shp(C.skin);if(sg<0&&wear.includes('finger')){X.save();X.translate(q[2][0],q[2][1]-z);X.scale(z,z);foamFinger(0,0,sg);X.restore();}}
-  kidHead(x,y,r,C.hairN,'#2b1a12',{mood:mood||'happy',look:[0,0],blink:noah.blink>0,wear});if(wear.includes('bow'))bowTie(x,y+34*z,z);},3.2*z);}
-function gearIcon(k,z){if(k==='bow')sticker(()=>bowTie(0,z*.2,z/13),2);else if(k==='floaties')sticker(()=>{floatie([-z*1.1,z*.9],[z*.9,-z*.55],z/15);},2);else if(k==='finger'){X.save();X.translate(0,z*.62);X.scale(z/26,z/26);sticker(()=>foamFinger(0,0,-1),2.4);X.restore();}else sticker(()=>kidHead(0,z*.3,z*.62,C.hairN,'#2b1a12',{mood:'happy',wear:[k]}),2);}
+  kidHead(x,y,r,C.hairN,'#2b1a12',{mood:mood||'happy',look:[0,0],blink:noah.blink>0,wear});if(wear.includes('bow'))bowTie(x,y+34*z,z);if(wear.includes('lei'))lei(x,y+33*z,z);},3.2*z);}
+function gearIcon(k,z){if(k==='lei')sticker(()=>lei(0,z*.1,z/17),2);else if(k==='bow')sticker(()=>bowTie(0,z*.2,z/13),2);else if(k==='floaties')sticker(()=>{floatie([-z*1.1,z*.9],[z*.9,-z*.55],z/15);},2);else if(k==='finger'){X.save();X.translate(0,z*.62);X.scale(z/26,z/26);sticker(()=>foamFinger(0,0,-1),2.4);X.restore();}else{const tall=k==='crown'||k==='duck';sticker(()=>kidHead(0,z*(tall?.5:.3),z*(tall?.54:.62),C.hairN,'#2b1a12',{mood:'happy',wear:[k]}),2);}}
 function drawNoah(){const q=PF.list[PF.cur],cw=336,ch=566,{cx,cy}=cardBegin(cw,ch,'Dress Noah',uiT-noahT0);
- coin(cx+26,cy+80,9);text(q.coins+' Coins',cx+41,cy+81,15,C.navy,{a:'left'});text(q.wear.length?'Wearing '+q.wear.length:'Nothing On Yet',cx+cw-18,cy+81,12,'#4a6fc4',{a:'right',w:800});
+ coin(cx+26,cy+80,9);text(q.coins+' Coins',cx+41,cy+81,15,C.navy,{a:'left'});const pages=Math.ceil(GEAR.length/8);gearPg=clamp(gearPg,0,pages-1);
+ if(pages>1){text((gearPg+1)+' Of '+pages,cx+cw-88,cy+81,12.5,C.navy);[[-1,cx+cw-160,20],[1,cx+cw-58,21]].forEach(a=>{const on=a[0]<0?gearPg>0:gearPg<pages-1,x=a[1],y=cy+70,dn=press&&press.id===a[2];rr(x,y+2,40,22,6);fill(on?'#34509c':'#aab4cc');rr(x,y+(dn?2:0),40,22,6);fill(on?'#5b7fd6':'#c9d1e2');
+   X.beginPath();X.moveTo(x+20+a[0]*7,y+11+(dn?2:0));X.lineTo(x+20-a[0]*5,y+4+(dn?2:0));X.lineTo(x+20-a[0]*5,y+18+(dn?2:0));X.closePath();fill('#fff');
+   if(on)hits.push({x:x-8,y:y-8,w:56,h:34,act:()=>{gearPg+=a[0];selGear=null;},key:uiKey,id:a[2]});});}
  // Noah in the tub, wearing what is switched on
  const pw=cw-40,ph=150,x0=cx+20,y0=cy+96;X.save();rr(x0,y0,pw,ph,8);X.clip();X.fillStyle=C.wall;X.fillRect(x0,y0,pw,ph);X.strokeStyle=C.tile;X.lineWidth=2.5;X.beginPath();for(let x=x0+20;x<x0+pw;x+=38){X.moveTo(x,y0);X.lineTo(x,y0+ph);}for(let y=y0+14;y<y0+ph;y+=38){X.moveTo(x0,y);X.lineTo(x0+pw,y);}X.stroke();
  noahBust(W/2,y0+74+Math.sin(NOW*2.2)*.8,1.1,q.wear);X.fillStyle=C.water;X.fillRect(x0,y0+ph-22,pw,22);X.fillStyle='#fff';X.fillRect(x0,y0+ph-24,pw,3);X.restore();
  // the pieces: owned ones switch on and off with a tap (tick = on); locked ones show a price
- const gx=cx+(cw-4*78+4)/2;GEAR.forEach((g,n)=>{const k=g[0],x=gx+(n%4)*78,y=cy+258+(n/4|0)*92,own=q.gear.includes(k),on=q.wear.includes(k),sel=k===selGear,id=30+n;if(sel||on){rr(x-3,y-3,80,90,10);fill(sel?C.lava:C.green);}rr(x,y,74,84,8);fill(sel||on?'#fff3bf':own?'#eef4fd':'#dfe3ec');
+ const gx=cx+(cw-4*78+4)/2;GEAR.slice(gearPg*8,gearPg*8+8).forEach((g,n)=>{const k=g[0],x=gx+(n%4)*78,y=cy+258+(n/4|0)*92,own=q.gear.includes(k),on=q.wear.includes(k),sel=k===selGear,id=30+gearPg*8+n;if(sel||on){rr(x-3,y-3,80,90,10);fill(sel?C.lava:C.green);}rr(x,y,74,84,8);fill(sel||on?'#fff3bf':own?'#eef4fd':'#dfe3ec');
   X.save();X.translate(x+37,y+27+(sel?Math.sin(NOW*6)*1.5:0));gearIcon(k,22);X.restore();text(g[2],x+37,y+61,g[2].length>9?9:10,C.navy,{w:800});
   if(own)text(on?'On':'Off',x+37,y+73,10,on?C.greenD:'#7c879f');else{const t=''+g[1];X.font=fnt(900,12);const tw=X.measureText(t).width;coin(x+37-tw/2-5,y+72.5,6);text(t,x+37-tw/2+5,y+73,12,q.coins>=g[1]?C.navy:'#7c879f',{a:'left'});}
   if(on)check(x+64,y+10);hits.push({x,y,w:74,h:84,act:()=>gearTap(k),key:uiKey,id});});
