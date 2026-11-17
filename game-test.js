@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v7.46'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v7.47'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -667,8 +667,10 @@ function kidHead(x,y,r,hairC,browC,o){const m=o.mood,lk=o.look||[0,0],k=r/27;
  X.save();X.translate(x,y);if(o.flip)X.scale(-1,1);X.beginPath();X.moveTo(-r*1.06,-r*.02);X.quadraticCurveTo(-r*1.22,-r*.95,-r*.56,-r*1.12);X.lineTo(-r*.66,-r*1.44);X.lineTo(-r*.2,-r*1.2);X.lineTo(-r*.02,-r*1.56);X.lineTo(r*.28,-r*1.2);X.lineTo(r*.7,-r*1.42);X.lineTo(r*.62,-r*1.08);X.quadraticCurveTo(r*1.22,-r*.95,r*1.06,-r*.02);
  X.quadraticCurveTo(r*.95,-r*.5,r*.52,-r*.54);X.lineTo(r*.3,-r*.34);X.lineTo(r*.04,-r*.58);X.lineTo(-r*.24,-r*.34);X.lineTo(-r*.5,-r*.56);X.quadraticCurveTo(-r*.95,-r*.5,-r*1.06,-r*.02);X.closePath();shp(hairC);X.restore();
  const wr=o.wear||NOWEAR,gog=wr.includes('goggles'); // Noah's gear (see GEAR). The hat and the goggle frames are sticker shapes (white rim); lenses and mustache are details.
- if(wr.includes('hat')){X.beginPath();X.moveTo(x-r*1.1,y-r*.62);X.bezierCurveTo(x-r*1.16,y-r*1.42,x-r*.6,y-r*1.74,x,y-r*1.74);X.bezierCurveTo(x+r*.6,y-r*1.74,x+r*1.16,y-r*1.42,x+r*1.1,y-r*.62);X.closePath();shp(C.lavaDk);
-  ell(x,y-r*.6,r*.98,r*.25);shp('#a82a06');circ(x,y-r*1.74,r*.13);shp(C.gold);if(PASS){star(x,y-r*1.17,r*.3,r*.14);fill(C.gold);}}
+ if(wr.includes('hat')){const dome=()=>{X.beginPath();X.moveTo(x-r*1.09,y-r*.56);X.bezierCurveTo(x-r*1.14,y-r*1.3,x-r*.6,y-r*1.6,x,y-r*1.6);X.bezierCurveTo(x+r*.6,y-r*1.6,x+r*1.14,y-r*1.3,x+r*1.09,y-r*.56);X.closePath();},sp=Math.abs(Math.cos(NOW*7)); // propeller beanie (v7.47: the red cap plus the mustache read as Mario)
+  rr(x-r*.055,y-r*1.86,r*.11,r*.3,r*.04);shp(C.navy);ell(x,y-r*1.84,r*(.12+.5*sp),r*.1);shp(C.lava);circ(x,y-r*1.84,r*.1);shp(C.gold);
+  dome();shp('#8a5bd6');if(PASS){X.save();dome();X.clip();ell(x,y-r*.56,r*.42,r*1.1);fill(C.gold);for(const g of[-1,1]){ell(x+g*r*1.2,y-r*.56,r*.42,r*1.1);fill('#12a5a0');}X.restore();}
+  rr(x-r*1.12,y-r*.74,r*2.24,r*.22,r*.08);shp(C.navy);}
  if(gog){X.save();X.translate(x,y+2*k);X.scale(k,k);rr(-27.5,-2.5,55,8,3);shp(C.navy);for(const s of[-1,1]){rr(s*10.5-10,-8,20,19,7.5);shp('#12a5a0');}X.restore();}
  if(!PASS)return;X.save();X.translate(x,y+2*k);X.scale(k,k);X.lineCap='round';X.lineJoin='round';
  if(gog)for(const s of[-1,1]){rr(s*10.5-7.2,-5.2,14.4,13.4,5);fill('#d6f3ff');}
@@ -683,7 +685,7 @@ function kidHead(x,y,r,hairC,browC,o){const m=o.mood,lk=o.look||[0,0],k=r/27;
  else if(m==='wow'){ell(0,16,4.8,6);fill(C.mouth);}
  else{const d=(m==='laugh'||m==='throw')?27:m==='cheeky'?21:23.5,mp=()=>{X.beginPath();X.moveTo(-11.5,10.5);X.lineTo(11.5,10.5);X.quadraticCurveTo(10,d,0,d);X.quadraticCurveTo(-10,d,-11.5,10.5);X.closePath();};
   mp();fill(C.mouth);X.save();mp();X.clip();X.fillStyle='#fff';X.fillRect(-12,9,24,5.4);ell(0,d-1,7,4.4);fill(C.tongue);X.restore();}
- if(wr.includes('stache')){X.beginPath();X.moveTo(0,7.6);X.bezierCurveTo(5,3.6,13,5.6,18.5,8.4);X.bezierCurveTo(14,15,5,14,0,11.8);X.bezierCurveTo(-5,14,-14,15,-18.5,8.4);X.bezierCurveTo(-13,5.6,-5,3.6,0,7.6);X.closePath();X.lineWidth=2.6;X.strokeStyle='#fff';X.stroke();fill('#1c1210');}
+ if(wr.includes('stache')){X.beginPath();X.moveTo(0,8.4);X.bezierCurveTo(4,5.6,10,7.4,14,9);X.bezierCurveTo(17.5,10.2,20,7.6,19,3.6);X.bezierCurveTo(22.6,9.6,17.6,14.6,12,13.2);X.bezierCurveTo(7,12.2,3,13,0,11);X.bezierCurveTo(-3,13,-7,12.2,-12,13.2);X.bezierCurveTo(-17.6,14.6,-22.6,9.6,-19,3.6);X.bezierCurveTo(-20,7.6,-17.5,10.2,-14,9);X.bezierCurveTo(-10,7.4,-4,5.6,0,8.4);X.closePath();X.lineWidth=2.6;X.strokeStyle='#fff';X.stroke();fill('#8a4a1c');} // thin, curled-up tips, brown (not a bushy black one)
  X.restore();}
 // foam finger: a big foam hand on Noah's free hand (hx,hy = his hand; sg = which side; call inside sticker())
 function foamFinger(hx,hy,sg){X.save();X.translate(hx,hy);X.rotate(sg*.22);rr(-5.5,-47,11,34,5.5);shp(C.gold);circ(-sg*12,-9,6.5);shp(C.gold);rr(-13,-19,26,27,7);shp(C.gold);rr(-10,7,20,8,3);shp(C.amber);if(PASS)text('#1',0,-5,13,C.navy);X.restore();}
