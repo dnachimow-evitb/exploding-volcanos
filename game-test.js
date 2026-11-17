@@ -7,11 +7,12 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v7.45'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v7.46'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
 let testRound=1; // TEST PAGE ONLY: which round a new game starts on (the small Round button on the start screen)
+let noahT0=0,selGear=null; // Dress Noah card (time it opened, 0 = closed); the locked piece currently picked on it
 let toyPg=0; // page of Other Toys on the My Toys card (8 per page)
 let toysT0=0,selSlot=-1,selToy=null; // My Toys card (time it opened, 0 = closed); the spot / toy currently picked on it
 let nameEd=null,pfDel=0; // in-game name keyboard {mode,txt,t0}; delete question (time it opened, 0 = closed)
@@ -31,6 +32,11 @@ Object.assign(TOYNAME,{'🦆':'Duck','⛵':'Sailboat','🦕':'Dino',whale:'Whale
 // and the player can put any toy they own into any spot. Coins, owned toys and the lineup are saved per player.
 const SHOP=[['crayon',25],['whale',30],['jelly',35],['turtle',40],['ring',45],['crab',50],['clown',55],['star',60],['banana',65],['seal',70],['soldier',72],['penguin',75],['teddy',80],['puffer',85],['tug',90],['zebra',95],['seahorse',100],['robot',105],['sub',110],['airplane',115],['train',120],['guitar',125],['pdino',130],['helicopter',135],['firetruck',140],['narwhal',150],['unicorn',160]]; // keep in price order: locked toys are listed in this order
 const TOY_SWAP={speedboat:'train'},swapToy=e=>TOY_SWAP[e]||e; // replaced toys: a saved player who had the old one gets the new one
+// NOAH'S GEAR: things Noah wears, bought with coins like toys: [key, price, name]. What a player owns (gear) and
+// what Noah has on (wear) are saved per player. Any number can be worn at once. The drawing is in kidHead (hat,
+// goggles, mustache) and foamFinger; a new piece needs a row here and its drawing there.
+const GEAR=[['hat',40,'Hat'],['goggles',60,'Goggles'],['stache',80,'Mustache'],['finger',100,'Foam Finger']],NOWEAR=[];
+const gearFix=(a,ok)=>GEAR.map(g=>g[0]).filter(k=>Array.isArray(a)&&a.includes(k)&&(!ok||ok.includes(k)));
 const COIN_ROUND=5,COIN_WIN=25,COIN_BADGE=[0,20,40,80]; // per round won, extra for finishing all 10, per badge level
 const DEF_LINE=[...BASE,...Object.values(NEWBY)],ALL_TOYS=DEF_LINE.concat(SHOP.map(q=>q[0])),priceOf=em=>{const q=SHOP.find(z=>z[0]===em);return q?q[1]:0;};
 let LINE={...NEWBY}; // the toy that joins in each round of the current game (from the player's lineup)
@@ -660,7 +666,12 @@ function kidHead(x,y,r,hairC,browC,o){const m=o.mood,lk=o.look||[0,0],k=r/27;
  circ(x-r*.98,y+3,r*.25);shp(C.skin);circ(x+r*.98,y+3,r*.25);shp(C.skin);rr(x-r,y-r*.96,r*2,r*1.96,r*.88);shp(C.skin);
  X.save();X.translate(x,y);if(o.flip)X.scale(-1,1);X.beginPath();X.moveTo(-r*1.06,-r*.02);X.quadraticCurveTo(-r*1.22,-r*.95,-r*.56,-r*1.12);X.lineTo(-r*.66,-r*1.44);X.lineTo(-r*.2,-r*1.2);X.lineTo(-r*.02,-r*1.56);X.lineTo(r*.28,-r*1.2);X.lineTo(r*.7,-r*1.42);X.lineTo(r*.62,-r*1.08);X.quadraticCurveTo(r*1.22,-r*.95,r*1.06,-r*.02);
  X.quadraticCurveTo(r*.95,-r*.5,r*.52,-r*.54);X.lineTo(r*.3,-r*.34);X.lineTo(r*.04,-r*.58);X.lineTo(-r*.24,-r*.34);X.lineTo(-r*.5,-r*.56);X.quadraticCurveTo(-r*.95,-r*.5,-r*1.06,-r*.02);X.closePath();shp(hairC);X.restore();
+ const wr=o.wear||NOWEAR,gog=wr.includes('goggles'); // Noah's gear (see GEAR). The hat and the goggle frames are sticker shapes (white rim); lenses and mustache are details.
+ if(wr.includes('hat')){X.beginPath();X.moveTo(x-r*1.1,y-r*.62);X.bezierCurveTo(x-r*1.16,y-r*1.42,x-r*.6,y-r*1.74,x,y-r*1.74);X.bezierCurveTo(x+r*.6,y-r*1.74,x+r*1.16,y-r*1.42,x+r*1.1,y-r*.62);X.closePath();shp(C.lavaDk);
+  ell(x,y-r*.6,r*.98,r*.25);shp('#a82a06');circ(x,y-r*1.74,r*.13);shp(C.gold);if(PASS){star(x,y-r*1.17,r*.3,r*.14);fill(C.gold);}}
+ if(gog){X.save();X.translate(x,y+2*k);X.scale(k,k);rr(-27.5,-2.5,55,8,3);shp(C.navy);for(const s of[-1,1]){rr(s*10.5-10,-8,20,19,7.5);shp('#12a5a0');}X.restore();}
  if(!PASS)return;X.save();X.translate(x,y+2*k);X.scale(k,k);X.lineCap='round';X.lineJoin='round';
+ if(gog)for(const s of[-1,1]){rr(s*10.5-7.2,-5.2,14.4,13.4,5);fill('#d6f3ff');}
  if(o.freckles){X.fillStyle='#c9703a';[[-18,7],[-14,10.5],[-20,11.5],[14,10.5],[18,7],[20,11.5]].forEach(f=>{circ(f[0],f[1],1.3);X.fill();});}
  for(const s of[-1,1]){const ex=s*10.5;X.strokeStyle='#2a160c';X.lineWidth=3.4;
   if(m==='laugh'){X.beginPath();X.arc(ex,5,5.6,PI*1.1,PI*1.9);X.stroke();}
@@ -672,7 +683,10 @@ function kidHead(x,y,r,hairC,browC,o){const m=o.mood,lk=o.look||[0,0],k=r/27;
  else if(m==='wow'){ell(0,16,4.8,6);fill(C.mouth);}
  else{const d=(m==='laugh'||m==='throw')?27:m==='cheeky'?21:23.5,mp=()=>{X.beginPath();X.moveTo(-11.5,10.5);X.lineTo(11.5,10.5);X.quadraticCurveTo(10,d,0,d);X.quadraticCurveTo(-10,d,-11.5,10.5);X.closePath();};
   mp();fill(C.mouth);X.save();mp();X.clip();X.fillStyle='#fff';X.fillRect(-12,9,24,5.4);ell(0,d-1,7,4.4);fill(C.tongue);X.restore();}
+ if(wr.includes('stache')){X.beginPath();X.moveTo(0,7.6);X.bezierCurveTo(5,3.6,13,5.6,18.5,8.4);X.bezierCurveTo(14,15,5,14,0,11.8);X.bezierCurveTo(-5,14,-14,15,-18.5,8.4);X.bezierCurveTo(-13,5.6,-5,3.6,0,7.6);X.closePath();X.lineWidth=2.6;X.strokeStyle='#fff';X.stroke();fill('#1c1210');}
  X.restore();}
+// foam finger: a big foam hand on Noah's free hand (hx,hy = his hand; sg = which side; call inside sticker())
+function foamFinger(hx,hy,sg){X.save();X.translate(hx,hy);X.rotate(sg*.22);rr(-5.5,-47,11,34,5.5);shp(C.gold);circ(-sg*12,-9,6.5);shp(C.gold);rr(-13,-19,26,27,7);shp(C.gold);rr(-10,7,20,8,3);shp(C.amber);if(PASS)text('#1',0,-5,13,C.navy);X.restore();}
 function nameTag(t,x,y,col){X.font=fnt(900,11);const w=X.measureText(t).width+18;rr(x-w/2,y-9,w,18,5);fill('#fff');text(t,x,y+.5,11,col);}
 function drawMax(mx,hY){const headY=hY+38,wob=Math.sin(wave*.22)*2,wl=headY+44,er=(state==='erupt'||state==='win'),m=mxc.mood,hopY=mxc.hop+(er?-Math.abs(Math.sin(NOW*7+1))*4:0),hd=headY+Math.sin(NOW*2.4+1)*.5,wig=m==='gotcha'?Math.sin(NOW*30)*3:0;
  foam(mx,wl,33,false);X.save();X.beginPath();X.rect(-20,-500,W+40,wl+500);X.clip();X.translate(0,hopY);
@@ -681,16 +695,16 @@ function drawMax(mx,hY){const headY=hY+38,wob=Math.sin(wave*.22)*2,wl=headY+44,e
   kidHead(mx,hd,22,C.hairM,'#a84f16',{mood:(er||m==='gotcha'||m==='laugh')?'laugh':m==='aww'?'wow':'cheeky',freckles:true,flip:true,look:lookAt(mx,headY),blink:mxc.blink>0});});
  X.restore();lapWater(mx,wl,33);foam(mx,wl,33,true);nameTag('Max',mx,wl+22,'#c2530f');}
 function maxBlocker(){if(blk.on)drawMax(blk.x,blk.y);}
-function kid(){const kx=190,base=372,s=splashSide,er=(state==='erupt'||state==='win'),wl=base+8,busy=charging||pendingLaunch||swingT>0;
+function kid(){const wr=PF.list[PF.cur].wear,kx=190,base=372,s=splashSide,er=(state==='erupt'||state==='win'),wl=base+8,busy=charging||pendingLaunch||swingT>0;
  const cheer=er||(noah.mood==='cheer'&&!busy),hopY=noah.hop+(er?-Math.abs(Math.sin(NOW*7))*4:0),hy=base-44+Math.sin(NOW*2.2)*.8;
  const tl=charging?-s*(.05+.07*Math.min(1,charging.c/1.2)):swingT>0?s*.14:0;noah.lean+=(tl-noah.lean)*.25;noah.ab=(noah.ab||0)+((busy?1:0)-(noah.ab||0))*.3;
  foam(kx,wl,40,false);X.save();X.beginPath();X.rect(-20,-500,W+40,wl+500);X.clip();X.translate(kx,wl+12);X.rotate(noah.lean);X.translate(-kx,-(wl+12)+hopY);
  sticker(()=>{
   rr(kx-25,base-35,50,92,22);shp(C.skin);if(PASS){ell(kx,base-29,15,7);fill(C.skinD);}
-  if(!cheer){const rest=(sg,ph)=>[[kx+18*sg,base-18],[kx+35*sg,base+1],[kx+41*sg,base-14+Math.sin(NOW*2.4+ph)*2.5]],arm=q=>{lin(q,12,C.skin);circ(q[2][0],q[2][1]-1,9.5);shp(C.skin);};arm(rest(-s,1.3));
+  if(!cheer){const rest=(sg,ph)=>[[kx+18*sg,base-18],[kx+35*sg,base+1],[kx+41*sg,base-14+Math.sin(NOW*2.4+ph)*2.5]],arm=q=>{lin(q,12,C.skin);circ(q[2][0],q[2][1]-1,9.5);shp(C.skin);};{const q=rest(-s,1.3);arm(q);if(wr.includes('finger'))foamFinger(q[2][0],q[2][1]-1,-s);}
    const sX=kx+18*s,sY=base-20,ex=sX+s*Math.cos(armAng)*26,ey=sY+Math.sin(armAng)*26,hx=ex+s*Math.cos(armAng+0.5)*22,hy2=ey+Math.sin(armAng+0.5)*22,r=rest(s,0),b=noah.ab||0,mix=(u,v)=>[lerp(u[0],v[0],b),lerp(u[1],v[1],b)];arm([mix(r[0],[sX,sY]),mix(r[1],[ex,ey]),mix(r[2],[hx,hy2])]);}
-  else[-1,1].forEach(sg=>{const wg=Math.sin(NOW*9+sg)*4,hx=kx+42*sg+wg,hy2=hy-22;lin([[kx+18*sg,base-20],[kx+38*sg,hy+12],[hx,hy2]],12,C.skin);circ(hx,hy2-2,9.5);shp(C.skin);});
-  const nm=noah.mood;kidHead(kx,hy,27,C.hairN,'#2b1a12',{mood:cheer?'laugh':charging?'focus':nm==='throw'?'throw':(nm==='wow'||nm==='oops')?'wow':'happy',look:lookAt(kx,hy),blink:noah.blink>0});});
+  else[-1,1].forEach(sg=>{const wg=Math.sin(NOW*9+sg)*4,hx=kx+42*sg+wg,hy2=hy-22;lin([[kx+18*sg,base-20],[kx+38*sg,hy+12],[hx,hy2]],12,C.skin);circ(hx,hy2-2,9.5);shp(C.skin);if(sg<0&&wr.includes('finger'))foamFinger(hx,hy2-2,sg);});
+  const nm=noah.mood;kidHead(kx,hy,27,C.hairN,'#2b1a12',{mood:cheer?'laugh':charging?'focus':nm==='throw'?'throw':(nm==='wow'||nm==='oops')?'wow':'happy',look:lookAt(kx,hy),blink:noah.blink>0,wear:wr});});
  X.restore();lapWater(kx,wl,40);foam(kx,wl,40,true);nameTag('Noah',kx,wl+24,'#1f5fd0');}
 
 // ── TOYS ──
@@ -799,8 +813,8 @@ const PF_KEY=TEST?'evitb-test-profiles-v1':PF_LIVE,PF_MAX=4,PF_ICONS=['🦆','�
 const ST0={games:0,rounds:0,toys:0,misses:0,hair:0,blocks:0,newFirst:0,sneak:0,perfect:0,quick:0,rebounds:0,hardRounds:0,wins:0,bestScore:0,bestStreak:0,bestRound:0,bestCombo:0};
 function pfFix(o){const r={...ST0};if(o)for(const k in ST0)if(typeof o[k]==='number')r[k]=o[k];return r;}
 let PF={cur:0,list:[]},ST;
-try{const sv=JSON.parse(localStorage.getItem(PF_KEY)||(TEST&&localStorage.getItem(PF_LIVE))||'null');if(sv&&Array.isArray(sv.list)&&sv.list.length){PF.list=sv.list.slice(0,PF_MAX).map((q,i)=>({name:String(q.name||'Player '+(i+1)).slice(0,10),icon:ALL_TOYS.includes(swapToy(q.icon))?swapToy(q.icon):PF_ICONS[i],st:pfFix(q.st),coins:typeof q.coins==='number'?Math.max(0,q.coins|0):null,owned:Array.isArray(q.owned)?[...new Set(q.owned.map(swapToy))].filter(e=>priceOf(e)):[],line:Array.isArray(q.line)?q.line.map(swapToy):q.line}));PF.cur=clamp(sv.cur|0,0,PF.list.length-1);}}catch(e){}
-if(!PF.list.length){let old=null;try{old=JSON.parse(localStorage.getItem(ST_KEY)||'null');}catch(e){}PF.list=[{name:'Player 1',icon:PF_ICONS[0],st:pfFix(old),coins:null,owned:[],line:null}];}
+try{const sv=JSON.parse(localStorage.getItem(PF_KEY)||(TEST&&localStorage.getItem(PF_LIVE))||'null');if(sv&&Array.isArray(sv.list)&&sv.list.length){PF.list=sv.list.slice(0,PF_MAX).map((q,i)=>({name:String(q.name||'Player '+(i+1)).slice(0,10),icon:ALL_TOYS.includes(swapToy(q.icon))?swapToy(q.icon):PF_ICONS[i],st:pfFix(q.st),coins:typeof q.coins==='number'?Math.max(0,q.coins|0):null,owned:Array.isArray(q.owned)?[...new Set(q.owned.map(swapToy))].filter(e=>priceOf(e)):[],line:Array.isArray(q.line)?q.line.map(swapToy):q.line,gear:gearFix(q.gear),wear:gearFix(q.wear,gearFix(q.gear))}));PF.cur=clamp(sv.cur|0,0,PF.list.length-1);}}catch(e){}
+if(!PF.list.length){let old=null;try{old=JSON.parse(localStorage.getItem(ST_KEY)||'null');}catch(e){}PF.list=[{name:'Player 1',icon:PF_ICONS[0],st:pfFix(old),coins:null,owned:[],line:null,gear:[],wear:[]}];}
 ST=PF.list[PF.cur].st;
 const owns=(q,em)=>DEF_LINE.includes(em)||q.owned.includes(em);
 function lineFix(q){const L=q.line;if(!(Array.isArray(L)&&L.length===12&&new Set(L).size===12&&L.every(e=>owns(q,e))))q.line=DEF_LINE.slice();}
@@ -812,7 +826,7 @@ function pfAdd(){if(PF.list.length<PF_MAX)nameEd={mode:'add',txt:'',t0:uiT};}
 function pfRename(){const n=PF.list[PF.cur].name;nameEd={mode:'rename',txt:/^Player \d$/.test(n)?'':n.replace(/[^A-Za-z]/g,'').slice(0,10),t0:uiT};} // a default "Player 1" starts blank
 function pfDelete(){if(PF.list.length>1)pfDel=uiT||.001;}
 function pfType(ch){const e=nameEd;if(!e)return;if(ch==='<')e.txt=e.txt.slice(0,-1);else if(e.txt.length<10)e.txt+=e.txt.length?ch.toLowerCase():ch.toUpperCase();}
-function pfNameDone(){const e=nameEd;if(!e||!e.txt)return;if(e.mode==='add'){const icon=PF_ICONS.find(c=>!PF.list.some(q=>q.icon===c))||PF_ICONS[0];PF.list.push({name:e.txt,icon,st:pfFix(null),coins:0,owned:[],line:DEF_LINE.slice()});pfPick(PF.list.length-1);pfToy=uiT||.001;}else{PF.list[PF.cur].name=e.txt;pfSave();}nameEd=null;}
+function pfNameDone(){const e=nameEd;if(!e||!e.txt)return;if(e.mode==='add'){const icon=PF_ICONS.find(c=>!PF.list.some(q=>q.icon===c))||PF_ICONS[0];PF.list.push({name:e.txt,icon,st:pfFix(null),coins:0,owned:[],line:DEF_LINE.slice(),gear:[],wear:[]});pfPick(PF.list.length-1);pfToy=uiT||.001;}else{PF.list[PF.cur].name=e.txt;pfSave();}nameEd=null;}
 function pfDeleteDone(){pfDel=0;if(PF.list.length<2)return;PF.list.splice(PF.cur,1);pfPick(Math.min(PF.cur,PF.list.length-1));}
 window.addEventListener('keydown',ev=>{if(!nameEd)return;if(ev.key==='Backspace'){pfType('<');ev.preventDefault();}else if(ev.key==='Enter')pfNameDone();else if(/^[a-zA-Z]$/.test(ev.key))pfType(ev.key);});
 function drawNameCard(){const e=nameEd,cw=336,ch=408,{cx,cy}=cardBegin(cw,ch,e.mode==='add'?'New Player':'Rename',uiT-e.t0);
@@ -934,13 +948,35 @@ function drawMyToys(){const q=PF.list[PF.cur],cw=344,ch=502,{cx,cy}=cardBegin(cw
  button(x0,yb,80,46,'Close',()=>{toysT0=0;},{size:15,id:7,...B});
  button(x0+88,yb,92,46,'Default',()=>{q.line=DEF_LINE.slice();pfSave();selSlot=-1;selToy=null;},{size:15,id:19,col:'#8a5bd6',colD:'#5a359c',colP:'#7648c2'});
  button(x0+188,yb,124,46,'Buy',toyBuy,{size:19,col:can?C.green:'#aab4cc',colD:can?C.greenD:'#8793ad',colP:can?'#27a83f':'#aab4cc'});cardEnd();}
+// ── DRESS NOAH (start screen): buy gear with coins and choose what Noah wears in the game ──
+function openNoah(){noahT0=uiT||.001;selGear=null;}
+function gearTap(k){const q=PF.list[PF.cur];if(q.gear.includes(k)){const i=q.wear.indexOf(k);if(i>=0)q.wear.splice(i,1);else q.wear.push(k);selGear=null;pfSave();sfxTick();}else selGear=selGear===k?null:k;}
+function gearBuy(){const q=PF.list[PF.cur],g=GEAR.find(z=>z[0]===selGear);if(!g||q.gear.includes(g[0])||q.coins<g[1])return;q.coins-=g[1];q.gear.push(g[0]);q.wear.push(g[0]);selGear=null;pfSave();sfxFanfare();} // a new piece goes straight on
+function noahBust(x,y,z,wear,mood){const r=27*z;sticker(()=>{rr(x-25*z,y+9*z,50*z,92*z,22*z);shp(C.skin);if(PASS){ell(x,y+15*z,15*z,7*z);fill(C.skinD);}
+  for(const sg of[-1,1]){const q=[[x+18*sg*z,y+26*z],[x+35*sg*z,y+45*z],[x+41*sg*z,y+30*z+Math.sin(NOW*2.4+sg)*2.5*z]];lin(q,12*z,C.skin);circ(q[2][0],q[2][1]-z,9.5*z);shp(C.skin);if(sg<0&&wear.includes('finger')){X.save();X.translate(q[2][0],q[2][1]-z);X.scale(z,z);foamFinger(0,0,sg);X.restore();}}
+  kidHead(x,y,r,C.hairN,'#2b1a12',{mood:mood||'happy',look:[0,0],blink:noah.blink>0,wear});},3.2*z);}
+function gearIcon(k,z){if(k==='finger'){X.save();X.translate(0,z*.62);X.scale(z/26,z/26);sticker(()=>foamFinger(0,0,-1),2.4);X.restore();}else sticker(()=>kidHead(0,z*.3,z*.62,C.hairN,'#2b1a12',{mood:'happy',wear:[k]}),2);}
+function drawNoah(){const q=PF.list[PF.cur],cw=336,ch=474,{cx,cy}=cardBegin(cw,ch,'Dress Noah',uiT-noahT0);
+ coin(cx+26,cy+80,9);text(q.coins+' Coins',cx+41,cy+81,15,C.navy,{a:'left'});text(q.wear.length?'Wearing '+q.wear.length:'Nothing On Yet',cx+cw-18,cy+81,12,'#4a6fc4',{a:'right',w:800});
+ // Noah in the tub, wearing what is switched on
+ const pw=cw-40,ph=150,x0=cx+20,y0=cy+96;X.save();rr(x0,y0,pw,ph,8);X.clip();X.fillStyle=C.wall;X.fillRect(x0,y0,pw,ph);X.strokeStyle=C.tile;X.lineWidth=2.5;X.beginPath();for(let x=x0+20;x<x0+pw;x+=38){X.moveTo(x,y0);X.lineTo(x,y0+ph);}for(let y=y0+14;y<y0+ph;y+=38){X.moveTo(x0,y);X.lineTo(x0+pw,y);}X.stroke();
+ noahBust(W/2,y0+74+Math.sin(NOW*2.2)*.8,1.1,q.wear);X.fillStyle=C.water;X.fillRect(x0,y0+ph-22,pw,22);X.fillStyle='#fff';X.fillRect(x0,y0+ph-24,pw,3);X.restore();
+ // the pieces: owned ones switch on and off with a tap (tick = on); locked ones show a price
+ const gx=cx+(cw-4*78+4)/2;GEAR.forEach((g,n)=>{const k=g[0],x=gx+n*78,y=cy+258,own=q.gear.includes(k),on=q.wear.includes(k),sel=k===selGear,id=30+n;if(sel||on){rr(x-3,y-3,80,90,10);fill(sel?C.lava:C.green);}rr(x,y,74,84,8);fill(sel||on?'#fff3bf':own?'#eef4fd':'#dfe3ec');
+  X.save();X.translate(x+37,y+27+(sel?Math.sin(NOW*6)*1.5:0));gearIcon(k,22);X.restore();text(g[2],x+37,y+61,g[2].length>9?9:10,C.navy,{w:800});
+  if(own)text(on?'On':'Off',x+37,y+73,10,on?C.greenD:'#7c879f');else{const t=''+g[1];X.font=fnt(900,12);const tw=X.measureText(t).width;coin(x+37-tw/2-5,y+72.5,6);text(t,x+37-tw/2+5,y+73,12,q.coins>=g[1]?C.navy:'#7c879f',{a:'left'});}
+  if(on)check(x+64,y+10);hits.push({x,y,w:74,h:84,act:()=>gearTap(k),key:uiKey,id});});
+ const g=GEAR.find(z=>z[0]===selGear),can=g&&q.coins>=g[1];
+ body(g?(can?'Buy the '+g[2]+' for '+g[1]+' coins?':g[2]+': you need '+(g[1]-q.coins)+' more coins.'):q.gear.length?'Tap a piece to put it on or take it off.':'Tap a piece to buy it for Noah.',cy+372,13.5);
+ const xb=W/2-(104+12+164)/2,yb=cy+ch-70;button(xb,yb,104,46,'Close',()=>{noahT0=0;},{size:16,id:7,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});
+ button(xb+116,yb,164,46,'Buy',gearBuy,{size:19,col:can?C.green:'#aab4cc',colD:can?C.greenD:'#8793ad',colP:can?'#27a83f':'#aab4cc'});cardEnd();}
 // ── HOW TO PLAY (start screen) ── five pages. The Game (toys, clock, Max, hairball); Two Ways To Play (Push or Swipe is a choice, plus Easy or Hard); Way 1: Push and Way 2: Swipe (a small looping demo and three short steps each); Coins And Toys.
 const HOWTO=[null,
  {name:'The Game',rows:[['toy','The Toys','Throw them all into the volcano.'],['clock','The Clock','Get them in before time runs out.'],['max','Max','He pops up and blocks your throw.'],['hair','The Hairball','Throw it in for 5 more seconds.']],note:'A new toy joins every round.',next:'Next: 2 Ways'},
  {name:'Two Ways To Play',rows:[['push','Push','Press and hold a toy, then let go.'],['swipe','Swipe','Flick a toy up at the volcano.'],['mode','Easy Or Hard','Hard hides the green dots.']],note:'You choose on the start screen. Try both!',next:'Next: Push'},
  {name:'Way 1: Push',steps:['Press a toy and hold.','Let go when the dots turn green.','It flies into the volcano!'],note:'Hard: the dots never turn green.',next:'Next: Swipe'},
  {name:'Way 2: Swipe',steps:['Put your finger on a toy.','Swipe up at the volcano.','Bigger swipe, bigger throw!'],note:'Bounce it off a wall for double points.',next:'Next: Coins'},
- {name:'Coins And Toys',rows:[['coin','Coins','Win rounds and badges to earn coins.'],['shop','New Toys','Buy new toys with your coins.'],['line','Your Lineup','Pick the 12 toys you play with.']],note:'Tap My Toys on the start screen.',next:'Got It!'}];
+ {name:'Coins And Toys',rows:[['coin','Coins','Win rounds and badges to earn coins.'],['shop','New Toys','Buy new toys with your coins.'],['line','Your Lineup','Pick the 12 toys you play with.'],['noah','Dress Noah','Buy him a hat, goggles and more.']],note:'Tap My Toys or Noah on the start screen.',next:'Got It!'}];
 function drawHowTo(){const pg=HOWTO[howTo],age=uiT-howT0,cw=324,ch=428,{cx,cy}=cardBegin(cw,ch,'How To Play',age);
  text(pg.name,W/2-(pg.name.length>13?14:0),cy+84,pg.name.length>13?19:23,C.navy);text(howTo+' Of '+(HOWTO.length-1),cx+cw-20,cy+84,12,'#4a6fc4',{a:'right',w:800});
  if(pg.rows){pg.rows.forEach((r,i)=>{const y=cy+122+i*54,ix=cx+46,k=EZ.back((age-.15-i*.08)/.3);if(k<=0)return;X.save();X.translate(ix,y);X.scale(k,k);
@@ -953,6 +989,7 @@ function drawHowTo(){const pg=HOWTO[howTo],age=uiT-howT0,cw=324,ch=428,{cx,cy}=c
    else if(r[0]==='coin'){X.translate(0,Math.sin(NOW*3)*2);coin(0,0,17);star(0,0,7.5,3.4);fill('#fff');}
    else if(r[0]==='shop'){X.rotate(Math.sin(NOW*2)*.12);paintToy('whale',42);}
    else if(r[0]==='line'){[['🦆',-13,3],['robot',0,-5],['🚀',13,3]].forEach(q=>{X.save();X.translate(q[1],q[2]);paintToy(q[0],24);X.restore();});}
+   else if(r[0]==='noah'){X.translate(0,6);sticker(()=>kidHead(0,0,14,C.hairN,'#2b1a12',{mood:'happy',wear:['hat','goggles']}));}
    else{X.translate(0,4);sticker(()=>kidHead(0,0,15,C.hairM,'#a84f16',{mood:'cheeky',freckles:true,flip:true}));}
    X.restore();text(r[1],cx+82,y-9,16.5,C.navy,{a:'left'});text(r[2],cx+82,y+11,12.5,'#4a6fc4',{a:'left',w:800});});
   body(pg.note,cy+336,12.5,C.lavaDk);
@@ -981,7 +1018,7 @@ function askHome(){if(homeAsk)return;homeWasPaused=paused;homeAsk=(paused?uiT:0)
 function drawHomeCard(){const cw=300,ch=282,{cy}=cardBegin(cw,ch,'Go Home?',uiT-(homeAsk-1));body('This game will end.',cy+96,16);body('Your badges are safe.',cy+119,13,'#4a6fc4');
  button((W-216)/2,cy+140,216,52,'Keep Playing',()=>{homeAsk=0;if(!homeWasPaused){paused=false;lastNow=performance.now();acc=0;}},{size:21});
  button((W-216)/2,cy+208,216,44,'Go Home',goMenu,{id:2,size:17,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});cardEnd();}
-function goMenu(){homeAsk=0;paused=false;charging=null;pendingLaunch=null;swingT=0;objs=[];ejecta=[];parts=[];eParts=[];rings=[];pops=[];confet=[];smoke=[];sparks=[];buildOn=false;build=0;shake=0;flash=0;blk.on=false;collected=0;need=0;combo=0;state='menu';menuStep=0;howTo=0;bdgPg=0;toysT0=0;pfOpen=false;nameEd=null;pfDel=0;pfToy=0;lastNow=performance.now();acc=0;}
+function goMenu(){homeAsk=0;paused=false;charging=null;pendingLaunch=null;swingT=0;objs=[];ejecta=[];parts=[];eParts=[];rings=[];pops=[];confet=[];smoke=[];sparks=[];buildOn=false;build=0;shake=0;flash=0;blk.on=false;collected=0;need=0;combo=0;state='menu';menuStep=0;howTo=0;bdgPg=0;toysT0=0;noahT0=0;pfOpen=false;nameEd=null;pfDel=0;pfToy=0;lastNow=performance.now();acc=0;}
 function drawPauseCard(){const cw=288,ch=286,{cy}=cardBegin(cw,ch,'Paused');body((swipeMode?'Swipe ':'Push ')+(hardMode?'Hard':'Easy')+'  ·  Round '+round+'  ·  Score '+score,cy+100,13.5);
  button((W-208)/2,cy+124,208,58,'Resume',()=>{paused=false;lastNow=performance.now();acc=0;},{icon:1});
  button((W-208)/2,cy+204,208,50,'Start Screen',askHome,{id:2,size:18,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});cardEnd();}
@@ -1010,16 +1047,17 @@ k0=lerp(.85,1,EZ.back(uiT/.5)),ih=py+pw+30,bandH=HS-ih; // the taped picture sit
  [['🦆',52,0],['🐙',144,1],['⛵',236,2],['🦕',328,4]].forEach(d=>{const k=EZ.back((uiT-.4-d[2]*.1)/.4);if(k<=0)return;const y=wy(d[1])+3+Math.sin(NOW*2+d[2])*2.5;toyFloat(d[0],d[1],y,42,Math.sin(NOW*1.3+d[2])*.1,k,k);});
  const bw=232,bx=(W-bw)/2,appear=(k,y,h,fn)=>{if(k<=0)return;X.save();X.translate(W/2,y+h/2);X.scale(k,k);X.translate(-W/2,-(y+h/2));fn();X.restore();};
  if(uiT<.7)card=null;
- if(!howTo&&!bdgPg&&!pfOpen&&!toysT0&&uiT>.6)drawChip();
+ if(!howTo&&!bdgPg&&!pfOpen&&!toysT0&&!noahT0&&uiT>.6)drawChip();
  const tby=ih+34+(bandH-34-SAFEB-56*2-20*2-36)*.5; // test buttons sit in the empty margin left of Push and Swipe, clear of everything on any phone
- if(TEST&&menuStep===0&&!howTo&&!bdgPg&&!pfOpen&&!toysT0&&uiT>.6)button(5,tby+14,60,28,'+50',()=>addCoins(50),{size:13,id:17,col:'#e08a00',colD:'#a85f24',colP:'#c97800'}); // test page only
- if(TEST&&menuStep===0&&!howTo&&!bdgPg&&!pfOpen&&!toysT0&&uiT>.6)button(5,tby+56+20+14,60,28,'Rd '+testRound,()=>{testRound=testRound>=10?1:testRound+1;},{size:12.5,id:6,col:'#e08a00',colD:'#a85f24',colP:'#c97800'}); // test page only: tap to choose the starting round
+ if(TEST&&menuStep===0&&!howTo&&!bdgPg&&!pfOpen&&!toysT0&&!noahT0&&uiT>.6)button(5,tby+14,60,28,'+50',()=>addCoins(50),{size:13,id:17,col:'#e08a00',colD:'#a85f24',colP:'#c97800'}); // test page only
+ if(TEST&&menuStep===0&&!howTo&&!bdgPg&&!pfOpen&&!toysT0&&!noahT0&&uiT>.6)button(5,tby+56+20+14,60,28,'Rd '+testRound,()=>{testRound=testRound>=10?1:testRound+1;},{size:12.5,id:6,col:'#e08a00',colD:'#a85f24',colP:'#c97800'}); // test page only: tap to choose the starting round
  if(howTo){drawHowTo();}
  else if(bdgPg){drawBadges();}
  else if(toysT0){drawMyToys();}
+ else if(noahT0){drawNoah();}
  else if(pfOpen){if(nameEd)drawNameCard();else if(pfToy)drawToyCard();else if(pfDel)drawDeleteCard();else drawPlayers();}
  else if(menuStep===0){const bh=56,gap=20,bk=36,by=ih+34+(bandH-34-SAFEB-bh*2-gap*2-bk)*.5; // step 1 of 2: how to throw
-  appear(EZ.back((uiT-1)/.45),by+(bh+gap)*2,bk,()=>{button(bx,by+(bh+gap)*2,96,bk,'How To Play',()=>{howTo=1;howT0=uiT;},{size:12,id:3,col:'#8a5bd6',colD:'#5a359c',colP:'#7648c2'});button(bx+102,by+(bh+gap)*2,58,bk,'Badges',()=>{bdgPg=1;bdgT0=uiT;},{size:12,id:4,col:'#12a5a0',colD:'#0b6f6c',colP:'#0e8f8a'});button(bx+166,by+(bh+gap)*2,66,bk,'My Toys',openToys,{size:12,id:18,col:'#e08a00',colD:'#a85f24',colP:'#c97800'});});
+  appear(EZ.back((uiT-1)/.45),by+(bh+gap)*2,bk,()=>{button(bx,by+(bh+gap)*2,78,bk,'How To Play',()=>{howTo=1;howT0=uiT;},{size:11,id:3,col:'#8a5bd6',colD:'#5a359c',colP:'#7648c2'});button(bx+82,by+(bh+gap)*2,48,bk,'Badges',()=>{bdgPg=1;bdgT0=uiT;},{size:11,id:4,col:'#12a5a0',colD:'#0b6f6c',colP:'#0e8f8a'});button(bx+134,by+(bh+gap)*2,54,bk,'My Toys',openToys,{size:11,id:18,col:'#e08a00',colD:'#a85f24',colP:'#c97800'});button(bx+192,by+(bh+gap)*2,40,bk,'Noah',openNoah,{size:11,id:22,col:'#e0457a',colD:'#a3264f',colP:'#c93a6a'});});
   if(uiT>.7)text('Pick A Game Mode',W/2,by-19,15,'#fff',{s:C.navy}); // says outright that Push and Swipe are two modes to choose from
   appear(EZ.back((uiT-.7)/.45),by,bh,()=>button(bx,by,bw,bh,'Push',()=>{swipeMode=false;menuStep=1;menuT0=uiT;},{size:25,id:0,sub:'Press And Hold'}));
   appear(EZ.back((uiT-.85)/.45),by+bh+gap,bh,()=>button(bx,by+bh+gap,bw,bh,'Swipe',()=>{swipeMode=true;menuStep=1;menuT0=uiT;},{size:25,id:2,sub:'Flick To Throw',col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'}));

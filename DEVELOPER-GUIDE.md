@@ -4,7 +4,7 @@ Read this first before changing the game. It says where things are and gives ste
 common jobs (add a toy, change prices, add a badge, publish). The history of *why* things are the way they are
 is in `experiments/fable-v7.md` (one line per version) and, for the art, `experiments/fable-v5.md`.
 
-Last updated: 2026-11-12, at test version v7.45 / live version v7.45.
+Last updated: 2026-11-17, at test version v7.46 / live version v7.45.
 
 ## 1. The files that matter
 
@@ -106,6 +106,7 @@ Sections are marked with `// ── NAME ──` comments, in this order:
 - CARDS + TITLE: `cardBegin` / `cardEnd`, `button`, intro / new-toy / pause / result cards.
 - BADGES AND STATS: players (`PF`), stats (`ST`), `BADGES` table, coins, badge banner, Badges card, Players cards.
 - MY TOYS: lineup + shop card.
+- DRESS NOAH: gear shop and what Noah wears (`GEAR` table is at the top, next to `SHOP`).
 - HOW TO PLAY, start screen (`drawMenu`), eruption lettering, SWIPE TO THROW, FRAME (`draw`, `resize`).
 
 Conventions:
@@ -114,9 +115,9 @@ Conventions:
 - **Buttons:** `button(x,y,w,h,label,action,{size,id,col,colD,colP,sub})`. `sub` is an optional small second line. `id` 0 is the main button (`card`),
   2/3/4 are `card2/3/4`, **5 and up go into the `hits` list** (use a fresh number for a new button).
   Bare tap areas: `hits.push({x,y,w,h,act,key:uiKey,id})`. Everything is cleared and rebuilt each frame.
-- **Start-screen cards** are flags checked in `drawMenu`: `howTo`, `bdgPg`, `toysT0`, `pfOpen` (+ `nameEd`,
+- **Start-screen cards** are flags checked in `drawMenu`: `howTo`, `bdgPg`, `toysT0`, `noahT0`, `pfOpen` (+ `nameEd`,
   `pfToy`, `pfDel`). A new card needs: a flag, a branch in that if-chain, a reset in `goMenu`, and to be added
-  to the `!howTo&&!bdgPg&&!pfOpen&&!toysT0` conditions that hide the chips and test buttons.
+  to the `!howTo&&!bdgPg&&!pfOpen&&!toysT0&&!noahT0` conditions that hide the chips and test buttons.
 - **Text style (Derek's rule):** Title Case On Every Word for titles, buttons and labels; sentence case only
   for full sentences. Nothing faded or see-through in the game art. Few rounded shapes.
 - **The version label stays on the live start screen** (bottom-right corner). Derek wants it there; do not hide it.
@@ -128,7 +129,7 @@ Conventions:
 ## 4. Saved data (per phone, `localStorage`)
 
 - Live key `evitb-profiles-v1`, test key `evitb-test-profiles-v1` (seeded once from the live one).
-- Shape: `{cur, list:[{name, icon, st:{…stats}, coins, owned:[toy keys], line:[12 toy keys]}]}`, up to 4 players.
+- Shape: `{cur, list:[{name, icon, st:{…stats}, coins, owned:[toy keys], line:[12 toy keys], gear:[gear keys owned], wear:[gear keys Noah has on]}]}`, up to 4 players.
 - Loading is defensive: unknown stats are dropped, a bad lineup resets to default (`lineFix`), missing `coins`
   is back-paid from badges already held. **When adding a field, add it in three places:** the load `map`,
   the default "Player 1" object, and the new-player object in `pfNameDone`. Give old saves a sensible default.
@@ -170,6 +171,17 @@ On load, the old key is swapped for the new one in the player's owned toys, line
 a toy they paid for. Then rename the painter in `TOYS`, the `TOYNAME` entry and the `SHOP` entry.
 Done once so far: `speedboat` became `train` in v7.31 (too similar to the tugboat).
 
+### Add something for Noah to wear (Dress Noah, v7.46)
+1. Add a row to `GEAR` (top of the file): `['cape',90,'Cape']` (key, price, name). The Dress Noah card shows 4
+   pieces in one row; a fifth needs a second row or pages (`drawNoah`).
+2. Draw it. On the head: in `kidHead`, behind `wr.includes('key')`. Shapes that stick out past the head (hat,
+   goggle frames) go BEFORE `if(!PASS)return` and use `shp()` so they get the white sticker rim; details inside
+   the face (lenses, mustache) go after it. Head coordinates: before that line use `x`, `y` and the radius `r`;
+   after it the face is scaled so the head is 27 units in radius, eyes at (±10.5, 1.5), mouth from y 10.5.
+   In a hand: copy `foamFinger` and call it from `kid()` (both the resting and the cheering arms) and `noahBust`.
+3. Only Noah passes `wear` to `kidHead`; Max and the badge pictures do not.
+4. Saving needs nothing: `gearFix` keeps only keys that are in `GEAR`.
+
 ### Change the default 12 toys or the number of rounds
 `BASE` (3 starting toys) + `NEWBY` (round 2..10) make `DEF_LINE`, which must stay 12 long. More rounds also
 needs: more rows in `DIFF`, the `round>=10` checks in `roundWin`, "/10" in the HUD, the win card text, the
@@ -194,6 +206,7 @@ page 4 is Swipe: the demo checks `howTo===4`). Page count and Back / Next follow
 
 ### Add a start-screen button
 The row under Swipe is drawn in `drawMenu` (step 0) and spans exactly the width of Push/Swipe (232 units).
+It holds four buttons since v7.46 (How To Play, Badges, My Toys, Noah) at text size 11 and is full: a fifth needs a second row.
 Derek wants that alignment kept.
 
 ### Tune floating, speed, difficulty
