@@ -1,4 +1,4 @@
-# Version 8: Noah Vs Max (design for review)
+# Version 8: Multiplayer mode (design for review)
 
 Status: **DRAFT for Derek to review. Nothing here is built.** Written 2026-11-17 at test v7.50 / live v7.45.
 The work list that goes with it is `experiments/v8-backlog.md`.
@@ -11,20 +11,22 @@ changing the numbers (section 9).
 Today there is one way to play: you are Noah, there are ten rounds, and from round 4 Max pops up as a nuisance
 the computer controls.
 
-Version 8 adds a second way to play, **Noah Vs Max**:
+Version 8 adds a second way to play, **Multiplayer** (Derek's name for it, 2026-11-17):
 
 - One person is Noah and throws toys at the volcano. One person is Max and stops them.
 - There are no levels to climb. You pick one stage, play it, and somebody wins.
 - Max gets gear of his own. Noah's gear is for looks; Max's gear changes what he can do.
 - Either side can be played by the computer, so one child can play as Max on their own.
 
-The ten-round game stays exactly as it is. It gets a name (**Adventure**) so the start screen can offer both.
+**Multiplayer does not replace anything** (Derek, 2026-11-17). The ten-round game stays exactly as it is, with
+Push and Swipe where they are now. Multiplayer is one more mode beside it. This document calls the existing
+game "the main game"; it does not need a new name on screen.
 
 ## 2. What is in Version 8, and what is not
 
 | In 8.0 | Not in 8.0 (parked, see section 11) |
 |---|---|
-| Noah Vs Max on **one device**, two people touching the same screen | Two phones playing each other |
+| Multiplayer on **one device**, two people touching the same screen | Two phones playing each other |
 | Play as Max against a computer Noah | iPad-sized layout |
 | Play as Noah against a smarter computer Max, on any stage | Powers for Noah |
 | Stage picker (1 to 10) | Tournaments, best-of-five |
@@ -43,7 +45,7 @@ Two phones is the biggest thing left out, on purpose. Section 7 explains why and
 4. **Result card:** who won, toys in, blocks made, time left. Buttons: Rematch, Swap Sides, Home.
 
 **Stages** reuse the ten rounds' difficulty table: stage 1 is 3 toys and a big crater, stage 10 is 12 toys and
-a small crater that drifts. The clock is longer than in Adventure (start at 1.5 times), because a person
+a small crater that drifts. The clock is longer than in the main game (start at 1.5 times), because a person
 playing Max blocks far more than the computer does today.
 
 **The hairball** stays: Noah gets 5 more seconds for landing it, and Max can block it like a toy.
@@ -102,7 +104,7 @@ wear the same 12 pieces for very little work. A player owns a piece once and can
 | Person | Person | The headline mode: two people, one device |
 | Computer | Person | **Be Max.** New for a child playing alone |
 | Person | Computer | One staged round against a Max who actually follows your throws |
-| Person | Computer | Adventure: the ten rounds, unchanged |
+| Person | Computer | The main game: the ten rounds, unchanged |
 
 The computer Noah picks a toy, winds up where you can see it, and sometimes fakes one side then throws from
 the other. The stage sets how accurate and how sneaky he is.
@@ -127,8 +129,10 @@ collected, works offline" promise the store listing makes.
 
 ## 8. Screens
 
-**Start screen.** Today it asks "Pick A Game Mode: Push or Swipe". In v8 the first question becomes which
-game: **Adventure** or **Noah Vs Max**. Push or Swipe and Easy or Hard move to the next step. The row of
+**Start screen.** It stays as it is: "Pick A Game Mode", Push and Swipe, then Easy or Hard. One thing is
+added: a **Multiplayer** button, which opens the match setup card. Where it sits needs a look on a real
+phone, because the lower half of the start screen is already full (a third big button under Swipe, or a
+wide button in place of the small row with that row moved down). The row of
 small buttons stays (How To Play, Badges, My Toys, Noah); "Noah" becomes "Dress Up" and covers both boys.
 
 **Match setup.** One card: Noah's player, Max's player, stage, Push or Swipe, Max's power, Go.
@@ -153,8 +157,8 @@ a dad. So the plan has balance built in:
 
 ## 10. How it is built
 
-- **A mode switch.** The game learns there are two rule sets, Adventure and Duel, sharing the same tub,
-  toys, physics and art. Adventure must play exactly as it does today; I will check that before anything else.
+- **A mode switch.** The game learns there are two rule sets, the main game and Multiplayer, sharing the same
+  tub, toys, physics and art. The main game must play exactly as it does today; I will check that before anything else.
 - **Controllers.** Each boy is driven by a "controller": a person's finger, the computer, or (later) another
   phone. The game only sees what the controller wants to do. This is what makes a second phone an add-on.
 - **Two fingers at once.** Today the game follows one finger. It will follow each finger separately and
@@ -169,7 +173,7 @@ a dad. So the plan has balance built in:
 
 Two phones (section 7). An iPad layout (the app is iPhone-only today and runs small on an iPad; a shared
 screen is much nicer large). Powers for Noah. Best-of-three and tournaments. A second player steering Max
-during Adventure. Hard Max with a jump button.
+during the main game. Hard Max with a jump button.
 
 ## 12. Releasing it
 
@@ -189,7 +193,7 @@ during Adventure. Hard Max with a jump button.
    with the panel (section 4).
 4. **Max's powers cost coins, with Big Splash free?** *Recommended: yes.* The other choice is everything
    unlocked in a duel, so a sibling with fewer coins is never at a disadvantage.
-5. **The name "Noah Vs Max", and "Adventure" for the ten rounds?**
+5. ~~The name.~~ **Decided 2026-11-17: the mode is called Multiplayer; the main game is not renamed or replaced.**
 6. **Do duels pay coins?** *Recommended:* a small amount (5 to the winner, 2 to the loser), none for matches
    shorter than 20 seconds, so nobody farms coins by losing on purpose.
 7. **The six powers in section 5:** any to cut, change or add?

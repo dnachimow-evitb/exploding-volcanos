@@ -1,22 +1,22 @@
-# Version 8 backlog: Noah Vs Max
+# Version 8 backlog: Multiplayer mode
 
 The design is `experiments/v8-design.md`. **Nothing is built yet; the design is waiting for Derek's review.**
 Work top to bottom. Tick an item when it is on the test page and noted in the version history.
 Size: S = under an hour of building, M = a session, L = several sessions. "Derek" marks items only he can do.
 
 ## Milestone 0: Before starting
-- [ ] **V8-01** (Derek) Answer the seven decisions in section 13 of the design.
+- [ ] **V8-01** (Derek) Answer the decisions in section 13 of the design (number 5, the name, is decided: Multiplayer).
 - [ ] **V8-02** (Derek) Try Dress Noah (v7.50) on the iPhone test app; say whether to publish it as the last v7.
 - [ ] **V8-03** S. If yes: publish v7.50 live (copy the test file, bump the cache name, history line).
 - [ ] **V8-04** S. Decide the live file name (`game-fable-v8.js`
       alongside v7, as was done for v5 to v7) and note what `native/` must change to package it.
 
 ## Milestone 1: Framework (nothing a player can see)
-- [ ] **V8-10** M. Mode switch: Adventure and Duel rule sets over the same tub, toys, physics and art.
+- [ ] **V8-10** M. Mode switch: main game and Multiplayer rule sets over the same tub, toys, physics and art.
 - [ ] **V8-11** M. Controllers: Noah and Max each driven by finger, computer or (later) remote. Depends V8-10.
 - [ ] **V8-12** M. Two fingers at once: follow each finger separately, assign by where it started.
 - [ ] **V8-13** S. Repeatable randomness for everything that affects play.
-- [ ] **V8-14** S. Check Adventure plays exactly as v7.50 (scripted run of rounds 1, 4 and 10, Push and Swipe).
+- [ ] **V8-14** S. Check the main game plays exactly as v7.50 (scripted run of rounds 1, 4 and 10, Push and Swipe).
 
 ## Milestone 2: First playable duel, one device (the fun test)
 - [ ] **V8-20** M. Max steered by a finger in a strip across the top; limited swim speed. Depends V8-11, V8-12.
@@ -37,14 +37,14 @@ Size: S = under an hour of building, M = a session, L = several sessions. "Derek
 - [ ] **V8-41** S. Pool Noodle and Flippers (always on).
 - [ ] **V8-42** M. Bucket, Squirt Blaster, Bubble Bath.
 - [ ] **V8-43** M. Shop and pick-a-power on the dress-up card; saved per player (three places, see the guide).
-- [ ] **V8-44** S. Dress Max: the 12 existing pieces on Max; outfit saved per player; shown in Adventure too.
+- [ ] **V8-44** S. Dress Max: the 12 existing pieces on Max; outfit saved per player; shown in the main game too.
 - [ ] **V8-45** S. Draw each power in Max's hands in the game (the noodle, the bucket and so on).
 
 ## Milestone 5: The rest of the game around it
-- [ ] **V8-50** M. New start screen: Adventure or Noah Vs Max first; Push or Swipe and Easy or Hard second.
+- [ ] **V8-50** M. Start screen: add a Multiplayer button; Push, Swipe, Easy and Hard stay as they are. Placement to be tried on a real phone.
 - [ ] **V8-51** S. Coins for duels, with the anti-farming rule Derek chooses.
 - [ ] **V8-52** M. Duel stats per player and new badges (for example blocks as Max, duel wins on each side).
-- [ ] **V8-53** S. How To Play pages for Noah Vs Max and for Max's controls.
+- [ ] **V8-53** S. How To Play pages for Multiplayer and for Max's controls.
 - [ ] **V8-54** S. Swap Sides on the result card; labels flip for a Max sitting across the phone.
 
 ## Milestone 6: Polish and release
@@ -60,7 +60,7 @@ Size: S = under an hour of building, M = a session, L = several sessions. "Derek
 - [ ] **V8-91** L. iPad layout (the app is iPhone-only today).
 - [ ] **V8-92** M. Powers for Noah.
 - [ ] **V8-93** M. Best-of-three and tournaments for up to 4 players.
-- [ ] **V8-94** S. A second player steers Max during Adventure.
+- [ ] **V8-94** S. A second player steers Max during the main game.
 - [ ] **V8-95** M. Hard Max: blocks are not automatic, tap to jump.
 
 ## Ideas inbox
