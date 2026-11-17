@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v7.48'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v7.49'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -693,7 +693,9 @@ function kidHead(x,y,r,hairC,browC,o){const m=o.mood,lk=o.look||[0,0],k=r/27;
 function bowTie(x,y,z){for(const g of[-1,1]){X.beginPath();X.moveTo(x,y);X.lineTo(x+g*13*z,y-7.5*z);X.lineTo(x+g*13*z,y+7.5*z);X.closePath();shp('#e0457a');}circ(x,y,3.6*z);shp('#a3264f');}
 function floatie(a,b,z){z=z||1;const P=t=>[lerp(a[0],b[0],t),lerp(a[1],b[1],t)];lin([P(.32),P(.74)],18*z,C.lava);if(PASS){X.beginPath();X.moveTo(...P(.45));X.lineTo(...P(.61));X.lineCap='butt';X.strokeStyle='#fff';X.lineWidth=18*z;X.stroke();}}
 // foam finger: a big foam hand on Noah's free hand (hx,hy = his hand; sg = which side; call inside sticker())
-function foamFinger(hx,hy,sg){X.save();X.translate(hx,hy);X.rotate(sg*.22);rr(-5.5,-47,11,34,5.5);shp(C.gold);circ(-sg*12,-9,6.5);shp(C.gold);rr(-13,-19,26,27,7);shp(C.gold);rr(-10,7,20,8,3);shp(C.amber);if(PASS)text('#1',0,-5,13,C.navy);X.restore();}
+function foamFinger(hx,hy,sg){X.save();X.translate(hx,hy);X.rotate(sg*.22); // v7.49: a FIST with the pointing finger at its outer edge and three folded knuckles beside it. A lone finger in the middle of a palm read as a rude gesture; do not centre it again.
+ rr(sg*12-6.5,-50,13,38,6.5);shp(C.gold);for(const q of[1.5,-6,-13.5]){circ(sg*q,-18.5,5);shp(C.gold);}rr(-19,-19,38,30,8);shp(C.gold);rr(-14,10,28,8,3);shp(C.amber);
+ if(PASS){X.lineCap='round';X.strokeStyle=C.amber;X.lineWidth=2.2;for(const q of[5.2,-2.2,-9.7]){X.beginPath();X.moveTo(sg*q,-19);X.lineTo(sg*q,-11);X.stroke();}text('#1',0,-1,13,C.navy);}X.restore();}
 function nameTag(t,x,y,col){X.font=fnt(900,11);const w=X.measureText(t).width+18;rr(x-w/2,y-9,w,18,5);fill('#fff');text(t,x,y+.5,11,col);}
 function drawMax(mx,hY){const headY=hY+38,wob=Math.sin(wave*.22)*2,wl=headY+44,er=(state==='erupt'||state==='win'),m=mxc.mood,hopY=mxc.hop+(er?-Math.abs(Math.sin(NOW*7+1))*4:0),hd=headY+Math.sin(NOW*2.4+1)*.5,wig=m==='gotcha'?Math.sin(NOW*30)*3:0;
  foam(mx,wl,33,false);X.save();X.beginPath();X.rect(-20,-500,W+40,wl+500);X.clip();X.translate(0,hopY);

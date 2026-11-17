@@ -4,7 +4,7 @@ Read this first before changing the game. It says where things are and gives ste
 common jobs (add a toy, change prices, add a badge, publish). The history of *why* things are the way they are
 is in `experiments/fable-v7.md` (one line per version) and, for the art, `experiments/fable-v5.md`.
 
-Last updated: 2026-11-17, at test version v7.48 / live version v7.45.
+Last updated: 2026-11-17, at test version v7.49 / live version v7.45.
 
 ## 1. The files that matter
 
@@ -184,7 +184,8 @@ Done once so far: `speedboat` became `train` in v7.31 (too similar to the tugboa
 3. Only Noah passes `wear` to `kidHead`; Max and the badge pictures do not.
 4. Saving needs nothing: `gearFix` keeps only keys that are in `GEAR`.
 5. Check how pieces look TOGETHER. A red cap plus a black mustache read as Mario (Derek, 2026-11-17) and were
-   redrawn in v7.47; keep Noah clear of any well-known character.
+   redrawn in v7.47; keep Noah clear of any well-known character. The foam finger was redrawn in v7.49 for reading as a
+   rude gesture: its finger sits at the edge of a fist with knuckles beside it, never alone in the middle.
 
 ### Change the default 12 toys or the number of rounds
 `BASE` (3 starting toys) + `NEWBY` (round 2..10) make `DEF_LINE`, which must stay 12 long. More rounds also
