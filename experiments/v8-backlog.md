@@ -1,33 +1,35 @@
 # Version 8 backlog: Multiplayer mode
 
-The design is `experiments/v8-design.md` (draft 2). **Nothing is built yet; the design is waiting for Derek's
-go-ahead.** Work top to bottom. Tick an item when it is on the test page and noted in the version history.
+The design is `experiments/v8-design.md` (draft 2, **go-ahead given by Derek 2026-11-17**). What has been built
+is in `experiments/fable-v8.md`. Work top to bottom. Tick an item when it is on the test page and noted in the version history.
 Size: S = under an hour of building, M = a session, L = several sessions. "Derek" marks items only he can do.
 
 The goal of the whole version (Derek, 2026-11-17): make the game stickier. Judge every item by that.
 
 ## Milestone 0: Before starting
-- [ ] **V8-01** (Derek) Go-ahead on design draft 2, or changes (design section 14).
-- [ ] **V8-02** (Derek) Try Dress Noah (v7.50) on the iPhone test app; say whether to publish it as the last v7.
-- [ ] **V8-03** S. If yes: publish v7.50 live (copy the test file, bump the cache name, history line).
+- [x] **V8-01** (Derek) Go-ahead on design draft 2: given 2026-11-17. Cloudflare relay OK; small-print change OK.
+- [x] **V8-02** (Derek) Dress Noah: **hold it for version 8** (2026-11-17). It is not published separately.
 - [ ] **V8-04** S. Decide the live file name (`game-fable-v8.js` alongside v7, as was done for v5 to v7) and
       note what `native/` must change to package it.
 
 ## Milestone 1: Framework (nothing a player can see)
-- [ ] **V8-10** M. Mode switch: main game and Multiplayer rule sets over the same tub, toys, physics and art.
+- [x] **V8-10** M. (v8.0) Mode switch: main game and Multiplayer rule sets over the same tub, toys, physics and art.
 - [ ] **V8-11** M. Controllers: Noah and Max each driven by a finger, the computer or the other device.
-- [ ] **V8-12** S. Repeatable randomness for everything that affects play.
-- [ ] **V8-13** S. Check the main game plays exactly as v7.50 (scripted run of rounds 1, 4 and 10, Push and Swipe).
+      (v8.0 has finger and computer for the two cases built so far; the other device comes with milestone 3.)
+- [x] **V8-12** S. (v8.0) Repeatable randomness for everything that affects play.
+- [x] **V8-13** S. (v8.0) Main game re-checked: Push and Swipe throws score in round 1; computer Max sweeps in round 4.
+      Repeat this check after every framework change.
 
 ## Milestone 2: Be Max, against the computer (first fun test, one phone)
-- [ ] **V8-20** M. Max steered by dragging; limited swim speed. Depends V8-11.
-- [ ] **V8-21** S. Automatic block, then the dunk (under water about 1 second, bubbles, cannot block).
-- [ ] **V8-22** M. Computer Noah: picks a toy, winds up visibly, fakes sides; skill by stage.
-- [ ] **V8-23** S. Win and lose: eruption = Noah wins, clock out = Max wins. Plain result card with Rematch.
-- [ ] **V8-24** S. Stage picker 1 to 10 from the existing difficulty table, clock at 1.5 times.
-- [ ] **V8-25** M. Tuning panel, test page only: Max speed, reach, dunk time, clock.
-- [ ] **V8-26** S. A plain Multiplayer button on the test start screen to reach all this.
-- [ ] **V8-27** (Derek) Play Max on the iPhone test app. Report what felt unfair or dull.
+- [x] **V8-20** M. (v8.0) Max steered by dragging; limited swim speed. Depends V8-11.
+- [x] **V8-21** S. (v8.0) Automatic block, then the dunk (under water about 1 second, bubbles, cannot block).
+- [x] **V8-22** M. (v8.0) Computer Noah: picks a toy, winds up visibly, fakes sides; skill by stage.
+- [x] **V8-23** S. (v8.0) Win and lose: eruption = Noah wins, clock out = Max wins. Plain result card with Rematch.
+- [x] **V8-24** S. (v8.0) Stage picker 1 to 10 from the existing difficulty table; clock x1.3 after simulated matches.
+- [x] **V8-25** M. (v8.0) Tuning panel, test page only: Max speed, reach, dunk time, clock.
+- [x] **V8-26** S. (v8.0) A plain Multiplayer button on the test start screen to reach all this.
+- [ ] **V8-27** (Derek) Play Max on the iPhone test app. Report what felt unfair or dull. **<- waiting on this**
+- [ ] **V8-28** S. Max is partly hidden behind Noah in the middle of the tub; decide how to keep him in view.
 
 ## Milestone 3: Two devices
 - [ ] **V8-30** (Derek) Free Cloudflare account; two keys added to GitHub secrets. Claude gives the steps.

@@ -4,11 +4,11 @@ Read this first before changing the game. It says where things are and gives ste
 common jobs (add a toy, change prices, add a badge, publish). The history of *why* things are the way they are
 is in `experiments/fable-v7.md` (one line per version) and, for the art, `experiments/fable-v5.md`.
 
-Last updated: 2026-11-17, at test version v7.50 / live version v7.45.
+Last updated: 2026-11-17, at test version v8.0 / live version v7.45.
 
 **Next major version (v8, Multiplayer mode: a new mode beside the main game, which it does not replace): design in `experiments/v8-design.md`, work list in
-`experiments/v8-backlog.md`.** As of 2026-11-17 the design is draft 2, waiting for Derek's go-ahead; build nothing
-from it until he gives it (its section 14 lists what is needed from him). His fixed points: two devices is
+`experiments/v8-backlog.md`.** Derek gave the go-ahead on draft 2 on 2026-11-17; what is built so far is in
+`experiments/fable-v8.md` (add a line there, not in fable-v7.md, for every v8 version). His fixed points: two devices is
 required, powers are limited and earned, and the goal of the whole version is to make the game stickier. New ideas from him go in the backlog's Ideas inbox.
 
 ## 1. The files that matter
@@ -112,6 +112,9 @@ Sections are marked with `// ── NAME ──` comments, in this order:
 - BADGES AND STATS: players (`PF`), stats (`ST`), `BADGES` table, coins, badge banner, Badges card, Players cards.
 - MY TOYS: lineup + shop card.
 - DRESS NOAH: gear shop and what Noah wears (`GEAR` table is at the top, next to `SHOP`).
+- MULTIPLAYER (v8): `duel` state and `TUNE` at the top; `startDuel`, `duelStep`, `cpuNoah` after `dist`;
+  `drawMulti` (the card, with the test-only tuning panel) and `drawDuelCard` before `askHome`. `duel` is null in the
+  main game, and every multiplayer change is behind `if(duel)`, so the main game plays as before.
 - HOW TO PLAY, start screen (`drawMenu`), eruption lettering, SWIPE TO THROW, FRAME (`draw`, `resize`).
 
 Conventions:
@@ -120,9 +123,9 @@ Conventions:
 - **Buttons:** `button(x,y,w,h,label,action,{size,id,col,colD,colP,sub})`. `sub` is an optional small second line. `id` 0 is the main button (`card`),
   2/3/4 are `card2/3/4`, **5 and up go into the `hits` list** (use a fresh number for a new button).
   Bare tap areas: `hits.push({x,y,w,h,act,key:uiKey,id})`. Everything is cleared and rebuilt each frame.
-- **Start-screen cards** are flags checked in `drawMenu`: `howTo`, `bdgPg`, `toysT0`, `noahT0`, `pfOpen` (+ `nameEd`,
+- **Start-screen cards** are flags checked in `drawMenu`: `howTo`, `bdgPg`, `toysT0`, `noahT0`, `mpT0`, `pfOpen` (+ `nameEd`,
   `pfToy`, `pfDel`). A new card needs: a flag, a branch in that if-chain, a reset in `goMenu`, and to be added
-  to the `!howTo&&!bdgPg&&!pfOpen&&!toysT0&&!noahT0` conditions that hide the chips and test buttons.
+  to the `!howTo&&!bdgPg&&!pfOpen&&!toysT0&&!noahT0&&!mpT0` conditions that hide the chips and test buttons.
 - **Text style (Derek's rule):** Title Case On Every Word for titles, buttons and labels; sentence case only
   for full sentences. Nothing faded or see-through in the game art. Few rounded shapes.
 - **The version label stays on the live start screen** (bottom-right corner). Derek wants it there; do not hide it.
