@@ -6,6 +6,10 @@ is in `experiments/fable-v7.md` (one line per version) and, for the art, `experi
 
 Last updated: 2026-11-17, at test version v7.50 / live version v7.45.
 
+**Next major version (v8, "Noah Vs Max"): design in `experiments/v8-design.md`, work list in
+`experiments/v8-backlog.md`.** As of 2026-11-17 the design is a draft waiting for Derek's review; build nothing
+from it until he has answered the decisions in its section 13. New ideas from him go in the backlog's Ideas inbox.
+
 ## 1. The files that matter
 
 | File | What it is |
