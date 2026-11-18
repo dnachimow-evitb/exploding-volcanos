@@ -185,3 +185,19 @@ devices is OK (he sets up the account when asked); the one-line privacy and list
     is meant to be visual only.
   - Seen in a browser with Max in the middle and at each side during a wind-up, and the main game at round 4.
     Noah's name tag and lower body are now partly behind the toys when you play Max. Not tried on a real iPhone.
+- v8.8 (TEST ONLY): Derek asked how Max tires (answer: a block, a dive and a Squirt Blaster hit each cost 35%; swimming
+  and the other powers cost nothing; the bar always refills, 11 s from empty) and then for "a bonus item for Max to
+  allow an automatic refill of energy".
+  - **Juice Box**, a seventh power: fills Max's energy at once and keeps it full for 3.5 seconds (`JUICE_T`), so
+    nothing tires him while it lasts. A juice box shows by his head, blinking before it ends. Same price as the
+    others (15 coins), earned at random like them; players start with one. It has its own Max School lesson,
+    straight after Energy (the school is now twelve lessons).
+  - **Measured before choosing the length** (`experiments/sim/pow.js`, packed three times, 150 matches in each of the
+    four usual situations, used when Max is too tired to dive): a refill and nothing else lifted Max's win rate by
+    only +4 points, because the bar refills by itself anyway; full energy for 8 seconds lifted it +38 (he won 83 to
+    95%); 3.5 seconds lifts it +21, inside the 15 to 22 band of the other six.
+  - Pack Your Bag shows the seven powers four to a row (was three).
+  - Checked in a browser: packing it, using it when tired, a block during it costing nothing, it ending, the new
+    lesson and all twelve lessons played through, main game. Physics fingerprint unchanged. Not on a real iPhone.
+  - Open question for Derek: "automatic" was read as "it happens at once when tapped". If he meant it should fire by
+    itself when Max runs out, that is a small change.

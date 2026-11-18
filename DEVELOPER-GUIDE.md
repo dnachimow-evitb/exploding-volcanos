@@ -4,7 +4,7 @@ Read this first before changing the game. It says where things are and gives ste
 common jobs (add a toy, change prices, add a badge, publish). The history of *why* things are the way they are
 is in `experiments/fable-v7.md` (one line per version) and, for the art, `experiments/fable-v5.md`.
 
-Last updated: 2026-11-17, at test version v8.7 / live version v7.45.
+Last updated: 2026-11-17, at test version v8.8 / live version v7.45.
 
 **Next major version (v8, Multiplayer mode: a new mode beside the main game, which it does not replace): design in `experiments/v8-design.md`, work list in
 `experiments/v8-backlog.md`.** Derek gave the go-ahead on draft 2 on 2026-11-17; what is built so far is in
@@ -202,13 +202,14 @@ Done once so far: `speedboat` became `train` in v7.31 (too similar to the tugboa
    rude gesture: its finger sits at the edge of a fist with knuckles beside it, never alone in the middle.
 
 ### Add a power for Max (Multiplayer, v8.3)
-1. Add a row to `POW` (top of the file): `['key','Name',seconds]`. The Pack Your Bag card shows 6 in two rows of 3.
+1. Add a row to `POW` (top of the file): `['key','Name',seconds]`, and its one-line description to `POWDESC`. The Pack
+   Your Bag card shows 4 to a row and has two rows (7 powers at v8.8; a ninth needs a third row or pages).
 2. Say what it does in `usePower` (a timer on `duel.mx` for a lasting power, or an instant effect), and count the
-   timer down in `duelStep` (the list `['noodle','flip','bucket','bub']`).
+   timer down in `duelStep` (the list `['noodle','flip','bucket','bub','juice']`).
 3. Draw it: its small picture in `powIcon`, and what it looks like on Max in `maxGear`.
 4. Saving needs nothing: `pwFix` gives every player a count for every key in `POW` (new keys start at 1).
    Give it a lesson in Max School: a row in `TUT` with `k` set to its key, and its script in `tutStep`.
-5. Measure it: `experiments/sim/pow.js` plays scripted matches with a power packed three times. At v8.5 the six
+5. Measure it: `experiments/sim/pow.js` plays scripted matches with a power packed three times. At v8.8 the seven
    powers each lift Max's win rate by 15 to 22 points; keep a new one in that band (how to run: `experiments/fable-v8.md`, v8.5).
 
 ### Change the default 12 toys or the number of rounds

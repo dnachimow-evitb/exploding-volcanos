@@ -14,6 +14,7 @@ const out=await p.evaluate(({CONDS,CELLS,N})=>{window.setTimeout=()=>0;const q=P
     if(pk&&u<count){const frac=1-timeLeft/roundTime,due=frac>=(u+1)/(count+1);let go=false;
      if(pk==='splash')go=seen!=null&&!ign&&((Math.abs(seen-blk.x)>55&&m.e<TUNE.tire+.1)||frac>=(u+1)/(count+1)+.12);
      else if(pk==='blast')go=objs.some(o=>o.st==='fly'&&!o.blocked&&Math.abs(o.x-blk.x)<BLAST_W&&o.y<blk.y-26);
+     else if(pk==='juice')go=m.e<TUNE.tire;
      else go=due;
      if(go){usePower(pk);u++;}}
     NOW+=1/60;step(1/60);f++;if(collected>=need){lost=true;break;}}
