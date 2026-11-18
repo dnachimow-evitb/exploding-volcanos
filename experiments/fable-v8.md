@@ -201,3 +201,37 @@ devices is OK (he sets up the account when asked); the one-line privacy and list
     lesson and all twelve lessons played through, main game. Physics fingerprint unchanged. Not on a real iPhone.
   - Open question for Derek: "automatic" was read as "it happens at once when tapped". If he meant it should fire by
     itself when Max runs out, that is a small change.
+- v8.9 (TEST ONLY): Derek chose two devices as the next thing to build (2026-11-18). This build is the first half:
+  the other side of the match, and the relay. **Two phones cannot play each other yet.**
+  - **Be Noah**: the Multiplayer card now has Be Max and Be Noah. As Noah you pick Push or Swipe on a "You Are
+    Noah!" card and throw as in the main game, against a **computer Max** (`cpuMax`). He plays by a person's rules
+    (same speed, reach and energy): he watches the wind-up a little late and swims to where the throw will pass,
+    dives if he thinks of it and has the energy, and with no wind-up to read goes for a toy already rising. By
+    stage he reacts faster (1.1 s at stage 1 to 0.4 s at stage 10), judges the spot better, dives more, is caught
+    napping less, and packs powers: a Pool Noodle from stage 6, a Juice Box too from 8, a Bubble Bath too at 10;
+    from stage 6 he also uses his free Big Splash. His powers never touch the player's stock.
+  - Max's name and energy bar are now drawn for both sides (`maxBar`), so Noah can see when Max is tired.
+  - The best stage beaten as Noah is saved (`nhBest`). The ladder on the card shows orange for stages beaten as Max,
+    blue for stages beaten as Noah, a green box for both, with a key. Next Stage is offered after a win on either side.
+  - **Balance (simulated, 60 matches a stage, `experiments/sim/noah.js`)**: a scripted Noah of fixed skill against
+    the computer Max. First version of him was far too good (a beginner-level Noah won 40% at stage 1 and under 3%
+    from stage 5). As shipped, Noah's win rate at stages 1 to 10: beginner 93 82 78 62 37 7 2 0 0 0; middling
+    95 100 97 100 92 72 58 57 45 23; expert 100 100 100 98 98 93 83 83 82 57.
+  - **Known problem: Swipe.** A flick has no wind-up, so the computer Max barely reacts to it (in the browser a
+    Swipe match at stage 2 went 4 for 4 with no blocks). The numbers above are for Push-style throws only. A person
+    playing Max on a second phone will have the same trouble. Needs a decision: Push only in matches, or give Max a
+    way to anticipate. The physics is not to be changed (Derek).
+  - **The relay** (`relay/`): a Cloudflare Worker with one Durable Object per four-letter room code. First device in
+    is the host, one more may join, each message is passed to the other and nothing is stored or logged; both are
+    told when someone arrives or leaves. Refusals: 4004 no such room, 4003 full, 4009 code in use; other websites
+    403. **Run locally in Cloudflare's own runtime (wrangler dev) and tested with real WebSocket clients: 13 of 13
+    checks pass** (`relay/test/relaytest.js`). The first version failed 3 of them (a refused device was left
+    connected); fixed. It is not deployed: `.github/workflows/relay.yml` deploys it once Derek adds two repository
+    secrets, and does nothing until then.
+  - Cloudflare's documentation site is not reachable from the cloud session (blocked host), so the configuration
+    follows search results of that documentation plus the local run; check the free-plan limits again at deploy time.
+  - Checked in a browser: the card, Be Noah with Push (real press and hold) through a whole match, Swipe, the result
+    and rewards, the computer Max using powers at stage 10 with the player's stock untouched. Physics fingerprint
+    for playing as Max unchanged. Main game re-checked. Not on a real iPhone.
+  - Still to build for two devices: Start A Game / Join A Game with a code, the match kept in step between the two
+    screens, what happens when a player drops, and Noah's three tricks.

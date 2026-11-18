@@ -4,7 +4,7 @@ Read this first before changing the game. It says where things are and gives ste
 common jobs (add a toy, change prices, add a badge, publish). The history of *why* things are the way they are
 is in `experiments/fable-v7.md` (one line per version) and, for the art, `experiments/fable-v5.md`.
 
-Last updated: 2026-11-17, at test version v8.8 / live version v7.45.
+Last updated: 2026-11-17, at test version v8.9 / live version v7.45.
 
 **Next major version (v8, Multiplayer mode: a new mode beside the main game, which it does not replace): design in `experiments/v8-design.md`, work list in
 `experiments/v8-backlog.md`.** Derek gave the go-ahead on draft 2 on 2026-11-17; what is built so far is in
@@ -28,6 +28,7 @@ required, powers are limited and earned, and the goal of the whole version is to
 | `story.html`, `the-song.html`, `the-game.html`, `album.html` | **The story website, BUILT files: never edit them directly.** Split on 2026-11-16 at Derek's request into a homepage and three chapters. `story.html` is the homepage (hero, a three-chapter overview, download buttons); its address is the one the App Store listing links to, so it must keep that name. Chapter One `the-song.html`: 01 The Jam (`#story`), 02 The AI (`#journey`), 03 The Song (`#song`, the player). Chapter Two `the-game.html`: 01 The Experiment, 02 The Game, 03 The Cast, then For Parents and his quote. Chapter Three `album.html`: The Pile, The Upload, The Conflict, The Name. Each chapter ends with a link to the next. Old links to sections of `story.html` are redirected to the right chapter. |
 | `assets/site/` | The site's shared stylesheet (`site.css`), scripts (`site.js`: menu, side rail, fade-in) and images: toys, Noah, Max and the volcano exported from the game, crops of the cover, web-sized copies of `native/screenshots/`. |
 | `privacy.html`, `support.html` | Hand-written companion pages (not built). |
+| `relay/` | **The Multiplayer relay** (v8.9): a Cloudflare Worker that passes messages between two devices in a room and stores nothing. `src/index.js`, `wrangler.toml`, tests in `test/relaytest.js`. Deployed by `.github/workflows/relay.yml` once the secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` exist (Derek adds them). Not deployed as of 2026-11-18. |
 | `native/` | **The iPhone App Store app** (Capacitor wrapper that packages the live game). Roadmap, checklist and decisions: `native/APP-STORE.md`. Built on GitHub's Macs by `.github/workflows/ios.yml`. |
 
 The whole game is one JavaScript file drawing to one `<canvas>`. No build step, no libraries.
@@ -142,7 +143,7 @@ Conventions:
 ## 4. Saved data (per phone, `localStorage`)
 
 - Live key `evitb-profiles-v1`, test key `evitb-test-profiles-v1` (seeded once from the live one).
-- Shape: `{cur, list:[{name, icon, st:{…stats}, coins, owned:[toy keys], line:[12 toy keys], gear:[gear keys owned], wear:[gear keys Noah has on], mxBest: highest Multiplayer stage beaten as Max, mxN: matches played as Max, mxTut: Max School (0 never, 1 skipped, 2 finished), pw:{power key: charges owned}}]}`, up to 4 players.
+- Shape: `{cur, list:[{name, icon, st:{…stats}, coins, owned:[toy keys], line:[12 toy keys], gear:[gear keys owned], wear:[gear keys Noah has on], mxBest: highest Multiplayer stage beaten as Max, mxN: matches played as Max, mxTut: Max School (0 never, 1 skipped, 2 finished), nhBest: highest stage beaten as Noah, pw:{power key: charges owned}}]}`, up to 4 players.
 - Loading is defensive: unknown stats are dropped, a bad lineup resets to default (`lineFix`), missing `coins`
   is back-paid from badges already held. **When adding a field, add it in three places:** the load `map`,
   the default "Player 1" object, and the new-player object in `pfNameDone`. Give old saves a sensible default.

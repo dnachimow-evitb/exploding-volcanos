@@ -1,0 +1,14 @@
+# The Exploding Volcanoes relay: passes messages between the two devices in a Multiplayer room. It stores nothing.
+# Deployed by .github/workflows/relay.yml. Runs on Cloudflare's free plan (Durable Objects there must be SQLite-backed,
+# hence new_sqlite_classes below, although this relay never uses the storage).
+name = "exploding-volcanoes-relay"
+main = "src/index.js"
+compatibility_date = "2025-09-01"
+
+[[durable_objects.bindings]]
+name = "ROOMS"
+class_name = "Room"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Room"]

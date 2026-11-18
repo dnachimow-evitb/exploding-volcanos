@@ -43,15 +43,18 @@ The goal of the whole version (Derek, 2026-11-17): make the game stickier. Judge
 - [ ] **V8-2A** S. Stage 10 is easier for Max than stage 9 (the computer Noah struggles with the smallest crater).
 
 ## Milestone 3: Two devices
-- [ ] **V8-30** (Derek) Free Cloudflare account; two keys added to GitHub secrets. Claude gives the steps.
-- [ ] **V8-31** M. The relay: passes messages between two devices in a room, stores nothing. Deployed by a
+- [ ] **V8-30** (Derek) Free Cloudflare account; two keys added to GitHub secrets (`CLOUDFLARE_API_TOKEN`,
+      `CLOUDFLARE_ACCOUNT_ID`). Steps given to him 2026-11-18. **<- waiting on this**
+- [ ] **V8-3A** S. Swipe in matches: a flick has no wind-up, so Max (computer or person) can barely react. Decide:
+      Push only in matches, or a way for Max to anticipate. Physics must not change.
+- [x] **V8-31** M. (v8.9: written and tested locally, 13 of 13; NOT deployed, waiting on V8-30) The relay: passes messages between two devices in a room, stores nothing. Deployed by a
       GitHub workflow. Depends V8-30. Check the free-plan limits again at build time.
 - [ ] **V8-32** M. Start A Game (four-letter code) and Join A Game (type it on the game's letter keys).
 - [ ] **V8-33** L. Match over the connection: Noah's device runs it; Max's device sends steering and draws
       Max at once; snapshots keep both screens the same. Depends V8-11, V8-12.
 - [ ] **V8-34** S. Setup card: stage, who is Noah, handicap (Max Slow / Normal / Fast).
 - [ ] **V8-35** S. A dropped player: "Waiting For Max", then the computer takes over after 10 seconds.
-- [ ] **V8-36** S. Smarter computer Max (follows throws with a reaction delay), used for take-over and solo.
+- [x] **V8-36** S. (v8.9, `cpuMax`, with Be Noah) Smarter computer Max (follows throws with a reaction delay), used for take-over and solo.
 - [ ] **V8-37** (Derek) Play it on two phones with two people. **Stop here and adjust the design if the core
       is not fun.**
 
