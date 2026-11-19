@@ -80,6 +80,9 @@ If a Pages build sticks or fails: `gh api -X POST repos/dnachimow-evitb/explodin
 - Do NOT use the Suno album's cover image: it is a personal photo of a child with another person in view.
   Track artwork (generated images, copied to `assets/album/`) is fine.
 
+### Probable next chapter: the café (noted 2026-11-19; do not build yet)
+The Exploding Volcanos family café is the probable next extension of the site and overall project once things have launched. The concept lives in Derek's Google Drive folder "Exploding Volcanos" (Handbook, Scratchpad, business plan; see `Scratchpad_Addendum_2026-11.md` there). **Do not add anything about it to the site, the game or the repo until Derek says so.**
+
 ### After every change to the site or game, give Derek a fresh link (his rule, 2026-11-16)
 End the reply with the full, tappable URL of what changed, carrying the new version so his phone does not show
 a saved copy: `.../story.html?v=N` or `.../album.html?v=N` (N = the site's `data-v`, add `#section` when one
