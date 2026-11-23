@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v8.13'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v8.14'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -274,7 +274,7 @@ function down(e){const wasPlaying=song&&!song.paused;initAudio();const p=P(e);
  if(duel&&duel.net&&state==='play'&&dist(p.sx,p.sy,W-74,SAFE+28)<23)return;
  if((state==='play'||paused)&&dist(p.sx,p.sy,W-120,SAFE+28)<22){sfxClick();askHome();return;} // home button: asks first, then back to the start screen
  if((state==='play'||paused)&&dist(p.sx,p.sy,W-74,SAFE+28)<23){paused=!paused;homeAsk=0;sfxClick();if(!paused){lastNow=performance.now();acc=0;}return;}
- if(paused||state!=='play'){for(const b of[card,card2,card3,card4,...hits])if(b&&b.act&&p.sx>b.x&&p.sx<b.x+b.w&&p.sy>b.y&&p.sy<b.y+b.h){press={key:b.key,act:b.act,id:b.id||0};break;}return;}
+ if(paused||state!=='play'){for(const b of[card,card2,card3,card4,...hits])if(b&&b.act&&p.sx>b.x&&p.sx<b.x+b.w&&p.sy>b.y&&p.sy<b.y+b.h){press={key:b.key,act:b.act,id:b.id||0,now:b.now};break;}return;}
  if(duel&&duel.tut&&p.sx<114&&p.sy>SAFE+6&&p.sy<SAFE+52){sfxClick();tutEnd(true);return;} // Max School: Skip
  if(duel&&duel.role==='max'){const b=duelBar().find(b=>p.sx>b.x-4&&p.sx<b.x+b.w+4&&p.sy>b.y-4&&p.sy<b.y+b.h+4);if(b){usePower(b.k,b.free);return;} // a power button
   duel.pid=e.pointerId;duel.mx.tx=clamp(p.x,MAX_L,MAX_R);duel.tap={id:e.pointerId,t:performance.now(),x:p.x,sx:p.sx,sy:p.sy,far:0};return;} // playing Max: the newest finger steers him; it never grabs a toy
@@ -282,7 +282,7 @@ function down(e){const wasPlaying=song&&!song.paused;initAudio();const p=P(e);
  if(hardMode&&swipeMode&&objs.filter(o=>o.st==='fly').length>=HARD_MAX_AIR)return;
  let best=null,bd=74;objs.forEach(o=>{if(o.st!=='float')return;const d=dist(p.x,p.y,o.x,o.y);if(d<bd){bd=d;best=o;}});
  if(best){charging={o:best,c:0.3,sx:p.x,sy:p.y,fx:p.x,fy:p.y,lx:p.x,ly:p.y,lt:performance.now(),peak:0,len:0,tc:0.3};hintT=0;splashSide=best.x<190?-1:1;haptic(1);}}
-function release(e){if(press){const p=press;press=null;pressUntil=NOW+.12;pressId=p.id||0;sfxClick();setTimeout(()=>{if(p.key===uiKey)p.act();},90);return;}
+function release(e){if(press){const p=press;press=null;pressUntil=NOW+.12;pressId=p.id||0;sfxClick();if(p.now){if(p.key===uiKey)p.act();}else setTimeout(()=>{if(p.key===uiKey)p.act();},90);return;}
  if(duel&&duel.role==='max'){const tp=duel.tap,id=e?e.pointerId:null;if(id==null||id===duel.pid)duel.pid=null;if(tp&&(id==null||id===tp.id)){duel.tap=null;if(performance.now()-tp.t<260&&tp.far<16&&Math.abs(tp.x-blk.x)>40)maxDive(tp.x);}return;} // a quick tap well away from Max is a dive (a tap near him only steers); the throw in progress belongs to the other side
  if(!charging)return;
  if(!swipeMode){pendingLaunch={o:charging.o,f:assist(charging.o,charging.c)};charging=null;swingT=swingDur;swingHit=false;return;}
@@ -1340,6 +1340,9 @@ function netMsg(N,m){const D=duel,q=PF.list[PF.cur];
   else if(state!=='play')return;
   else if(m.t==='B'){const o=byId(m.i);if(o&&o.st==='fly'&&!o.blocked){mx.bucket=m.c&&!mx.held?1:0;maxBlock(o,true,!!m.j);}} // a late block on a toy that already went in is ignored: the score stands
   else if(m.t==='P'&&POWNAME[m.k])powFx(m.k,m.d<0?-1:1);}}
+// copy text to the phone's clipboard. Must run inside a tap (see now:true). Tries the modern way, then the old one.
+function copyText(t,done){let ok=false;try{const ta=document.createElement('textarea');ta.value=t;ta.setAttribute('readonly','');ta.style.cssText='position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;font-size:16px';document.body.appendChild(ta);ta.focus();ta.select();ta.setSelectionRange(0,t.length);ok=document.execCommand('copy');document.body.removeChild(ta);}catch(e){}
+ if(ok){done(true);return;}try{navigator.clipboard.writeText(t).then(()=>done(true),()=>done(false));}catch(e){done(false);}}
 function netGo(how){net={how,side:null,st:how==='join'?'code':'side',txt:'',ws:null,peer:null,err:'',note:'',t0:uiT};}
 function netSide(sd){const N=net;N.side=sd;if(N.how==='start')netRoom(netCode(),'host');else netQuick();}
 function pickBtn(x,y,w,h,t,sub,act,id,col,colD,colP){button(x,y,w,h,t,act,{size:21,id,sub,col,colD,colP});}
@@ -1358,9 +1361,12 @@ function drawPerson(){const q=PF.list[PF.cur],N=net,B={col:'#5b7fd6',colD:'#3450
   CODE_AB.split('').forEach((L,i)=>{const x=cx+(cw-7*44+4)/2+(i%7)*44,y=cy+176+(i/7|0)*46,id=220+i,dn=press&&press.id===id,d=dn?3:0;rr(x,y+4,40,40,7);fill('#9db7e6');rr(x,y+d,40,40,7);fill(dn?'#cfe0fa':'#eef4fd');text(L,x+20,y+21+d,20,C.navy);hits.push({x:x-2,y:y-2,w:44,h:46,act:()=>{if(N.txt.length<4)N.txt+=L;},key:uiKey,id});});
   {const x=cx+(cw-7*44+4)/2+6*44,y=cy+176+2*46,dn=press&&press.id===241,d=dn?3:0;rr(x,y+4,40,40,7);fill('#9db7e6');rr(x,y+d,40,40,7);fill(dn?'#cfe0fa':'#eef4fd');text('⌫',x+20,y+21+d,18,C.navy);hits.push({x:x-2,y:y-2,w:44,h:46,act:()=>{N.txt=N.txt.slice(0,-1);},key:uiKey,id:241});}
   const ok=N.txt.length===4,x0=W/2-(104+12+164)/2,yb=cy+ch-70;button(x0,yb,104,46,'Cancel',netClose,{size:16,id:7,...B});button(x0+116,yb,164,46,'Join',()=>{if(net&&net.txt.length===4)netRoom(net.txt,'join');},{size:20,col:ok?C.green:'#aab4cc',colD:ok?C.greenD:'#8793ad',colP:ok?'#27a83f':'#aab4cc'});cardEnd();return;}
- if(N.st==='waiting'||N.st==='joining'||N.st==='looking'){const start=N.st==='waiting'&&N.how==='start',cw=328,ch=start?372:300,{cx,cy}=cardBegin(cw,ch,start?'Your Code':N.st==='looking'?'Quick Match':'Connecting',age),dots='.'.repeat(1+(~~(NOW*2.5)%3));
-  if(start){for(let i=0;i<4;i++){const x=W/2-118+i*60,y=cy+92;rr(x,y+4,52,62,9);fill(C.deep);rr(x,y,52,62,9);fill('#fff3bf');text(N.code[i],x+26,y+33,36,C.navy);}
-   body('Tell your friend this code.',cy+182,15);body('They tap Multiplayer, Play A Person, Join A Game.',cy+204,11,'#4a6fc4');body(N.note||('Waiting for your friend'+dots),cy+238,14,N.note?C.lavaDk:C.navy);body('You are '+(N.side==='max'?'Max':'Noah')+'.',cy+262,12,'#4a6fc4');}
+ if(N.st==='waiting'||N.st==='joining'||N.st==='looking'){const start=N.st==='waiting'&&N.how==='start',cw=328,ch=start?418:300,{cx,cy}=cardBegin(cw,ch,start?'Your Code':N.st==='looking'?'Quick Match':'Connecting',age),dots='.'.repeat(1+(~~(NOW*2.5)%3));
+  if(start){const cp=()=>copyText(N.code,ok=>{N.copied=ok?NOW:-NOW;}),did=N.copied>0&&NOW-N.copied<2.2,bad=N.copied<0&&NOW+N.copied<3,dn=press&&press.id===210,d=dn?3:0;
+   for(let i=0;i<4;i++){const x=W/2-118+i*60,y=cy+92;rr(x,y+4,52,62,9);fill(C.deep);rr(x,y+d,52,62,9);fill(did?'#d6f5dc':'#fff3bf');text(N.code[i],x+26,y+33+d,36,C.navy);}
+   hits.push({x:W/2-124,y:cy+86,w:248,h:76,act:cp,key:uiKey,id:210,now:true}); // tap the code itself, or the button under it, to copy it
+   {const x=W/2-84,y=cy+170,dn2=press&&press.id===211,d2=dn2?3:0;rr(x,y+4,168,36,8);fill(did?C.greenD:'#34509c');rr(x,y+d2,168,36,8);fill(did?C.green:'#5b7fd6');text(did?'Copied!':'Copy Code',W/2,y+19+d2,15,'#fff');hits.push({x:x-4,y:y-4,w:176,h:46,act:cp,key:uiKey,id:211,now:true});}
+   body(bad?'Could not copy. Tell them the letters.':'Send it to your friend.',cy+232,15,bad?C.lavaDk:C.navy);body('They tap Multiplayer, Play A Person, Join A Game.',cy+254,11,'#4a6fc4');body(N.note||('Waiting for your friend'+dots),cy+288,14,N.note?C.lavaDk:C.navy);body('You are '+(N.side==='max'?'Max':'Noah')+'.',cy+312,12,'#4a6fc4');}
   else{X.save();X.translate(W/2,cy+124);X.rotate(NOW*2.2);for(let i=0;i<8;i++){X.rotate(TAU/8);circ(0,-26,5.5-i*.35);fill(i%2?C.lava:C.hot);}X.restore();
    body(N.st==='looking'?'Looking for a player'+dots:'Connecting'+dots,cy+180,15);if(N.st==='looking'){body('You are '+(N.side==='max'?'Max':'Noah')+'.',cy+204,12,'#4a6fc4');if(age>12&&N.side==='max')body('Nobody yet. Keep waiting, or cancel and play the computer.',cy+224,10.5,C.lavaDk);else if(age>12)body('Nobody yet. Keep waiting, or cancel and play the main game.',cy+224,10.5,C.lavaDk);}}
   back(cy+ch-58);cardEnd();return;}

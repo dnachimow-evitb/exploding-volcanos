@@ -331,3 +331,9 @@ devices is OK (he sets up the account when asked); the one-line privacy and list
   - Not built: Noah's tricks; a notice when the two phones run different versions beyond a line on the Connected card.
 - 2026-11-23: **Derek confirmed Quick Match on two real phones** (one Max, one Noah, paired through the live relay). Start / Join by
   code, Wave and Quick Match are now all confirmed on real phones. The two-phone MATCH (v8.13) is not yet reported on.
+- v8.14 (TEST ONLY): Derek asked for tap-to-copy on the code to share with a friend. On the Your Code card, tapping
+  the code itself or the Copy Code button under it copies the four letters; the button turns green and says
+  "Copied!", or the card says "Could not copy. Tell them the letters." A tap area can now be marked `now:true` so
+  its action runs inside the tap instead of 90 ms later: phones only allow copying during the tap itself
+  (`copyText`, `release`). Checked in a browser (clipboard read back, both ways of tapping). Whether the iPhone
+  home-screen app allows the copy is not known until Derek tries it.
