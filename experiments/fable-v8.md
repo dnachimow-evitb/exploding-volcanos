@@ -337,3 +337,17 @@ devices is OK (he sets up the account when asked); the one-line privacy and list
   its action runs inside the tap instead of 90 ms later: phones only allow copying during the tap itself
   (`copyText`, `release`). Checked in a browser (clipboard read back, both ways of tapping). Whether the iPhone
   home-screen app allows the copy is not known until Derek tries it.
+- v8.15 (TEST ONLY): Derek, again: "make it easy to copy the code to send to someone". Copying four letters still left
+  the friend to find the Join screen and type them, so:
+  - **Send It** on the Your Code card opens the phone's own share sheet (Messages, WhatsApp and so on) with a short
+    message and an **invite link** that carries the code (`?join=CODE`). Where there is no share sheet, the whole
+    invitation is copied instead. Copy Code stays beside it for the four letters alone.
+  - **Opening an invite link starts the game and joins straight away**, with nothing to type (`JOIN`, `joinFromLink`);
+    the code is then removed from the address bar so a reload does not rejoin. A link with a bad code is ignored; a
+    link to a game that has gone says "No game with that code."
+  - The link points at whichever page made it (the test page for now). The iPhone App Store app cannot make a link
+    to itself, so there it will point at the website's game.
+  - Checked in a browser: the fallback copy, the share sheet (stubbed) receiving the message and link, Copy Code,
+    a second page opening the link and being paired, a bad link, a dead link. Not known until Derek tries: the real
+    iPhone share sheet, and that a link tapped in Messages opens in Safari, not in the home-screen app (so the
+    friend plays as their Safari player, not their home-screen one).

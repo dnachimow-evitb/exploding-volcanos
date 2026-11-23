@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v8.14'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v8.15'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -1343,6 +1343,14 @@ function netMsg(N,m){const D=duel,q=PF.list[PF.cur];
 // copy text to the phone's clipboard. Must run inside a tap (see now:true). Tries the modern way, then the old one.
 function copyText(t,done){let ok=false;try{const ta=document.createElement('textarea');ta.value=t;ta.setAttribute('readonly','');ta.style.cssText='position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;font-size:16px';document.body.appendChild(ta);ta.focus();ta.select();ta.setSelectionRange(0,t.length);ok=document.execCommand('copy');document.body.removeChild(ta);}catch(e){}
  if(ok){done(true);return;}try{navigator.clipboard.writeText(t).then(()=>done(true),()=>done(false));}catch(e){done(false);}}
+// INVITE LINK (v8.15): the easiest way to get a friend in. Send It opens the phone's own share sheet (Messages,
+// WhatsApp, ...) with a short message and a link that carries the code; opening that link starts the game and joins
+// straight away, with nothing to type. Where there is no share sheet the message is copied instead.
+let JOIN=(()=>{try{const c=(new URLSearchParams(location.search).get('join')||'').toUpperCase();return /^[BCDFGHJKLMNPQRSTVWXZ]{4}$/.test(c)?c:null;}catch(e){return null;}})();
+const inviteUrl=c=>(/^https?:/.test(location.protocol)?location.origin+location.pathname:'https://dnachimow-evitb.github.io/exploding-volcanos/')+'?join='+c;
+const inviteText=c=>'Play Exploding Volcanoes with me! Tap to join my game (code '+c+'):';
+function sendInvite(N){const c=N.code,done=ok=>{N.copied=ok?NOW:-NOW;N.sent=0;};try{if(navigator.share){navigator.share({text:inviteText(c),url:inviteUrl(c)}).then(()=>{N.sent=NOW;},()=>{});return;}}catch(e){}copyText(inviteText(c)+' '+inviteUrl(c),done);}
+function joinFromLink(){const c=JOIN;JOIN=null;try{history.replaceState(null,'',location.pathname);}catch(e){}openMulti();mpPg=2;netGo('join');net.txt=c;netRoom(c,'join');}
 function netGo(how){net={how,side:null,st:how==='join'?'code':'side',txt:'',ws:null,peer:null,err:'',note:'',t0:uiT};}
 function netSide(sd){const N=net;N.side=sd;if(N.how==='start')netRoom(netCode(),'host');else netQuick();}
 function pickBtn(x,y,w,h,t,sub,act,id,col,colD,colP){button(x,y,w,h,t,act,{size:21,id,sub,col,colD,colP});}
@@ -1365,8 +1373,8 @@ function drawPerson(){const q=PF.list[PF.cur],N=net,B={col:'#5b7fd6',colD:'#3450
   if(start){const cp=()=>copyText(N.code,ok=>{N.copied=ok?NOW:-NOW;}),did=N.copied>0&&NOW-N.copied<2.2,bad=N.copied<0&&NOW+N.copied<3,dn=press&&press.id===210,d=dn?3:0;
    for(let i=0;i<4;i++){const x=W/2-118+i*60,y=cy+92;rr(x,y+4,52,62,9);fill(C.deep);rr(x,y+d,52,62,9);fill(did?'#d6f5dc':'#fff3bf');text(N.code[i],x+26,y+33+d,36,C.navy);}
    hits.push({x:W/2-124,y:cy+86,w:248,h:76,act:cp,key:uiKey,id:210,now:true}); // tap the code itself, or the button under it, to copy it
-   {const x=W/2-84,y=cy+170,dn2=press&&press.id===211,d2=dn2?3:0;rr(x,y+4,168,36,8);fill(did?C.greenD:'#34509c');rr(x,y+d2,168,36,8);fill(did?C.green:'#5b7fd6');text(did?'Copied!':'Copy Code',W/2,y+19+d2,15,'#fff');hits.push({x:x-4,y:y-4,w:176,h:46,act:cp,key:uiKey,id:211,now:true});}
-   body(bad?'Could not copy. Tell them the letters.':'Send it to your friend.',cy+232,15,bad?C.lavaDk:C.navy);body('They tap Multiplayer, Play A Person, Join A Game.',cy+254,11,'#4a6fc4');body(N.note||('Waiting for your friend'+dots),cy+288,14,N.note?C.lavaDk:C.navy);body('You are '+(N.side==='max'?'Max':'Noah')+'.',cy+312,12,'#4a6fc4');}
+   {const y=cy+170,sent=N.sent&&NOW-N.sent<2.5;[[W/2-122,'Send It',212,()=>sendInvite(N),sent?C.green:C.lava,sent?C.greenD:'#a82a06',sent?'Sent!':null],[W/2+4,'Copy Code',211,cp,did?C.green:'#5b7fd6',did?C.greenD:'#34509c',did?'Copied!':null]].forEach(r=>{const dn2=press&&press.id===r[2],d2=dn2?3:0;rr(r[0],y+4,118,38,8);fill(r[5]);rr(r[0],y+d2,118,38,8);fill(r[4]);text(r[6]||r[1],r[0]+59,y+20+d2,15,'#fff');hits.push({x:r[0]-2,y:y-4,w:122,h:48,act:r[3],key:uiKey,id:r[2],now:true});});}
+   body(bad?'Could not copy. Tell them the letters.':'Send It: your friend just taps the link.',cy+232,14,bad?C.lavaDk:C.navy);body('Or they tap Multiplayer, Play A Person, Join A Game.',cy+254,11,'#4a6fc4');body(N.note||('Waiting for your friend'+dots),cy+288,14,N.note?C.lavaDk:C.navy);body('You are '+(N.side==='max'?'Max':'Noah')+'.',cy+312,12,'#4a6fc4');}
   else{X.save();X.translate(W/2,cy+124);X.rotate(NOW*2.2);for(let i=0;i<8;i++){X.rotate(TAU/8);circ(0,-26,5.5-i*.35);fill(i%2?C.lava:C.hot);}X.restore();
    body(N.st==='looking'?'Looking for a player'+dots:'Connecting'+dots,cy+180,15);if(N.st==='looking'){body('You are '+(N.side==='max'?'Max':'Noah')+'.',cy+204,12,'#4a6fc4');if(age>12&&N.side==='max')body('Nobody yet. Keep waiting, or cancel and play the computer.',cy+224,10.5,C.lavaDk);else if(age>12)body('Nobody yet. Keep waiting, or cancel and play the main game.',cy+224,10.5,C.lavaDk);}}
   back(cy+ch-58);cardEnd();return;}
@@ -1479,6 +1487,7 @@ k0=lerp(.85,1,EZ.back(uiT/.5)),ih=py+pw+30,bandH=HS-ih; // the taped picture sit
  const tby=ih+34+(bandH-34-SAFEB-56*2-46-36-14*3)*.5; // test buttons sit in the empty margin left of Push and Swipe, clear of everything on any phone
  if(TEST&&menuStep===0&&!howTo&&!bdgPg&&!pfOpen&&!toysT0&&!noahT0&&!mpT0&&uiT>.6)button(5,tby+14,60,28,'+50',()=>addCoins(50),{size:13,id:17,col:'#e08a00',colD:'#a85f24',colP:'#c97800'}); // test page only
  if(TEST&&menuStep===0&&!howTo&&!bdgPg&&!pfOpen&&!toysT0&&!noahT0&&!mpT0&&uiT>.6)button(5,tby+56+14+14,60,28,'Rd '+testRound,()=>{testRound=testRound>=10?1:testRound+1;},{size:12.5,id:6,col:'#e08a00',colD:'#a85f24',colP:'#c97800'}); // test page only: tap to choose the starting round
+ if(JOIN&&uiT>.9&&!howTo&&!bdgPg&&!pfOpen&&!toysT0&&!noahT0&&!mpT0)joinFromLink();
  if(howTo){drawHowTo();}
  else if(bdgPg){drawBadges();}
  else if(toysT0){drawMyToys();}
