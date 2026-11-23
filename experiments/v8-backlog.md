@@ -45,8 +45,9 @@ The goal of the whole version (Derek, 2026-11-17): make the game stickier. Judge
 ## Milestone 3: Two devices
 - [x] **V8-30** (Derek) Cloudflare token and Account ID added as GitHub secrets, 2026-11-23. Relay deployed and tested live
       (13 of 13): `https://exploding-volcanoes-relay.dnachimow.workers.dev`.
-- [ ] **V8-3A** S. Swipe in matches: a flick has no wind-up, so Max (computer or person) can barely react. Decide:
-      Push only in matches, or a way for Max to anticipate. Physics must not change.
+- [x] **V8-3A** S. (v8.10) Swipe in matches: Derek chose anticipation. The computer Max now guards against a flick.
+- [ ] **V8-3B** S. The tell for a person playing Max against a flicking Noah (lane marker on touch, marker for a toy in
+      the air). Build with V8-33; needs two phones to judge.
 - [x] **V8-31** M. (v8.9; deployed 2026-11-23, tested live 13 of 13) The relay: passes messages between two devices in a room, stores nothing. Deployed by a
       GitHub workflow. Depends V8-30. Check the free-plan limits again at build time.
 - [ ] **V8-32** M. Start A Game (four-letter code) and Join A Game (type it on the game's letter keys).

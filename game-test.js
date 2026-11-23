@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v8.9'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v8.10'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -133,7 +133,7 @@ function crossX(o){const iv=ideal(o),q=iv.vy*iv.vy-2*G*(o.y-DUEL_Y),t=q>0?(-iv.v
 let lastPack=[]; // what was packed last time, offered again on the next bag card
 function startDuel(stage,role,now){const q=PF.list[PF.cur];stage=clamp(stage|0,1,10);
  duel={stage,role,lastSec:99,noah:role==='noah'?'touch':'cpu',max:role==='max'?'touch':'cpu',blocks:0,over:null,pid:null,tired:0,coins:0,t:0,pack:[],info:null,bag:[],free:1,earned:[],wave:0,jet:0,
-  mx:{tx:CX,dive:0,dx:CX,e:1,juice:0,noodle:0,flip:0,bucket:0,held:null,bub:0},cpu:{wait:1.5,bad:false,fakeAt:0,side:0,avoid:0,late:0,k:null},cmx:{hist:[],key:null,err:0,dive:false,skip:false,n0:0}};
+  mx:{tx:CX,dive:0,dx:CX,e:1,juice:0,noodle:0,flip:0,bucket:0,held:null,bub:0},cpu:{wait:1.5,bad:false,fakeAt:0,side:0,avoid:0,late:0,k:null},cmx:{hist:[],key:null,err:0,dive:false,skip:false,n0:0,gt:0,gx:null}};
  if(role==='noah')duel.bag=(stage>=10?['bubble','noodle','juice']:stage>=8?['noodle','juice']:stage>=6?['noodle']:[]).map(k=>({k})); // what the computer Max packs
  {const have={...q.pw};for(const k of lastPack)if(have[k]>0&&duel.pack.length<3){have[k]--;duel.pack.push(k);}}
  RS=(Date.now()>>>0)||1;swipeMode=false;hardMode=false;streak=0;round=stage;score=0;bestCombo=0;currentToys=q.line.slice(0,stage+2);LINE={};newToyEm=null;landed=[];objs=[];ejecta=[];confet=[];scoreShown=0;lastScore=0;mpT0=0;
@@ -219,13 +219,17 @@ function tutStep(dt){const D=duel,T=D.tut,m=D.mx,L=TUT[T.i],inWay=k=>charging&&M
 // With no wind-up to read (a Swipe throw) he goes for a toy already on its way up. The stage sets his skill (k = 0 at
 // stage 1 .. 1 at stage 10): reaction time, how well he judges the spot, how often he dives, how often he is caught
 // napping, and what he packs (startDuel). He plays by the same rules as a person: same speed, reach and energy.
-const CMX={lag:[1.1,.4],err:[60,12],dive:[0,.7],nap:[.55,.08]}; // each [stage 1, stage 10]: reaction seconds, how far off he judges the spot, chance he thinks to dive, chance he misses a throw altogether. v8.9: from simulated matches
+// AGAINST SWIPE (v8.10) a flick has no wind-up, so he ANTICIPATES instead: between throws he waits where the next flick is
+// most likely to pass (the side of the tub with more toys; guard = how often he bothers), and he is already watching
+// for a finger on a toy, so his reaction is shorter (lag x swipe). The throw itself is untouched.
+const CMX={lag:[1.1,.4],err:[60,12],dive:[0,.7],nap:[.55,.08],swipe:.5,guard:[.05,.95]}; // each [stage 1, stage 10]: reaction seconds, how far off he judges the spot, chance he thinks to dive, chance he misses a throw altogether. v8.9: from simulated matches
 function cpuMax(dt){const D=duel,m=D.mx,a=D.cmx,k=(round-1)/9,L=q=>lerp(q[0],q[1],k);
  let see=null;if(charging)see={x:crossX(charging.o),key:charging.o};else{const o=objs.find(q=>q.st==='fly'&&!q.blocked&&q.vy<0&&q.y>blk.y+20);if(o)see={x:o.x+o.vx*Math.max(0,(o.y-blk.y)/Math.max(2,-o.vy)),key:o};}
- a.hist.push(see);const lag=Math.round(L(CMX.lag)*60);while(a.hist.length>lag+1)a.hist.shift();const sn=a.hist.length>lag?a.hist[0]:null;
+ a.hist.push(see);const lag=Math.round(L(CMX.lag)*(swipeMode?CMX.swipe:1)*60);while(a.hist.length>lag+1)a.hist.shift();const sn=a.hist.length>lag?a.hist[0]:null;
  if(sn){if(sn.key!==a.key){a.key=sn.key;a.err=(rnd()-.5)*2*L(CMX.err);a.dive=rnd()<L(CMX.dive);a.skip=rnd()<L(CMX.nap);} // a new throw: how far off he judges it, whether he thinks to dive, whether he misses it altogether
   if(!a.skip){const x=clamp(sn.x+a.err,MAX_L,MAX_R);m.tx=x;if(a.dive&&m.e>=TUNE.tire+.1&&Math.abs(x-blk.x)>50)maxDive(x);
    if(D.free&&round>=6&&Math.abs(x-blk.x)>55&&m.e<TUNE.tire+.1)usePower('splash',true);}}
+ else if(swipeMode){if((a.gt-=dt)<=0){a.gt=.5;const fl=objs.filter(o=>o.st==='float'&&!o.hb),lf=fl.filter(o=>o.x<CX),side=lf.length*2>fl.length?lf:lf.length*2<fl.length?fl.filter(o=>o.x>=CX):fl;a.gx=fl.length&&rnd()<L(CMX.guard)?side.reduce((t,o)=>t+crossX(o),0)/side.length:null;}if(a.gx!=null)m.tx=clamp(a.gx,MAX_L,MAX_R);} // guarding against a flick
  else if(k>.35)m.tx=CX; // between throws the better ones come back to the middle
  if(D.bag.length){const n0=a.n0||(a.n0=D.bag.length),used=n0-D.bag.length;if(1-timeLeft/roundTime>=(used+1)/(n0+1))usePower(D.bag[0].k);}} // his powers, spread through the match
 // COMPUTER NOAH. He throws the way a Push player does (hold, let go when it will score), so the person playing Max

@@ -244,3 +244,19 @@ devices is OK (he sets up the account when asked); the one-line privacy and list
   `relay/test/relaytest.js` against the live address from GitHub's runner: 13 of 13 pass. The cloud session cannot
   reach workers.dev (network allowlist; this session runs in the Default environment and cannot be moved), so the
   live relay can only be checked that way, and the two-screen match has to be developed against a local copy.
+- v8.10 (TEST ONLY): Derek, on Swipe in matches: "find a way to anticipate the flick". The throw is not changed.
+  - **Measured first** (`experiments/sim/swipe.js`: a scripted Noah who flicks with the game's own Swipe throw, three
+    skill levels, against the computer Max): as v8.9 stood, a middling or expert flicker won 100% at every stage.
+  - **The computer Max now anticipates a flick.** Between throws he waits where the next flick is most likely to pass
+    (the side of the tub with more toys), and because he is already watching for a finger on a toy his reaction is
+    half as long. How often he bothers to guard rises with the stage (5% at stage 1 to 95% at stage 10). Guarding is
+    what does the work: shortening his reaction alone changed little.
+  - **After** (50 matches a stage), Noah's win rate with Swipe at stages 1 to 10: beginner 96 86 70 66 30 4 4 0 0 0;
+    middling 100 94 96 98 90 64 60 50 40 26; expert 98 98 100 96 98 88 86 68 74 48. Close to the Push ladder.
+  - Push is unaffected (same code path as before; spot-checked), and the physics fingerprint for playing as Max is
+    identical.
+  - In a browser, the fast scripted swiper that went 4 for 4 with no blocks at stage 2 was blocked 11 times.
+  - **Not built yet: the tell for a PERSON playing Max against a flicking Noah.** That only happens on two devices
+    (the computer Noah throws Push-style), so it is built with the two-screen match: a marker in Max's lane the
+    moment Noah's finger lands on a toy, and one for a toy already in the air. Whether a person can react in time is
+    unknown until two phones are playing.
