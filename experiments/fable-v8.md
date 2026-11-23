@@ -235,3 +235,12 @@ devices is OK (he sets up the account when asked); the one-line privacy and list
     for playing as Max unchanged. Main game re-checked. Not on a real iPhone.
   - Still to build for two devices: Start A Game / Join A Game with a code, the match kept in step between the two
     screens, what happens when a player drops, and Noah's three tricks.
+- 2026-11-23: **the relay is deployed.** Derek already had a Cloudflare account (welcome mail of 2026-11-05); he made an
+  API token (Cloudflare's token screen has been redesigned: the Workers template arrives as three "policies"; the Zone
+  policy has to be deleted or set to All zones when the account has no domain) and added the two GitHub secrets.
+  Address: `https://exploding-volcanoes-relay.dnachimow.workers.dev` (WebSocket: `wss://…/room/CODE?role=host|join`).
+  The first deploy failed on a line break in the Account ID secret while the run showed green (the log was piped
+  without pipefail); the workflow now strips whitespace from both secrets, fails properly, and after every deploy runs
+  `relay/test/relaytest.js` against the live address from GitHub's runner: 13 of 13 pass. The cloud session cannot
+  reach workers.dev (network allowlist; this session runs in the Default environment and cannot be moved), so the
+  live relay can only be checked that way, and the two-screen match has to be developed against a local copy.
