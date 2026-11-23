@@ -51,7 +51,7 @@ The goal of the whole version (Derek, 2026-11-17): make the game stickier. Judge
 - [x] **V8-31** M. (v8.9; deployed 2026-11-23, tested live 13 of 13) The relay: passes messages between two devices in a room, stores nothing. Deployed by a
       GitHub workflow. Depends V8-30. Check the free-plan limits again at build time.
 - [x] **V8-32** M. (v8.12, plus Quick Match and a Connected card with Wave) Start A Game (four-letter code) and Join A Game (type it on the game's letter keys).
-- [x] **V8-38** (Derek) Two phones connected with a code on v8.12 and Wave worked (2026-11-23). Quick Match on real phones: not yet confirmed.
+- [x] **V8-38** (Derek) Two phones connected with a code on v8.12 and Wave worked (2026-11-23). Quick Match on real phones confirmed too (2026-11-23).
 - [ ] **V8-3C** (Derek) Play a whole match on two phones on v8.13, both sides, Push and Swipe. **<- waiting on this**
 - [ ] **V8-39** S. Quick Match pairs strangers: recheck Apple's age rating and App Privacy answers before release; names are
       already hidden there.

@@ -329,3 +329,5 @@ devices is OK (he sets up the account when asked); the one-line privacy and list
   - **Not tested and not knowable from here:** real phones, real network delay (the local relay has none), mobile
     data, whether a late block looks acceptable, whether a person can react to the flick tell.
   - Not built: Noah's tricks; a notice when the two phones run different versions beyond a line on the Connected card.
+- 2026-11-23: **Derek confirmed Quick Match on two real phones** (one Max, one Noah, paired through the live relay). Start / Join by
+  code, Wave and Quick Match are now all confirmed on real phones. The two-phone MATCH (v8.13) is not yet reported on.
