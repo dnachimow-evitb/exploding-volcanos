@@ -297,3 +297,35 @@ devices is OK (he sets up the account when asked); the one-line privacy and list
     "Could not connect" and recovers. Main game and physics fingerprint unchanged.
   - **Not tested: real phones, and the live relay from a browser** (the cloud session cannot reach it; only the
     relay's own checks run against it, from GitHub). Derek's two-phone try of this build is the first real test.
+- 2026-11-23: **Derek connected two real phones on v8.12** with a code, and Wave worked. Quick Match on real phones is
+  not yet confirmed.
+- v8.13 (TEST ONLY): **the match between two devices.** First playable; not yet played on real phones.
+  - On the Connected card the one who started the game picks the stage, can Swap Sides, and taps Play. Max's device
+    goes to Pack Your Bag, Noah's to the "You Are Noah!" card (Push or Swipe). When both are ready the match starts
+    on both. After the result, Play Again brings both back to the Connected card.
+  - **How the two screens stay in step** (comment block above `netBegin`): each device runs the game and is in charge
+    of its own boy, so nobody waits on the network to see their own move. Noah's device owns the toys, the clock and
+    every score; Max's device owns where Max is, his energy, his powers and every block. Noah's device sends the
+    state of every toy about 15 times a second plus each throw and each score; Max's device sends Max 20 times a
+    second plus each block and each power. A block arrives a moment late and is applied to the toy where it is by
+    then; if it arrives after the toy has gone in, the score stands.
+  - **If the other device goes**, the computer takes over that boy (`cpuNoah` / `cpuMax`) and the match carries on,
+    with "They Left. The Computer Took Over."
+  - A two-device match cannot pause (the pause button is hidden); Home needs a second tap within 2.5 seconds.
+  - Max's device sees Noah's outfit. **The tell against a flick:** on Max's device the stand-here ring shows at every
+    stage when Noah is on Swipe, from the moment Noah's finger lands on a toy.
+  - Two-device matches pay coins and powers like any match but do not count on the stage ladder.
+  - **Bug found and fixed:** the main button of a card (`card`) was not cleared each frame, so on a card with no main
+    button a tap could run the previous card's button. On the joiner's Connected card, tapping Wave ran the old Join
+    and showed "That game is full." Present since the main-button scheme existed; harmless before because every
+    card had a main button. Now cleared every frame.
+  - Tested with two game pages through a local relay, real pointer input on both sides
+    (`experiments/sim/two-device-match.js`, `two-device-swipe.js`): same toys in the same places at the start; the
+    wind-up, Max's position and energy, the clock and the count of toys in all matching on both screens through a
+    match; 18 blocks counted on both; Big Splash sweeping Noah's toys; the same winner and rewards on both; Play
+    Again; Swap Sides; a Swipe match Noah wins on both; one page closed mid-match and the computer taking over; a
+    player leaving from the result card. Main game, Max School, the one-phone match and the physics fingerprint
+    re-checked.
+  - **Not tested and not knowable from here:** real phones, real network delay (the local relay has none), mobile
+    data, whether a late block looks acceptable, whether a person can react to the flick tell.
+  - Not built: Noah's tricks; a notice when the two phones run different versions beyond a line on the Connected card.

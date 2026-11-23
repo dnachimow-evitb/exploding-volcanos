@@ -1,4 +1,4 @@
-const {launch}=require('./lib2.js') // two or three game pages against a LOCAL relay: start it in relay/ with `npx wrangler dev --ip 127.0.0.1 --port 8794 --local`, then `node two-devices.js ws://127.0.0.1:8794`;const RELAY=process.argv[2];
+const {launch}=require('./lib2.js');const RELAY=process.argv[2];
 (async()=>{const L=await launch(RELAY),A=await L.page('A'),B=await L.page('B');const st=x=>x.ev(()=>net?net.st+(net.err?':'+net.err:''):'none');
 await A.ev(()=>{PF.list[0].name='Dad';});await B.ev(()=>{PF.list[0].name='Noah';PF.list[0].icon='🦕';});
 // menu
@@ -12,7 +12,7 @@ const wrong=code==='BBBB'?'CCCC':'BBBB';await type(B,wrong);await B.tap(0,1200);
 // then the right one, with a mistake corrected by erase
 await B.tap(2);await type(B,code.slice(0,3)+'Z');await B.tap(241,150);await type(B,code[3]);await B.tap(0,1300);
 console.log('paired: A',await st(A),JSON.stringify(await A.ev(()=>({side:net.side,peer:net.peer}))),'| B',await st(B),JSON.stringify(await B.ev(()=>({side:net.side,peer:net.peer}))));
-await A.shot('w6');await B.tap(0,600);await A.shot('w7');console.log('A saw the wave:',await A.ev(()=>!!net.wave&&NOW-net.wave<2));
+await A.shot('w6');await B.tap(3,600);await A.shot('w7');console.log('A saw the wave:',await A.ev(()=>!!net.wave&&NOW-net.wave<2));
 // a third phone cannot get in
 const C=await L.page('C');await C.tap(23);await C.tap(0);await C.tap(2);await type(C,code);await C.tap(0,1200);console.log('C third ->',await st(C));await C.tap(0);
 // B leaves: A goes back to waiting with the same code, and C can now join

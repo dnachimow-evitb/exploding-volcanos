@@ -4,7 +4,7 @@ Read this first before changing the game. It says where things are and gives ste
 common jobs (add a toy, change prices, add a badge, publish). The history of *why* things are the way they are
 is in `experiments/fable-v7.md` (one line per version) and, for the art, `experiments/fable-v5.md`.
 
-Last updated: 2026-11-17, at test version v8.12 / live version v7.45.
+Last updated: 2026-11-17, at test version v8.13 / live version v7.45.
 
 **Next major version (v8, Multiplayer mode: a new mode beside the main game, which it does not replace): design in `experiments/v8-design.md`, work list in
 `experiments/v8-backlog.md`.** Derek gave the go-ahead on draft 2 on 2026-11-17; what is built so far is in
@@ -116,7 +116,10 @@ Sections are marked with `// ── NAME ──` comments, in this order:
 - BADGES AND STATS: players (`PF`), stats (`ST`), `BADGES` table, coins, badge banner, Badges card, Players cards.
 - MY TOYS: lineup + shop card.
 - DRESS NOAH: gear shop and what Noah wears (`GEAR` table is at the top, next to `SHOP`).
-- TWO DEVICES (v8.12): `net`, `netRoom`, `netQuick`, `drawPerson` (start / join / quick match / connected), `drawMultiMenu`.
+- TWO DEVICES (v8.12 to v8.13): `net`, `netRoom`, `netQuick`, `drawPerson` (start / join / quick match / the Connected lobby),
+  `drawMultiMenu`; the match: `netBegin`, `netSetup`, `netMsg` (every message of a match), `netDrop` (computer takes
+  over), `duel.net` ('N' on Noah's device, 'M' on Max's). Read the comment block above `netBegin` before touching it.
+  Test with two pages and a local relay: `experiments/sim/two-device-match.js`.
   The relay address is `RELAY`; a test page can set `window.RELAY_URL` first. `mpPg` picks the Multiplayer card.
 - MULTIPLAYER (v8): `duel` state and `TUNE` at the top; `startDuel`, `duelStep`, `cpuNoah` after `dist`;
   `drawMulti` (the card, with the test-only tuning panel) and `drawDuelCard` before `askHome`. `duel` is null in the

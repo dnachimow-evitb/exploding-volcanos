@@ -46,18 +46,19 @@ The goal of the whole version (Derek, 2026-11-17): make the game stickier. Judge
 - [x] **V8-30** (Derek) Cloudflare token and Account ID added as GitHub secrets, 2026-11-23. Relay deployed and tested live
       (13 of 13): `https://exploding-volcanoes-relay.dnachimow.workers.dev`.
 - [x] **V8-3A** S. (v8.10) Swipe in matches: Derek chose anticipation. The computer Max now guards against a flick.
-- [ ] **V8-3B** S. The tell for a person playing Max against a flicking Noah (lane marker on touch, marker for a toy in
+- [x] **V8-3B** S. (v8.13: the ring shows on touch at every stage against Swipe; no marker yet for a toy in the air) The tell for a person playing Max against a flicking Noah (lane marker on touch, marker for a toy in
       the air). Build with V8-33; needs two phones to judge.
 - [x] **V8-31** M. (v8.9; deployed 2026-11-23, tested live 13 of 13) The relay: passes messages between two devices in a room, stores nothing. Deployed by a
       GitHub workflow. Depends V8-30. Check the free-plan limits again at build time.
 - [x] **V8-32** M. (v8.12, plus Quick Match and a Connected card with Wave) Start A Game (four-letter code) and Join A Game (type it on the game's letter keys).
-- [ ] **V8-38** (Derek) Two phones: connect with a code and with Quick Match on v8.12, tap Wave both ways. **<- waiting on this**
+- [x] **V8-38** (Derek) Two phones connected with a code on v8.12 and Wave worked (2026-11-23). Quick Match on real phones: not yet confirmed.
+- [ ] **V8-3C** (Derek) Play a whole match on two phones on v8.13, both sides, Push and Swipe. **<- waiting on this**
 - [ ] **V8-39** S. Quick Match pairs strangers: recheck Apple's age rating and App Privacy answers before release; names are
       already hidden there.
-- [ ] **V8-33** L. Match over the connection: Noah's device runs it; Max's device sends steering and draws
+- [x] **V8-33** L. (v8.13, first playable; tested with two pages on a local relay, not on phones) Match over the connection: Noah's device runs it; Max's device sends steering and draws
       Max at once; snapshots keep both screens the same. Depends V8-11, V8-12.
-- [ ] **V8-34** S. Setup card: stage, who is Noah, handicap (Max Slow / Normal / Fast).
-- [ ] **V8-35** S. A dropped player: "Waiting For Max", then the computer takes over after 10 seconds.
+- [x] **V8-34** S. (v8.13: stage and Swap Sides on the Connected card; no handicap yet) Setup card: stage, who is Noah, handicap (Max Slow / Normal / Fast).
+- [x] **V8-35** S. (v8.13: the computer takes over at once) A dropped player: "Waiting For Max", then the computer takes over after 10 seconds.
 - [x] **V8-36** S. (v8.9, `cpuMax`, with Be Noah) Smarter computer Max (follows throws with a reaction delay), used for take-over and solo.
 - [ ] **V8-37** (Derek) Play it on two phones with two people. **Stop here and adjust the design if the core
       is not fun.**
