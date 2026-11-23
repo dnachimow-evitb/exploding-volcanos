@@ -272,3 +272,28 @@ devices is OK (he sets up the account when asked); the one-line privacy and list
   - **Rule for this project (Derek):** on one phone, Multiplayer means playing as Max. Playing as Noah against the
     computer is the main game. Do not add solo modes that duplicate it.
   - Checked in a browser: the card, Play As Max, Max School start and Skip; main game; fingerprint unchanged.
+- v8.12 (TEST ONLY): Derek made the shape of Multiplayer clear (2026-11-23): just playing = the original game as
+  Noah; **Multiplayer = against a person, you choose Max or Noah and are paired with someone who has the other side.**
+  His answers: pairing is BOTH a code for a friend and Quick Match with anyone; playing Max against the computer
+  stays, and the computer fills in when no opponent is found or one drops. (So `cpuMax` and Noah's side of a match,
+  kept in v8.11, are needed after all.)
+  - **This build finds and connects the other player. The match between two phones is NOT built yet.**
+  - Multiplayer is now a small menu: Play A Person, Play The Computer (the old card: stage, ladder, Play As Max, tuning),
+    Max School.
+  - Play A Person: **Start A Game** (pick Max or Noah, get a four-letter code, wait), **Join A Game** (type the code on
+    the game's own letter keys; you get the other side), **Quick Match** (pick a side, wait for anyone who picked the
+    other). When paired, a Connected card shows both players and sides, with a Wave button that makes the other phone
+    say "… waved!". That card is a connection test until the match is built.
+  - Codes are four consonants (no vowels, so no code spells a word); a code already in use is swapped for another.
+  - **Quick Match is with strangers, so it shows and sends no names**: the other player is "A Player" with their toy.
+    There is no chat anywhere. Apple's age-rating and privacy answers must be looked at again before release.
+  - Relay: a Quick Match lobby added (`Lobby`, `/match?side=max|noah`): longest-waiting player of the other side is
+    paired; both get a fresh room code. 22 of 22 relay checks pass locally and (after this push) on the live relay.
+  - Tested with three game pages against a local relay (`experiments/sim/two-devices.js`), real taps throughout:
+    start and code, wrong code, a typing mistake erased, pairing with opposite sides and each other's name and toy,
+    wave, a third phone refused, the joiner leaving (host waits again on the same code, another can join), the host
+    leaving (joiner is told), Quick Match pairing a Max with a Noah while a second Max keeps waiting, names hidden
+    in Quick Match, cancel, and going home closing the connection. With the relay unreachable the game shows
+    "Could not connect" and recovers. Main game and physics fingerprint unchanged.
+  - **Not tested: real phones, and the live relay from a browser** (the cloud session cannot reach it; only the
+    relay's own checks run against it, from GitHub). Derek's two-phone try of this build is the first real test.

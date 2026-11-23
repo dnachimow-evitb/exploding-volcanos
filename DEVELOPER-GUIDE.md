@@ -4,7 +4,7 @@ Read this first before changing the game. It says where things are and gives ste
 common jobs (add a toy, change prices, add a badge, publish). The history of *why* things are the way they are
 is in `experiments/fable-v7.md` (one line per version) and, for the art, `experiments/fable-v5.md`.
 
-Last updated: 2026-11-17, at test version v8.11 / live version v7.45.
+Last updated: 2026-11-17, at test version v8.12 / live version v7.45.
 
 **Next major version (v8, Multiplayer mode: a new mode beside the main game, which it does not replace): design in `experiments/v8-design.md`, work list in
 `experiments/v8-backlog.md`.** Derek gave the go-ahead on draft 2 on 2026-11-17; what is built so far is in
@@ -116,6 +116,8 @@ Sections are marked with `// ── NAME ──` comments, in this order:
 - BADGES AND STATS: players (`PF`), stats (`ST`), `BADGES` table, coins, badge banner, Badges card, Players cards.
 - MY TOYS: lineup + shop card.
 - DRESS NOAH: gear shop and what Noah wears (`GEAR` table is at the top, next to `SHOP`).
+- TWO DEVICES (v8.12): `net`, `netRoom`, `netQuick`, `drawPerson` (start / join / quick match / connected), `drawMultiMenu`.
+  The relay address is `RELAY`; a test page can set `window.RELAY_URL` first. `mpPg` picks the Multiplayer card.
 - MULTIPLAYER (v8): `duel` state and `TUNE` at the top; `startDuel`, `duelStep`, `cpuNoah` after `dist`;
   `drawMulti` (the card, with the test-only tuning panel) and `drawDuelCard` before `askHome`. `duel` is null in the
   main game, and every multiplayer change is behind `if(duel)`, so the main game plays as before.
@@ -133,9 +135,11 @@ Conventions:
 - **Text style (Derek's rule):** Title Case On Every Word for titles, buttons and labels; sentence case only
   for full sentences. Nothing faded or see-through in the game art. Few rounded shapes.
 - **The version label stays on the live start screen** (bottom-right corner). Derek wants it there; do not hide it.
-- **Derek's rule (2026-11-23): on one phone, Multiplayer means playing as Max.** Playing as Noah against the computer
-  is the main game; do not add solo modes that duplicate it. Noah's side of a match exists in code only for a second
-  person on another device. Before building a helper mode he did not ask for, ask.
+- **What Multiplayer is (Derek, 2026-11-23):** just playing = the original game, as Noah. Multiplayer = against a
+  PERSON: you choose Max or Noah and are paired with someone who has the other side, by a friend's code or by Quick
+  Match. Playing Max against the computer stays as practice, and the computer fills in when nobody is found or a
+  player drops. Do not add a solo "be Noah against the computer" mode: that is the main game. Ask before building
+  a helper mode he did not request.
 - **Derek's rule for Multiplayer (2026-11-17): the physics is not to change; fix what the player sees.** To prove a
   change is picture-only, run `experiments/sim/fp.js` before and after: the fingerprint line must be identical.
 - **A button's action runs about 90 ms after the tap and can run twice on a fast double tap.** Re-check inside the

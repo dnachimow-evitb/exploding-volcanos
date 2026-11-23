@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v8.11'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v8.12'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -17,6 +17,7 @@ let testRound=1; // TEST PAGE ONLY: which round a new game starts on (the small 
 // boy (noah / max: 'touch' = a finger here, 'cpu' = the computer; 'net' = the other device, not built yet), Max's
 // state (mx: tx = where he is steering to, e = his energy 0..1, dive = a dive in progress, timers for his powers) and the
 // computer Noah's state (cpu). Design: experiments/v8-design.md. Work list: experiments/v8-backlog.md.
+let mpPg=0; // which Multiplayer card is showing: 0 = the menu, 1 = Play The Computer, 2 = Play A Person
 let duel=null,mpT0=0,mpStage=3; // mpT0: Multiplayer card on the start screen (time it opened, 0 = closed); mpStage: stage picked on it
 const DUEL_Y=246; // Max's lane in a match: higher up the tub than in the main game (292), where he and Noah stand in the same spot and one hides the other
 const MAX_L=82,MAX_R=298; // how far Max can swim (the same span the computer Max sweeps in the main game)
@@ -1172,7 +1173,7 @@ function drawMyToys(){const q=PF.list[PF.cur],cw=344,ch=502,{cx,cy}=cardBegin(cw
  button(x0+88,yb,92,46,'Default',()=>{q.line=DEF_LINE.slice();pfSave();selSlot=-1;selToy=null;},{size:15,id:19,col:'#8a5bd6',colD:'#5a359c',colP:'#7648c2'});
  button(x0+188,yb,124,46,'Buy',toyBuy,{size:19,col:can?C.green:'#aab4cc',colD:can?C.greenD:'#8793ad',colP:can?'#27a83f':'#aab4cc'});cardEnd();}
 // ── DRESS NOAH (start screen): buy gear with coins and choose what Noah wears in the game ──
-function openMulti(){mpT0=uiT||.001;mpStage=clamp((PF.list[PF.cur].mxBest||0)+1,1,10);} // opens on the next stage this player has not beaten
+function openMulti(){mpPg=0;mpT0=uiT||.001;mpStage=clamp((PF.list[PF.cur].mxBest||0)+1,1,10);} // opens on the next stage this player has not beaten
 function openNoah(){noahT0=uiT||.001;selGear=null;gearPg=0;}
 function gearTap(k){const q=PF.list[PF.cur];if(q.gear.includes(k)){const i=q.wear.indexOf(k);if(i>=0)q.wear.splice(i,1);else gearOn(q,k);selGear=null;pfSave();sfxTick();}else selGear=selGear===k?null:k;}
 function gearBuy(){const q=PF.list[PF.cur],g=GEAR.find(z=>z[0]===selGear);if(!g||q.gear.includes(g[0])||q.coins<g[1])return;q.coins-=g[1];q.gear.push(g[0]);gearOn(q,g[0]);selGear=null;pfSave();sfxFanfare();} // a new piece goes straight on
@@ -1246,7 +1247,69 @@ function tuneSave(){if(TEST)try{localStorage.setItem('evitb-test-tune-v84',JSON.
 if(TEST)try{const t=JSON.parse(localStorage.getItem('evitb-test-tune-v84')||'null');if(t)for(const k in TUNE0)if(typeof t[k]==='number')TUNE[k]=t[k];}catch(e){}
 function nudgeBtn(x,y,t,act,id,on){const dn=press&&press.id===id,d=dn?2:0;rr(x,y+3,34,28,7);fill(on?'#34509c':'#aab4cc');rr(x,y+d,34,28,7);fill(on?(dn?'#4a6cc0':'#5b7fd6'):'#c9d1e2');text(t,x+17,y+14.5+d,19,'#fff');if(on)hits.push({x:x-4,y:y-4,w:42,h:38,act,key:uiKey,id});}
 const TUNE_ROWS=[['spd','Max Speed',.1,.5,7,v=>v.toFixed(1)],['reach','Max Reach',1,14,60,v=>''+v],['tire','Tire Per Block',.05,0,1,v=>Math.round(v*100)+'%'],['rest','Rest To Full',1,1,30,v=>v+' s'],['clock','Clock',.1,.3,3,v=>'x '+v.toFixed(1)]];
-function drawMulti(){const q=PF.list[PF.cur],O=30,cw=336,ch=(TEST?570:340)+O,{cx,cy:cy0}=cardBegin(cw,ch,'Multiplayer',uiT-mpT0),cy=cy0+O;
+// ── TWO DEVICES (v8.12: finding the other player; the match itself is not built yet) ──
+// Multiplayer against a person: you pick Max or Noah and are paired with someone who has the other side, either a
+// friend (Start A Game shows a four-letter code, Join A Game types it) or anyone (Quick Match). The devices talk
+// through the relay (relay/), which passes messages and keeps nothing. Codes are consonants only, so no code spells
+// a word. In Quick Match the other player's name is never shown or sent: only their toy.
+// net = null when not connecting. how: 'start' | 'join' | 'quick'. st: 'side' (choosing a side), 'code' (typing a
+// code), 'waiting' (code shown, nobody yet), 'joining', 'looking' (Quick Match), 'paired', 'error'.
+const RELAY=window.RELAY_URL||'wss://exploding-volcanoes-relay.dnachimow.workers.dev',CODE_AB='BCDFGHJKLMNPQRSTVWXZ';
+let net=null;
+function netCode(){let c='';for(let i=0;i<4;i++)c+=CODE_AB[~~(Math.random()*CODE_AB.length)];return c;}
+function netClose(){const N=net;net=null;if(N&&N.ws){try{N.ws.close();}catch(e){}}}
+function netFail(N,msg){if(net!==N)return;N.st='error';N.err=msg;try{N.ws&&N.ws.close();}catch(e){}N.ws=null;}
+function netSend(o){if(net&&net.ws&&net.ws.readyState===1)try{net.ws.send(JSON.stringify(o));}catch(e){}}
+function netRoom(code,role){const N=net,q=PF.list[PF.cur];N.code=code;N.role=role;N.st=role==='host'?'waiting':'joining';N.no=0;N.t0=uiT;let ws;try{ws=new WebSocket(RELAY+'/room/'+code+'?role='+role);}catch(e){netFail(N,'Could not connect.');return;}N.ws=ws;
+ ws.onmessage=ev=>{if(net!==N||N.ws!==ws)return;let m;try{m=JSON.parse(ev.data);}catch(e){return;}if(!m||typeof m!=='object')return;
+  if(m._==='no')N.no=m.code;
+  else if(m._==='room'){if(m.n>=2)netSend({t:'hi',name:N.how==='quick'?'':q.name,icon:q.icon,side:N.side,v:VERSION});else if(N.st==='paired'){N.peer=null;if(role==='host'){N.st='waiting';N.note='The other player left.';}else netFail(N,'The other player left.');}}
+  else if(m.t==='hi'){N.peer={name:N.how==='quick'?'':String(m.name||'').replace(/[^A-Za-z]/g,'').slice(0,10),icon:ALL_TOYS.includes(m.icon)?m.icon:'🦆',v:String(m.v||'')};if(role==='join')N.side=m.side==='max'?'noah':'max';N.st='paired';N.note='';N.t0=uiT;sfxFanfare();} // the one who started the game keeps the side they chose; the one who joined takes the other
+  else if(m.t==='wave'){N.wave=NOW;sfxScore();}};
+ ws.onclose=ev=>{if(net!==N||N.ws!==ws)return;const c=N.no||ev.code;
+  if(c===4009&&role==='host'){netRoom(netCode(),'host');return;} // that code is in use: take another
+  if(c===4004&&N.how==='quick'&&(N.tries=(N.tries||0)+1)<10){setTimeout(()=>{if(net===N&&N.ws===ws)netRoom(code,'join');},400);return;} // matched, but the other device has not opened the room yet
+  netFail(N,c===4004?'No game with that code.':c===4003?'That game is full.':N.st==='paired'?'The connection was lost.':'Could not connect. Check the internet.');};
+ ws.onerror=()=>{};}
+function netQuick(){const N=net;N.st='looking';N.t0=uiT;let ws;try{ws=new WebSocket(RELAY+'/match?side='+N.side);}catch(e){netFail(N,'Could not connect.');return;}N.ws=ws;
+ ws.onmessage=ev=>{if(net!==N||N.ws!==ws)return;let m;try{m=JSON.parse(ev.data);}catch(e){return;}if(m&&m._==='match'&&/^[A-Z]{4}$/.test(m.code||'')){N.ws=null;try{ws.close();}catch(e){}netRoom(m.code,m.role==='host'?'host':'join');}};
+ ws.onclose=()=>{if(net===N&&N.ws===ws)netFail(N,'Could not connect. Check the internet.');};ws.onerror=()=>{};}
+function netGo(how){net={how,side:null,st:how==='join'?'code':'side',txt:'',ws:null,peer:null,err:'',note:'',t0:uiT};}
+function netSide(sd){const N=net;N.side=sd;if(N.how==='start')netRoom(netCode(),'host');else netQuick();}
+function pickBtn(x,y,w,h,t,sub,act,id,col,colD,colP){button(x,y,w,h,t,act,{size:21,id,sub,col,colD,colP});}
+function drawPerson(){const q=PF.list[PF.cur],N=net,B={col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'},back=(y,cx)=>button((W-160)/2,y,160,42,N?'Cancel':'Back',()=>{if(net)netClose();else{mpPg=0;mpT0=uiT;}},{size:16,id:7,...B});
+ if(!N){const cw=328,ch=384,{cx,cy}=cardBegin(cw,ch,'Play A Person',uiT-mpT0);body('Max against Noah, on two phones.',cy+88,14.5);
+  pickBtn((W-256)/2,cy+110,256,56,'Start A Game','Get A Code For A Friend',()=>netGo('start'),0);
+  pickBtn((W-256)/2,cy+180,256,56,'Join A Game','Type A Friend’s Code',()=>netGo('join'),2,'#5b7fd6','#34509c','#4a6cc0');
+  pickBtn((W-256)/2,cy+250,256,56,'Quick Match','Play Anyone',()=>netGo('quick'),3,C.lava,'#a82a06','#e2580f');back(cy+ch-54);cardEnd();return;}
+ const age=uiT-N.t0;
+ if(N.st==='side'){const cw=328,ch=330,{cx,cy}=cardBegin(cw,ch,'Pick A Side',age);body(N.how==='start'?'Your friend gets the other one.':'You play someone who picked the other.',cy+88,14);
+  [['max','Be Max','Block The Toys',C.hairM,'#a84f16',0,C.lava,'#a82a06','#e2580f'],['noah','Be Noah','Throw The Toys',C.hairN,'#2b1a12',2,'#5b7fd6','#34509c','#4a6cc0']].forEach((r,i)=>{const x=W/2-150+i*156,y=cy+108;button(x,y,144,128,'',()=>netSide(r[0]),{id:r[5],col:r[6],colD:r[7],colP:r[8]});
+   const dn=(press&&press.id===r[5])?5:0;X.save();X.translate(x+72,y+52+dn);sticker(()=>kidHead(0,0,27,r[3],r[4],i?{mood:'happy',wear:q.wear}:{mood:'cheeky',freckles:true,flip:true}),2.4);X.restore();text(r[1],x+72,y+98+dn,19,'#fff');text(r[2],x+72,y+116+dn,10.5,'#fff',{w:800});});
+  back(cy+ch-56);cardEnd();return;}
+ if(N.st==='code'){const cw=336,ch=400,{cx,cy}=cardBegin(cw,ch,'Join A Game',age);body('Type your friend’s code.',cy+86,14);
+  for(let i=0;i<4;i++){const x=W/2-110+i*56,y=cy+102;rr(x,y+3,48,54,8);fill(C.deep);rr(x,y,48,54,8);fill(N.txt[i]?'#fff3bf':'#eef4fd');if(N.txt[i])text(N.txt[i],x+24,y+29,30,C.navy);else if(i===N.txt.length&&Math.sin(NOW*7)>0){X.fillStyle=C.lava;X.fillRect(x+12,y+40,24,4);}}
+  CODE_AB.split('').forEach((L,i)=>{const x=cx+(cw-7*44+4)/2+(i%7)*44,y=cy+176+(i/7|0)*46,id=220+i,dn=press&&press.id===id,d=dn?3:0;rr(x,y+4,40,40,7);fill('#9db7e6');rr(x,y+d,40,40,7);fill(dn?'#cfe0fa':'#eef4fd');text(L,x+20,y+21+d,20,C.navy);hits.push({x:x-2,y:y-2,w:44,h:46,act:()=>{if(N.txt.length<4)N.txt+=L;},key:uiKey,id});});
+  {const x=cx+(cw-7*44+4)/2+6*44,y=cy+176+2*46,dn=press&&press.id===241,d=dn?3:0;rr(x,y+4,40,40,7);fill('#9db7e6');rr(x,y+d,40,40,7);fill(dn?'#cfe0fa':'#eef4fd');text('⌫',x+20,y+21+d,18,C.navy);hits.push({x:x-2,y:y-2,w:44,h:46,act:()=>{N.txt=N.txt.slice(0,-1);},key:uiKey,id:241});}
+  const ok=N.txt.length===4,x0=W/2-(104+12+164)/2,yb=cy+ch-70;button(x0,yb,104,46,'Cancel',netClose,{size:16,id:7,...B});button(x0+116,yb,164,46,'Join',()=>{if(net&&net.txt.length===4)netRoom(net.txt,'join');},{size:20,col:ok?C.green:'#aab4cc',colD:ok?C.greenD:'#8793ad',colP:ok?'#27a83f':'#aab4cc'});cardEnd();return;}
+ if(N.st==='waiting'||N.st==='joining'||N.st==='looking'){const start=N.st==='waiting'&&N.how==='start',cw=328,ch=start?372:300,{cx,cy}=cardBegin(cw,ch,start?'Your Code':N.st==='looking'?'Quick Match':'Connecting',age),dots='.'.repeat(1+(~~(NOW*2.5)%3));
+  if(start){for(let i=0;i<4;i++){const x=W/2-118+i*60,y=cy+92;rr(x,y+4,52,62,9);fill(C.deep);rr(x,y,52,62,9);fill('#fff3bf');text(N.code[i],x+26,y+33,36,C.navy);}
+   body('Tell your friend this code.',cy+182,15);body('They tap Multiplayer, Play A Person, Join A Game.',cy+204,11,'#4a6fc4');body(N.note||('Waiting for your friend'+dots),cy+238,14,N.note?C.lavaDk:C.navy);body('You are '+(N.side==='max'?'Max':'Noah')+'.',cy+262,12,'#4a6fc4');}
+  else{X.save();X.translate(W/2,cy+124);X.rotate(NOW*2.2);for(let i=0;i<8;i++){X.rotate(TAU/8);circ(0,-26,5.5-i*.35);fill(i%2?C.lava:C.hot);}X.restore();
+   body(N.st==='looking'?'Looking for a player'+dots:'Connecting'+dots,cy+180,15);if(N.st==='looking'){body('You are '+(N.side==='max'?'Max':'Noah')+'.',cy+204,12,'#4a6fc4');if(age>12&&N.side==='max')body('Nobody yet. Keep waiting, or cancel and play the computer.',cy+224,10.5,C.lavaDk);else if(age>12)body('Nobody yet. Keep waiting, or cancel and play the main game.',cy+224,10.5,C.lavaDk);}}
+  back(cy+ch-58);cardEnd();return;}
+ if(N.st==='paired'){const cw=328,ch=424,{cx,cy}=cardBegin(cw,ch,'Connected!',age),me=N.side,P=N.peer,nm=P.name||'A Player',wv=N.wave&&NOW-N.wave<1.6;
+  [[me==='max',q.icon,'You',W/2-78],[me!=='max',P.icon,nm,W/2+78]].forEach((r,i)=>{const kk=EZ.back((age-.1-i*.12)/.35);if(kk<=0)return;X.save();X.translate(r[3],cy+128);X.scale(kk,kk);sticker(()=>kidHead(0,0,26,r[0]?C.hairM:C.hairN,r[0]?'#a84f16':'#2b1a12',r[0]?{mood:'cheeky',freckles:true,flip:true}:{mood:'happy',wear:i?[]:q.wear}),2.4);X.save();X.translate(26,24);paintToy(r[1],30);X.restore();X.restore();
+   text(r[2],r[3],cy+178,16,C.navy);text(r[0]?'Max':'Noah',r[3],cy+197,12,'#4a6fc4',{w:800});});text('VS',W/2,cy+128,22,C.lava,{s:'#fff',sw:6});
+  body(wv?(nm+' waved!'):'The two phones are talking.',cy+232,15,wv?C.lavaDk:C.navy);body('The match itself is the next thing being built.',cy+254,11.5,'#4a6fc4');if(P.v&&P.v!==VERSION)body('Different versions: you '+VERSION+', them '+P.v+'.',cy+274,11,C.lavaDk);
+  button((W-200)/2,cy+290,200,48,'Wave',()=>{netSend({t:'wave'});sfxTick();},{size:20});button((W-160)/2,cy+ch-56,160,40,'Leave',netClose,{size:15,id:7,...B});cardEnd();return;}
+ {const cw=320,ch=250,{cx,cy}=cardBegin(cw,ch,'Oh No!',age);body(N.err||'Something went wrong.',cy+104,15);body('Nothing was lost. Try again.',cy+128,12,'#4a6fc4');button((W-180)/2,cy+ch-86,180,50,'OK',netClose,{size:20});cardEnd();}}
+function drawMultiMenu(){const cw=324,ch=392,{cx,cy}=cardBegin(cw,ch,'Multiplayer',uiT-mpT0);body('Noah throws. Max blocks.',cy+88,15);
+ pickBtn((W-256)/2,cy+110,256,58,'Play A Person','Two Phones',()=>{mpPg=2;mpT0=uiT;},0,C.lava,'#a82a06','#e2580f');
+ pickBtn((W-256)/2,cy+182,256,58,'Play The Computer','Be Max',()=>{mpPg=1;mpT0=uiT;},2);
+ button((W-200)/2,cy+256,200,36,'Max School',startTut,{size:14,id:24,col:'#8a5bd6',colD:'#5a359c',colP:'#7648c2'});
+ button((W-160)/2,cy+ch-58,160,42,'Close',()=>{mpT0=0;},{size:16,id:7,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});cardEnd();}
+function drawMulti(){const q=PF.list[PF.cur],O=30,cw=336,ch=(TEST?570:340)+O,{cx,cy:cy0}=cardBegin(cw,ch,'Play The Computer',uiT-mpT0),cy=cy0+O;
  // the ten stages: a tick on each one this player has beaten as Max
  for(let i=1;i<=10;i++){const x=cx+cw/2-135+(i-1)*30,y=cy0+158,won=i<=(q.mxBest||0),cur=i===mpStage;if(cur){rr(x-13,y-13,26,26,7);fill(C.lava);}rr(x-10.5,y-10.5,21,21,5);fill(won?C.green:'#dfe3ec');text(''+i,x,y+.5,11.5,won?'#fff':'#7c879f');hits.push({x:x-15,y:y-15,w:30,h:30,act:()=>{mpStage=i;},key:uiKey,id:130+i});}
  body('Be Max. Block Noah’s toys!',cy0+88,16);
@@ -1256,7 +1319,7 @@ function drawMulti(){const q=PF.list[PF.cur],O=30,cw=336,ch=(TEST?570:340)+O,{cx
  if(TEST){X.fillStyle='#eef4fd';X.fillRect(cx+12,cy+18+258,cw-24,214);text('Tuning (Test Page Only)',cx+24,cy+18+274,12,C.lavaDk,{a:'left'});
   hits.push({x:cx+cw-92,y:cy+18+262,w:76,h:26,act:()=>{Object.assign(TUNE,TUNE0);tuneSave();},key:uiKey,id:120});text('Reset',cx+cw-24,cy+18+274,12,'#5b7fd6',{a:'right'});
   TUNE_ROWS.forEach((r,i)=>{const y=cy+18+290+i*36,v=TUNE[r[0]],set=d=>{TUNE[r[0]]=Math.round(clamp(TUNE[r[0]]+d,r[3],r[4])*100)/100;tuneSave();};text(r[1],cx+24,y+15,14,C.navy,{a:'left',w:800});nudgeBtn(cx+158,y,'−',()=>set(-r[2]),110+i*2,v>r[3]);text(r[5](v),cx+226,y+15,15,C.navy);nudgeBtn(cx+260,y,'+',()=>set(r[2]),111+i*2,v<r[4]);});}
- button((W-180)/2,cy0+ch-66,180,44,'Close',()=>{mpT0=0;},{size:17,id:7,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});cardEnd();}
+ button((W-180)/2,cy0+ch-66,180,44,'Back',()=>{mpPg=0;mpT0=uiT;},{size:17,id:7,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});cardEnd();}
 function drawDuelIntro(){const D=duel,mx=D.role==='max',cw=324,ch=440,{cx,cy,age}=cardBegin(cw,ch,mx?'You Are Max!':'You Are Noah!');
  X.save();X.translate(W/2,cy+128);const k=EZ.elastic((age-.1)/.8);X.scale(k,k);sticker(()=>{if(mx)kidHead(0,4,32,C.hairM,'#a84f16',{mood:'cheeky',freckles:true,flip:true});else kidHead(0,4,32,C.hairN,'#2b1a12',{mood:'happy',wear:PF.list[PF.cur].wear});});X.restore();
  // the two things to know, each with a small moving picture
@@ -1301,7 +1364,7 @@ function askHome(){if(homeAsk)return;homeWasPaused=paused;homeAsk=(paused?uiT:0)
 function drawHomeCard(){const cw=300,ch=282,{cy}=cardBegin(cw,ch,'Go Home?',uiT-(homeAsk-1));body('This game will end.',cy+96,16);body('Your badges are safe.',cy+119,13,'#4a6fc4');
  button((W-216)/2,cy+140,216,52,'Keep Playing',()=>{homeAsk=0;if(!homeWasPaused){paused=false;lastNow=performance.now();acc=0;}},{size:21});
  button((W-216)/2,cy+208,216,44,'Go Home',goMenu,{id:2,size:17,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});cardEnd();}
-function goMenu(){homeAsk=0;duel=null;mpT0=0;paused=false;charging=null;pendingLaunch=null;swingT=0;objs=[];ejecta=[];parts=[];eParts=[];rings=[];pops=[];confet=[];smoke=[];sparks=[];buildOn=false;build=0;shake=0;flash=0;blk.on=false;collected=0;need=0;combo=0;state='menu';menuStep=0;howTo=0;bdgPg=0;toysT0=0;noahT0=0;pfOpen=false;nameEd=null;pfDel=0;pfToy=0;lastNow=performance.now();acc=0;}
+function goMenu(){homeAsk=0;duel=null;mpT0=0;netClose();paused=false;charging=null;pendingLaunch=null;swingT=0;objs=[];ejecta=[];parts=[];eParts=[];rings=[];pops=[];confet=[];smoke=[];sparks=[];buildOn=false;build=0;shake=0;flash=0;blk.on=false;collected=0;need=0;combo=0;state='menu';menuStep=0;howTo=0;bdgPg=0;toysT0=0;noahT0=0;pfOpen=false;nameEd=null;pfDel=0;pfToy=0;lastNow=performance.now();acc=0;}
 function drawPauseCard(){const cw=288,ch=286,{cy}=cardBegin(cw,ch,'Paused');body(duel&&duel.tut?'Max School  ·  Lesson '+(duel.tut.i+1)+' Of '+TUT.length:duel?'Multiplayer  ·  Stage '+duel.stage+'  ·  Blocks '+duel.blocks:(swipeMode?'Swipe ':'Push ')+(hardMode?'Hard':'Easy')+'  ·  Round '+round+'  ·  Score '+score,cy+100,13.5);
  button((W-208)/2,cy+124,208,58,'Resume',()=>{paused=false;lastNow=performance.now();acc=0;},{icon:1});
  button((W-208)/2,cy+204,208,50,'Start Screen',askHome,{id:2,size:18,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});cardEnd();}
@@ -1338,7 +1401,7 @@ k0=lerp(.85,1,EZ.back(uiT/.5)),ih=py+pw+30,bandH=HS-ih; // the taped picture sit
  else if(bdgPg){drawBadges();}
  else if(toysT0){drawMyToys();}
  else if(noahT0){drawNoah();}
- else if(mpT0){drawMulti();}
+ else if(mpT0){if(mpPg===2)drawPerson();else if(mpPg===1)drawMulti();else drawMultiMenu();}
  else if(pfOpen){if(nameEd)drawNameCard();else if(pfToy)drawToyCard();else if(pfDel)drawDeleteCard();else drawPlayers();}
  else if(menuStep===0){const bh=56,gap=14,mh=46,bk=36,by=ih+34+(bandH-34-SAFEB-bh*2-mh-bk-gap*3)*.5,ry=by+(bh+gap)*2+mh+gap; // step 1 of 2: how to throw. v8: a Multiplayer button sits under Swipe; the small row (at ry) moved down
   appear(EZ.back((uiT-1)/.45),ry,bk,()=>{button(bx,ry,78,bk,'How To Play',()=>{howTo=1;howT0=uiT;},{size:11,id:3,col:'#8a5bd6',colD:'#5a359c',colP:'#7648c2'});button(bx+82,ry,48,bk,'Badges',()=>{bdgPg=1;bdgT0=uiT;},{size:11,id:4,col:'#12a5a0',colD:'#0b6f6c',colP:'#0e8f8a'});button(bx+134,ry,54,bk,'My Toys',openToys,{size:11,id:18,col:'#e08a00',colD:'#a85f24',colP:'#c97800'});button(bx+192,ry,40,bk,'Noah',openNoah,{size:11,id:22,col:'#e0457a',colD:'#a3264f',colP:'#c93a6a'});});

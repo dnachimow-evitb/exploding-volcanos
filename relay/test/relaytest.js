@@ -1,5 +1,5 @@
 // Tests the relay with real WebSocket clients. Run it against a local copy: in relay/, `npx wrangler dev --ip 127.0.0.1 --port 8791 --local`,
-// then `node test/relaytest.js ws://127.0.0.1:8791` (needs `npm install ws`). All 13 checks passed on 2026-11-18 (wrangler 4.164.0).
+// then `node test/relaytest.js ws://127.0.0.1:8791` (needs `npm install ws`). All 22 checks passed on 2026-11-23 (wrangler 4.164.0).
 const WebSocket=require('ws');const BASE=process.argv[2]||'ws://127.0.0.1:8787',OK='https://dnachimow-evitb.github.io';
 const conn=(code,role,origin=OK)=>new Promise(res=>{const ws=new WebSocket(BASE+'/room/'+code+'?role='+role,{headers:{Origin:origin}});const o={ws,msgs:[],closed:null,err:null};ws.on('message',d=>o.msgs.push(d.toString()));ws.on('close',(c,r)=>{o.closed=[c,r.toString()];});ws.on('error',e=>{o.err=String(e.message);res(o);});ws.on('open',()=>setTimeout(()=>res(o),250));ws.on('unexpected-response',(rq,rs)=>{o.err='http '+rs.statusCode;res(o);});});
 const wait=ms=>new Promise(r=>setTimeout(r,ms));let fail=0;const check=(name,ok,got)=>{console.log((ok?'PASS ':'FAIL ')+name+(ok?'':'  got '+JSON.stringify(got)));if(!ok)fail++;};
@@ -16,4 +16,15 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));let fail=0;const check=(name,ok,
  const g4=await conn('ABCD','join');await wait(200);check('a new guest can take the free place',g4.msgs.includes('{"_":"room","n":2}'),g4.msgs);
  const bad=await conn('ABCD','join','https://evil.example');check('other websites are refused (403)',bad.err==='http 403'||/403/.test(bad.err||''),bad.err);
  const low=await conn('abcd','host');check('a bad code is refused (404)',/404/.test(low.err||''),low.err);
+ // Quick Match
+ const mq=(side,origin=OK)=>new Promise(res=>{const ws=new WebSocket(BASE+'/match?side='+side,{headers:{Origin:origin}});const o={ws,msgs:[],closed:null,err:null};ws.on('message',d=>o.msgs.push(JSON.parse(d.toString())));ws.on('close',c=>{o.closed=c;});ws.on('error',e=>{o.err=String(e.message);res(o);});ws.on('unexpected-response',(rq,rs)=>{o.err='http '+rs.statusCode;res(o);});ws.on('open',()=>setTimeout(()=>res(o),300));});
+ const m1=await mq('max'),m2=await mq('max');check('first waiting player is told to wait',m1.msgs.length===1&&m1.msgs[0]._==='wait'&&m1.closed===null,m1.msgs);
+ const n1=await mq('noah');await wait(300);const a1=m1.msgs.find(x=>x._==='match'),b1=n1.msgs.find(x=>x._==='match');
+ check('a Noah is paired with the longest-waiting Max',!!a1&&!!b1&&a1.code===b1.code&&a1.role==='host'&&b1.role==='join'&&!m2.msgs.some(x=>x._==='match'),[m1.msgs,n1.msgs,m2.msgs]);
+ check('the code is four consonants',!!a1&&/^[BCDFGHJKLMNPQRSTVWXZ]{4}$/.test(a1.code),a1);
+ check('the newcomer is released from the lobby',n1.closed!==null,n1.closed);m1.ws.close(); // the one who was waiting closes its own connection when it gets the code (the game does this)
+ if(a1){const rh=await conn(a1.code,'host'),rj=await conn(a1.code,'join');await wait(200);check('the matched pair can meet in that room',rj.msgs.includes('{"_":"room","n":2}'),rj.msgs);rh.ws.close();rj.ws.close();}
+ m2.ws.close();await wait(400);const n2=await mq('noah');await wait(300);check('a player who gave up waiting is not matched',n2.msgs.length===1&&n2.msgs[0]._==='wait',n2.msgs);
+ const m3=await mq('max');await wait(300);check('the next Max gets the waiting Noah',m3.msgs.some(x=>x._==='match')&&n2.msgs.some(x=>x._==='match'),[m3.msgs,n2.msgs]);
+ const badm=await mq('max','https://evil.example');check('other websites cannot use Quick Match (403)',/403/.test(badm.err||''),badm.err);
  for(const o of[h,g4,other])o.ws.close();await wait(300);console.log(fail?fail+' FAILED':'ALL PASSED');process.exit(fail?1:0);})();

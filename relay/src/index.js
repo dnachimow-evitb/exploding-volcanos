@@ -13,6 +13,11 @@ const MAX_MESSAGE = 4096; // characters; a game message is a few hundred
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if (url.pathname === "/match") { // Quick Match: wait here until someone wants the other side
+      if (request.headers.get("Upgrade") !== "websocket") return new Response("Expected a WebSocket", { status: 426 });
+      if (!ALLOWED.some((r) => r.test(request.headers.get("Origin") || ""))) return new Response("Forbidden", { status: 403 });
+      return env.LOBBY.get(env.LOBBY.idFromName("lobby")).fetch(request);
+    }
     const m = url.pathname.match(/^\/room\/([A-Z]{4})$/);
     if (!m) return new Response(url.pathname === "/" ? "Exploding Volcanoes relay" : "Not found", { status: url.pathname === "/" ? 200 : 404 });
     if (request.headers.get("Upgrade") !== "websocket") return new Response("Expected a WebSocket", { status: 426 });
@@ -54,4 +59,38 @@ export class Room extends DurableObject {
   webSocketError(ws) {
     if (ws.deserializeAttachment()) this.tell(ws);
   }
+}
+
+// QUICK MATCH. A device says which side it wants (max or noah) and waits. As soon as one of each is waiting, both are
+// given the same fresh room code, {"_":"match","code":"BKTR","role":"host"|"join"}, and move to that room. Longest
+// waiting goes first. Nothing about either device is kept or passed on: no names, no addresses.
+// Codes use consonants only, so a random code can never spell a word.
+const CODE_LETTERS = "BCDFGHJKLMNPQRSTVWXZ";
+function newCode() {
+  const r = crypto.getRandomValues(new Uint8Array(4));
+  return [...r].map((v) => CODE_LETTERS[v % CODE_LETTERS.length]).join("");
+}
+export class Lobby extends DurableObject {
+  async fetch(request) {
+    const side = new URL(request.url).searchParams.get("side") === "noah" ? "noah" : "max";
+    const want = side === "max" ? "noah" : "max";
+    const waiting = this.ctx.getWebSockets().map((s) => ({ s, a: s.deserializeAttachment() })).filter((w) => w.a && w.a.side === want).sort((x, y) => x.a.t - y.a.t);
+    const pair = new WebSocketPair(), client = pair[0], server = pair[1];
+    if (waiting.length) {
+      const other = waiting[0].s, code = newCode();
+      other.serializeAttachment(null); // taken: must not be matched twice
+      try { other.send(JSON.stringify({ _: "match", code, role: "host" })); } catch (e) {} // it closes its own connection on getting this
+      server.accept();
+      server.send(JSON.stringify({ _: "match", code, role: "join" }));
+      server.close(1000, "matched");
+    } else {
+      this.ctx.acceptWebSocket(server);
+      server.serializeAttachment({ side, t: Date.now() });
+      server.send(JSON.stringify({ _: "wait" }));
+    }
+    return new Response(null, { status: 101, webSocket: client });
+  }
+  webSocketMessage() {} // a waiting device has nothing to say
+  webSocketClose(ws, code, reason) { try { ws.close(code === 1005 || code === 1006 ? 1000 : code, reason); } catch (e) {} }
+  webSocketError() {}
 }

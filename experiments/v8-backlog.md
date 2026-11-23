@@ -50,7 +50,10 @@ The goal of the whole version (Derek, 2026-11-17): make the game stickier. Judge
       the air). Build with V8-33; needs two phones to judge.
 - [x] **V8-31** M. (v8.9; deployed 2026-11-23, tested live 13 of 13) The relay: passes messages between two devices in a room, stores nothing. Deployed by a
       GitHub workflow. Depends V8-30. Check the free-plan limits again at build time.
-- [ ] **V8-32** M. Start A Game (four-letter code) and Join A Game (type it on the game's letter keys).
+- [x] **V8-32** M. (v8.12, plus Quick Match and a Connected card with Wave) Start A Game (four-letter code) and Join A Game (type it on the game's letter keys).
+- [ ] **V8-38** (Derek) Two phones: connect with a code and with Quick Match on v8.12, tap Wave both ways. **<- waiting on this**
+- [ ] **V8-39** S. Quick Match pairs strangers: recheck Apple's age rating and App Privacy answers before release; names are
+      already hidden there.
 - [ ] **V8-33** L. Match over the connection: Noah's device runs it; Max's device sends steering and draws
       Max at once; snapshots keep both screens the same. Depends V8-11, V8-12.
 - [ ] **V8-34** S. Setup card: stage, who is Noah, handicap (Max Slow / Normal / Fast).
