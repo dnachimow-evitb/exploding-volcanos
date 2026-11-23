@@ -43,6 +43,10 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           WRANGLER_SEND_METRICS: 'false'
         run: |
+          set -o pipefail   # without this a failed deploy still showed as a green run (it did, on 2026-11-23)
+          # a secret pasted with a stray space or line break is refused by Cloudflare: strip them
+          export CLOUDFLARE_API_TOKEN="$(printf '%s' "$CLOUDFLARE_API_TOKEN" | tr -d '[:space:]')"
+          export CLOUDFLARE_ACCOUNT_ID="$(printf '%s' "$CLOUDFLARE_ACCOUNT_ID" | tr -d '[:space:]')"
           npx --yes wrangler@4.164.0 deploy 2>&1 | tee deploy.log
           url=$(grep -o 'https://[a-z0-9.-]*workers\.dev' deploy.log | head -1 || true)
           echo "### Relay deployed" >> "$GITHUB_STEP_SUMMARY"
