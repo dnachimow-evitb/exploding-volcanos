@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v8.10'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v8.11'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -1246,13 +1246,12 @@ function tuneSave(){if(TEST)try{localStorage.setItem('evitb-test-tune-v84',JSON.
 if(TEST)try{const t=JSON.parse(localStorage.getItem('evitb-test-tune-v84')||'null');if(t)for(const k in TUNE0)if(typeof t[k]==='number')TUNE[k]=t[k];}catch(e){}
 function nudgeBtn(x,y,t,act,id,on){const dn=press&&press.id===id,d=dn?2:0;rr(x,y+3,34,28,7);fill(on?'#34509c':'#aab4cc');rr(x,y+d,34,28,7);fill(on?(dn?'#4a6cc0':'#5b7fd6'):'#c9d1e2');text(t,x+17,y+14.5+d,19,'#fff');if(on)hits.push({x:x-4,y:y-4,w:42,h:38,act,key:uiKey,id});}
 const TUNE_ROWS=[['spd','Max Speed',.1,.5,7,v=>v.toFixed(1)],['reach','Max Reach',1,14,60,v=>''+v],['tire','Tire Per Block',.05,0,1,v=>Math.round(v*100)+'%'],['rest','Rest To Full',1,1,30,v=>v+' s'],['clock','Clock',.1,.3,3,v=>'x '+v.toFixed(1)]];
-function drawMulti(){const q=PF.list[PF.cur],O=46,cw=336,ch=(TEST?570:340)+O,{cx,cy:cy0}=cardBegin(cw,ch,'Multiplayer',uiT-mpT0),cy=cy0+O;
+function drawMulti(){const q=PF.list[PF.cur],O=30,cw=336,ch=(TEST?570:340)+O,{cx,cy:cy0}=cardBegin(cw,ch,'Multiplayer',uiT-mpT0),cy=cy0+O;
  // the ten stages: a tick on each one this player has beaten as Max
- for(let i=1;i<=10;i++){const x=cx+cw/2-135+(i-1)*30,y=cy0+158,wm=i<=(q.mxBest||0),wn=i<=(q.nhBest||0),cur=i===mpStage;if(cur){rr(x-13,y-13,26,26,7);fill(C.lava);}rr(x-10.5,y-10.5,21,21,5);fill(wm&&wn?C.green:'#dfe3ec');text(''+i,x,y-1,11.5,wm&&wn?'#fff':'#7c879f');if(wm&&!wn){X.fillStyle=C.lava;X.fillRect(x-8,y+5.5,7,3.5);}if(wn&&!wm){X.fillStyle='#1f5fd0';X.fillRect(x+1,y+5.5,7,3.5);}hits.push({x:x-15,y:y-15,w:30,h:30,act:()=>{mpStage=i;},key:uiKey,id:130+i});}
- {const y=cy0+181;X.fillStyle=C.lava;X.fillRect(cx+56,y-2,9,4);text('Beaten As Max',cx+70,y+.5,10,'#4a6fc4',{a:'left',w:800});X.fillStyle='#1f5fd0';X.fillRect(cx+176,y-2,9,4);text('Beaten As Noah',cx+190,y+.5,10,'#4a6fc4',{a:'left',w:800});} // the key: orange = beaten as Max, blue = as Noah, a green box = both
- body('Noah throws. Max blocks. Pick a side!',cy0+88,15);
+ for(let i=1;i<=10;i++){const x=cx+cw/2-135+(i-1)*30,y=cy0+158,won=i<=(q.mxBest||0),cur=i===mpStage;if(cur){rr(x-13,y-13,26,26,7);fill(C.lava);}rr(x-10.5,y-10.5,21,21,5);fill(won?C.green:'#dfe3ec');text(''+i,x,y+.5,11.5,won?'#fff':'#7c879f');hits.push({x:x-15,y:y-15,w:30,h:30,act:()=>{mpStage=i;},key:uiKey,id:130+i});}
+ body('Be Max. Block Noah’s toys!',cy0+88,16);
  text('Stage',cx+34,cy0+128,17,C.navy,{a:'left'});nudgeBtn(cx+116,cy0+113,'−',()=>{mpStage=clamp(mpStage-1,1,10);},100,mpStage>1);text(''+mpStage,cx+173,cy0+128,22,C.lava);nudgeBtn(cx+196,cy0+113,'+',()=>{mpStage=clamp(mpStage+1,1,10);},101,mpStage<10);text((mpStage+2)+' Toys',cx+cw-30,cy0+128,12.5,'#4a6fc4',{a:'right',w:800});
- {const x0=(W-296)/2;button(x0,cy+158,142,56,'Be Max',playMax,{size:22,col:C.lava,colD:'#a82a06',colP:'#e2580f'});button(x0+154,cy+158,142,56,'Be Noah',()=>startDuel(mpStage,'noah'),{size:22,id:2,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});}
+ button((W-244)/2,cy+158,244,56,'Play As Max',playMax,{size:23,icon:1}); // v8.11: no "Be Noah" here. Playing Noah against a computer Max is what the main game already is (Derek). Noah's side of a match (startDuel(stage,'noah'), cpuMax) stays in the code for two devices: a second person plays Noah, and the computer Max takes over if the Max player drops.
  button((W-200)/2,cy+228,200,32,'Max School',startTut,{size:14,id:24,col:'#8a5bd6',colD:'#5a359c',colP:'#7648c2',sub:null});
  if(TEST){X.fillStyle='#eef4fd';X.fillRect(cx+12,cy+18+258,cw-24,214);text('Tuning (Test Page Only)',cx+24,cy+18+274,12,C.lavaDk,{a:'left'});
   hits.push({x:cx+cw-92,y:cy+18+262,w:76,h:26,act:()=>{Object.assign(TUNE,TUNE0);tuneSave();},key:uiKey,id:120});text('Reset',cx+cw-24,cy+18+274,12,'#5b7fd6',{a:'right'});

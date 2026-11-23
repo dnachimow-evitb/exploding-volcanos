@@ -260,3 +260,15 @@ devices is OK (he sets up the account when asked); the one-line privacy and list
     (the computer Noah throws Push-style), so it is built with the two-screen match: a marker in Max's lane the
     moment Noah's finger lands on a toy, and one for a toy already in the air. Whether a person can react in time is
     unknown until two phones are playing.
+- v8.11 (TEST ONLY): Derek: "There's no need to be Noah in a multiplayer game. That is the original game." and asked
+  whether the Swipe anticipation was over-engineering. It partly was: the problem only existed because of a
+  "Be Noah against a computer Max" mode he had not asked for.
+  - **The Be Noah button is removed.** The Multiplayer card is back to Play As Max and Max School, and the ladder shows
+    stages beaten as Max only.
+  - Kept in the code, unreachable on one phone, because two devices need them: Noah's side of a match
+    (`startDuel(stage,'noah')`, the "You Are Noah!" card, `nhBest`) for the second person, and the computer Max
+    (`cpuMax`, including the Swipe guarding) to take over if the Max player drops. Do not polish these further until
+    two phones are playing.
+  - **Rule for this project (Derek):** on one phone, Multiplayer means playing as Max. Playing as Noah against the
+    computer is the main game. Do not add solo modes that duplicate it.
+  - Checked in a browser: the card, Play As Max, Max School start and Skip; main game; fingerprint unchanged.

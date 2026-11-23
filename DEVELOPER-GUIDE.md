@@ -4,7 +4,7 @@ Read this first before changing the game. It says where things are and gives ste
 common jobs (add a toy, change prices, add a badge, publish). The history of *why* things are the way they are
 is in `experiments/fable-v7.md` (one line per version) and, for the art, `experiments/fable-v5.md`.
 
-Last updated: 2026-11-17, at test version v8.10 / live version v7.45.
+Last updated: 2026-11-17, at test version v8.11 / live version v7.45.
 
 **Next major version (v8, Multiplayer mode: a new mode beside the main game, which it does not replace): design in `experiments/v8-design.md`, work list in
 `experiments/v8-backlog.md`.** Derek gave the go-ahead on draft 2 on 2026-11-17; what is built so far is in
@@ -133,6 +133,9 @@ Conventions:
 - **Text style (Derek's rule):** Title Case On Every Word for titles, buttons and labels; sentence case only
   for full sentences. Nothing faded or see-through in the game art. Few rounded shapes.
 - **The version label stays on the live start screen** (bottom-right corner). Derek wants it there; do not hide it.
+- **Derek's rule (2026-11-23): on one phone, Multiplayer means playing as Max.** Playing as Noah against the computer
+  is the main game; do not add solo modes that duplicate it. Noah's side of a match exists in code only for a second
+  person on another device. Before building a helper mode he did not ask for, ask.
 - **Derek's rule for Multiplayer (2026-11-17): the physics is not to change; fix what the player sees.** To prove a
   change is picture-only, run `experiments/sim/fp.js` before and after: the fingerprint line must be identical.
 - **A button's action runs about 90 ms after the tap and can run twice on a fast double tap.** Re-check inside the
