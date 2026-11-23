@@ -36,6 +36,7 @@ jobs:
         with:
           node-version: 22
       - name: Deploy
+        id: deploy
         if: steps.keys.outputs.ready == 'yes'
         working-directory: relay
         env:
@@ -51,3 +52,13 @@ jobs:
           url=$(grep -o 'https://[a-z0-9.-]*workers\.dev' deploy.log | head -1 || true)
           echo "### Relay deployed" >> "$GITHUB_STEP_SUMMARY"
           echo "Address: ${url:-see the log above}" >> "$GITHUB_STEP_SUMMARY"
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+      - name: Test the live relay with real connections
+        if: steps.keys.outputs.ready == 'yes'
+        run: |
+          # Claude's cloud session cannot reach workers.dev, so the live relay is checked from here.
+          npm install --no-audit --no-fund --prefix "$RUNNER_TEMP/t" ws >/dev/null
+          cp relay/test/relaytest.js "$RUNNER_TEMP/t/"
+          sleep 5
+          cd "$RUNNER_TEMP/t" && node relaytest.js "wss://exploding-volcanoes-relay.dnachimow.workers.dev" | tee result.txt
+          { echo '### Live relay test'; echo '```'; cat result.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
