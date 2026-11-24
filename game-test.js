@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v8.17'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v8.18'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -1413,15 +1413,17 @@ function drawPerson(){const q=PF.list[PF.cur],N=net,B={col:'#5b7fd6',colD:'#3450
  {const cw=320,ch=250,{cx,cy}=cardBegin(cw,ch,'Oh No!',age);body(N.err||'Something went wrong.',cy+104,15);body('Nothing was lost. Try again.',cy+128,12,'#4a6fc4');button((W-180)/2,cy+ch-86,180,50,'OK',netClose,{size:20});cardEnd();}}
 function drawMultiMenu(){const cw=324,ch=392,{cx,cy}=cardBegin(cw,ch,'Multiplayer',uiT-mpT0);body('Noah throws. Max blocks.',cy+88,15);
  pickBtn((W-256)/2,cy+110,256,58,'Play A Person','Two Phones',()=>{mpPg=2;mpT0=uiT;},0,C.lava,'#a82a06','#e2580f');
- pickBtn((W-256)/2,cy+182,256,58,'Play The Computer','Be Max',()=>{mpPg=1;mpT0=uiT;},2);
+ pickBtn((W-256)/2,cy+182,256,58,'Play The Computer','Be Max Or Noah',()=>{mpPg=1;mpT0=uiT;},2);
  button((W-200)/2,cy+256,200,36,'Max School',startTut,{size:14,id:24,col:'#8a5bd6',colD:'#5a359c',colP:'#7648c2'});
  button((W-160)/2,cy+ch-58,160,42,'Close',()=>{mpT0=0;},{size:16,id:7,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});cardEnd();}
 function drawMulti(){const q=PF.list[PF.cur],O=30,cw=336,ch=(TEST?570:340)+O,{cx,cy:cy0}=cardBegin(cw,ch,'Play The Computer',uiT-mpT0),cy=cy0+O;
  // the ten stages: a tick on each one this player has beaten as Max
- for(let i=1;i<=10;i++){const x=cx+cw/2-135+(i-1)*30,y=cy0+158,won=i<=(q.mxBest||0),cur=i===mpStage;if(cur){rr(x-13,y-13,26,26,7);fill(C.lava);}rr(x-10.5,y-10.5,21,21,5);fill(won?C.green:'#dfe3ec');text(''+i,x,y+.5,11.5,won?'#fff':'#7c879f');hits.push({x:x-15,y:y-15,w:30,h:30,act:()=>{mpStage=i;},key:uiKey,id:130+i});}
- body('Be Max. Block Noah’s toys!',cy0+88,16);
+ for(let i=1;i<=10;i++){const x=cx+cw/2-135+(i-1)*30,y=cy0+158,won=i<=(q.mxBest||0),cur=i===mpStage;if(cur){rr(x-13,y-13,26,26,7);fill(C.lava);}rr(x-10.5,y-10.5,21,21,5);fill(won?C.green:'#dfe3ec');text(''+i,x,y+.5,11.5,won?'#fff':'#7c879f');if(i<=(q.nhBest||0)){circ(x,y+16,3);fill('#5b7fd6');}hits.push({x:x-15,y:y-15,w:30,h:30,act:()=>{mpStage=i;},key:uiKey,id:130+i});} // green: beaten as Max; blue dot: beaten as Noah
+ body('Block as Max, or throw as Noah.',cy0+88,16);
  text('Stage',cx+34,cy0+128,17,C.navy,{a:'left'});nudgeBtn(cx+116,cy0+113,'−',()=>{mpStage=clamp(mpStage-1,1,10);},100,mpStage>1);text(''+mpStage,cx+173,cy0+128,22,C.lava);nudgeBtn(cx+196,cy0+113,'+',()=>{mpStage=clamp(mpStage+1,1,10);},101,mpStage<10);text((mpStage+2)+' Toys',cx+cw-30,cy0+128,12.5,'#4a6fc4',{a:'right',w:800});
- button((W-244)/2,cy+158,244,56,'Play As Max',playMax,{size:23,icon:1}); // v8.11: no "Be Noah" here. Playing Noah against a computer Max is what the main game already is (Derek). Noah's side of a match (startDuel(stage,'noah'), cpuMax) stays in the code for two devices: a second person plays Noah, and the computer Max takes over if the Max player drops.
+ // v8.18: Be Noah is back (it was removed in v8.11). Derek: in the main game Max only swims back and forth; here the computer Max
+ // reacts to the throw "like basketball defense", which is a different game, and Noah's tricks (the decoy) belong in it.
+ button((W-304)/2,cy+158,148,56,'Be Max',playMax,{size:22});button((W-304)/2+156,cy+158,148,56,'Be Noah',()=>startDuel(mpStage,'noah'),{size:22,id:2,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});
  button((W-200)/2,cy+228,200,32,'Max School',startTut,{size:14,id:24,col:'#8a5bd6',colD:'#5a359c',colP:'#7648c2',sub:null});
  if(TEST){X.fillStyle='#eef4fd';X.fillRect(cx+12,cy+18+258,cw-24,214);text('Tuning (Test Page Only)',cx+24,cy+18+274,12,C.lavaDk,{a:'left'});
   hits.push({x:cx+cw-92,y:cy+18+262,w:76,h:26,act:()=>{Object.assign(TUNE,TUNE0);tuneSave();},key:uiKey,id:120});text('Reset',cx+cw-24,cy+18+274,12,'#5b7fd6',{a:'right'});

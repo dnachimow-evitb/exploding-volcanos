@@ -377,4 +377,11 @@ devices is OK (he sets up the account when asked); the one-line privacy and list
   now 3 seconds of silence (`NET_QUIET`) counts as gone and the computer takes over. Scripts:
   `two-device-noahleaves.js`, `two-device-maxleaves.js`, `two-device-background.js`. The computer Max reacts with a
   delay (0.8 s at stage 5) and barely moves at stage 1, which can look like standing still.
+- v8.18 (TEST ONLY): Derek, rethinking: in the main game Max just moves back and forth, in Multiplayer he reacts to
+  the shot, "more like basketball defense. Maybe this brings back the case for multiplayer vs computer as Noah. And
+  I'd expect the decoys to be useful here too." **Be Noah is back** on the Play The Computer card (Be Max / Be Noah
+  side by side; a blue dot under a stage beaten as Noah, `nhBest`). Same path as a two-phone Noah: Push or Swipe, Pack
+  Your Tricks, play. Checked in a browser at stage 8: three decoys thrown near the computer Max, he swatted all three
+  and lost 55 to 70% energy each time. Balance against the computer is the v8.16 table (Double strong; Decoy and
+  Rocket no gain when fired blindly); whether a person timing a decoy before a real throw gains from it is not measured.
 

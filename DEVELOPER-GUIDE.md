@@ -141,7 +141,7 @@ Conventions:
 - **What Multiplayer is (Derek, 2026-11-23):** just playing = the original game, as Noah. Multiplayer = against a
   PERSON: you choose Max or Noah and are paired with someone who has the other side, by a friend's code or by Quick
   Match. Playing Max against the computer stays as practice, and the computer fills in when nobody is found or a
-  player drops. Do not add a solo "be Noah against the computer" mode: that is the main game. Ask before building
+  player drops. Be Noah against the computer was removed in v8.11 ("that is the main game") and put back in v8.18 at Derek's request: the computer Max here reacts to the throw ("like basketball defense") and the tricks work on him, so it is a different game from the main one. Ask before building
   a helper mode he did not request.
 - **Derek's rule for Multiplayer (2026-11-17): the physics is not to change; fix what the player sees.** To prove a
   change is picture-only, run `experiments/sim/fp.js` before and after: the fingerprint line must be identical.
