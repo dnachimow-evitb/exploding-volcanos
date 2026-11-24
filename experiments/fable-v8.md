@@ -426,4 +426,15 @@ devices is OK (he sets up the account when asked); the one-line privacy and list
     than round 9. Smart Max (`noah.js`): Noah skill .2: 100 100 83 63 58 17 13 4 0 0; skill .6: 100 x6, 96 83 83 42.
   - The match fingerprint (`fp.js`) changed on purpose: now [[2,2521,17,1,651229356],[6,3421,23,4,1917037585],[9,3112,20,11,2357667211]].
   - Two-phone matches get the same rule. Two pages on a local relay agreed on score and blocks. Not played by people.
+- 2026-11-24: Derek on v8.21: "I like the bounce after a block."
+- v8.22 (TEST ONLY): Derek: "how can we build logging into the game so that you can get real feedback about when I test
+  the game and then adjustments based on the actual data". **Test log**: every round played on the test page adds one
+  line to a list on the phone (`LOG_KEY`, newest 150; `logBegin`, `logTick`, `logEnd`). A teal "Log N" button on the
+  test start screen copies it; Derek pastes it into the chat. Nothing is sent anywhere, no names, and the live game has
+  none of it. A line: version | date time | game | round | WIN/LOSS/QUIT | seconds | clock left | toys in | throws, then
+  for a match: blocks | dives | powers | tricks | lowest energy | % of the round tired | distance swum | longest stand-still
+  | any tuning changed; for the original game: misses | Max's blocks | score. Example from a scripted round:
+  `v8.22 | 11-24 17:39 | max | r1 | WIN | 44s | left 0 | in 1/3 | thr 19 | blk 16 | dive 0 | pw splash | trk - | eMin 0.00 | tired 67% | swim 1327 | still 4.3s`
+  Chosen over sending logs to the relay: the relay stores nothing by design, this session cannot reach it, and the
+  store listing says no data is collected. Not built: a full replay of a round (the seed and every input).
 
