@@ -461,4 +461,22 @@ devices is OK (he sets up the account when asked); the one-line privacy and list
   banks. Against that script: before 100 100 100 100 81 50 50 25 25 0, now 94 100 88 88 56 50 19 19 19 0. A beginner
   script now wins round 1 88% and round 2 38%: Smart Max is the hard choice and plays like it. Push (`noah.js`):
   skill .6 gives 100 100 100 95 85 70 70 40 35 0. Next log decides the next step.
+- 2026-11-24, **bot playtest** (Derek: "spend the next hour simulating all these scenarios, managing your own logs and
+  then coming back to me with your own feedback"). `experiments/sim/playtest.js` plays whole ten-round games (win: next
+  round; loss: retry; give up after 3, 4 or 6 losses on one round) through the game's own log; `runall.sh` runs every
+  mode and player; `botreport.js` tabulates; raw logs and `REPORT.txt` are in `experiments/sim/botlogs/` (1,841 rounds,
+  10 games each). Players: kid (slow, sloppy, no powers or tricks), casual, good; plus "derekish" for Swipe.
+  First-try win % by round, kid / casual / good:
+  - Max game: 50 44 13 25 0 | 100 100 80 80 80 70 70 60 30 86 | 90 100 100 100 100 100 80 90 60 20. Finished all ten:
+    0, 6 and 10 of 10. In good shape; round 10 easier than 9 for the casual player (old V8-2A).
+  - Original Noah, Push: kid stops at rounds 5 to 7; casual 7 of 10 finish; good always. Swipe: everyone finishes,
+    even the kid (8 of 10), with half the clock left: for the bots the original Swipe game is much easier than Push.
+  - Smart Max, Push (v8.25): 70 70 20 0 | 100 100 100 80 10 43 0 | 100 x8 90 50. Kid stops at round 3, casual at 5 to 7.
+  - Smart Max, Swipe (v8.24 values): kid 90 50 40 11 20 0; casual and good 100% every round with 33 to 79% of the
+    clock left; derekish 100 78 100 67 67 67 78 22 0 0. The computer Max cannot stop quick accurate flicks at all.
+  - A fault in my first Max bot (he swam back to the middle before the toy arrived) made "good" lose round 1; fixed and
+    re-run. Bot limits: no steering or bank shots, no bluffing, fixed reaction times; they cannot say what is fun.
+- v8.25 (TEST ONLY): the one change from the bot games: v8.24's sharper early rounds and cheaper energy for the
+  computer Max now apply **against Swipe only** (`CMX.sw`, `cmx()`); against Push he is back on the earlier values.
+  With v8.24 the kid bot won Push round 1 only 30% of the time and the good bot never finished.
 

@@ -1,0 +1,66 @@
+v8.24 | 11-24 18:45 | max@kid | r1 | WIN | 39s | left 0 | in 1/3 | thr 18 | blk 13 | dive 0 | pw splash | trk - | eMin 0.00 | tired 63% | swim 1090 | still 2.1s | try 1 | gap - | lastin 37 | sess 1
+v8.24 | 11-24 18:45 | max@kid | r2 | WIN | 46s | left 0 | in 3/4 | thr 22 | blk 15 | dive 0 | pw splash | trk - | eMin 0.00 | tired 53% | swim 1275 | still 3.0s | try 1 | gap 0 | lastin 42 | sess 1
+v8.24 | 11-24 18:45 | max@kid | r3 | LOSS | 43s | left 7 | in 5/5 | thr 19 | blk 13 | dive 0 | pw splash | trk - | eMin 0.00 | tired 23% | swim 1183 | still 7.9s | try 1 | gap 0 | lastin 43 | sess 1
+v8.24 | 11-24 18:45 | max@kid | r3 | LOSS | 27s | left 18 | in 5/5 | thr 13 | blk 8 | dive 0 | pw splash | trk - | eMin 0.00 | tired 54% | swim 842 | still 2.1s | try 2 | gap 0 | lastin 27 | sess 1
+v8.24 | 11-24 18:45 | max@kid | r3 | LOSS | 38s | left 7 | in 5/5 | thr 15 | blk 9 | dive 0 | pw - | trk - | eMin 0.36 | tired 0% | swim 647 | still 8.8s | try 3 | gap 0 | lastin 38 | sess 1 | GAVEUP
+v8.24 | 11-24 18:45 | max@kid | r1 | WIN | 39s | left 0 | in 2/3 | thr 17 | blk 14 | dive 0 | pw splash | trk - | eMin 0.00 | tired 52% | swim 926 | still 3.9s | try 1 | gap - | lastin 38 | sess 2
+v8.24 | 11-24 18:45 | max@kid | r2 | WIN | 41s | left 0 | in 2/4 | thr 19 | blk 16 | dive 0 | pw splash | trk - | eMin 0.00 | tired 76% | swim 1183 | still 2.2s | try 1 | gap 0 | lastin 37 | sess 2
+v8.24 | 11-24 18:45 | max@kid | r3 | LOSS | 44s | left 11 | in 5/5 | thr 21 | blk 13 | dive 0 | pw splash | trk - | eMin 0.00 | tired 46% | swim 1623 | still 3.8s | try 1 | gap 0 | lastin 44 | sess 2
+v8.24 | 11-24 18:45 | max@kid | r3 | LOSS | 45s | left 0 | in 5/5 | thr 21 | blk 15 | dive 0 | pw splash | trk - | eMin 0.00 | tired 51% | swim 1347 | still 4.4s | try 2 | gap 0 | lastin 45 | sess 2
+v8.24 | 11-24 18:45 | max@kid | r3 | WIN | 50s | left 0 | in 3/5 | thr 25 | blk 18 | dive 0 | pw splash | trk - | eMin 0.00 | tired 66% | swim 1445 | still 4.3s | try 3 | gap 0 | lastin 48 | sess 2
+v8.24 | 11-24 18:45 | max@kid | r4 | LOSS | 39s | left 14 | in 6/6 | thr 20 | blk 12 | dive 0 | pw splash | trk - | eMin 0.00 | tired 51% | swim 1315 | still 3.3s | try 1 | gap 0 | lastin 39 | sess 2
+v8.24 | 11-24 18:45 | max@kid | r4 | LOSS | 42s | left 6 | in 6/6 | thr 22 | blk 14 | dive 0 | pw splash | trk - | eMin 0.00 | tired 65% | swim 1105 | still 3.4s | try 2 | gap 0 | lastin 42 | sess 2
+v8.24 | 11-24 18:45 | max@kid | r4 | LOSS | 46s | left 7 | in 6/6 | thr 21 | blk 11 | dive 0 | pw splash | trk - | eMin 0.00 | tired 28% | swim 1081 | still 9.8s | try 3 | gap 0 | lastin 46 | sess 2 | GAVEUP
+v8.24 | 11-24 18:45 | max@kid | r1 | WIN | 39s | left 0 | in 2/3 | thr 14 | blk 10 | dive 0 | pw - | trk - | eMin 0.42 | tired 0% | swim 1006 | still 5.7s | try 1 | gap - | lastin 27 | sess 3
+v8.24 | 11-24 18:45 | max@kid | r2 | LOSS | 42s | left 4 | in 4/4 | thr 20 | blk 13 | dive 0 | pw splash | trk - | eMin 0.00 | tired 56% | swim 1180 | still 5.5s | try 1 | gap 0 | lastin 42 | sess 3
+v8.24 | 11-24 18:45 | max@kid | r2 | WIN | 41s | left 0 | in 3/4 | thr 19 | blk 14 | dive 0 | pw splash | trk - | eMin 0.00 | tired 65% | swim 1417 | still 2.1s | try 2 | gap 0 | lastin 38 | sess 3
+v8.24 | 11-24 18:45 | max@kid | r3 | WIN | 45s | left 0 | in 2/5 | thr 21 | blk 18 | dive 0 | pw splash | trk - | eMin 0.00 | tired 57% | swim 1462 | still 2.1s | try 1 | gap 0 | lastin 45 | sess 3
+v8.24 | 11-24 18:45 | max@kid | r4 | LOSS | 44s | left 4 | in 6/6 | thr 22 | blk 14 | dive 0 | pw splash | trk - | eMin 0.00 | tired 56% | swim 1276 | still 4.3s | try 1 | gap 0 | lastin 44 | sess 3
+v8.24 | 11-24 18:45 | max@kid | r4 | LOSS | 34s | left 14 | in 6/6 | thr 16 | blk 10 | dive 0 | pw splash | trk - | eMin 0.00 | tired 31% | swim 911 | still 6.7s | try 2 | gap 0 | lastin 34 | sess 3
+v8.24 | 11-24 18:45 | max@kid | r4 | LOSS | 44s | left 4 | in 6/6 | thr 21 | blk 13 | dive 0 | pw splash | trk - | eMin 0.00 | tired 41% | swim 2085 | still 2.5s | try 3 | gap 0 | lastin 44 | sess 3 | GAVEUP
+v8.24 | 11-24 18:45 | max@kid | r1 | WIN | 39s | left 0 | in 2/3 | thr 16 | blk 11 | dive 0 | pw splash | trk - | eMin 0.00 | tired 27% | swim 1051 | still 8.3s | try 1 | gap - | lastin 17 | sess 4
+v8.24 | 11-24 18:45 | max@kid | r2 | WIN | 41s | left 0 | in 2/4 | thr 19 | blk 14 | dive 0 | pw splash | trk - | eMin 0.00 | tired 36% | swim 1062 | still 6.1s | try 1 | gap 0 | lastin 31 | sess 4
+v8.24 | 11-24 18:45 | max@kid | r3 | LOSS | 46s | left 4 | in 5/5 | thr 22 | blk 16 | dive 0 | pw splash | trk - | eMin 0.00 | tired 60% | swim 1456 | still 3.5s | try 1 | gap 0 | lastin 46 | sess 4
+v8.24 | 11-24 18:45 | max@kid | r3 | WIN | 50s | left 0 | in 2/5 | thr 25 | blk 18 | dive 0 | pw splash | trk - | eMin 0.00 | tired 65% | swim 1444 | still 4.5s | try 2 | gap 0 | lastin 48 | sess 4
+v8.24 | 11-24 18:45 | max@kid | r4 | WIN | 53s | left 0 | in 3/6 | thr 27 | blk 19 | dive 0 | pw splash | trk - | eMin 0.00 | tired 47% | swim 1821 | still 3.0s | try 1 | gap 0 | lastin 39 | sess 4
+v8.24 | 11-24 18:45 | max@kid | r5 | LOSS | 49s | left 2 | in 7/7 | thr 23 | blk 15 | dive 0 | pw splash | trk - | eMin 0.00 | tired 25% | swim 2089 | still 2.9s | try 1 | gap 0 | lastin 49 | sess 4
+v8.24 | 11-24 18:45 | max@kid | r5 | LOSS | 40s | left 11 | in 7/7 | thr 21 | blk 14 | dive 0 | pw splash | trk - | eMin 0.00 | tired 46% | swim 1359 | still 2.7s | try 2 | gap 0 | lastin 40 | sess 4
+v8.24 | 11-24 18:45 | max@kid | r5 | LOSS | 51s | left 10 | in 7/7 | thr 28 | blk 18 | dive 0 | pw splash | trk - | eMin 0.00 | tired 59% | swim 1728 | still 2.8s | try 3 | gap 0 | lastin 51 | sess 4 | GAVEUP
+v8.24 | 11-24 18:45 | max@kid | r1 | LOSS | 14s | left 25 | in 3/3 | thr 5 | blk 1 | dive 0 | pw - | trk - | eMin 0.65 | tired 0% | swim 88 | still 7.7s | try 1 | gap - | lastin 14 | sess 5
+v8.24 | 11-24 18:45 | max@kid | r1 | WIN | 39s | left 0 | in 1/3 | thr 17 | blk 13 | dive 0 | pw splash | trk - | eMin 0.00 | tired 44% | swim 1371 | still 2.1s | try 2 | gap 0 | lastin 26 | sess 5
+v8.24 | 11-24 18:45 | max@kid | r2 | LOSS | 37s | left 4 | in 4/4 | thr 18 | blk 12 | dive 0 | pw splash | trk - | eMin 0.00 | tired 68% | swim 831 | still 3.5s | try 1 | gap 0 | lastin 37 | sess 5
+v8.24 | 11-24 18:45 | max@kid | r2 | WIN | 41s | left 0 | in 3/4 | thr 20 | blk 15 | dive 0 | pw splash | trk - | eMin 0.00 | tired 71% | swim 1317 | still 2.1s | try 2 | gap 0 | lastin 38 | sess 5
+v8.24 | 11-24 18:45 | max@kid | r3 | LOSS | 34s | left 16 | in 5/5 | thr 17 | blk 11 | dive 0 | pw splash | trk - | eMin 0.00 | tired 52% | swim 810 | still 4.5s | try 1 | gap 0 | lastin 34 | sess 5
+v8.24 | 11-24 18:45 | max@kid | r3 | LOSS | 31s | left 19 | in 5/5 | thr 15 | blk 9 | dive 0 | pw splash | trk - | eMin 0.00 | tired 51% | swim 877 | still 3.4s | try 2 | gap 0 | lastin 31 | sess 5
+v8.24 | 11-24 18:45 | max@kid | r3 | LOSS | 37s | left 8 | in 5/5 | thr 18 | blk 13 | dive 0 | pw splash | trk - | eMin 0.00 | tired 66% | swim 1033 | still 4.7s | try 3 | gap 0 | lastin 37 | sess 5 | GAVEUP
+v8.24 | 11-24 18:45 | max@kid | r1 | LOSS | 37s | left 2 | in 3/3 | thr 15 | blk 11 | dive 0 | pw splash | trk - | eMin 0.00 | tired 34% | swim 1174 | still 4.9s | try 1 | gap - | lastin 37 | sess 6
+v8.24 | 11-24 18:45 | max@kid | r1 | LOSS | 34s | left 15 | in 3/3 | thr 14 | blk 9 | dive 0 | pw splash | trk - | eMin 0.14 | tired 10% | swim 871 | still 7.3s | try 2 | gap 0 | lastin 34 | sess 6
+v8.24 | 11-24 18:45 | max@kid | r1 | WIN | 39s | left 0 | in 0/3 | thr 17 | blk 15 | dive 0 | pw splash | trk - | eMin 0.00 | tired 56% | swim 1352 | still 2.1s | try 3 | gap 0 | lastin - | sess 6
+v8.24 | 11-24 18:45 | max@kid | r2 | WIN | 46s | left 0 | in 3/4 | thr 22 | blk 14 | dive 0 | pw splash | trk - | eMin 0.00 | tired 55% | swim 905 | still 6.1s | try 1 | gap 0 | lastin 27 | sess 6
+v8.24 | 11-24 18:45 | max@kid | r3 | LOSS | 36s | left 14 | in 5/5 | thr 18 | blk 12 | dive 0 | pw splash | trk - | eMin 0.00 | tired 55% | swim 1315 | still 4.3s | try 1 | gap 0 | lastin 36 | sess 6
+v8.24 | 11-24 18:45 | max@kid | r3 | LOSS | 40s | left 15 | in 5/5 | thr 20 | blk 13 | dive 0 | pw splash | trk - | eMin 0.00 | tired 69% | swim 1433 | still 4.5s | try 2 | gap 0 | lastin 40 | sess 6
+v8.24 | 11-24 18:45 | max@kid | r3 | LOSS | 41s | left 4 | in 5/5 | thr 19 | blk 13 | dive 0 | pw splash | trk - | eMin 0.00 | tired 55% | swim 1185 | still 4.3s | try 3 | gap 0 | lastin 41 | sess 6 | GAVEUP
+v8.24 | 11-24 18:45 | max@kid | r1 | LOSS | 40s | left 4 | in 3/3 | thr 16 | blk 10 | dive 0 | pw splash | trk - | eMin 0.03 | tired 14% | swim 1069 | still 5.6s | try 1 | gap - | lastin 40 | sess 7
+v8.24 | 11-24 18:45 | max@kid | r1 | WIN | 39s | left 0 | in 1/3 | thr 18 | blk 15 | dive 0 | pw splash | trk - | eMin 0.00 | tired 62% | swim 986 | still 4.9s | try 2 | gap 0 | lastin 22 | sess 7
+v8.24 | 11-24 18:45 | max@kid | r2 | LOSS | 32s | left 9 | in 4/4 | thr 15 | blk 11 | dive 0 | pw splash | trk - | eMin 0.00 | tired 63% | swim 729 | still 3.7s | try 1 | gap 0 | lastin 32 | sess 7
+v8.24 | 11-24 18:45 | max@kid | r2 | WIN | 46s | left 0 | in 3/4 | thr 22 | blk 14 | dive 0 | pw splash | trk - | eMin 0.00 | tired 49% | swim 1374 | still 4.6s | try 2 | gap 0 | lastin 46 | sess 7
+v8.24 | 11-24 18:45 | max@kid | r3 | LOSS | 43s | left 2 | in 5/5 | thr 19 | blk 12 | dive 0 | pw splash | trk - | eMin 0.00 | tired 17% | swim 837 | still 5.2s | try 1 | gap 0 | lastin 43 | sess 7
+v8.24 | 11-24 18:45 | max@kid | r3 | LOSS | 37s | left 8 | in 5/5 | thr 19 | blk 13 | dive 0 | pw splash | trk - | eMin 0.00 | tired 66% | swim 1179 | still 3.3s | try 2 | gap 0 | lastin 37 | sess 7
+v8.24 | 11-24 18:45 | max@kid | r3 | LOSS | 50s | left 5 | in 5/5 | thr 24 | blk 13 | dive 0 | pw splash | trk - | eMin 0.00 | tired 39% | swim 2114 | still 4.5s | try 3 | gap 0 | lastin 50 | sess 7 | GAVEUP
+v8.24 | 11-24 18:45 | max@kid | r1 | LOSS | 38s | left 6 | in 3/3 | thr 17 | blk 12 | dive 0 | pw splash | trk - | eMin 0.00 | tired 39% | swim 899 | still 4.1s | try 1 | gap - | lastin 38 | sess 8
+v8.24 | 11-24 18:45 | max@kid | r1 | WIN | 39s | left 0 | in 1/3 | thr 18 | blk 13 | dive 0 | pw splash | trk - | eMin 0.00 | tired 60% | swim 1324 | still 3.6s | try 2 | gap 0 | lastin 34 | sess 8
+v8.24 | 11-24 18:45 | max@kid | r2 | LOSS | 35s | left 11 | in 4/4 | thr 15 | blk 10 | dive 0 | pw splash | trk - | eMin 0.11 | tired 30% | swim 937 | still 3.8s | try 1 | gap 0 | lastin 35 | sess 8
+v8.24 | 11-24 18:45 | max@kid | r2 | LOSS | 34s | left 12 | in 4/4 | thr 16 | blk 11 | dive 0 | pw splash | trk - | eMin 0.00 | tired 47% | swim 1053 | still 3.9s | try 2 | gap 0 | lastin 34 | sess 8
+v8.24 | 11-24 18:45 | max@kid | r2 | WIN | 41s | left 0 | in 3/4 | thr 20 | blk 15 | dive 0 | pw splash | trk - | eMin 0.00 | tired 60% | swim 964 | still 4.8s | try 3 | gap 0 | lastin 38 | sess 8
+v8.24 | 11-24 18:45 | max@kid | r3 | LOSS | 49s | left 1 | in 5/5 | thr 24 | blk 17 | dive 0 | pw splash | trk - | eMin 0.00 | tired 53% | swim 1638 | still 3.5s | try 1 | gap 0 | lastin 49 | sess 8
+v8.24 | 11-24 18:45 | max@kid | r3 | WIN | 45s | left 0 | in 4/5 | thr 20 | blk 13 | dive 0 | pw splash | trk - | eMin 0.00 | tired 28% | swim 1619 | still 4.6s | try 2 | gap 0 | lastin 44 | sess 8
+v8.24 | 11-24 18:45 | max@kid | r4 | LOSS | 46s | left 2 | in 6/6 | thr 21 | blk 15 | dive 0 | pw splash | trk - | eMin 0.00 | tired 39% | swim 1519 | still 3.6s | try 1 | gap 0 | lastin 46 | sess 8
+v8.24 | 11-24 18:45 | max@kid | r4 | LOSS | 38s | left 10 | in 6/6 | thr 18 | blk 10 | dive 0 | pw splash | trk - | eMin 0.00 | tired 49% | swim 976 | still 7.1s | try 2 | gap 0 | lastin 38 | sess 8
+v8.24 | 11-24 18:45 | max@kid | r4 | LOSS | 34s | left 19 | in 6/6 | thr 15 | blk 8 | dive 0 | pw splash | trk - | eMin 0.00 | tired 18% | swim 797 | still 8.5s | try 3 | gap 0 | lastin 34 | sess 8 | GAVEUP
+v8.24 | 11-24 18:45 | max@kid | r1 | LOSS | 30s | left 9 | in 3/3 | thr 13 | blk 8 | dive 0 | pw splash | trk - | eMin 0.00 | tired 43% | swim 461 | still 3.7s | try 1 | gap - | lastin 30 | sess 9
+v8.24 | 11-24 18:45 | max@kid | r1 | LOSS | 25s | left 14 | in 3/3 | thr 10 | blk 7 | dive 0 | pw splash | trk - | eMin 0.14 | tired 19% | swim 628 | still 7.9s | try 2 | gap 0 | lastin 25 | sess 9
+v8.24 | 11-24 18:45 | max@kid | r1 | LOSS | 36s | left 3 | in 3/3 | thr 15 | blk 12 | dive 0 | pw splash | trk - | eMin 0.00 | tired 40% | swim 886 | still 3.3s | try 3 | gap 0 | lastin 36 | sess 9 | GAVEUP
+v8.24 | 11-24 18:45 | max@kid | r1 | WIN | 44s | left 0 | in 2/3 | thr 19 | blk 14 | dive 0 | pw splash | trk - | eMin 0.00 | tired 49% | swim 1047 | still 12.6s | try 1 | gap - | lastin 42 | sess 10
+v8.24 | 11-24 18:45 | max@kid | r2 | LOSS | 35s | left 6 | in 4/4 | thr 15 | blk 11 | dive 0 | pw splash | trk - | eMin 0.00 | tired 36% | swim 1246 | still 2.1s | try 1 | gap 0 | lastin 35 | sess 10
+v8.24 | 11-24 18:45 | max@kid | r2 | LOSS | 31s | left 10 | in 4/4 | thr 15 | blk 10 | dive 0 | pw splash | trk - | eMin 0.00 | tired 50% | swim 1167 | still 2.1s | try 2 | gap 0 | lastin 31 | sess 10
+v8.24 | 11-24 18:45 | max@kid | r2 | LOSS | 38s | left 13 | in 4/4 | thr 18 | blk 11 | dive 0 | pw splash | trk - | eMin 0.00 | tired 46% | swim 1144 | still 6.0s | try 3 | gap 0 | lastin 38 | sess 10 | GAVEUP

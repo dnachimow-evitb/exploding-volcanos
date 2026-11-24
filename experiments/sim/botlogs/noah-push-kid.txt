@@ -1,0 +1,89 @@
+v8.24 | 11-24 18:44 | noah-push@kid | r1 | WIN | 26s | left 9 | in 3/3 | thr 9 | miss 4 | maxblk 0 | score 92 | try 1 | gap - | lastin 26 | sess 1
+v8.24 | 11-24 18:44 | noah-push@kid | r2 | WIN | 18s | left 14 | in 4/4 | thr 6 | miss 1 | maxblk 0 | score 112 | try 1 | gap 0 | lastin 18 | sess 1
+v8.24 | 11-24 18:44 | noah-push@kid | r3 | WIN | 27s | left 18 | in 5/5 | thr 9 | miss 2 | maxblk 0 | score 334 | try 1 | gap 0 | lastin 27 | sess 1
+v8.24 | 11-24 18:44 | noah-push@kid | r4 | WIN | 36s | left 2 | in 6/6 | thr 12 | miss 6 | maxblk 3 | score 140 | try 1 | gap 0 | lastin 36 | sess 1
+v8.24 | 11-24 18:44 | noah-push@kid | r5 | LOSS | 56s | left 0 | in 5/7 | thr 19 | miss 9 | maxblk 4 | score 282 | try 1 | gap 0 | lastin 53 | sess 1
+v8.24 | 11-24 18:44 | noah-push@kid | r5 | LOSS | 41s | left 0 | in 5/7 | thr 13 | miss 5 | maxblk 6 | score 132 | try 2 | gap 0 | lastin 37 | sess 1
+v8.24 | 11-24 18:44 | noah-push@kid | r5 | LOSS | 46s | left 0 | in 5/7 | thr 15 | miss 9 | maxblk 3 | score 182 | try 3 | gap 0 | lastin 44 | sess 1 | GAVEUP
+v8.24 | 11-24 18:44 | noah-push@kid | r1 | WIN | 17s | left 13 | in 3/3 | thr 6 | miss 2 | maxblk 0 | score 42 | try 1 | gap - | lastin 17 | sess 2
+v8.24 | 11-24 18:44 | noah-push@kid | r2 | WIN | 15s | left 17 | in 4/4 | thr 5 | miss 0 | maxblk 0 | score 96 | try 1 | gap 0 | lastin 15 | sess 2
+v8.24 | 11-24 18:44 | noah-push@kid | r3 | WIN | 21s | left 14 | in 5/5 | thr 7 | miss 1 | maxblk 0 | score 198 | try 1 | gap 0 | lastin 21 | sess 2
+v8.24 | 11-24 18:44 | noah-push@kid | r4 | LOSS | 43s | left 0 | in 5/6 | thr 14 | miss 6 | maxblk 2 | score 170 | try 1 | gap 0 | lastin 39 | sess 2
+v8.24 | 11-24 18:44 | noah-push@kid | r4 | WIN | 29s | left 14 | in 6/6 | thr 9 | miss 2 | maxblk 1 | score 270 | try 2 | gap 0 | lastin 29 | sess 2
+v8.24 | 11-24 18:44 | noah-push@kid | r5 | WIN | 48s | left 3 | in 7/7 | thr 16 | miss 6 | maxblk 5 | score 386 | try 1 | gap 0 | lastin 48 | sess 2
+v8.24 | 11-24 18:44 | noah-push@kid | r6 | WIN | 36s | left 13 | in 8/8 | thr 12 | miss 1 | maxblk 1 | score 530 | try 1 | gap 0 | lastin 36 | sess 2
+v8.24 | 11-24 18:44 | noah-push@kid | r7 | LOSS | 52s | left 0 | in 8/9 | thr 17 | miss 8 | maxblk 6 | score 362 | try 1 | gap 0 | lastin 48 | sess 2
+v8.24 | 11-24 18:44 | noah-push@kid | r7 | LOSS | 47s | left 0 | in 6/9 | thr 16 | miss 8 | maxblk 5 | score 208 | try 2 | gap 0 | lastin 43 | sess 2
+v8.24 | 11-24 18:44 | noah-push@kid | r7 | LOSS | 52s | left 0 | in 8/9 | thr 18 | miss 8 | maxblk 3 | score 648 | try 3 | gap 0 | lastin 50 | sess 2 | GAVEUP
+v8.24 | 11-24 18:44 | noah-push@kid | r1 | WIN | 32s | left 8 | in 3/3 | thr 11 | miss 6 | maxblk 0 | score 170 | try 1 | gap - | lastin 32 | sess 3
+v8.24 | 11-24 18:44 | noah-push@kid | r2 | WIN | 25s | left 17 | in 4/4 | thr 8 | miss 2 | maxblk 0 | score 228 | try 1 | gap 0 | lastin 25 | sess 3
+v8.24 | 11-24 18:44 | noah-push@kid | r3 | WIN | 16s | left 19 | in 5/5 | thr 5 | miss 0 | maxblk 0 | score 270 | try 1 | gap 0 | lastin 16 | sess 3
+v8.24 | 11-24 18:44 | noah-push@kid | r4 | WIN | 40s | left 3 | in 6/6 | thr 13 | miss 5 | maxblk 5 | score 310 | try 1 | gap 0 | lastin 40 | sess 3
+v8.24 | 11-24 18:44 | noah-push@kid | r5 | LOSS | 41s | left 0 | in 3/7 | thr 13 | miss 9 | maxblk 5 | score 88 | try 1 | gap 0 | lastin 34 | sess 3
+v8.24 | 11-24 18:44 | noah-push@kid | r5 | LOSS | 51s | left 0 | in 5/7 | thr 18 | miss 9 | maxblk 3 | score 232 | try 2 | gap 0 | lastin 35 | sess 3
+v8.24 | 11-24 18:44 | noah-push@kid | r5 | LOSS | 41s | left 0 | in 4/7 | thr 14 | miss 8 | maxblk 5 | score 110 | try 3 | gap 0 | lastin 38 | sess 3 | GAVEUP
+v8.24 | 11-24 18:44 | noah-push@kid | r1 | WIN | 15s | left 15 | in 3/3 | thr 5 | miss 2 | maxblk 0 | score 56 | try 1 | gap - | lastin 15 | sess 4
+v8.24 | 11-24 18:44 | noah-push@kid | r2 | WIN | 25s | left 7 | in 4/4 | thr 9 | miss 5 | maxblk 0 | score 112 | try 1 | gap 0 | lastin 25 | sess 4
+v8.24 | 11-24 18:44 | noah-push@kid | r3 | WIN | 22s | left 13 | in 5/5 | thr 7 | miss 1 | maxblk 0 | score 144 | try 1 | gap 0 | lastin 22 | sess 4
+v8.24 | 11-24 18:44 | noah-push@kid | r4 | WIN | 36s | left 7 | in 6/6 | thr 12 | miss 5 | maxblk 1 | score 210 | try 1 | gap 0 | lastin 36 | sess 4
+v8.24 | 11-24 18:44 | noah-push@kid | r5 | WIN | 40s | left 6 | in 7/7 | thr 13 | miss 3 | maxblk 3 | score 270 | try 1 | gap 0 | lastin 40 | sess 4
+v8.24 | 11-24 18:44 | noah-push@kid | r6 | LOSS | 44s | left 0 | in 5/8 | thr 15 | miss 9 | maxblk 6 | score 168 | try 1 | gap 0 | lastin 37 | sess 4
+v8.24 | 11-24 18:44 | noah-push@kid | r6 | WIN | 50s | left 4 | in 8/8 | thr 16 | miss 5 | maxblk 3 | score 532 | try 2 | gap 0 | lastin 50 | sess 4
+v8.24 | 11-24 18:44 | noah-push@kid | r7 | LOSS | 47s | left 0 | in 5/9 | thr 16 | miss 7 | maxblk 7 | score 156 | try 1 | gap 0 | lastin 39 | sess 4
+v8.24 | 11-24 18:44 | noah-push@kid | r7 | LOSS | 57s | left 0 | in 3/9 | thr 19 | miss 14 | maxblk 6 | score 178 | try 2 | gap 0 | lastin 38 | sess 4
+v8.24 | 11-24 18:44 | noah-push@kid | r7 | LOSS | 47s | left 0 | in 5/9 | thr 16 | miss 8 | maxblk 7 | score 234 | try 3 | gap 0 | lastin 28 | sess 4 | GAVEUP
+v8.24 | 11-24 18:44 | noah-push@kid | r1 | WIN | 9s | left 21 | in 3/3 | thr 3 | miss 0 | maxblk 0 | score 84 | try 1 | gap - | lastin 9 | sess 5
+v8.24 | 11-24 18:44 | noah-push@kid | r2 | WIN | 24s | left 8 | in 4/4 | thr 8 | miss 2 | maxblk 0 | score 64 | try 1 | gap 0 | lastin 24 | sess 5
+v8.24 | 11-24 18:44 | noah-push@kid | r3 | WIN | 25s | left 15 | in 5/5 | thr 8 | miss 2 | maxblk 0 | score 212 | try 1 | gap 0 | lastin 25 | sess 5
+v8.24 | 11-24 18:44 | noah-push@kid | r4 | WIN | 37s | left 1 | in 6/6 | thr 13 | miss 4 | maxblk 3 | score 160 | try 1 | gap 0 | lastin 37 | sess 5
+v8.24 | 11-24 18:44 | noah-push@kid | r5 | WIN | 57s | left 4 | in 7/7 | thr 20 | miss 8 | maxblk 3 | score 552 | try 1 | gap 0 | lastin 57 | sess 5
+v8.24 | 11-24 18:44 | noah-push@kid | r6 | LOSS | 44s | left 0 | in 3/8 | thr 14 | miss 10 | maxblk 9 | score 96 | try 1 | gap 0 | lastin 33 | sess 5
+v8.24 | 11-24 18:44 | noah-push@kid | r6 | LOSS | 44s | left 0 | in 3/8 | thr 15 | miss 10 | maxblk 6 | score 72 | try 2 | gap 0 | lastin 35 | sess 5
+v8.24 | 11-24 18:44 | noah-push@kid | r6 | WIN | 51s | left 3 | in 8/8 | thr 17 | miss 6 | maxblk 2 | score 364 | try 3 | gap 0 | lastin 51 | sess 5
+v8.24 | 11-24 18:44 | noah-push@kid | r7 | LOSS | 52s | left 0 | in 5/9 | thr 17 | miss 10 | maxblk 8 | score 206 | try 1 | gap 0 | lastin 38 | sess 5
+v8.24 | 11-24 18:44 | noah-push@kid | r7 | LOSS | 47s | left 0 | in 6/9 | thr 15 | miss 8 | maxblk 7 | score 208 | try 2 | gap 0 | lastin 46 | sess 5
+v8.24 | 11-24 18:44 | noah-push@kid | r7 | LOSS | 52s | left 0 | in 6/9 | thr 17 | miss 9 | maxblk 4 | score 388 | try 3 | gap 0 | lastin 50 | sess 5 | GAVEUP
+v8.24 | 11-24 18:44 | noah-push@kid | r1 | WIN | 13s | left 22 | in 3/3 | thr 4 | miss 0 | maxblk 0 | score 148 | try 1 | gap - | lastin 13 | sess 6
+v8.24 | 11-24 18:44 | noah-push@kid | r2 | WIN | 26s | left 6 | in 4/4 | thr 9 | miss 4 | maxblk 0 | score 112 | try 1 | gap 0 | lastin 26 | sess 6
+v8.24 | 11-24 18:44 | noah-push@kid | r3 | WIN | 37s | left 3 | in 5/5 | thr 12 | miss 5 | maxblk 0 | score 194 | try 1 | gap 0 | lastin 37 | sess 6
+v8.24 | 11-24 18:44 | noah-push@kid | r4 | LOSS | 38s | left 0 | in 5/6 | thr 12 | miss 6 | maxblk 5 | score 160 | try 1 | gap 0 | lastin 37 | sess 6
+v8.24 | 11-24 18:44 | noah-push@kid | r4 | LOSS | 38s | left 0 | in 5/6 | thr 12 | miss 3 | maxblk 3 | score 120 | try 2 | gap 0 | lastin 28 | sess 6
+v8.24 | 11-24 18:44 | noah-push@kid | r4 | WIN | 34s | left 4 | in 6/6 | thr 11 | miss 4 | maxblk 2 | score 180 | try 3 | gap 0 | lastin 34 | sess 6
+v8.24 | 11-24 18:44 | noah-push@kid | r5 | LOSS | 51s | left 0 | in 5/7 | thr 17 | miss 9 | maxblk 5 | score 254 | try 1 | gap 0 | lastin 22 | sess 6
+v8.24 | 11-24 18:44 | noah-push@kid | r5 | LOSS | 46s | left 0 | in 5/7 | thr 15 | miss 9 | maxblk 4 | score 204 | try 2 | gap 0 | lastin 45 | sess 6
+v8.24 | 11-24 18:44 | noah-push@kid | r5 | LOSS | 41s | left 0 | in 5/7 | thr 13 | miss 7 | maxblk 6 | score 132 | try 3 | gap 0 | lastin 36 | sess 6 | GAVEUP
+v8.24 | 11-24 18:44 | noah-push@kid | r1 | WIN | 23s | left 12 | in 3/3 | thr 8 | miss 3 | maxblk 0 | score 106 | try 1 | gap - | lastin 23 | sess 7
+v8.24 | 11-24 18:44 | noah-push@kid | r2 | WIN | 21s | left 11 | in 4/4 | thr 7 | miss 2 | maxblk 0 | score 112 | try 1 | gap 0 | lastin 21 | sess 7
+v8.24 | 11-24 18:44 | noah-push@kid | r3 | WIN | 28s | left 12 | in 5/5 | thr 9 | miss 2 | maxblk 0 | score 230 | try 1 | gap 0 | lastin 28 | sess 7
+v8.24 | 11-24 18:44 | noah-push@kid | r4 | WIN | 27s | left 11 | in 6/6 | thr 9 | miss 1 | maxblk 1 | score 160 | try 1 | gap 0 | lastin 27 | sess 7
+v8.24 | 11-24 18:44 | noah-push@kid | r5 | LOSS | 41s | left 0 | in 5/7 | thr 13 | miss 7 | maxblk 6 | score 132 | try 1 | gap 0 | lastin 31 | sess 7
+v8.24 | 11-24 18:44 | noah-push@kid | r5 | LOSS | 46s | left 0 | in 2/7 | thr 15 | miss 12 | maxblk 6 | score 94 | try 2 | gap 0 | lastin 44 | sess 7
+v8.24 | 11-24 18:44 | noah-push@kid | r5 | WIN | 30s | left 11 | in 7/7 | thr 10 | miss 3 | maxblk 1 | score 242 | try 3 | gap 0 | lastin 30 | sess 7
+v8.24 | 11-24 18:44 | noah-push@kid | r6 | LOSS | 44s | left 0 | in 5/8 | thr 14 | miss 9 | maxblk 5 | score 144 | try 1 | gap 0 | lastin 42 | sess 7
+v8.24 | 11-24 18:44 | noah-push@kid | r6 | LOSS | 44s | left 0 | in 4/8 | thr 14 | miss 10 | maxblk 6 | score 120 | try 2 | gap 0 | lastin 38 | sess 7
+v8.24 | 11-24 18:44 | noah-push@kid | r6 | LOSS | 44s | left 0 | in 6/8 | thr 15 | miss 6 | maxblk 3 | score 192 | try 3 | gap 0 | lastin 41 | sess 7 | GAVEUP
+v8.24 | 11-24 18:44 | noah-push@kid | r1 | WIN | 17s | left 13 | in 3/3 | thr 6 | miss 2 | maxblk 0 | score 56 | try 1 | gap - | lastin 17 | sess 8
+v8.24 | 11-24 18:44 | noah-push@kid | r2 | WIN | 24s | left 8 | in 4/4 | thr 8 | miss 2 | maxblk 0 | score 80 | try 1 | gap 0 | lastin 24 | sess 8
+v8.24 | 11-24 18:44 | noah-push@kid | r3 | WIN | 16s | left 19 | in 5/5 | thr 5 | miss 0 | maxblk 0 | score 270 | try 1 | gap 0 | lastin 16 | sess 8
+v8.24 | 11-24 18:44 | noah-push@kid | r4 | WIN | 34s | left 4 | in 6/6 | thr 11 | miss 5 | maxblk 1 | score 180 | try 1 | gap 0 | lastin 34 | sess 8
+v8.24 | 11-24 18:44 | noah-push@kid | r5 | LOSS | 41s | left 0 | in 5/7 | thr 13 | miss 8 | maxblk 5 | score 176 | try 1 | gap 0 | lastin 41 | sess 8
+v8.24 | 11-24 18:44 | noah-push@kid | r5 | LOSS | 51s | left 0 | in 4/7 | thr 17 | miss 11 | maxblk 4 | score 188 | try 2 | gap 0 | lastin 43 | sess 8
+v8.24 | 11-24 18:44 | noah-push@kid | r5 | LOSS | 46s | left 0 | in 4/7 | thr 16 | miss 8 | maxblk 6 | score 160 | try 3 | gap 0 | lastin 25 | sess 8 | GAVEUP
+v8.24 | 11-24 18:44 | noah-push@kid | r1 | WIN | 21s | left 9 | in 3/3 | thr 7 | miss 4 | maxblk 0 | score 42 | try 1 | gap - | lastin 21 | sess 9
+v8.24 | 11-24 18:44 | noah-push@kid | r2 | WIN | 23s | left 9 | in 4/4 | thr 8 | miss 3 | maxblk 0 | score 112 | try 1 | gap 0 | lastin 23 | sess 9
+v8.24 | 11-24 18:44 | noah-push@kid | r3 | WIN | 32s | left 3 | in 5/5 | thr 11 | miss 3 | maxblk 0 | score 108 | try 1 | gap 0 | lastin 32 | sess 9
+v8.24 | 11-24 18:44 | noah-push@kid | r4 | WIN | 30s | left 8 | in 6/6 | thr 10 | miss 3 | maxblk 2 | score 160 | try 1 | gap 0 | lastin 30 | sess 9
+v8.24 | 11-24 18:44 | noah-push@kid | r5 | LOSS | 46s | left 0 | in 6/7 | thr 15 | miss 8 | maxblk 8 | score 270 | try 1 | gap 0 | lastin 42 | sess 9
+v8.24 | 11-24 18:44 | noah-push@kid | r5 | WIN | 39s | left 7 | in 7/7 | thr 13 | miss 4 | maxblk 4 | score 380 | try 2 | gap 0 | lastin 39 | sess 9
+v8.24 | 11-24 18:44 | noah-push@kid | r6 | LOSS | 54s | left 0 | in 7/8 | thr 18 | miss 7 | maxblk 5 | score 388 | try 1 | gap 0 | lastin 43 | sess 9
+v8.24 | 11-24 18:44 | noah-push@kid | r6 | LOSS | 59s | left 0 | in 6/8 | thr 19 | miss 10 | maxblk 8 | score 342 | try 2 | gap 0 | lastin 55 | sess 9
+v8.24 | 11-24 18:44 | noah-push@kid | r6 | LOSS | 44s | left 0 | in 5/8 | thr 14 | miss 8 | maxblk 4 | score 264 | try 3 | gap 0 | lastin 35 | sess 9 | GAVEUP
+v8.24 | 11-24 18:44 | noah-push@kid | r1 | WIN | 9s | left 21 | in 3/3 | thr 3 | miss 0 | maxblk 0 | score 84 | try 1 | gap - | lastin 9 | sess 10
+v8.24 | 11-24 18:44 | noah-push@kid | r2 | LOSS | 32s | left 0 | in 3/4 | thr 11 | miss 6 | maxblk 0 | score 64 | try 1 | gap 0 | lastin 14 | sess 10
+v8.24 | 11-24 18:44 | noah-push@kid | r2 | WIN | 24s | left 13 | in 4/4 | thr 8 | miss 3 | maxblk 0 | score 178 | try 2 | gap 0 | lastin 24 | sess 10
+v8.24 | 11-24 18:44 | noah-push@kid | r3 | WIN | 27s | left 13 | in 5/5 | thr 9 | miss 2 | maxblk 0 | score 176 | try 1 | gap 0 | lastin 27 | sess 10
+v8.24 | 11-24 18:44 | noah-push@kid | r4 | WIN | 37s | left 1 | in 6/6 | thr 12 | miss 5 | maxblk 2 | score 240 | try 1 | gap 0 | lastin 37 | sess 10
+v8.24 | 11-24 18:44 | noah-push@kid | r5 | WIN | 43s | left 13 | in 7/7 | thr 14 | miss 3 | maxblk 2 | score 458 | try 1 | gap 0 | lastin 43 | sess 10
+v8.24 | 11-24 18:44 | noah-push@kid | r6 | LOSS | 49s | left 0 | in 7/8 | thr 16 | miss 6 | maxblk 4 | score 290 | try 1 | gap 0 | lastin 42 | sess 10
+v8.24 | 11-24 18:44 | noah-push@kid | r6 | LOSS | 44s | left 0 | in 3/8 | thr 15 | miss 12 | maxblk 6 | score 96 | try 2 | gap 0 | lastin 35 | sess 10
+v8.24 | 11-24 18:44 | noah-push@kid | r6 | LOSS | 44s | left 0 | in 7/8 | thr 15 | miss 5 | maxblk 6 | score 336 | try 3 | gap 0 | lastin 42 | sess 10 | GAVEUP

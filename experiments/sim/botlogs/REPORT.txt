@@ -1,0 +1,145 @@
+REPORT.txt: empty
+
+max-casual  (10 games, 139 rounds)
+  round          1    2    3    4    5    6    7    8    9   10
+  1st-try %    100  100   80   80   80   70   70   60   30   86
+  cleared %    100  100  100  100  100  100  100  100   70   60
+  tries/win    1.0  1.0  1.2  1.2  1.2  1.5  1.3  1.5  4.3  1.7
+  margin %      60   70   46   37   33   34   19   15   13   13   (toys Noah still needed)
+  blocks        15   16   17   19   20   22   25   26   25   24
+  finished all ten: 6 of 10; gave up at: r9 x3, r10 x1
+
+max-good  (10 games, 126 rounds)
+  round          1    2    3    4    5    6    7    8    9   10
+  1st-try %     90  100  100  100  100  100   80   90   60   20
+  cleared %    100  100  100  100  100  100  100  100  100  100
+  tries/win    1.1  1.0  1.0  1.0  1.0  1.0  1.3  1.1  1.8  2.3
+  margin %      77   78   56   47   41   29   21   22   15   16   (toys Noah still needed)
+  blocks        16   17   19   20   23   26   26   27   28   27
+  finished all ten: 10 of 10; gave up at: never
+
+max-kid  (10 games, 66 rounds)
+  round          1    2    3    4    5    6    7    8    9   10
+  1st-try %     50   44   13   25    0    -    -    -    -    -
+  cleared %     90   80   40   10    0    0    0    0    0    0
+  tries/win    1.9  2.0  5.0 10.0    -    -    -    -    -    -
+  margin %      56   31   45   50    -    -    -    -    -    -   (toys Noah still needed)
+  blocks        11   13   13   13   16    -    -    -    -    -
+  finished all ten: 0 of 10; gave up at: r1 x1, r2 x1, r3 x4, r4 x3, r5 x1
+
+noah-push-casual  (10 games, 137 rounds)
+  round          1    2    3    4    5    6    7    8    9   10
+  1st-try %    100  100  100  100   80   80   60   44   57   14
+  cleared %    100  100  100  100  100  100   90   70   70   70
+  tries/win    1.0  1.0  1.0  1.0  1.2  1.2  2.0  2.9  1.7  3.3
+  margin %      70   59   54   27   22   18   17   23   19   12   (clock left)
+  blocks         0    0    0    4    6    5    7    8    6    6
+  finished all ten: 7 of 10; gave up at: r7 x1, r8 x2
+
+noah-push-good  (10 games, 102 rounds)
+  round          1    2    3    4    5    6    7    8    9   10
+  1st-try %    100  100  100  100   90   90  100  100  100  100
+  cleared %    100  100  100  100  100  100  100  100  100  100
+  tries/win    1.0  1.0  1.0  1.0  1.1  1.1  1.0  1.0  1.0  1.0
+  margin %      75   70   66   55   41   27   25   32   28   32   (clock left)
+  blocks         0    0    0    2    6    9    8    7    8    5
+  finished all ten: 10 of 10; gave up at: never
+
+noah-push-kid  (10 games, 89 rounds)
+  round          1    2    3    4    5    6    7    8    9   10
+  1st-try %    100   90  100   80   40   17    0    -    -    -
+  cleared %    100  100  100  100   60   30    0    0    0    0
+  tries/win    1.0  1.1  1.0  1.3  3.5  5.0    -    -    -    -
+  margin %      45   33   34   14   15   13    -    -    -    -   (clock left)
+  blocks         0    0    0    2    4    5    6    -    -    -
+  finished all ten: 0 of 10; gave up at: r5 x4, r6 x3, r7 x3
+
+noah-swipe-casual  (10 games, 100 rounds)
+  round          1    2    3    4    5    6    7    8    9   10
+  1st-try %    100  100  100  100  100  100  100  100  100  100
+  cleared %    100  100  100  100  100  100  100  100  100  100
+  tries/win    1.0  1.0  1.0  1.0  1.0  1.0  1.0  1.0  1.0  1.0
+  margin %      81   78   73   66   66   60   57   57   48   38   (clock left)
+  blocks         0    0    0    2    2    3    3    4    7   10
+  finished all ten: 10 of 10; gave up at: never
+
+noah-swipe-good  (10 games, 100 rounds)
+  round          1    2    3    4    5    6    7    8    9   10
+  1st-try %    100  100  100  100  100  100  100  100  100  100
+  cleared %    100  100  100  100  100  100  100  100  100  100
+  tries/win    1.0  1.0  1.0  1.0  1.0  1.0  1.0  1.0  1.0  1.0
+  margin %      85   83   81   77   78   73   72   70   67   65   (clock left)
+  blocks         0    0    0    1    0    2    2    3    5    6
+  finished all ten: 10 of 10; gave up at: never
+
+noah-swipe-kid  (10 games, 106 rounds)
+  round          1    2    3    4    5    6    7    8    9   10
+  1st-try %    100  100  100  100  100  100  100  100   90   70
+  cleared %    100  100  100  100  100  100  100  100  100   80
+  tries/win    1.0  1.0  1.0  1.0  1.0  1.0  1.0  1.0  1.1  1.9
+  margin %      70   65   53   40   40   27   27   23   31   21   (clock left)
+  blocks         0    0    0    2    3    6    5    6    6    9
+  finished all ten: 8 of 10; gave up at: r10 x2
+
+smart-push-casual  (10 games, 106 rounds)
+  round          1    2    3    4    5    6    7    8    9   10
+  1st-try %    100  100  100   80   10   43    0    -    -    -
+  cleared %    100  100  100  100   70   40    0    0    0    0
+  tries/win    1.0  1.0  1.0  1.2  4.4  4.3    -    -    -    -
+  margin %      61   47   36   37   21   10    -    -    -    -   (clock left)
+  blocks         2    4    5    7   13   15   17    -    -    -
+  finished all ten: 0 of 10; gave up at: r5 x3, r6 x3, r7 x4
+
+smart-push-good  (10 games, 111 rounds)
+  round          1    2    3    4    5    6    7    8    9   10
+  1st-try %    100  100  100  100  100   90  100  100   90   50
+  cleared %    100  100  100  100  100  100  100  100  100  100
+  tries/win    1.0  1.0  1.0  1.0  1.0  1.1  1.0  1.0  1.1  1.9
+  margin %      67   63   65   50   45   25   27   10   10   12   (clock left)
+  blocks         3    4    3    6    8   14   14   20   21   21
+  finished all ten: 10 of 10; gave up at: never
+
+smart-push-kid  (10 games, 68 rounds)
+  round          1    2    3    4    5    6    7    8    9   10
+  1st-try %     70   70   20    0    0    -    -    -    -    -
+  cleared %    100  100   40   10    0    0    0    0    0    0
+  tries/win    1.3  1.6  6.3 11.0    -    -    -    -    -    -
+  margin %      37   24   12   54    -    -    -    -    -    -   (clock left)
+  blocks         3    5    8    8   10    -    -    -    -    -
+  finished all ten: 0 of 10; gave up at: r3 x6, r4 x3, r5 x1
+
+smart-swipe-casual  (10 games, 102 rounds)
+  round          1    2    3    4    5    6    7    8    9   10
+  1st-try %    100  100  100  100  100  100  100  100  100   80
+  cleared %    100  100  100  100  100  100  100  100  100  100
+  tries/win    1.0  1.0  1.0  1.0  1.0  1.0  1.0  1.0  1.0  1.2
+  margin %      70   64   63   60   58   48   39   40   34   33   (clock left)
+  blocks         4    6    7    8    9   13   17   18   21   24
+  finished all ten: 10 of 10; gave up at: never
+
+smart-swipe-derekish  (9 games, 150 rounds)
+  round          1    2    3    4    5    6    7    8    9   10
+  1st-try %    100   78  100   67   67   67   78   22    0    0
+  cleared %    100  100  100  100  100  100  100   78   11    0
+  tries/win    1.0  1.3  1.0  1.4  1.4  1.3  1.4  4.4 32.0    -
+  margin %      46   47   30   26   30   15   12   11   11    -   (clock left)
+  blocks         7    9   10   13   13   16   18   21   23   26
+  finished all ten: 0 of 9; gave up at: r8 x2, r9 x5, r10 x1
+
+smart-swipe-good  (10 games, 100 rounds)
+  round          1    2    3    4    5    6    7    8    9   10
+  1st-try %    100  100  100  100  100  100  100  100  100  100
+  cleared %    100  100  100  100  100  100  100  100  100  100
+  tries/win    1.0  1.0  1.0  1.0  1.0  1.0  1.0  1.0  1.0  1.0
+  margin %      79   75   78   73   74   68   68   66   67   62   (clock left)
+  blocks         4    5    3    5    5    9    9   11   10   13
+  finished all ten: 10 of 10; gave up at: never
+
+smart-swipe-kid  (10 games, 82 rounds)
+  round          1    2    3    4    5    6    7    8    9   10
+  1st-try %     90   50   40   11   20    0    -    -    -    -
+  cleared %    100  100   90   50   10    0    0    0    0    0
+  tries/win    1.1  1.5  2.1  4.2 13.0    -    -    -    -    -
+  margin %      29   22   17    8   10    -    -    -    -    -   (clock left)
+  blocks        10   12   15   17   19   19    -    -    -    -
+  finished all ten: 0 of 10; gave up at: r3 x1, r4 x4, r5 x4, r6 x1

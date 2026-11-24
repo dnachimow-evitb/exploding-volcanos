@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v8.24'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v8.25'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -153,7 +153,7 @@ function startDuel(stage,role,now,nt){const q=PF.list[PF.cur];stage=clamp(stage|
 const LOG_KEY='evitb-test-log-v1';let LOGS=[],RL=null,logMsg=0,logTry={},logLast=0,logFelt='';
 function logBegin(){if(!TEST)return;RL={t0:performance.now(),thr:0,dv:0,pw:[],tk:[],eMin:1,tired:0,n:0,swim:0,still:0,stillMax:0,lx:blk.x};}
 function logTick(dt){const R=RL;if(!R||!duel)return;const e=duel.mx.e,dx=Math.abs(blk.x-R.lx);R.lx=blk.x;R.n+=dt;R.eMin=Math.min(R.eMin,e);if(e<TUNE.tire)R.tired+=dt;R.swim+=dx;if(dx<.05){R.still+=dt;R.stillMax=Math.max(R.stillMax,R.still);}else R.still=0;}
-function logEnd(res){const R=RL;RL=null;if(!TEST||!R)return;const D=duel,d=new Date(),p2=n=>String(n).padStart(2,'0'),sec=Math.round(duel?R.n:(performance.now()-R.t0)/1000);
+function logEnd(res){const R=RL;RL=null;if(!TEST||!R)return;const D=duel,d=new Date(),p2=n=>String(n).padStart(2,'0'),sec=Math.round(R.n);
  const game=D?(D.tut?'school':(D.net||D.wasNet?'2phone-':'')+(D.role==='max'?'max':'smartmax-noah')+(D.wasNet?'-dropped':'')+(D.role==='noah'||D.noah!=='cpu'?(swipeMode?'-swipe':'-push'):'')):'noah-'+(swipeMode?'swipe':'push')+(hardMode?'-hard':'-easy');
  let L=[VERSION,p2(d.getMonth()+1)+'-'+p2(d.getDate())+' '+p2(d.getHours())+':'+p2(d.getMinutes()),game,'r'+round,res,sec+'s','left '+Math.round(timeLeft),'in '+collected+'/'+need,'thr '+R.thr];
  if(D){L.push('blk '+D.blocks,'dive '+R.dv,'pw '+(R.pw.join('+')||'-'),'trk '+(R.tk.join('+')||'-'),'eMin '+R.eMin.toFixed(2),'tired '+Math.round(100*R.tired/Math.max(1,R.n))+'%','swim '+Math.round(R.swim),'still '+R.stillMax.toFixed(1)+'s');
@@ -283,13 +283,13 @@ function tutStep(dt){const D=duel,T=D.tut,m=D.mx,L=TUT[T.i],inWay=k=>charging&&M
 // AGAINST SWIPE (v8.10) a flick has no wind-up, so he ANTICIPATES instead: between throws he waits where the next flick is
 // most likely to pass (the side of the tub with more toys; guard = how often he bothers), and he is already watching
 // for a finger on a toy, so his reaction is shorter (lag x swipe). The throw itself is untouched.
-const CMX={lag:[.8,.4],err:[40,12],dive:[.3,.7],nap:[.3,.08],swipe:.5,guard:[.5,.95],fit:[.6,.43]}; // v8.24, from Derek's first log (Swipe, rounds 1 to 8 won first try with half the clock left): the early rounds are sharper; the late ones are as he played them
-const tireNow=()=>TUNE.tire*(duel&&duel.max==='cpu'?lerp(CMX.fit[0],CMX.fit[1],(round-1)/9):1); // fit (v8.24): how much a block or dive tires the COMPUTER Max, as a share of a person's cost, by round
+const CMX={lag:[1.1,.4],err:[60,12],dive:[0,.7],nap:[.55,.08],swipe:.5,guard:[.5,.95],fit:[1,1],sw:{lag:[.8,.4],err:[40,12],dive:[.3,.7],nap:[.3,.08],fit:[.6,.43]}},cmx=k=>(swipeMode&&CMX.sw[k])||CMX[k]; // sw: his sharper early rounds against Swipe only (v8.25: bot games showed v8.24 had made Push far too hard for beginners). fit and guard date from v8.24 and Derek's first log
+const tireNow=()=>TUNE.tire*(duel&&duel.max==='cpu'?lerp(cmx('fit')[0],cmx('fit')[1],(round-1)/9):1); // fit (v8.24): how much a block or dive tires the COMPUTER Max, as a share of a person's cost, by round
 // // each [stage 1, stage 10]: reaction seconds, how far off he judges the spot, chance he thinks to dive, chance he misses a throw altogether. v8.9: from simulated matches
 function cpuMax(dt){const D=duel,m=D.mx,a=D.cmx,k=(round-1)/9,L=q=>lerp(q[0],q[1],k);
  let see=null;if(charging)see={x:crossX(charging.o),key:charging.o};else{const o=objs.find(q=>q.st==='fly'&&!q.blocked&&q.vy<0&&q.y>blk.y+20);if(o)see={x:o.x+o.vx*Math.max(0,(o.y-blk.y)/Math.max(2,-o.vy)),key:o};}
- a.hist.push(see);const lag=Math.round(L(CMX.lag)*(swipeMode?CMX.swipe:1)*60);while(a.hist.length>lag+1)a.hist.shift();const sn=a.hist.length>lag?a.hist[0]:null;
- if(sn){if(sn.key!==a.key){a.key=sn.key;a.err=(rnd()-.5)*2*L(CMX.err);a.dive=rnd()<L(CMX.dive);a.skip=rnd()<L(CMX.nap);} // a new throw: how far off he judges it, whether he thinks to dive, whether he misses it altogether
+ a.hist.push(see);const lag=Math.round(L(cmx('lag'))*(swipeMode?CMX.swipe:1)*60);while(a.hist.length>lag+1)a.hist.shift();const sn=a.hist.length>lag?a.hist[0]:null;
+ if(sn){if(sn.key!==a.key){a.key=sn.key;a.err=(rnd()-.5)*2*L(cmx('err'));a.dive=rnd()<L(cmx('dive'));a.skip=rnd()<L(cmx('nap'));} // a new throw: how far off he judges it, whether he thinks to dive, whether he misses it altogether
   if(!a.skip){const x=clamp(sn.x+a.err,MAX_L,MAX_R);m.tx=x;if(a.dive&&m.e>=tireNow()+.1&&Math.abs(x-blk.x)>50)maxDive(x);
    if(D.free&&round>=6&&Math.abs(x-blk.x)>55&&m.e<tireNow()+.1)usePower('splash',true);}}
  else if(swipeMode){if((a.gt-=dt)<=0){a.gt=.5;const fl=objs.filter(o=>o.st==='float'&&!o.hb),lf=fl.filter(o=>o.x<CX),side=lf.length*2>fl.length?lf:lf.length*2<fl.length?fl.filter(o=>o.x>=CX):fl;a.gx=fl.length&&rnd()<L(CMX.guard)?side.reduce((t,o)=>t+crossX(o),0)/side.length:null;}if(a.gx!=null)m.tx=clamp(a.gx,MAX_L,MAX_R);} // guarding against a flick
@@ -387,7 +387,7 @@ function step(dt){
  if(state==='play'){
    
    if(duel&&duel.net==='M'){}else{
-   if(!(buildOn&&build>.54))timeLeft-=dt;if(timeLeft<=0){timeLeft=0;if(duel){if(collected>=need)return;duelEnd('max');return;}logEnd('LOSS');statMax('bestScore',score);state='gameover';return;}
+   if(RL&&!duel)RL.n+=dt;if(!(buildOn&&build>.54))timeLeft-=dt;if(timeLeft<=0){timeLeft=0;if(duel){if(collected>=need)return;duelEnd('max');return;}logEnd('LOSS');statMax('bestScore',score);state='gameover';return;}
    hbTimer-=dt;if(hbTimer<=0&&!objs.some(o=>o.hb&&o.st!=='gone')){spawnHairball();hbTimer=8+rnd()*4;}}
  }
  if(blk.on){if(!duel){blk.x+=blk.spd*blk.dir;if(blk.x>298||blk.x<82)blk.dir*=-1;}blk.y=(duel?DUEL_Y:292)+Math.sin(wave*.05)*8;} // in a match Max is moved by duelStep
@@ -418,7 +418,7 @@ function splash(x,y,col,n){for(let i=0;i<n;i++){const a=-1.57+(Math.random()-.5)
 function scoreToy(o){if(o.dc){o.st='gone';sparkle(CX,CY-6,6);pop(CX,CY-22,'Just A Decoy!','#7fe0ff');return;}
      if(o.hb){stat('hair');streak++;statMax('bestStreak',streak);combo++;bestCombo=Math.max(bestCombo,combo);timeLeft+=5;score+=50;shake=4;flash=.18;flashCol='#ffe9b0';collectedToys.push('🧶');freeze=3;vol.sv+=.5;mood(vol,'yuck',1.3);mood(noah,'cheer',1);hop(noah,3);sparkle(CX,CY-6,10);
        pop(CX,CY-18,'Hairball! +50  +5s','#ffd23f');splash(CX,CY,'#8a5a2a',26);sfxHair();o.st='gone';
-     }else{if(RL)RL.lastIn=Math.round(duel?RL.n:(performance.now()-RL.t0)/1000);if(duel){campS=0;stat('mxLet');}stat('toys');streak++;statMax('bestStreak',streak);if(rdFirst&&o.isNew)stat('newFirst');rdFirst=false;if(o.bn)stat('rebounds');collected++;combo++;bestCombo=Math.max(bestCombo,combo);statMax('bestCombo',bestCombo);collectedToys.push(o.em);
+     }else{if(RL)RL.lastIn=Math.round(RL.n);if(duel){campS=0;stat('mxLet');}stat('toys');streak++;statMax('bestStreak',streak);if(rdFirst&&o.isNew)stat('newFirst');rdFirst=false;if(o.bn)stat('rebounds');collected++;combo++;bestCombo=Math.max(bestCombo,combo);statMax('bestCombo',bestCombo);collectedToys.push(o.em);
        const fpN2=collected/need,fpPrev=(collected-1)/need;
        if(fpN2>=.85&&fpPrev<.85)pop(CX,CY-46,'Gonna Overflow?!','#ff4400');else if(fpN2>=.6&&fpPrev<.6)pop(CX,CY-46,"It's Getting Hotter!",'#ff8a1a');else if(fpN2>=.35&&fpPrev<.35)pop(CX,CY-46,"It's Getting Bigger!",'#ffd23f');
        if(combo===3)pop(190,150,'Look, Daddy, Look!','#7fd0ff');
