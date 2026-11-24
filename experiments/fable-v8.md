@@ -368,3 +368,13 @@ devices is OK (he sets up the account when asked); the one-line privacy and list
   this. They are bluffing tools, and whether they work on a person is not known until two people play. Tested with two
   pages on a local relay (`two-device-tricks.js`): both screens agree on the decoy, Max's energy, the rocket and both
   toys of a double. Not tested on phones.
+- v8.17 (TEST ONLY): Derek, two phones: "When I left the game, it said computer took over but max wasn't moving and the
+  toys weren't moving". Not reproduced exactly as described (Push, both sides, leaving by Home, a dead page, a page
+  that sleeps: the computer took over and played in every run). Two real faults found on the way and fixed:
+  (1) if the Noah player left a **Swipe** match, the computer Noah wound up for ever and never threw (he only knows
+  Push); a take-over now switches the match to Push. (2) a phone that goes to sleep keeps its connection open for a
+  while and says nothing, so the other screen stood still with no message (Max's screen: clock and toys frozen);
+  now 3 seconds of silence (`NET_QUIET`) counts as gone and the computer takes over. Scripts:
+  `two-device-noahleaves.js`, `two-device-maxleaves.js`, `two-device-background.js`. The computer Max reacts with a
+  delay (0.8 s at stage 5) and barely moves at stage 1, which can look like standing still.
+

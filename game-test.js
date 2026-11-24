@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v8.16'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v8.17'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -149,7 +149,8 @@ function duelGo(){const q=PF.list[PF.cur];if(duel.role==='noah'){lastPackN=duel.
  if(duel.role==='max'){q.mxN=(q.mxN||0)+1;pfSave();lastPack=duel.pack.slice();duel.bag=duel.pack.map(k=>({k}));}
  if(duel.net){duel.ready=true;netSend({t:'rdy',sw:swipeMode?1:0});state='duelwait';netMaybeGo();return;} // two devices: wait until both are ready
  duelStart();}
-function duelStart(){banner='Stage '+duel.stage+(duel.role==='max'?': Block The Toys!':': Splash Away!');bannerT=3;state='play';lastNow=performance.now();acc=0;}
+const NET_QUIET=3000;
+function duelStart(){if(duel.net)duel.rxT=performance.now();banner='Stage '+duel.stage+(duel.role==='max'?': Block The Toys!':': Splash Away!');bannerT=3;state='play';lastNow=performance.now();acc=0;}
 // THE BLOCK RULE in a match: a rising toy that touches Max, anywhere from his raised hands down to his chest, is
 // blocked. Height never matters to the player: if it would pass through him, he gets it. The Pool Noodle widens him.
 const maxReach=()=>TUNE.reach*(duel.mx.noodle>0?1.7:1);
@@ -174,7 +175,9 @@ function powFx(k,dir){const D=duel,m=D.mx;pop(blk.x,blk.y-58,POWNAME[k]+'!','#7f
   if(charging&&charging.cpu&&!D.net){charging=null;D.cpu.wait=SPLASH_T*.8;}else if(charging&&D.net!=='M'){charging=null;} // the wave knocks the toy out of Noah's hand
  }else if(k==='noodle')m.noodle=10;else if(k==='flip')m.flip=10;else if(k==='bucket')m.bucket=12;else if(k==='bubble')m.bub=5;else if(k==='juice'){m.e=1;m.juice=JUICE_T;sparkle(blk.x,blk.y+34,14);mood(mxc,'laugh',1.2);hop(mxc,3);}
  else if(k==='blast'){D.jet=.4;sfxSplash();if(D.net!=='N')objs.forEach(o=>{if(o.st==='fly'&&!o.blocked&&Math.abs(o.x-blk.x)<BLAST_W&&o.y<blk.y+60)maxBlock(o,false,true);});}}
-function duelStep(dt){const D=duel,m=D.mx;D.t+=dt;if(D.tut&&D.tut.lock)m.tx=CX;if(D.max==='cpu')cpuMax(dt);
+function duelStep(dt){const D=duel,m=D.mx;D.t+=dt;
+ if(D.net&&D.rxT&&performance.now()-D.rxT>NET_QUIET){netDrop();} // both devices talk many times a second: silence means the other phone is asleep or gone, so the computer takes over now instead of the match standing still
+ if(D.tut&&D.tut.lock)m.tx=CX;if(D.max==='cpu')cpuMax(dt);
  // Max: a dive in progress, or swimming toward where he is steered at a limited speed (Flippers: faster)
  if(D.max==='net'){blk.x+=(D.rx-blk.x)*.4;}else
  {const x0=blk.x;if(m.dive>0){m.dive-=dt;blk.x+=clamp(m.dx-blk.x,-DIVE_SPD,DIVE_SPD);if(Math.abs(m.dx-blk.x)<1)m.dive=0;}else{const sp=TUNE.spd*lerp(TIRED,1,m.e)*(m.flip>0?1.7:1);blk.x+=clamp(m.tx-blk.x,-sp,sp);}
@@ -1328,10 +1331,11 @@ function netBegin(){const N=net,q=PF.list[PF.cur];if(!N||N.st!=='paired')return;
 function netSetup(m){const N=net;if(!N||!Array.isArray(m.toys))return;N.stage=clamp(m.stage|0,1,10);N.st='playing';startDuel(N.stage,N.side,false,{net:N.side==='noah'?'N':'M',seed:m.seed|0,toys:m.toys.map(String),wear:Array.isArray(m.wear)?m.wear:[]});}
 function netMaybeGo(){const D=duel;if(D&&D.net==='N'&&D.ready&&D.peerReady&&state==='duelwait'){netSend({t:'go'});duelStart();}}
 function netDrop(){const D=duel,N=net;if(!D||!D.net)return; // the other device has gone
- if(state==='play'){D.wasNet=true;D.net=null;if(D.max==='net')D.max='cpu';if(D.noah==='net'){D.noah='cpu';if(charging)charging=null;}banner='They Left. The Computer Took Over.';bannerT=3.5;net=null;if(N&&N.ws){try{N.ws.close();}catch(e){}}}
+ if(state==='play'){D.wasNet=true;D.net=null;if(D.max==='net')D.max='cpu';if(D.noah==='net'){D.noah='cpu';swipeMode=false;charging=null;pendingLaunch=null;swingT=0;} // the computer Noah only knows the Push throw: left in Swipe he wound up for ever (v8.17)
+  banner='They Left. The Computer Took Over.';bannerT=3.5;net=null;if(N&&N.ws){try{N.ws.close();}catch(e){}}}
  else if(state==='duelend'||state==='erupt'){D.wasNet=true;D.net=null;net=null;if(N&&N.ws){try{N.ws.close();}catch(e){}}}
  else{goMenu(true);if(net===N&&N){netFail(N,'The other player left.');}else net={how:'start',st:'error',err:'The other player left.',t0:uiT};mpPg=2;mpT0=uiT||.001;}}
-function netMsg(N,m){const D=duel,q=PF.list[PF.cur];
+function netMsg(N,m){const D=duel,q=PF.list[PF.cur];if(D)D.rxT=performance.now();
  if(m.t==='cfg'){if(N.role==='join'&&N.st==='paired'){N.stage=clamp(m.stage|0,1,10);N.side=m.side==='max'?'noah':'max';}return;}
  if(m.t==='start'){if(N.role==='join')netBegin();return;}
  if(m.t==='again'){if(D&&(state==='duelend'||state==='duelwait'||state==='duelbag'||state==='duelintro')){goMenu(true);mpPg=2;mpT0=uiT||.001;N.st='paired';N.t0=uiT;}return;}
