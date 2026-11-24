@@ -351,3 +351,5 @@ devices is OK (he sets up the account when asked); the one-line privacy and list
     a second page opening the link and being paired, a bad link, a dead link. Not known until Derek tries: the real
     iPhone share sheet, and that a link tapped in Messages opens in Safari, not in the home-screen app (so the
     friend plays as their Safari player, not their home-screen one).
+- 2026-11-24: **Derek: the invite link works on real phones** ("Holy shit, it actually works", v8.15). Not yet reported: how a whole
+  two-phone match plays (delay, late blocks, the flick tell).
