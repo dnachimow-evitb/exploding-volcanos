@@ -409,4 +409,21 @@ devices is OK (he sets up the account when asked); the one-line privacy and list
 - v8.20 (TEST ONLY): Derek: "make Noah vs Smart Max as a sub choice under easy and hard". Start screen is Noah, Max,
   Multiplayer again (full-width buttons). Noah, then Push/Swipe, then Easy / Hard / **Smart Max**. Smart Max keeps the
   throw already chosen, so its "You Are Noah!" card has one Next button instead of Push/Swipe.
+- v8.21 (TEST ONLY): Derek's screen recording of the Max game, round 1: "too easy; toy wasn't floating and I just stood
+  in the same spot as Max and Noah was toast". The recording shows one duck left near the middle, Max parked on its
+  only path, Blocks 14 to 21 in 17 seconds. **This is a hole in the match rules, not a tuning miss**, and is probably
+  also his earlier "Max wasn't moving and the toys weren't moving ... destined to lose" (v8.17): a Push throw has one
+  path per toy position, toys barely drifted in early rounds, a block dropped the toy back where it came from, and
+  energy only slows swimming, so a Max who does not need to swim blocks for ever.
+  - **Fix (matches only): a blocked toy is swatted across the tub** (`swat`, `SWAT`): it lands on the far side from
+    where it was thrown, so Max has to swim for the next throw and his energy matters. Toys also drift faster in a
+    match (`DUEL_DRIFT` .8). The throw itself is unchanged; the original game is unchanged.
+  - Tried and dropped: (a) "too tired to block": outcome became arithmetic, every scripted Max lost at tire .35 and
+    every one won at .2; (b) a computer Noah that waits for an unguarded lane: it only ran down his own clock.
+  - `CAMP` retuned for the new rule: skill .15 to .8, clock x1.3 to x1.2. `camp.js`, 24 games a round, no powers or
+    dives: quick Max 83 79 63 75 75 54 46 38 17 38; slower 38 58 42 33 8 25 8 0 4 29; a Max who shadows the toys with
+    no thought 50 33 8 21 0 4 0 0 0 0; a Max who stands in the middle 4 0 0 0 0 0 0 0 0 0. Round 10 is still easier
+    than round 9. Smart Max (`noah.js`): Noah skill .2: 100 100 83 63 58 17 13 4 0 0; skill .6: 100 x6, 96 83 83 42.
+  - The match fingerprint (`fp.js`) changed on purpose: now [[2,2521,17,1,651229356],[6,3421,23,4,1917037585],[9,3112,20,11,2357667211]].
+  - Two-phone matches get the same rule. Two pages on a local relay agreed on score and blocks. Not played by people.
 

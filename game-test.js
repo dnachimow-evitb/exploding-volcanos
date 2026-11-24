@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v8.20'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v8.21'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -143,13 +143,13 @@ function startDuel(stage,role,now,nt){const q=PF.list[PF.cur];stage=clamp(stage|
  if(role==='noah'&&!nt)duel.bag=(stage>=10?['bubble','noodle','juice']:stage>=8?['noodle','juice']:stage>=6?['noodle']:[]).map(k=>({k})); // what the computer Max packs
  duel.nbag=[];{const have={...q.pw};for(const k of(role==='noah'?lastPackN:lastPack))if(have[k]>0&&duel.pack.length<3){have[k]--;duel.pack.push(k);}}
  RS=nt?(nt.seed>>>0)||1:(Date.now()>>>0)||1;swipeMode=false;hardMode=false;streak=0;round=stage;score=0;bestCombo=0;currentToys=nt?nt.toys.filter(e=>ALL_TOYS.includes(e)).slice(0,stage+2):q.line.slice(0,stage+2);LINE={};newToyEm=null;landed=[];objs=[];ejecta=[];confet=[];scoreShown=0;lastScore=0;mpT0=0;
- startRound(false);blk.on=true;blk.spd=0;blk.x=CX;blk.dir=1;timeLeft=roundTime=Math.round(diff().time*TUNE.clock*(!nt&&role==='max'?lerp(CAMP.c0,CAMP.c1,(stage-1)/9)/TUNE0.clock:1));if(!nt&&role==='max')duel.cpu.k=lerp(CAMP.k0,CAMP.k1,(stage-1)/9);tutOn=false;hintT=0;
+ startRound(false);objs.forEach(o=>{o.vx=Math.sign(o.vx||1)*Math.max(Math.abs(o.vx),DUEL_DRIFT);});blk.on=true;blk.spd=0;blk.x=CX;blk.dir=1;timeLeft=roundTime=Math.round(diff().time*TUNE.clock*(!nt&&role==='max'?lerp(CAMP.c0,CAMP.c1,(stage-1)/9)/TUNE0.clock:1));if(!nt&&role==='max')duel.cpu.k=lerp(CAMP.k0,CAMP.k1,(stage-1)/9);tutOn=false;hintT=0;
  state=role==='max'?'duelbag':'duelintro';if(now)duelGo();} // matches open on the bag card (a new player is sent to Max School first, see playMax); now: straight in (tests)
 // SOLO GAMES (v8.19, Derek): playing the computer is not Multiplayer. From the start screen: Noah (the original game),
 // Max (ten rounds against the computer Noah) and Noah Vs Smart Max (ten rounds against the Max that reacts, with tricks).
 // The two new ones are a "duel" without a connection: win a round to reach the next, lose and try it again.
 // CAMP: how the computer Noah's skill and the clock grow over the ten rounds of the Max game (measured: experiments/sim/camp.js).
-const CAMP={k0:.4,k1:1,c0:1.6,c1:1.5};let campBlocks=0,campS=0;
+const CAMP={k0:.15,k1:.8,c0:1.3,c1:1.2};let campBlocks=0,campS=0;
 const solo=D=>!!D&&!D.net&&!D.wasNet&&!D.tut;
 function startCamp(role,keep){if(!keep){campBlocks=0;campS=0;}const r=keep||(TEST&&testRound>1?testRound:1);startDuel(r,role);if(!keep&&role==='max')stat('mxGames');}
 function duelGo(){const q=PF.list[PF.cur];if(duel.role==='noah'){lastPackN=duel.pack.slice();duel.nbag=duel.pack.map(k=>({k,armed:false}));}
@@ -161,7 +161,14 @@ function duelStart(){if(duel.net)duel.rxT=performance.now();banner=(duel.net?'St
 // THE BLOCK RULE in a match: a rising toy that touches Max, anywhere from his raised hands down to his chest, is
 // blocked. Height never matters to the player: if it would pass through him, he gets it. The Pool Noodle widens him.
 const maxReach=()=>TUNE.reach*(duel.mx.noodle>0?1.7:1);
+// v8.21 PARKING FIX (Derek's recording: one toy left, Max stood on its only path and blocked 21 throws in a row).
+// In matches only: (1) a blocked toy is SWATTED ACROSS THE TUB (it lands on the far side from where it was thrown), so the
+// next throw comes from a new place and Max has to swim for it, which is where his energy matters; (2) toys drift faster
+// (DUEL_DRIFT), so no lane stays put. Tried and dropped: "too tired to block" (the result became pure arithmetic: every
+// scripted Max lost at tire .35 and every one won at .2) and a computer Noah who waits for a clear lane (it only ran his clock down).
+const DUEL_DRIFT=.8,SWAT={a:70,b:60};
 function maxHit(o){return !(duel.tut&&duel.tut.noBlock)&&o.vy<0&&Math.abs(o.x-blk.x)<maxReach()*(o.fast?ROCKET_REACH:1)&&o.y>blk.y-TUNE.reach&&o.y<blk.y+74;}
+function swat(o){const vy=Math.abs(o.vy)*.5+1,h=Math.max(20,452-o.y),t=(-vy+Math.sqrt(vy*vy+2*G*h))/G,far=o.vx>0?1:-1,tx=CX+far*(SWAT.a+rnd()*SWAT.b);o.vy=vy;o.vx=(tx-o.x)/Math.max(8,t);} // o.vx>0: it was thrown from the left, so it lands on the right
 // a match that lasted at least 20 seconds pays one random charge, and a second for winning
 function duelReward(won){const q=PF.list[PF.cur],D=duel;if(D.t<20)return;D.coins=COIN_DUEL[won?1:0];q.coins=(q.coins||0)+D.coins;for(let i=0;i<(won?2:1);i++){const k=ALLPW[~~(rnd()*ALLPW.length)][0];q.pw[k]++;D.earned.push(k);}pfSave();}
 function duelEnd(w){const D=duel;if(D.net==='N')netSend({t:'end',w});if(D.mx.held){D.mx.held.o.st='float';D.mx.held=null;}if(w==='max'&&D.role==='max'&&!D.net&&!D.wasNet){const q=PF.list[PF.cur];if(D.stage>(q.mxBest||0))q.mxBest=D.stage;
@@ -173,7 +180,7 @@ function mxCount(o,dive){stat('mxBlocks');if(o.hb)stat('mxHair');if(dive)stat('m
 function maxBlock(o,free,jet){const D=duel,m=D.mx;if(D.net==='M')netSend({t:'B',i:o.id,c:m.bucket>0&&!m.held?1:0,j:jet?1:0});D.blocks++;haptic(2);o.blocked=1;if(!free)m.e=Math.max(0,m.e-TUNE.tire); // a block tires him, and so does a hit with the Squirt Blaster (jet)
  if(o.dc){if(!free)m.e=Math.max(0,m.e-TUNE.tire*(DECOY_TIRE-1));D.blocks--;o.st='gone';waterBurst(o.x,o.y,false);pop(blk.x,blk.y-36,'Fooled! A Decoy!','#7fe0ff');sfxBlock();mood(mxc,'wow',1);mood(noah,'cheer',1);return;} // he spent the energy and got nothing
  if(m.bucket>0&&!m.held){mxCount(o,D.dove>0);m.bucket=0;m.held={o,t:BUCKET_T};if(!free)m.e=Math.min(1,m.e+TUNE.tire);o.st='held';pop(blk.x,blk.y-40,'In The Bucket!','#ffb020');sfxBlock();mood(mxc,'gotcha',1.1);hop(mxc,3.2);mood(noah,'wow',.8);combo=0;streak=0;return;} // caught: out of play for 4 seconds
- mxCount(o,D.dove>0);o.vy=Math.abs(o.vy)*.5+1;o.vx=jet?(o.x<CX?-3:3):o.vx*-.5;shake=3;rdBlock++;pop(blk.x,blk.y-36,'Max Got It!','#ffb020');sfxBlock();mood(mxc,'gotcha',1.1);hop(mxc,3.2);mood(noah,'wow',.8);}
+ mxCount(o,D.dove>0);if(jet||D.tut){o.vy=Math.abs(o.vy)*.5+1;o.vx=jet?(o.x<CX?-3:3):o.vx*-.5;}else swat(o);shake=3;rdBlock++;pop(blk.x,blk.y-36,'Max Got It!','#ffb020');sfxBlock();mood(mxc,'gotcha',1.1);hop(mxc,3.2);mood(noah,'wow',.8);}
 function usePower(k,free){const D=duel,m=D.mx,q=PF.list[PF.cur];if(state!=='play'||paused)return;
  if(free){if(!D.free)return;D.free=0;}else{const i=D.bag.findIndex(b=>b.k===k);if(i<0||(!D.tut&&D.max!=='cpu'&&!(q.pw[k]>0)))return;D.bag.splice(i,1);if(!D.tut&&D.max!=='cpu'){q.pw[k]--;pfSave();}} // Max School lends the powers; nothing leaves the player's stock there
  D.usedPow=true;stat('mxPow');
@@ -334,7 +341,7 @@ function flyStep(o,d){
    }else if((o.vy>0&&o.y>=448)||(!swipeMode&&(o.x<22||o.x>358))){
      combo=0;streak=0;
      if(o.hb||o.dc){o.st='gone';waterBurst(Math.max(40,Math.min(340,o.x)),456,false);}
-     else{rdMiss++;stat('misses');o.st='float';o.x=Math.max(58,Math.min(322,o.x));o.y=Math.max(448,Math.min(o.y,486));o.vx=(rnd()<.5?-1:1)*floatSpd(d)*(round>=3?1:.4);o.vy=0;o.blocked=0;
+     else{rdMiss++;stat('misses');o.st='float';o.x=Math.max(58,Math.min(322,o.x));o.y=Math.max(448,Math.min(o.y,486));o.vx=(rnd()<.5?-1:1)*(duel?Math.max(DUEL_DRIFT,floatSpd(d)):floatSpd(d)*(round>=3?1:.4));o.vy=0;o.blocked=0;
        waterBurst(o.x,o.y-6,false);pop(o.x,o.y-30,'Splash! Try Again!','#dff4ff');sfxPlop();mood(noah,'oops',.9);mood(mxc,'laugh',.8);mood(vol,'aww',.9);}
    }
 }
