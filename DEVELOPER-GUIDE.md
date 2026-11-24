@@ -143,6 +143,9 @@ Conventions:
   Match. Playing Max against the computer stays as practice, and the computer fills in when nobody is found or a
   player drops. Be Noah against the computer was removed in v8.11 ("that is the main game") and put back in v8.18 at Derek's request: the computer Max here reacts to the throw ("like basketball defense") and the tricks work on him, so it is a different game from the main one. Ask before building
   a helper mode he did not request.
+- **Where the computer lives (Derek, 2026-11-24, v8.19):** playing the computer is a MAIN GAME feature, not Multiplayer. The start
+  screen offers Noah (the original), Max and Noah Vs Smart Max (both ten rounds, `startCamp`); Multiplayer is people only, and the
+  computer appears there only when a player drops or quits. This replaces the 2026-11-23 note above where they differ.
 - **Derek's rule for Multiplayer (2026-11-17): the physics is not to change; fix what the player sees.** To prove a
   change is picture-only, run `experiments/sim/fp.js` before and after: the fingerprint line must be identical.
 - A bare tap area pushed to `hits` with `now:true` runs its action inside the tap itself (needed for copying to the

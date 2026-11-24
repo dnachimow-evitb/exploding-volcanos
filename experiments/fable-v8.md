@@ -384,4 +384,26 @@ devices is OK (he sets up the account when asked); the one-line privacy and list
   Your Tricks, play. Checked in a browser at stage 8: three decoys thrown near the computer Max, he swatted all three
   and lost 55 to 70% energy each time. Balance against the computer is the v8.16 table (Double strong; Decoy and
   Rocket no gain when fired blindly); whether a person timing a decoy before a real throw gains from it is not measured.
+- v8.19 (TEST ONLY): Derek, four tasks at once: (1) decouple the computer from Multiplayer and make playing it a main
+  game feature ("playing as max is no different than playing as Noah in the original game"; Multiplayer only for
+  people; the computer only on a connection failure or a quit); (2) parallel badges for Max; (3) the Max game gets
+  harder round by round like Noah's; (4) Max against the computer was too easy. Asked where the reacting Max for a
+  Noah player should go: **"A third main-game choice"**.
+  - **Start screen: Pick A Game.** Noah (the original, then Push/Swipe, then Easy/Hard: one more tap, play unchanged),
+    Max, Noah Vs Smart Max, and Multiplayer ("Play A Person"). `menuStep` 0/1/2.
+  - **Solo games** (`startCamp`, `solo(D)`): the two new ones are a duel without a connection, played as ten rounds.
+    Win: Next Round. Lose: Try Again (same round). Round 10 won: +25 coins, Play Again from round 1. Cards say Round,
+    not Stage. Smart Max asks Push/Swipe once, then goes straight to Pack Your Tricks each round.
+  - **Multiplayer card**: Play A Person and Max School only. The old Play The Computer card survives on the test page
+    as "Test: Any Round + Tuning".
+  - **Max's badges**: twelve more in `BADGES` (`mx:1`), stats `mx*` in `ST0`, counted only in the solo Max game
+    (`statSet`), same coins per level. Badges card: Noah's 1-2, Max's 3-4, Noah's stats, Max's stats. Smart Max has no
+    badges yet (only `nhBest`).
+  - **Difficulty** (`CAMP`, `experiments/sim/camp.js`, scripted Max with no powers and no dives, 40 games a round).
+    Before: quick player 100 100 100 100 95 80 80 65 65 50; slower player 90 90 90 90 70 25 35 15 5 10 (a walkover
+    for four rounds, then a cliff). Now the computer Noah starts at skill .4 (was 0) and the clock is x1.6 falling to
+    x1.5 (was x1.3): quick 100 100 85 65 75 43 55 53 40 55; slower 73 75 45 33 28 20 25 10 8 18. A bag of powers adds
+    to these. Round 10 still reads easier than round 9 (V8-2A). Two-phone matches are unchanged (fingerprint identical).
+  - Not done: How To Play pages for the new games; badges for Smart Max; whether three powers every round make the
+    Max game too easy again is not measured.
 

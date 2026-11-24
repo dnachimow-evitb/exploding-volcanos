@@ -90,6 +90,11 @@ The goal of the whole version (Derek, 2026-11-17): make the game stickier. Judge
 - [ ] **V8-63** S. Dress Up: the "Noah" button covers both boys; Max wears the 12 existing pieces.
 - [ ] **V8-64** S. How To Play pages for Multiplayer, Max's controls, powers and the Daily Bath.
 
+- [x] **V8-65** L. (v8.19) Computer games moved to the start screen: Noah, Max (ten rounds), Noah Vs Smart Max (ten rounds);
+      Multiplayer is people only. Max's twelve badges and stats. Max game retuned to climb round by round.
+- [ ] **V8-66** (Derek) Play the Max game from round 1: is the climb right, is it still too easy with a full bag? **<- waiting on this**
+- [ ] **V8-67** S. Badges for Noah Vs Smart Max; How To Play pages for the two new games.
+
 ## Milestone 7: Polish and release
 - [ ] **V8-70** M. Winner lettering, sounds, moods for both boys, haptics where the phone allows.
 - [ ] **V8-71** S. Privacy policy and support page: the line about online play (wording by the writing model).
