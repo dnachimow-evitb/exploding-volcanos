@@ -9,7 +9,7 @@ await A.tap(201,300);await A.tap(201,300);await A.tap(200,400);console.log('stag
 await A.tap(0,1200);console.log('after Play: A',await A.ev(()=>state+' net='+duel.net+' role='+duel.role),'| B',await B.ev(()=>state+' net='+duel.net+' role='+duel.role));
 console.log('same toys in the same places:',JSON.stringify(await A.ev(()=>objs.map(o=>o.em+Math.round(o.x)).join()))===JSON.stringify(await B.ev(()=>objs.map(o=>o.em+Math.round(o.x)).join())),await A.ev(()=>objs.length));
 await A.tap(0,700);console.log('A ready:',await A.ev(()=>state),'B still',await B.ev(()=>state));await A.shot('x3');
-await B.tap(0,1200);console.log('both go: A',await A.ev(()=>state),'B',await B.ev(()=>state));
+await B.tap(0,500);await B.tap(0,1200);console.log('both go: A',await A.ev(()=>state),'B',await B.ev(()=>state));
 const ba=await A.p.locator('#c').boundingBox(),K=await A.ev(()=>KS);
 // B plays Noah (press the toy furthest from Max, hold until green, let go); A steers Max onto the wind-up it sees
 await A.p.mouse.move(ba.x+190*K,ba.y+650*K);await A.p.mouse.down();
@@ -29,7 +29,7 @@ await A.shot('x7');await B.shot('x8');
 // Play Again brings both back to the Connected card; then a second match where B's phone vanishes mid-match
 await B.tap(0,900);console.log('again: A',await A.ev(()=>state+' '+(net&&net.st)),'B',await B.ev(()=>state+' '+(net&&net.st)));
 await A.tap(2,400);console.log('swapped: A',await A.ev(()=>net.side),'B',await B.ev(()=>net.side));await A.tap(2,400);
-await A.tap(0,1200);await A.tap(0,600);await B.tap(0,1500);console.log('match 2: A',await A.ev(()=>state),'B',await B.ev(()=>state));
+await A.tap(0,1200);await A.tap(0,600);await B.tap(0,500);await B.tap(0,1500);console.log('match 2: A',await A.ev(()=>state),'B',await B.ev(()=>state));
 await B.p.close();await A.p.waitForTimeout(2500);console.log('B gone: A',JSON.stringify(await A.ev(()=>({st:state,net:duel.net,noah:duel.noah,banner,netObj:net===null}))));
 await A.p.waitForTimeout(4000);console.log('computer Noah is throwing:',await A.ev(()=>!!charging||objs.some(o=>o.st==='fly')||collected>0||duel.blocks>0));
 console.log('errors',L.errs);await L.b.close();})();

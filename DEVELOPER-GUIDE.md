@@ -228,6 +228,14 @@ Done once so far: `speedboat` became `train` in v7.31 (too similar to the tugboa
 5. Measure it: `experiments/sim/pow.js` plays scripted matches with a power packed three times. At v8.8 the seven
    powers each lift Max's win rate by 15 to 22 points; keep a new one in that band (how to run: `experiments/fable-v8.md`, v8.5).
 
+### Add a trick for Noah (Multiplayer, v8.16)
+1. Add a row to `TRK` (`['key','Name',0]`) and a line in `POWDESC`. Tricks share the stock, price and rewards of
+   Max's powers (`ALLPW`); the bag card shows `TRK` to the Noah player and `POW` to the Max player.
+2. Say what it does in `doLaunch`: `take('key')` is true when that trick was armed for this throw. A flag the other
+   device must know goes into the `L` message (see `tell`) and is read in `netMsg`.
+3. Draw it in `powIcon`. The button label is the first word of the name (`drawDuelBar`).
+4. Measure it with `experiments/sim/tricks.js`, and play `two-device-tricks.js` against a local relay.
+
 ### Change the default 12 toys or the number of rounds
 `BASE` (3 starting toys) + `NEWBY` (round 2..10) make `DEF_LINE`, which must stay 12 long. More rounds also
 needs: more rows in `DIFF`, the `round>=10` checks in `roundWin`, "/10" in the HUD, the win card text, the

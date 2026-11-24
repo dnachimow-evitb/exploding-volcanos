@@ -52,7 +52,7 @@ The goal of the whole version (Derek, 2026-11-17): make the game stickier. Judge
       GitHub workflow. Depends V8-30. Check the free-plan limits again at build time.
 - [x] **V8-32** M. (v8.12, plus Quick Match and a Connected card with Wave) Start A Game (four-letter code) and Join A Game (type it on the game's letter keys).
 - [x] **V8-38** (Derek) Two phones connected with a code on v8.12 and Wave worked (2026-11-23). Quick Match on real phones confirmed too (2026-11-23).
-- [ ] **V8-3C** (Derek) Play a whole match on two phones on v8.13, both sides, Push and Swipe. **<- waiting on this**
+- [x] **V8-3C** (Derek) A whole match on two phones worked (2026-11-24). Not reported: both sides, Swipe, how the delay feels.
 - [ ] **V8-39** S. Quick Match pairs strangers: recheck Apple's age rating and App Privacy answers before release; names are
       already hidden there.
 - [x] **V8-33** L. (v8.13, first playable; tested with two pages on a local relay, not on phones) Match over the connection: Noah's device runs it; Max's device sends steering and draws
@@ -67,7 +67,9 @@ The goal of the whole version (Derek, 2026-11-17): make the game stickier. Judge
 - [x] **V8-40** M. (v8.3) Charges owned per player; the bag (pack up to 3); spend on use; unused come home.
 - [x] **V8-41** M. (v8.3) Max: Big Splash (one free per match), Pool Noodle, Flippers.
 - [x] **V8-42** M. (v8.3) Max: Bucket, Squirt Blaster, Bubble Bath.
-- [ ] **V8-43** M. Noah: Decoy Duck, Rocket Throw, Double Throw.
+- [x] **V8-43** M. (v8.16; two pages on a local relay, not on phones) Noah: Decoy Duck, Rocket Throw, Double Throw.
+- [ ] **V8-47** (Derek) Play Noah with the tricks on two phones. In simulation Double Throw is strong; Decoy and Rocket
+      showed no gain when used blindly, so they may need more bite. **<- waiting on this**
 - [x] **V8-44** S. (v8.3) Earning: one charge per finished match, a second for winning; buy with coins.
 - [ ] **V8-45** S. Power bubble in the main game from round 4.
 - [x] **V8-46** S. (v8.3, Max's) Draw each power in the boy's hands in the game.

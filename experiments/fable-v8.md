@@ -353,3 +353,18 @@ devices is OK (he sets up the account when asked); the one-line privacy and list
     friend plays as their Safari player, not their home-screen one).
 - 2026-11-24: **Derek: the invite link works on real phones** ("Holy shit, it actually works", v8.15). Not yet reported: how a whole
   two-phone match plays (delay, late blocks, the flick tell).
+- 2026-11-24: Derek: "The match worked, build Noah's tricks next" (a whole two-phone match plays).
+- v8.16 (TEST ONLY): **Noah's tricks** (V8-43). Three charges for the person playing Noah, kept in the same stock as
+  Max's powers (`q.pw`; `TRK`, `ALLPW`): Decoy Duck (a copy of the toy flies, the real one stays; swatting it tires Max
+  twice a block, `DECOY_TIRE`), Rocket Throw (the toy flies two physics steps a frame, and Max must be closer to swat
+  it, `ROCKET_REACH`=.6), Double Throw (a second toy goes too, from the other side, thrown true). Noah's device: after
+  Push/Swipe comes "Pack Your Tricks" (the bag card, three tricks), then buttons along the bottom; a tap arms the trick
+  ("Ready") and spends the charge, and the next throw uses it (`useTrick`, `doLaunch`). Flight moved into `flyStep`
+  (no change to the main game: fingerprint identical). Over the connection: the `L` message carries `f` (rocket) and
+  `dc`/`em` (decoy); a decoy has its own id (900+), is left out of snapshots and lives on each device by itself.
+  Match rewards now draw from all ten items. Measured (`experiments/sim/tricks.js`, scripted Noah with three of one
+  trick, used on his first throws, against the computer Max, 30 matches a stage): Double Throw lifts Noah's win rate
+  10 to 19 points; **Decoy Duck and Rocket Throw show no gain within the noise (about 8 points)** used blindly like
+  this. They are bluffing tools, and whether they work on a person is not known until two people play. Tested with two
+  pages on a local relay (`two-device-tricks.js`): both screens agree on the decoy, Max's energy, the rocket and both
+  toys of a double. Not tested on phones.
