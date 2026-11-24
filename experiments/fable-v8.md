@@ -446,4 +446,19 @@ devices is OK (he sets up the account when asked); the one-line privacy and list
   tired, longest stand-still, the Easy/Fun/Hard taps) and a list of flags: TOO EASY / TOO HARD (needs 3 first tries),
   A WALL (4 tries), NEVER IN DOUBT, PARKING, player says EASY/HARD, STOPPING AFTER A LOSS. The targets are my starting
   guesses, to be corrected by what Derek says felt right.
+- 2026-11-24: **Derek's first test log** (11 rounds, Smart Max, Swipe, iPhone 402x714, v8.23). Rounds 1 to 8 won on the
+  first try with 26 to 39 seconds left and only 1 to 4 blocks (9 in round 8); round 9 lost once then won; round 10 won
+  with 10 seconds left after 42 throws. So: rounds 1 to 8 a walkover, 9 and 10 about right. No Easy/Fun/Hard taps.
+  **Every line carried `tune tire=0.15`**: his phone had an old value saved from the tuning panel (default .35), so all
+  his recent testing ran with cheap energy. As Max that made blocking and diving nearly free (part of "too easy"); in
+  Smart Max it helped the computer Max (35 dives a round), so at the default he would have won even more easily.
+- v8.24 (TEST ONLY): from that log. (1) The tuning panel saves under a new key, so every phone is back on the defaults,
+  and the test page's version label says "TUNING CHANGED" whenever the panel is off them. (2) The computer Max is sharper
+  in the EARLY rounds only (`CMX` round-1 ends: reaction 1.1 to .8 s, misjudge 60 to 40, dives 0 to .3, sleeps through
+  a throw .55 to .3, guards a flick .05 to .5) and gets `fit` (.6 to .43): a block or dive costs the computer that share
+  of a person's cost, which at round 10 equals what Derek played against (.15/.35). Scripts cannot stand in for him:
+  the closest (`swipe.js` level [.2,1.4,.3,.97]) was blocked 3 to 5 times as often as he was, because he steers and
+  banks. Against that script: before 100 100 100 100 81 50 50 25 25 0, now 94 100 88 88 56 50 19 19 19 0. A beginner
+  script now wins round 1 88% and round 2 38%: Smart Max is the hard choice and plays like it. Push (`noah.js`):
+  skill .6 gives 100 100 100 95 85 70 70 40 35 0. Next log decides the next step.
 

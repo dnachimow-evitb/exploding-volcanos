@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v8.23'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v8.24'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -198,12 +198,12 @@ function duelReward(won){const q=PF.list[PF.cur],D=duel;if(D.t<20)return;D.coins
 function duelEnd(w){const D=duel;logEnd(w===D.role?'WIN':'LOSS');if(D.net==='N')netSend({t:'end',w});if(D.mx.held){D.mx.held.o.st='float';D.mx.held=null;}if(w==='max'&&D.role==='max'&&!D.net&&!D.wasNet){const q=PF.list[PF.cur];if(D.stage>(q.mxBest||0))q.mxBest=D.stage;
   stat('mxRounds');statMax('mxBestRound',D.stage);if(!collected)stat('mxShut');if(!D.usedPow)stat('mxNoPow');if(need-collected===1)stat('mxClose');if(D.stage>=8)stat('mxLate');if(D.stage>=10){stat('mxWins');q.coins=(q.coins||0)+COIN_WIN;}}duelReward(w===D.role);pfSave();D.over=w;charging=null;pendingLaunch=null;swingT=0;state='duelend';mood(mxc,'laugh',6);hop(mxc,3.2);mood(noah,'oops',2.5);sfxFanfare();}
 // DIVE: tap a spot and Max lunges there fast. It costs the same energy as a block, and he needs that much left.
-function maxDive(x){const m=duel.mx;if(state!=='play'||paused)return;duel.dives=(duel.dives||0)+1;if(m.e<TUNE.tire){duel.dives--;if(NOW-duel.tired>1.2){duel.tired=NOW;pop(blk.x,blk.y-40,'Too Tired To Dive!','#ffd23f');blip(200,.12,'sawtooth',.12,120);}return;}m.dive=DIVE_T;duel.dove=1.2;if(RL)RL.dv++;m.dx=clamp(x,MAX_L,MAX_R);m.tx=m.dx;m.e-=TUNE.tire;waterBurst(blk.x,blk.y+78,true);blip(300,.16,'triangle',.18,760);haptic(1);mood(mxc,'gotcha',.5);}
+function maxDive(x){const m=duel.mx;if(state!=='play'||paused)return;duel.dives=(duel.dives||0)+1;if(m.e<tireNow()){duel.dives--;if(NOW-duel.tired>1.2){duel.tired=NOW;pop(blk.x,blk.y-40,'Too Tired To Dive!','#ffd23f');blip(200,.12,'sawtooth',.12,120);}return;}m.dive=DIVE_T;duel.dove=1.2;if(RL)RL.dv++;m.dx=clamp(x,MAX_L,MAX_R);m.tx=m.dx;m.e-=tireNow();waterBurst(blk.x,blk.y+78,true);blip(300,.16,'triangle',.18,760);haptic(1);mood(mxc,'gotcha',.5);}
 // what the toy does when Max gets it (a block, or the Squirt Blaster)
 function mxCount(o,dive){stat('mxBlocks');if(o.hb)stat('mxHair');if(dive)stat('mxDives');campS++;statMax('mxBestStreak',campS);campBlocks++;statMax('mxBestScore',campBlocks);} // a real block in the Max game
-function maxBlock(o,free,jet){const D=duel,m=D.mx;if(D.net==='M')netSend({t:'B',i:o.id,c:m.bucket>0&&!m.held?1:0,j:jet?1:0});D.blocks++;haptic(2);o.blocked=1;if(!free)m.e=Math.max(0,m.e-TUNE.tire); // a block tires him, and so does a hit with the Squirt Blaster (jet)
- if(o.dc){if(!free)m.e=Math.max(0,m.e-TUNE.tire*(DECOY_TIRE-1));D.blocks--;o.st='gone';waterBurst(o.x,o.y,false);pop(blk.x,blk.y-36,'Fooled! A Decoy!','#7fe0ff');sfxBlock();mood(mxc,'wow',1);mood(noah,'cheer',1);return;} // he spent the energy and got nothing
- if(m.bucket>0&&!m.held){mxCount(o,D.dove>0);m.bucket=0;m.held={o,t:BUCKET_T};if(!free)m.e=Math.min(1,m.e+TUNE.tire);o.st='held';pop(blk.x,blk.y-40,'In The Bucket!','#ffb020');sfxBlock();mood(mxc,'gotcha',1.1);hop(mxc,3.2);mood(noah,'wow',.8);combo=0;streak=0;return;} // caught: out of play for 4 seconds
+function maxBlock(o,free,jet){const D=duel,m=D.mx;if(D.net==='M')netSend({t:'B',i:o.id,c:m.bucket>0&&!m.held?1:0,j:jet?1:0});D.blocks++;haptic(2);o.blocked=1;if(!free)m.e=Math.max(0,m.e-tireNow()); // a block tires him, and so does a hit with the Squirt Blaster (jet)
+ if(o.dc){if(!free)m.e=Math.max(0,m.e-tireNow()*(DECOY_TIRE-1));D.blocks--;o.st='gone';waterBurst(o.x,o.y,false);pop(blk.x,blk.y-36,'Fooled! A Decoy!','#7fe0ff');sfxBlock();mood(mxc,'wow',1);mood(noah,'cheer',1);return;} // he spent the energy and got nothing
+ if(m.bucket>0&&!m.held){mxCount(o,D.dove>0);m.bucket=0;m.held={o,t:BUCKET_T};if(!free)m.e=Math.min(1,m.e+tireNow());o.st='held';pop(blk.x,blk.y-40,'In The Bucket!','#ffb020');sfxBlock();mood(mxc,'gotcha',1.1);hop(mxc,3.2);mood(noah,'wow',.8);combo=0;streak=0;return;} // caught: out of play for 4 seconds
  mxCount(o,D.dove>0);if(jet||D.tut){o.vy=Math.abs(o.vy)*.5+1;o.vx=jet?(o.x<CX?-3:3):o.vx*-.5;}else swat(o);shake=3;rdBlock++;pop(blk.x,blk.y-36,'Max Got It!','#ffb020');sfxBlock();mood(mxc,'gotcha',1.1);hop(mxc,3.2);mood(noah,'wow',.8);}
 function usePower(k,free){const D=duel,m=D.mx,q=PF.list[PF.cur];if(state!=='play'||paused)return;
  if(free){if(!D.free)return;D.free=0;}else{const i=D.bag.findIndex(b=>b.k===k);if(i<0||(!D.tut&&D.max!=='cpu'&&!(q.pw[k]>0)))return;D.bag.splice(i,1);if(!D.tut&&D.max!=='cpu'){q.pw[k]--;pfSave();}} // Max School lends the powers; nothing leaves the player's stock there
@@ -283,13 +283,15 @@ function tutStep(dt){const D=duel,T=D.tut,m=D.mx,L=TUT[T.i],inWay=k=>charging&&M
 // AGAINST SWIPE (v8.10) a flick has no wind-up, so he ANTICIPATES instead: between throws he waits where the next flick is
 // most likely to pass (the side of the tub with more toys; guard = how often he bothers), and he is already watching
 // for a finger on a toy, so his reaction is shorter (lag x swipe). The throw itself is untouched.
-const CMX={lag:[1.1,.4],err:[60,12],dive:[0,.7],nap:[.55,.08],swipe:.5,guard:[.05,.95]}; // each [stage 1, stage 10]: reaction seconds, how far off he judges the spot, chance he thinks to dive, chance he misses a throw altogether. v8.9: from simulated matches
+const CMX={lag:[.8,.4],err:[40,12],dive:[.3,.7],nap:[.3,.08],swipe:.5,guard:[.5,.95],fit:[.6,.43]}; // v8.24, from Derek's first log (Swipe, rounds 1 to 8 won first try with half the clock left): the early rounds are sharper; the late ones are as he played them
+const tireNow=()=>TUNE.tire*(duel&&duel.max==='cpu'?lerp(CMX.fit[0],CMX.fit[1],(round-1)/9):1); // fit (v8.24): how much a block or dive tires the COMPUTER Max, as a share of a person's cost, by round
+// // each [stage 1, stage 10]: reaction seconds, how far off he judges the spot, chance he thinks to dive, chance he misses a throw altogether. v8.9: from simulated matches
 function cpuMax(dt){const D=duel,m=D.mx,a=D.cmx,k=(round-1)/9,L=q=>lerp(q[0],q[1],k);
  let see=null;if(charging)see={x:crossX(charging.o),key:charging.o};else{const o=objs.find(q=>q.st==='fly'&&!q.blocked&&q.vy<0&&q.y>blk.y+20);if(o)see={x:o.x+o.vx*Math.max(0,(o.y-blk.y)/Math.max(2,-o.vy)),key:o};}
  a.hist.push(see);const lag=Math.round(L(CMX.lag)*(swipeMode?CMX.swipe:1)*60);while(a.hist.length>lag+1)a.hist.shift();const sn=a.hist.length>lag?a.hist[0]:null;
  if(sn){if(sn.key!==a.key){a.key=sn.key;a.err=(rnd()-.5)*2*L(CMX.err);a.dive=rnd()<L(CMX.dive);a.skip=rnd()<L(CMX.nap);} // a new throw: how far off he judges it, whether he thinks to dive, whether he misses it altogether
-  if(!a.skip){const x=clamp(sn.x+a.err,MAX_L,MAX_R);m.tx=x;if(a.dive&&m.e>=TUNE.tire+.1&&Math.abs(x-blk.x)>50)maxDive(x);
-   if(D.free&&round>=6&&Math.abs(x-blk.x)>55&&m.e<TUNE.tire+.1)usePower('splash',true);}}
+  if(!a.skip){const x=clamp(sn.x+a.err,MAX_L,MAX_R);m.tx=x;if(a.dive&&m.e>=tireNow()+.1&&Math.abs(x-blk.x)>50)maxDive(x);
+   if(D.free&&round>=6&&Math.abs(x-blk.x)>55&&m.e<tireNow()+.1)usePower('splash',true);}}
  else if(swipeMode){if((a.gt-=dt)<=0){a.gt=.5;const fl=objs.filter(o=>o.st==='float'&&!o.hb),lf=fl.filter(o=>o.x<CX),side=lf.length*2>fl.length?lf:lf.length*2<fl.length?fl.filter(o=>o.x>=CX):fl;a.gx=fl.length&&rnd()<L(CMX.guard)?side.reduce((t,o)=>t+crossX(o),0)/side.length:null;}if(a.gx!=null)m.tx=clamp(a.gx,MAX_L,MAX_R);} // guarding against a flick
  else if(k>.35)m.tx=CX; // between throws the better ones come back to the middle
  if(D.bag.length){const n0=a.n0||(a.n0=D.bag.length),used=n0-D.bag.length;if(1-timeLeft/roundTime>=(used+1)/(n0+1))usePower(D.bag[0].k);}} // his powers, spread through the match
@@ -1350,8 +1352,8 @@ function drawHowTo(){const pg=HOWTO[howTo],age=uiT-howT0,cw=324,ch=428,{cx,cy}=c
  body(pg.note,cy+336,12.5,'#4a6fc4');
  const qx=W/2-(96+12+176)/2,yb=cy+ch-74;button(qx,yb,96,48,'Back',()=>{howTo--;},{size:16,id:7,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});button(qx+108,yb,176,48,pg.next,()=>{howTo++;},{size:19});cardEnd();}
 // ── MULTIPLAYER CARDS ──
-function tuneSave(){if(TEST)try{localStorage.setItem('evitb-test-tune-v84',JSON.stringify(TUNE));}catch(e){}}
-if(TEST)try{const t=JSON.parse(localStorage.getItem('evitb-test-tune-v84')||'null');if(t)for(const k in TUNE0)if(typeof t[k]==='number')TUNE[k]=t[k];}catch(e){}
+function tuneSave(){if(TEST)try{localStorage.setItem('evitb-test-tune-v824',JSON.stringify(TUNE));}catch(e){}}
+if(TEST)try{const t=JSON.parse(localStorage.getItem('evitb-test-tune-v824')||'null');if(t)for(const k in TUNE0)if(typeof t[k]==='number')TUNE[k]=t[k];}catch(e){}
 function nudgeBtn(x,y,t,act,id,on){const dn=press&&press.id===id,d=dn?2:0;rr(x,y+3,34,28,7);fill(on?'#34509c':'#aab4cc');rr(x,y+d,34,28,7);fill(on?(dn?'#4a6cc0':'#5b7fd6'):'#c9d1e2');text(t,x+17,y+14.5+d,19,'#fff');if(on)hits.push({x:x-4,y:y-4,w:42,h:38,act,key:uiKey,id});}
 const TUNE_ROWS=[['spd','Max Speed',.1,.5,7,v=>v.toFixed(1)],['reach','Max Reach',1,14,60,v=>''+v],['tire','Tire Per Block',.05,0,1,v=>Math.round(v*100)+'%'],['rest','Rest To Full',1,1,30,v=>v+' s'],['clock','Clock',.1,.3,3,v=>'x '+v.toFixed(1)]];
 // ── TWO DEVICES (v8.12: finding the other player; the match itself is not built yet) ──
@@ -1607,7 +1609,7 @@ if(TEST&&menuStep===0&&!howTo&&!bdgPg&&!pfOpen&&!toysT0&&!noahT0&&!mpT0&&uiT>.6)
   // v8.20 (Derek): Noah Vs Smart Max is a third choice beside Easy and Hard, not a game of its own on the start screen
   appear(EZ.back((mt-.2)/.35),by+(bh+gap)*2,mh,()=>button(bx,by+(bh+gap)*2,bw,mh,'Smart Max',()=>{const sw=swipeMode;startCamp('noah');swipeMode=sw;},{size:20,id:25,sub:'He Fights Back. You Get Tricks.',col:'#8a5bd6',colD:'#5a359c',colP:'#7648c2'}));
   appear(EZ.back((mt-.3)/.35),by+(bh+gap)*2+mh+gap,bk,()=>button((W-120)/2,by+(bh+gap)*2+mh+gap,120,bk,'Back',()=>{menuStep=1;menuT0=uiT;},{size:16,id:3,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'}));}
- text(VERSION+(TEST?' TEST':''),W-16,HS-lblB-12,10,TEST?C.hot:'#d6efff',{a:'right',w:800});if(TEST)text(dbg,16,HS-lblB-12,9,'#d6efff',{a:'left',w:800});}
+ text(VERSION+(TEST?' TEST':'')+(TEST&&Object.keys(TUNE0).some(k=>TUNE[k]!==TUNE0[k])?' · TUNING CHANGED':''),W-16,HS-lblB-12,10,TEST?C.hot:'#d6efff',{a:'right',w:800});if(TEST)text(dbg,16,HS-lblB-12,9,'#d6efff',{a:'left',w:800});}
 function overlay(){card=null;card2=null;card3=null;card4=null;hits.length=0; // v8.13: the main button (card) is cleared every frame like the others. It used to survive onto a card that had no main button of its own, so a tap there ran the PREVIOUS card's button (found when the joiner's Wave tapped the old Join).
  const key=paused?'pause':state;if(key!==uiKey){uiKey=key;uiT=0;card=null;press=null;}
  if(paused){if(homeAsk)drawHomeCard();else drawPauseCard();return;}
