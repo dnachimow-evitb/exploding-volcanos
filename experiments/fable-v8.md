@@ -486,4 +486,14 @@ devices is OK (he sets up the account when asked); the one-line privacy and list
   8 (before: 100 78 100 67 67 67 78 22 0 0); kid 50 0 50 0, stuck at rounds 1 to 4. A harsher x.7 to x1.1 was worse the
   same way. **Reading: the clock is the wrong lever. It does nothing to a quick accurate flicker and takes the game
   away from slower players.** Shipped the mild setting so Derek can judge it by hand; expect to revert.
+- v8.27 (TEST ONLY): Derek: "Can't the computer intuit the flick". Yes: the finger lands on a toy before the flick.
+  Against Swipe the computer Max now (1) reacts to the touch in .4 s (round 1) down to .1 s (round 10), was .4 to .2;
+  (2) reads which way the finger is steering (`charging.ts`); (3) between throws waits midway between the two
+  outermost paths instead of in front of the bigger group. The v8.26 clock trial is reverted (x1.3 again): it only hurt
+  slow players. Bot games (`botlogs5/`), first-try wins: derekish 100 88 88 63 88 25 0 29 0 0 (v8.25: 100 78 100 67 67
+  67 78 22 0 0); casual 100 until round 10 (88), clock left 64% falling to 31%; kid 75 25 29 0 0; the "good" bot
+  (flick in .2 s, throw every .5 s, 5% bad) still 100% with 60%+ of the clock left. What limits Max now is not seeing
+  the flick but swimming speed and energy: making his energy much cheaper (`botlogs6/`, fit .2) walls the casual bot
+  at rounds 8 to 9 while the "good" bot still never loses, so that bot is faster than a person and is not the target.
+  Push is unchanged.
 

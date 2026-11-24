@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v8.26'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v8.27'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -173,7 +173,7 @@ function logCopy(){const dev=(navigator.userAgent.match(/iPhone|iPad|Android|Mac
 // Max (ten rounds against the computer Noah) and Noah Vs Smart Max (ten rounds against the Max that reacts, with tricks).
 // The two new ones are a "duel" without a connection: win a round to reach the next, lose and try it again.
 // CAMP: how the computer Noah's skill and the clock grow over the ten rounds of the Max game (measured: experiments/sim/camp.js).
-const CAMP={k0:.15,k1:.8,c0:1.3,c1:1.2,s0:.85,s1:1.2};let campBlocks=0,campS=0; // s0,s1 (v8.26): Smart Max against SWIPE has a shorter clock (x.85 in round 1 to x1.2 in round 10; Push keeps x1.3), because the computer Max cannot reach a quick flick
+const CAMP={k0:.15,k1:.8,c0:1.3,c1:1.2,s0:1.3,s1:1.3};let campBlocks=0,campS=0; // s0,s1 (v8.26): Smart Max against SWIPE has a shorter clock (x.85 in round 1 to x1.2 in round 10; Push keeps x1.3), because the computer Max cannot reach a quick flick
 const solo=D=>!!D&&!D.net&&!D.wasNet&&!D.tut;
 function startCamp(role,keep){if(!keep){campBlocks=0;campS=0;}const r=keep||(TEST&&testRound>1?testRound:1);startDuel(r,role);if(!keep&&role==='max')stat('mxGames');}
 function duelGo(){const q=PF.list[PF.cur];if(duel.role==='noah'){lastPackN=duel.pack.slice();duel.nbag=duel.pack.map(k=>({k,armed:false}));}
@@ -283,16 +283,17 @@ function tutStep(dt){const D=duel,T=D.tut,m=D.mx,L=TUT[T.i],inWay=k=>charging&&M
 // AGAINST SWIPE (v8.10) a flick has no wind-up, so he ANTICIPATES instead: between throws he waits where the next flick is
 // most likely to pass (the side of the tub with more toys; guard = how often he bothers), and he is already watching
 // for a finger on a toy, so his reaction is shorter (lag x swipe). The throw itself is untouched.
-const CMX={lag:[1.1,.4],err:[60,12],dive:[0,.7],nap:[.55,.08],swipe:.5,guard:[.5,.95],fit:[1,1],sw:{lag:[.8,.4],err:[40,12],dive:[.3,.7],nap:[.3,.08],fit:[.6,.43]}},cmx=k=>(swipeMode&&CMX.sw[k])||CMX[k]; // sw: his sharper early rounds against Swipe only (v8.25: bot games showed v8.24 had made Push far too hard for beginners). fit and guard date from v8.24 and Derek's first log
+const CMX={lag:[1.1,.4],err:[60,12],dive:[0,.7],nap:[.55,.08],swipe:.5,guard:[.5,.95],fit:[1,1],sw:{lag:[.4,.1],err:[40,12],dive:[.3,.7],nap:[.3,.08],fit:[.6,.43]}},cmx=k=>(swipeMode&&CMX.sw[k])||CMX[k]; // sw: his sharper early rounds against Swipe only (v8.25: bot games showed v8.24 had made Push far too hard for beginners). fit and guard date from v8.24 and Derek's first log
 const tireNow=()=>TUNE.tire*(duel&&duel.max==='cpu'?lerp(cmx('fit')[0],cmx('fit')[1],(round-1)/9):1); // fit (v8.24): how much a block or dive tires the COMPUTER Max, as a share of a person's cost, by round
 // // each [stage 1, stage 10]: reaction seconds, how far off he judges the spot, chance he thinks to dive, chance he misses a throw altogether. v8.9: from simulated matches
 function cpuMax(dt){const D=duel,m=D.mx,a=D.cmx,k=(round-1)/9,L=q=>lerp(q[0],q[1],k);
- let see=null;if(charging)see={x:crossX(charging.o),key:charging.o};else{const o=objs.find(q=>q.st==='fly'&&!q.blocked&&q.vy<0&&q.y>blk.y+20);if(o)see={x:o.x+o.vx*Math.max(0,(o.y-blk.y)/Math.max(2,-o.vy)),key:o};}
- a.hist.push(see);const lag=Math.round(L(cmx('lag'))*(swipeMode?CMX.swipe:1)*60);while(a.hist.length>lag+1)a.hist.shift();const sn=a.hist.length>lag?a.hist[0]:null;
+ let see=null;if(charging)see={x:crossX(charging.o)+(swipeMode?(charging.ts||0)*.33:0),key:charging.o};else{const o=objs.find(q=>q.st==='fly'&&!q.blocked&&q.vy<0&&q.y>blk.y+20);if(o)see={x:o.x+o.vx*Math.max(0,(o.y-blk.y)/Math.max(2,-o.vy)),key:o};}
+ a.hist.push(see);const lag=Math.round(L(cmx('lag'))*60);while(a.hist.length>lag+1)a.hist.shift();const sn=a.hist.length>lag?a.hist[0]:null;
  if(sn){if(sn.key!==a.key){a.key=sn.key;a.err=(rnd()-.5)*2*L(cmx('err'));a.dive=rnd()<L(cmx('dive'));a.skip=rnd()<L(cmx('nap'));} // a new throw: how far off he judges it, whether he thinks to dive, whether he misses it altogether
   if(!a.skip){const x=clamp(sn.x+a.err,MAX_L,MAX_R);m.tx=x;if(a.dive&&m.e>=tireNow()+.1&&Math.abs(x-blk.x)>50)maxDive(x);
    if(D.free&&round>=6&&Math.abs(x-blk.x)>55&&m.e<tireNow()+.1)usePower('splash',true);}}
- else if(swipeMode){if((a.gt-=dt)<=0){a.gt=.5;const fl=objs.filter(o=>o.st==='float'&&!o.hb),lf=fl.filter(o=>o.x<CX),side=lf.length*2>fl.length?lf:lf.length*2<fl.length?fl.filter(o=>o.x>=CX):fl;a.gx=fl.length&&rnd()<L(CMX.guard)?side.reduce((t,o)=>t+crossX(o),0)/side.length:null;}if(a.gx!=null)m.tx=clamp(a.gx,MAX_L,MAX_R);} // guarding against a flick
+ else if(swipeMode){if((a.gt-=dt)<=0){a.gt=.5;const fl=objs.filter(o=>o.st==='float'&&!o.hb),lf=fl.filter(o=>o.x<CX),ln=fl.map(crossX);a.gx=fl.length&&rnd()<L(CMX.guard)?(Math.min(...ln)+Math.max(...ln))/2:null;} // v8.27: he waits midway between the two outermost paths, so no flick is far from him
+ if(a.gx!=null)m.tx=clamp(a.gx,MAX_L,MAX_R);} // guarding against a flick
  else if(k>.35)m.tx=CX; // between throws the better ones come back to the middle
  if(D.bag.length){const n0=a.n0||(a.n0=D.bag.length),used=n0-D.bag.length;if(1-timeLeft/roundTime>=(used+1)/(n0+1))usePower(D.bag[0].k);}} // his powers, spread through the match
 // COMPUTER NOAH. He throws the way a Push player does (hold, let go when it will score), so the person playing Max
