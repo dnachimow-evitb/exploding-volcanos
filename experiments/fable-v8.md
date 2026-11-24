@@ -437,4 +437,13 @@ devices is OK (he sets up the account when asked); the one-line privacy and list
   `v8.22 | 11-24 17:39 | max | r1 | WIN | 44s | left 0 | in 1/3 | thr 19 | blk 16 | dive 0 | pw splash | trk - | eMin 0.00 | tired 67% | swim 1327 | still 4.3s`
   Chosen over sending logs to the relay: the relay stores nothing by design, this session cannot reach it, and the
   store listing says no data is collected. Not built: a full replay of a round (the seed and every input).
+- v8.23 (TEST ONLY): Derek: "I want you to be able to make difficulty and enjoyability factors based on what you're
+  seeing in the logs". The log now also records, per round: which attempt it was (`try`), seconds since the previous
+  round ended (`gap`), when the last toy went in (`lastin`), and the player's own word: a **"How Was That?" row (Easy /
+  Fun / Hard)** under every result card on the test page (`rateRow`, one optional tap, `felt`).
+  `experiments/sim/readlog.js log.txt` turns a pasted log into a table per game and round (plays, win rate, first-try
+  win rate against a target of 85% in round 1 falling to 40% in round 10, most tries, how close the wins were, time
+  tired, longest stand-still, the Easy/Fun/Hard taps) and a list of flags: TOO EASY / TOO HARD (needs 3 first tries),
+  A WALL (4 tries), NEVER IN DOUBT, PARKING, player says EASY/HARD, STOPPING AFTER A LOSS. The targets are my starting
+  guesses, to be corrected by what Derek says felt right.
 

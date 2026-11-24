@@ -148,6 +148,9 @@ Conventions:
   computer appears there only when a player drops or quits. This replaces the 2026-11-23 note above where they differ.
 - **Tuning from real play (v8.22):** the test page keeps a log of every round (`logEnd`); Derek taps "Log" on the test start
   screen and pastes it into the chat. Read it before changing difficulty numbers, and add a field there when a new question comes up.
+  Save the paste as a file and run `node experiments/sim/readlog.js file`: it compares each round with the targets (first-try wins 85% in
+  round 1 down to 40% in round 10, no round needing 4 tries, wins that are close, no stopping right after a loss) and counts
+  the player's own Easy / Fun / Hard taps. Trust the taps over the targets when they disagree, and change one number at a time.
 - **Derek's rule for Multiplayer (2026-11-17): the physics is not to change; fix what the player sees.** To prove a
   change is picture-only, run `experiments/sim/fp.js` before and after: the fingerprint line must be identical.
 - A bare tap area pushed to `hits` with `now:true` runs its action inside the tap itself (needed for copying to the

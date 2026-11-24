@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v8.22'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v8.23'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -150,16 +150,23 @@ function startDuel(stage,role,now,nt){const q=PF.list[PF.cur];stage=clamp(stage|
 // screen copies the list, and Derek pastes it into the chat. A line says which game, round, result, time, toys in, blocks,
 // throws, dives, powers and tricks used, Max's lowest energy, how much of the round he was tired, how far he swam and the
 // longest he stood still. The live game has no log (TEST is false there) and no names are recorded.
-const LOG_KEY='evitb-test-log-v1';let LOGS=[],RL=null,logMsg=0;
+const LOG_KEY='evitb-test-log-v1';let LOGS=[],RL=null,logMsg=0,logTry={},logLast=0,logFelt='';
 function logBegin(){if(!TEST)return;RL={t0:performance.now(),thr:0,dv:0,pw:[],tk:[],eMin:1,tired:0,n:0,swim:0,still:0,stillMax:0,lx:blk.x};}
 function logTick(dt){const R=RL;if(!R||!duel)return;const e=duel.mx.e,dx=Math.abs(blk.x-R.lx);R.lx=blk.x;R.n+=dt;R.eMin=Math.min(R.eMin,e);if(e<TUNE.tire)R.tired+=dt;R.swim+=dx;if(dx<.05){R.still+=dt;R.stillMax=Math.max(R.stillMax,R.still);}else R.still=0;}
-function logEnd(res){const R=RL;RL=null;if(!TEST||!R)return;const D=duel,d=new Date(),p2=n=>String(n).padStart(2,'0'),sec=Math.round((performance.now()-R.t0)/1000);
+function logEnd(res){const R=RL;RL=null;if(!TEST||!R)return;const D=duel,d=new Date(),p2=n=>String(n).padStart(2,'0'),sec=Math.round(duel?R.n:(performance.now()-R.t0)/1000);
  const game=D?(D.tut?'school':(D.net||D.wasNet?'2phone-':'')+(D.role==='max'?'max':'smartmax-noah')+(D.wasNet?'-dropped':'')+(D.role==='noah'||D.noah!=='cpu'?(swipeMode?'-swipe':'-push'):'')):'noah-'+(swipeMode?'swipe':'push')+(hardMode?'-hard':'-easy');
  let L=[VERSION,p2(d.getMonth()+1)+'-'+p2(d.getDate())+' '+p2(d.getHours())+':'+p2(d.getMinutes()),game,'r'+round,res,sec+'s','left '+Math.round(timeLeft),'in '+collected+'/'+need,'thr '+R.thr];
  if(D){L.push('blk '+D.blocks,'dive '+R.dv,'pw '+(R.pw.join('+')||'-'),'trk '+(R.tk.join('+')||'-'),'eMin '+R.eMin.toFixed(2),'tired '+Math.round(100*R.tired/Math.max(1,R.n))+'%','swim '+Math.round(R.swim),'still '+R.stillMax.toFixed(1)+'s');
   const tu=Object.keys(TUNE0).filter(k=>TUNE[k]!==TUNE0[k]).map(k=>k+'='+TUNE[k]).join(',');if(tu)L.push('tune '+tu);}
  else L.push('miss '+rdMiss,'maxblk '+rdBlock,'score '+score);
+ // v8.23, for judging difficulty AND fun: which attempt at this round this was (try), how long since the last round ended (gap: a long
+ // gap or none at all means the player stopped), when the last toy went in (lastin), and afterwards the player's own word (felt).
+ {const key=game+round,n=logTry[key]=(logTry[key]||0)+1;if(res==='WIN')logTry[key]=0;L.push('try '+n,'gap '+(logLast?Math.min(999,Math.round((R.t0-logLast)/1000)):'-'),'lastin '+(R.lastIn!=null?R.lastIn:'-'));logLast=performance.now();logFelt='';}
  LOGS.push(L.join(' | '));if(LOGS.length>150)LOGS=LOGS.slice(-150);try{localStorage.setItem(LOG_KEY,JSON.stringify(LOGS));}catch(e){}}
+function logSave(){try{localStorage.setItem(LOG_KEY,JSON.stringify(LOGS));}catch(e){}}
+// "How was that?": three small buttons under a result card on the test page. One tap adds the answer to the round just logged.
+function rateRow(y){if(!TEST||!LOGS.length||uiT<.6)return;text('How Was That?',W/2-112,y+15,11,'#fff',{a:'left',s:C.navy});[['Easy','#12a5a0'],['Fun','#2fbf4a'],['Hard','#e2580f']].forEach((r,i)=>{const x=W/2-10+i*46,on=logFelt===r[0],dn=press&&press.id===27+i;rr(x,y+(dn?2:0),42,28,7);fill(on?'#fff':r[1]);text(r[0],x+21,y+14+(dn?2:0),11.5,on?r[1]:'#fff');
+  hits.push({x,y,w:42,h:30,act:()=>{logFelt=r[0];LOGS[LOGS.length-1]=LOGS[LOGS.length-1].replace(/ \| felt \w+$/,'')+' | felt '+r[0].toLowerCase();logSave();sfxTick();},key:uiKey,id:27+i});});}
 function logCopy(){const dev=(navigator.userAgent.match(/iPhone|iPad|Android|Macintosh|Windows/)||['?'])[0]+' '+innerWidth+'x'+innerHeight;copyText('EVITB test log ('+LOGS.length+' rounds, '+dev+')\n'+LOGS.join('\n'),ok=>{logMsg=ok?NOW:-NOW;});}
 
 // SOLO GAMES (v8.19, Derek): playing the computer is not Multiplayer. From the start screen: Noah (the original game),
@@ -409,7 +416,7 @@ function splash(x,y,col,n){for(let i=0;i<n;i++){const a=-1.57+(Math.random()-.5)
 function scoreToy(o){if(o.dc){o.st='gone';sparkle(CX,CY-6,6);pop(CX,CY-22,'Just A Decoy!','#7fe0ff');return;}
      if(o.hb){stat('hair');streak++;statMax('bestStreak',streak);combo++;bestCombo=Math.max(bestCombo,combo);timeLeft+=5;score+=50;shake=4;flash=.18;flashCol='#ffe9b0';collectedToys.push('🧶');freeze=3;vol.sv+=.5;mood(vol,'yuck',1.3);mood(noah,'cheer',1);hop(noah,3);sparkle(CX,CY-6,10);
        pop(CX,CY-18,'Hairball! +50  +5s','#ffd23f');splash(CX,CY,'#8a5a2a',26);sfxHair();o.st='gone';
-     }else{if(duel){campS=0;stat('mxLet');}stat('toys');streak++;statMax('bestStreak',streak);if(rdFirst&&o.isNew)stat('newFirst');rdFirst=false;if(o.bn)stat('rebounds');collected++;combo++;bestCombo=Math.max(bestCombo,combo);statMax('bestCombo',bestCombo);collectedToys.push(o.em);
+     }else{if(RL)RL.lastIn=Math.round(duel?RL.n:(performance.now()-RL.t0)/1000);if(duel){campS=0;stat('mxLet');}stat('toys');streak++;statMax('bestStreak',streak);if(rdFirst&&o.isNew)stat('newFirst');rdFirst=false;if(o.bn)stat('rebounds');collected++;combo++;bestCombo=Math.max(bestCombo,combo);statMax('bestCombo',bestCombo);collectedToys.push(o.em);
        const fpN2=collected/need,fpPrev=(collected-1)/need;
        if(fpN2>=.85&&fpPrev<.85)pop(CX,CY-46,'Gonna Overflow?!','#ff4400');else if(fpN2>=.6&&fpPrev<.6)pop(CX,CY-46,"It's Getting Hotter!",'#ff8a1a');else if(fpN2>=.35&&fpPrev<.35)pop(CX,CY-46,"It's Getting Bigger!",'#ffd23f');
        if(combo===3)pop(190,150,'Look, Daddy, Look!','#7fd0ff');
@@ -1531,11 +1538,11 @@ function drawDuelCard(){const D=duel,mw=D.over==='max',you=D.over===D.role,cw=32
  if(D.earned.length){X.font=fnt(900,13);const t='You Earned',tw=X.measureText(t).width,ct='+'+D.coins,cw2=X.measureText(ct).width+22,w=tw+10+D.earned.length*34+10+cw2,x=W/2-w/2;text(t,x,cy+272,13,C.navy,{a:'left'});D.earned.forEach((k,i)=>{const kk=EZ.back((age-.6-i*.2)/.3);if(kk<=0)return;X.save();X.translate(x+tw+26+i*34,cy+271);X.scale(kk,kk);powIcon(k,12);X.restore();});const cx2=x+tw+10+D.earned.length*34+10;coin(cx2+8,cy+271,7.5);text(ct,cx2+20,cy+272,13,C.navy,{a:'left'});}
  else text('Play 20 seconds or more to earn a power.',W/2,cy+272,11,'#4a6fc4',{w:800});
  if(D.net||D.wasNet){const B={col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'},on=D.net&&net&&net.st==='playing'; // two devices: back to the Connected card together, or home
-  button((W-232)/2,cy+306,232,52,on?'Play Again':'Home',()=>{if(on){netSend({t:'again'});goMenu(true);mpPg=2;mpT0=uiT||.001;net.st='paired';net.t0=uiT;}else goMenu();},{icon:on?1:0,size:21});if(on)button((W-120)/2,cy+ch-62,120,38,'Leave',goMenu,{size:15,id:3,...B});cardEnd();return;}
+  button((W-232)/2,cy+306,232,52,on?'Play Again':'Home',()=>{if(on){netSend({t:'again'});goMenu(true);mpPg=2;mpT0=uiT||.001;net.st='paired';net.t0=uiT;}else goMenu();},{icon:on?1:0,size:21});if(on)button((W-120)/2,cy+ch-62,120,38,'Leave',goMenu,{size:15,id:3,...B});cardEnd();rateRow(cy+ch+12);return;}
  // a solo game: win to reach the next round, lose and try this one again; after round 10 it starts over
  {const nx=you&&D.stage<10,all=you&&D.stage>=10,sw=swipeMode;if(all)text('All 10 rounds cleared!  +'+COIN_WIN+' coins',W/2,cy+290,12,C.lavaDk,{w:800});
   button((W-232)/2,cy+306,232,52,nx?'Next Round':all?'Play Again':'Try Again',()=>{const r=D.role;if(all)startCamp(r);else startCamp(r,nx?D.stage+1:D.stage);if(r==='noah'&&!all){swipeMode=sw;state='duelbag';}},{icon:1,size:21});}
- button((W-140)/2,cy+ch-62,140,38,'Home',goMenu,{size:15,id:3,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});cardEnd();}
+ button((W-140)/2,cy+ch-62,140,38,'Home',goMenu,{size:15,id:3,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});cardEnd();rateRow(cy+ch+12);}
 function askHome(){if(homeAsk)return;homeWasPaused=paused;homeAsk=(paused?uiT:0)+1;paused=true;}
 function drawHomeCard(){const cw=300,ch=282,{cy}=cardBegin(cw,ch,'Go Home?',uiT-(homeAsk-1));body('This game will end.',cy+96,16);body('Your badges are safe.',cy+119,13,'#4a6fc4');
  button((W-216)/2,cy+140,216,52,'Keep Playing',()=>{homeAsk=0;if(!homeWasPaused){paused=false;lastNow=performance.now();acc=0;}},{size:21});
@@ -1550,11 +1557,11 @@ function drawResultCard(win){const age=win?uiT-1.75:uiT;if(age<0){card=null;retu
   X.lineCap='round';for(const g of[-1,1]){X.beginPath();X.arc(g*15,-9,8,g>0?-PI*.5:PI*.5,g>0?PI*.5:PI*1.5);X.lineWidth=4.5;X.strokeStyle=C.amber;X.stroke();}
   X.beginPath();X.moveTo(-15,-21);X.lineTo(15,-21);X.quadraticCurveTo(15,4,0,8);X.quadraticCurveTo(-15,4,-15,-21);X.closePath();fill(C.gold);rr(-3.5,7,7,9,1);fill(C.amber);rr(-12,15,24,7,3.5);fill(C.lava);star(0,-8,6,2.9);fill('#fff');X.restore();
   body('All 10 rounds cleared!',cy+226,17);body('Score '+score+'   ·   Best combo x'+bestCombo,cy+250,13.5,'#4a6fc4');
-  button((W-224)/2,cy+ch-74,224,58,'Play Again',()=>startGame(),{icon:1});cardEnd();}
+  button((W-224)/2,cy+ch-74,224,58,'Play Again',()=>startGame(),{icon:1});cardEnd();rateRow(cy+ch+12);}
  else{const cw=324,ch=292,{cy}=cardBegin(cw,ch,'So Close!',age),n=need,gap=Math.min(44,(cw-70)/Math.max(n,1)),x0=W/2-(n-1)*gap/2,sz=Math.min(40,gap*.95);
   for(let i=0;i<n;i++){const o=objs[i],got=!o||o.st==='gone',kk=EZ.back((age-.2-i*.05)/.3);if(kk<=0)continue;X.save();X.translate(x0+i*gap,cy+118);X.scale(kk,kk);paintToy(currentToys[i],sz);if(got)check(sz*.38,sz*.34);X.restore();}
   body(collected>0?'You splashed '+collected+' of '+need+'. Nice!':'So nearly! Have another go.',cy+166,16);body('Round '+round+' is waiting for you',cy+189,13,'#4a6fc4');
-  button((W-224)/2,cy+ch-78,224,58,'Try Again',()=>{startRound(false);state='play';lastNow=performance.now();},{icon:1});cardEnd();}}
+  button((W-224)/2,cy+ch-78,224,58,'Try Again',()=>{startRound(false);state='play';lastNow=performance.now();},{icon:1});cardEnd();rateRow(cy+ch+12);}}
 const cover=new Image();cover.onload=()=>{cover._ok=true;};cover.onerror=()=>{};cover.src='assets/cover-volcanoes.webp'; // corrected spelling (Volcanoes); the old art is still at assets/cover.png
 function drawMenu(){const t=38;X.fillStyle=C.wall;X.fillRect(0,0,W,HS);X.strokeStyle=C.tile;X.lineWidth=2.5;X.beginPath();for(let x=0;x<=W;x+=t){X.moveTo(x,0);X.lineTo(x,HS);}for(let y=8;y<HS;y+=t){X.moveTo(0,y);X.lineTo(W,y);}X.stroke();
  const pw=Math.round((W-48)*.85),py=SAFE+84, // cover is 85% of its old width (v7.34): the lower half needed the room
