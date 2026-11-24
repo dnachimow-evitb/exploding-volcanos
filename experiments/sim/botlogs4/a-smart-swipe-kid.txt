@@ -1,0 +1,38 @@
+v8.26 | 11-24 19:34 | smart-swipe@kid | r1 | LOSS | 31s | left 0 | in 2/3 | thr 14 | blk 10 | dive 0 | pw - | trk - | eMin 0.73 | tired 0% | swim 1839 | still 2.8s | try 1 | gap - | lastin 15 | sess 1
+v8.26 | 11-24 19:34 | smart-swipe@kid | r1 | WIN | 24s | left 2 | in 3/3 | thr 11 | blk 7 | dive 3 | pw - | trk - | eMin 0.14 | tired 16% | swim 942 | still 1.8s | try 2 | gap 0 | lastin 24 | sess 1
+v8.26 | 11-24 19:34 | smart-swipe@kid | r2 | LOSS | 43s | left 0 | in 2/4 | thr 21 | blk 12 | dive 4 | pw - | trk - | eMin 0.00 | tired 25% | swim 2208 | still 2.3s | try 1 | gap 0 | lastin 38 | sess 1
+v8.26 | 11-24 19:34 | smart-swipe@kid | r2 | WIN | 27s | left 6 | in 4/4 | thr 13 | blk 3 | dive 0 | pw - | trk - | eMin 0.80 | tired 0% | swim 788 | still 3.1s | try 2 | gap 0 | lastin 27 | sess 1
+v8.26 | 11-24 19:34 | smart-swipe@kid | r3 | LOSS | 32s | left 0 | in 3/5 | thr 16 | blk 9 | dive 4 | pw - | trk - | eMin 0.05 | tired 16% | swim 1810 | still 1.4s | try 1 | gap 0 | lastin 26 | sess 1
+v8.26 | 11-24 19:34 | smart-swipe@kid | r3 | LOSS | 32s | left 0 | in 3/5 | thr 16 | blk 10 | dive 8 | pw - | trk - | eMin 0.00 | tired 43% | swim 1555 | still 2.0s | try 2 | gap 0 | lastin 26 | sess 1
+v8.26 | 11-24 19:34 | smart-swipe@kid | r3 | LOSS | 32s | left 0 | in 1/5 | thr 15 | blk 11 | dive 4 | pw - | trk - | eMin 0.08 | tired 16% | swim 1967 | still 0.8s | try 3 | gap 0 | lastin 4 | sess 1 | GAVEUP
+v8.26 | 11-24 19:34 | smart-swipe@kid | r1 | LOSS | 31s | left 0 | in 1/3 | thr 15 | blk 12 | dive 3 | pw - | trk - | eMin 0.05 | tired 5% | swim 1616 | still 2.4s | try 1 | gap - | lastin 3 | sess 2
+v8.26 | 11-24 19:34 | smart-swipe@kid | r1 | LOSS | 26s | left 0 | in 1/3 | thr 13 | blk 11 | dive 3 | pw - | trk - | eMin 0.00 | tired 70% | swim 1035 | still 1.9s | try 2 | gap 0 | lastin 20 | sess 2
+v8.26 | 11-24 19:34 | smart-swipe@kid | r1 | LOSS | 26s | left 0 | in 2/3 | thr 12 | blk 9 | dive 6 | pw - | trk - | eMin 0.00 | tired 64% | swim 1191 | still 1.4s | try 3 | gap 0 | lastin 13 | sess 2 | GAVEUP
+v8.26 | 11-24 19:34 | smart-swipe@kid | r1 | WIN | 24s | left 2 | in 3/3 | thr 11 | blk 8 | dive 4 | pw - | trk - | eMin 0.00 | tired 11% | swim 1485 | still 1.4s | try 1 | gap - | lastin 24 | sess 3
+v8.26 | 11-24 19:34 | smart-swipe@kid | r2 | LOSS | 28s | left 0 | in 1/4 | thr 14 | blk 11 | dive 0 | pw - | trk - | eMin 0.67 | tired 0% | swim 1653 | still 2.8s | try 1 | gap 0 | lastin 24 | sess 3
+v8.26 | 11-24 19:34 | smart-swipe@kid | r2 | LOSS | 28s | left 0 | in 0/4 | thr 14 | blk 9 | dive 5 | pw - | trk - | eMin 0.00 | tired 58% | swim 1230 | still 0.9s | try 2 | gap 0 | lastin - | sess 3
+v8.26 | 11-24 19:34 | smart-swipe@kid | r2 | LOSS | 33s | left 0 | in 2/4 | thr 15 | blk 10 | dive 5 | pw - | trk - | eMin 0.00 | tired 26% | swim 1370 | still 2.2s | try 3 | gap 0 | lastin 23 | sess 3 | GAVEUP
+v8.26 | 11-24 19:34 | smart-swipe@kid | r1 | WIN | 18s | left 8 | in 3/3 | thr 9 | blk 6 | dive 1 | pw - | trk - | eMin 0.54 | tired 0% | swim 867 | still 2.3s | try 1 | gap - | lastin 18 | sess 4
+v8.26 | 11-24 19:34 | smart-swipe@kid | r2 | LOSS | 28s | left 0 | in 2/4 | thr 14 | blk 9 | dive 4 | pw - | trk - | eMin 0.00 | tired 49% | swim 1285 | still 1.5s | try 1 | gap 0 | lastin 14 | sess 4
+v8.26 | 11-24 19:34 | smart-swipe@kid | r2 | LOSS | 33s | left 0 | in 1/4 | thr 16 | blk 9 | dive 4 | pw - | trk - | eMin 0.03 | tired 17% | swim 1614 | still 2.4s | try 2 | gap 0 | lastin 21 | sess 4
+v8.26 | 11-24 19:34 | smart-swipe@kid | r2 | LOSS | 43s | left 0 | in 2/4 | thr 20 | blk 13 | dive 0 | pw - | trk - | eMin 0.72 | tired 0% | swim 2160 | still 2.9s | try 3 | gap 0 | lastin 13 | sess 4 | GAVEUP
+v8.26 | 11-24 19:34 | smart-swipe@kid | r1 | LOSS | 26s | left 0 | in 2/3 | thr 12 | blk 8 | dive 0 | pw - | trk - | eMin 0.67 | tired 0% | swim 1292 | still 1.5s | try 1 | gap - | lastin 15 | sess 5
+v8.26 | 11-24 19:34 | smart-swipe@kid | r1 | LOSS | 26s | left 0 | in 0/3 | thr 12 | blk 9 | dive 4 | pw - | trk - | eMin 0.00 | tired 6% | swim 1674 | still 1.2s | try 2 | gap 0 | lastin - | sess 5
+v8.26 | 11-24 19:34 | smart-swipe@kid | r1 | WIN | 23s | left 3 | in 3/3 | thr 11 | blk 5 | dive 4 | pw - | trk - | eMin 0.00 | tired 24% | swim 1337 | still 2.5s | try 3 | gap 0 | lastin 23 | sess 5
+v8.26 | 11-24 19:34 | smart-swipe@kid | r2 | LOSS | 28s | left 0 | in 2/4 | thr 14 | blk 10 | dive 2 | pw - | trk - | eMin 0.34 | tired 0% | swim 1442 | still 2.1s | try 1 | gap 0 | lastin 16 | sess 5
+v8.26 | 11-24 19:34 | smart-swipe@kid | r2 | WIN | 30s | left 3 | in 4/4 | thr 15 | blk 8 | dive 0 | pw - | trk - | eMin 0.74 | tired 0% | swim 1329 | still 2.9s | try 2 | gap 0 | lastin 30 | sess 5
+v8.26 | 11-24 19:34 | smart-swipe@kid | r3 | WIN | 32s | left 5 | in 5/5 | thr 16 | blk 9 | dive 5 | pw - | trk - | eMin 0.06 | tired 13% | swim 1883 | still 2.0s | try 1 | gap 0 | lastin 32 | sess 5
+v8.26 | 11-24 19:34 | smart-swipe@kid | r4 | LOSS | 42s | left 0 | in 3/6 | thr 20 | blk 16 | dive 5 | pw - | trk - | eMin 0.00 | tired 26% | swim 2102 | still 1.1s | try 1 | gap 0 | lastin 41 | sess 5
+v8.26 | 11-24 19:34 | smart-swipe@kid | r4 | LOSS | 52s | left 0 | in 5/6 | thr 26 | blk 14 | dive 4 | pw - | trk - | eMin 0.43 | tired 0% | swim 2836 | still 3.4s | try 2 | gap 0 | lastin 42 | sess 5
+v8.26 | 11-24 19:34 | smart-swipe@kid | r4 | LOSS | 37s | left 0 | in 1/6 | thr 18 | blk 13 | dive 8 | pw - | trk - | eMin 0.04 | tired 22% | swim 1968 | still 1.3s | try 3 | gap 0 | lastin 5 | sess 5 | GAVEUP
+v8.26 | 11-24 19:34 | smart-swipe@kid | r1 | LOSS | 36s | left 0 | in 1/3 | thr 17 | blk 10 | dive 4 | pw - | trk - | eMin 0.00 | tired 13% | swim 1520 | still 2.3s | try 1 | gap - | lastin 9 | sess 6
+v8.26 | 11-24 19:34 | smart-swipe@kid | r1 | LOSS | 36s | left 0 | in 2/3 | thr 17 | blk 12 | dive 4 | pw - | trk - | eMin 0.00 | tired 11% | swim 1612 | still 2.6s | try 2 | gap 0 | lastin 30 | sess 6
+v8.26 | 11-24 19:34 | smart-swipe@kid | r1 | LOSS | 26s | left 0 | in 1/3 | thr 12 | blk 7 | dive 4 | pw - | trk - | eMin 0.00 | tired 32% | swim 852 | still 3.4s | try 3 | gap 0 | lastin 13 | sess 6 | GAVEUP
+v8.26 | 11-24 19:34 | smart-swipe@kid | r1 | WIN | 30s | left 5 | in 3/3 | thr 15 | blk 8 | dive 5 | pw - | trk - | eMin 0.00 | tired 41% | swim 1430 | still 1.5s | try 1 | gap - | lastin 30 | sess 7
+v8.26 | 11-24 19:34 | smart-swipe@kid | r2 | LOSS | 33s | left 0 | in 2/4 | thr 16 | blk 13 | dive 0 | pw - | trk - | eMin 0.65 | tired 0% | swim 1735 | still 2.7s | try 1 | gap 0 | lastin 9 | sess 7
+v8.26 | 11-24 19:34 | smart-swipe@kid | r2 | LOSS | 33s | left 0 | in 3/4 | thr 17 | blk 9 | dive 0 | pw - | trk - | eMin 0.71 | tired 0% | swim 2004 | still 3.3s | try 2 | gap 0 | lastin 18 | sess 7
+v8.26 | 11-24 19:34 | smart-swipe@kid | r2 | LOSS | 28s | left 0 | in 3/4 | thr 14 | blk 8 | dive 0 | pw - | trk - | eMin 0.72 | tired 0% | swim 1159 | still 1.7s | try 3 | gap 0 | lastin 25 | sess 7 | GAVEUP
+v8.26 | 11-24 19:34 | smart-swipe@kid | r1 | WIN | 29s | left 2 | in 3/3 | thr 14 | blk 8 | dive 0 | pw - | trk - | eMin 0.71 | tired 0% | swim 1135 | still 2.8s | try 1 | gap - | lastin 29 | sess 8
+v8.26 | 11-24 19:34 | smart-swipe@kid | r2 | LOSS | 33s | left 0 | in 3/4 | thr 16 | blk 9 | dive 4 | pw - | trk - | eMin 0.02 | tired 12% | swim 1732 | still 1.6s | try 1 | gap 0 | lastin 32 | sess 8
+v8.26 | 11-24 19:34 | smart-swipe@kid | r2 | LOSS | 28s | left 0 | in 2/4 | thr 14 | blk 10 | dive 6 | pw - | trk - | eMin 0.00 | tired 83% | swim 1000 | still 1.3s | try 2 | gap 0 | lastin 16 | sess 8
+v8.26 | 11-24 19:34 | smart-swipe@kid | r2 | LOSS | 33s | left 0 | in 2/4 | thr 16 | blk 12 | dive 4 | pw - | trk - | eMin 0.02 | tired 44% | swim 1791 | still 1.2s | try 3 | gap 0 | lastin 26 | sess 8 | GAVEUP

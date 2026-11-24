@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v8.25'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v8.26'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -173,7 +173,7 @@ function logCopy(){const dev=(navigator.userAgent.match(/iPhone|iPad|Android|Mac
 // Max (ten rounds against the computer Noah) and Noah Vs Smart Max (ten rounds against the Max that reacts, with tricks).
 // The two new ones are a "duel" without a connection: win a round to reach the next, lose and try it again.
 // CAMP: how the computer Noah's skill and the clock grow over the ten rounds of the Max game (measured: experiments/sim/camp.js).
-const CAMP={k0:.15,k1:.8,c0:1.3,c1:1.2};let campBlocks=0,campS=0;
+const CAMP={k0:.15,k1:.8,c0:1.3,c1:1.2,s0:.85,s1:1.2};let campBlocks=0,campS=0; // s0,s1 (v8.26): Smart Max against SWIPE has a shorter clock (x.85 in round 1 to x1.2 in round 10; Push keeps x1.3), because the computer Max cannot reach a quick flick
 const solo=D=>!!D&&!D.net&&!D.wasNet&&!D.tut;
 function startCamp(role,keep){if(!keep){campBlocks=0;campS=0;}const r=keep||(TEST&&testRound>1?testRound:1);startDuel(r,role);if(!keep&&role==='max')stat('mxGames');}
 function duelGo(){const q=PF.list[PF.cur];if(duel.role==='noah'){lastPackN=duel.pack.slice();duel.nbag=duel.pack.map(k=>({k,armed:false}));}
@@ -181,7 +181,7 @@ function duelGo(){const q=PF.list[PF.cur];if(duel.role==='noah'){lastPackN=duel.
  if(duel.net){duel.ready=true;netSend({t:'rdy',sw:swipeMode?1:0});state='duelwait';netMaybeGo();return;} // two devices: wait until both are ready
  duelStart();}
 const NET_QUIET=3000;
-function duelStart(){logBegin();if(duel.net)duel.rxT=performance.now();banner=(duel.net?'Stage ':'Round ')+duel.stage+(duel.role==='max'?': Block The Toys!':': Splash Away!');bannerT=3;state='play';lastNow=performance.now();acc=0;}
+function duelStart(){if(solo(duel)&&duel.role==='noah'&&swipeMode)timeLeft=roundTime=Math.round(diff().time*lerp(CAMP.s0,CAMP.s1,(duel.stage-1)/9));logBegin();if(duel.net)duel.rxT=performance.now();banner=(duel.net?'Stage ':'Round ')+duel.stage+(duel.role==='max'?': Block The Toys!':': Splash Away!');bannerT=3;state='play';lastNow=performance.now();acc=0;}
 // THE BLOCK RULE in a match: a rising toy that touches Max, anywhere from his raised hands down to his chest, is
 // blocked. Height never matters to the player: if it would pass through him, he gets it. The Pool Noodle widens him.
 const maxReach=()=>TUNE.reach*(duel.mx.noodle>0?1.7:1);

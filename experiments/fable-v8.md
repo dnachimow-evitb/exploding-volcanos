@@ -479,4 +479,11 @@ devices is OK (he sets up the account when asked); the one-line privacy and list
 - v8.25 (TEST ONLY): the one change from the bot games: v8.24's sharper early rounds and cheaper energy for the
   computer Max now apply **against Swipe only** (`CMX.sw`, `cmx()`); against Push he is back on the earlier values.
   With v8.24 the kid bot won Push round 1 only 30% of the time and the good bot never finished.
+- v8.26 (TEST ONLY): Derek: "Try the shorter clock in Swipe first." Smart Max against Swipe now has a clock of x.85
+  (round 1) to x1.2 (round 10) instead of x1.3 (`CAMP.s0`, `s1`, set in `duelStart`). Bot games (8 each,
+  `botlogs4/`), first-try wins by round: good flicker still 100% every round with 56 to 67% of the clock left; casual
+  100% nearly throughout (margin down from 33-70% to 18-54%); derekish 100 63 63 63 50 43 0 0 and stuck at rounds 5 to
+  8 (before: 100 78 100 67 67 67 78 22 0 0); kid 50 0 50 0, stuck at rounds 1 to 4. A harsher x.7 to x1.1 was worse the
+  same way. **Reading: the clock is the wrong lever. It does nothing to a quick accurate flicker and takes the game
+  away from slower players.** Shipped the mild setting so Derek can judge it by hand; expect to revert.
 
