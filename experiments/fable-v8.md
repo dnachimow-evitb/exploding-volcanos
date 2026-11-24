@@ -496,4 +496,11 @@ devices is OK (he sets up the account when asked); the one-line privacy and list
   the flick but swimming speed and energy: making his energy much cheaper (`botlogs6/`, fit .2) walls the casual bot
   at rounds 8 to 9 while the "good" bot still never loses, so that bot is faster than a person and is not the target.
   Push is unchanged.
+- v8.28 (TEST ONLY): Derek, start screen: one My Toys button instead of My Toys and Noah, with a second choice of Max
+  Toys or Noah Toys; Max Toys to include his blocking powers; Noah Toys split into Outfits and the game-play toys.
+  The small row is now How To Play, Badges, My Toys. My Toys opens "Whose toys?" (`drawToyMenu`, `tmPg`): **Noah's
+  Toys** leads to Outfits (the Dress Noah card), Bath Toys (the lineup and shop, the old My Toys card) and Tricks;
+  **Max's Toys** shows his seven powers with how many are owned, what each does, and Buy (15 coins). Every card's
+  Close became Back and returns one level up. Added without being asked: the Tricks card (Noah's three tricks had no
+  place to be seen or bought outside the pack card). Not built: outfits for Max.
 

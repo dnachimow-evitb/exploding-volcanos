@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v8.27'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v8.28'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -1255,11 +1255,36 @@ function drawBadges(){const age=uiT-bdgT0,cw=336,ch=470,NB=BADGES.length/6,NP=NB
  const x0=W/2-(96+12+176)/2,yb=cy+ch-72,nxt=bdgPg===NB/2?'Max’s Badges':bdgPg<NB?'More Badges':bdgPg===NB?'Next: Stats':bdgPg<NP?'Max’s Stats':'Done';button(x0,yb,96,48,bdgPg===1?'Close':'Back',()=>{bdgPg--;},{size:16,id:7,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});
  button(x0+108,yb,176,48,nxt,()=>{bdgPg=bdgPg<NP?bdgPg+1:0;},{size:19});cardEnd();}
 // ── MY TOYS (start screen): the player's 12-spot lineup, every toy in the game, and the shop ──
-function openToys(){toysT0=uiT||.001;selSlot=-1;selToy=null;toyPg=0;}
+// MY TOYS MENU (v8.28, Derek): one My Toys button on the start screen. It opens a choice, Noah's Toys or Max's Toys.
+// Noah's Toys: Outfits (the dress-up card), Bath Toys (the lineup and shop; "the current toys") and Tricks. Max's Toys: his powers.
+// tmPg: 0 = the Bath Toys card itself, 1 = Noah or Max, 2 = Noah's three, 3 = Max's powers, 4 = Noah's tricks.
+let tmPg=0,tmSel=null;
+function openToys(){toysT0=uiT||.001;tmPg=1;tmSel=null;selSlot=-1;selToy=null;toyPg=0;}
+function tmGo(pg){tmPg=pg;tmSel=null;toysT0=uiT||.001;}
+function drawToyMenu(){const q=PF.list[PF.cur],B={col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'};
+ if(tmPg===1){const cw=324,ch=330,{cx,cy}=cardBegin(cw,ch,'My Toys',uiT-toysT0);body('Whose toys?',cy+88,15);
+  pickBtn((W-256)/2,cy+108,256,62,'Noah’s Toys','Outfits, Bath Toys, Tricks',()=>tmGo(2),0);
+  pickBtn((W-256)/2,cy+184,256,62,'Max’s Toys','His Blocking Powers',()=>tmGo(3),2,'#e08a00','#a85f24','#c97800');
+  button((W-160)/2,cy+ch-62,160,42,'Close',()=>{toysT0=0;tmPg=0;},{size:16,id:7,...B});cardEnd();return;}
+ if(tmPg===2){const cw=324,ch=398,{cx,cy}=cardBegin(cw,ch,'Noah’s Toys',uiT-toysT0);body('What do you want to see?',cy+88,15);
+  pickBtn((W-256)/2,cy+108,256,58,'Outfits','What Noah Wears',()=>{toysT0=0;tmPg=0;openNoah();},0,'#e0457a','#a3264f','#c93a6a');
+  pickBtn((W-256)/2,cy+178,256,58,'Bath Toys','The Toys You Throw',()=>tmGo(0),2);
+  pickBtn((W-256)/2,cy+248,256,58,'Tricks','For Smart Max And Multiplayer',()=>tmGo(4),21,'#8a5bd6','#5a359c','#7648c2');
+  button((W-160)/2,cy+ch-62,160,42,'Back',()=>tmGo(1),{size:16,id:7,...B});cardEnd();return;}
+ // a stock card: Max's powers, or Noah's tricks. Tap one to read about it; Buy adds one for coins.
+ const mx=tmPg===3,LIST=mx?POW:TRK,rows=Math.ceil(LIST.length/4),cw=336,ch=mx?470:376,{cx,cy}=cardBegin(cw,ch,mx?'Max’s Toys':'Noah’s Tricks',uiT-toysT0);
+ coin(cx+26,cy+80,9);text(q.coins+' Coins',cx+41,cy+81,15,C.navy,{a:'left'});text(mx?'His Blocking Powers':'They Change Your Next Throw',cx+cw-18,cy+81,11,'#4a6fc4',{a:'right',w:800});
+ LIST.forEach((pw,n)=>{const k=pw[0],nc=Math.min(4,LIST.length),x=cx+(cw-nc*80+6)/2+(n%4)*80,y=cy+100+(n/4|0)*94,sel=tmSel===k,id=160+n;if(sel){rr(x-3,y-3,80,94,10);fill(C.lava);}rr(x,y,74,88,8);fill(sel?'#fff3bf':'#eef4fd');
+  X.save();X.translate(x+37,y+29+(sel?Math.sin(NOW*6)*1.5:0));powIcon(k,16);X.restore();text(pw[1],x+37,y+60,pw[1].length>11?8.2:pw[1].length>8?9.2:10.5,C.navy,{w:800});text('x'+q.pw[k],x+37,y+75,12,q.pw[k]>0?C.greenD:'#7c879f');
+  hits.push({x,y,w:74,h:88,act:()=>{tmSel=k;sfxTick();},key:uiKey,id});});
+ const my=cy+100+rows*94+16,can=tmSel&&q.coins>=POW_PRICE;body(tmSel?POWDESC[tmSel]:mx?'Tap a power to see what it does.':'Tap a trick to see what it does.',my,13.5);
+ text(tmSel?(can?'Buy one more for '+POW_PRICE+' coins?':'One more costs '+POW_PRICE+' coins. You need '+(POW_PRICE-q.coins)+' more.'):mx?'You pack three before a game as Max. Win games to earn more.':'You pack three before a game. Win games to earn more.',W/2,my+20,11,'#4a6fc4',{w:800});
+ const x0=W/2-(104+12+164)/2,yb=cy+ch-70;button(x0,yb,104,46,'Back',()=>tmGo(mx?1:2),{size:16,id:7,...B});
+ button(x0+116,yb,164,46,'Buy',()=>{const k=tmSel;if(!k||q.coins<POW_PRICE)return;q.coins-=POW_PRICE;q.pw[k]++;pfSave();sfxFanfare();},{size:19,id:19,col:can?'#e08a00':'#aab4cc',colD:can?'#a85f24':'#8793ad',colP:can?'#c97800':'#aab4cc'});cardEnd();}
 function toyPlace(em,i){const q=PF.list[PF.cur],L=q.line,j=L.indexOf(em);if(j>=0)L[j]=L[i];L[i]=em;pfSave();selSlot=-1;selToy=null;}
 function toyBuy(){const q=PF.list[PF.cur],em=selToy,pr=priceOf(em);if(!em||owns(q,em)||q.coins<pr)return;q.coins-=pr;q.owned.push(em);pfSave();sfxFanfare();
  {const rest=ALL_TOYS.filter(e=>!q.line.includes(e)),i=rest.filter(e=>owns(q,e)).indexOf(em);toyPg=i<0?0:Math.floor(i/8);}} // jump to the page the new toy is now on (owned toys are listed first, so normally page 1)
-function drawMyToys(){const q=PF.list[PF.cur],cw=344,ch=502,{cx,cy}=cardBegin(cw,ch,'My Toys',uiT-toysT0),L=q.line;
+function drawMyToys(){const q=PF.list[PF.cur],cw=344,ch=502,{cx,cy}=cardBegin(cw,ch,'Bath Toys',uiT-toysT0),L=q.line;
  coin(cx+26,cy+80,9);text(q.coins+' Coins',cx+41,cy+81,15,C.navy,{a:'left'});text(q.name+'’s Lineup',cx+cw-18,cy+81,12,'#4a6fc4',{a:'right',w:800});
  // the 12 spots
  const sx=cx+(cw-6*52+4)/2;L.forEach((em,i)=>{const x=sx+(i%6)*52,y=cy+96+(i/6|0)*50,sel=i===selSlot,id=40+i;if(sel){rr(x-3,y-3,54,52,9);fill(C.lava);}rr(x,y,48,46,7);fill(sel?'#fff3bf':'#eef4fd');
@@ -1279,7 +1304,7 @@ function drawMyToys(){const q=PF.list[PF.cur],cw=344,ch=502,{cx,cy}=cardBegin(cw
  const own=selToy&&owns(q,selToy),pr=selToy?priceOf(selToy):0,can=selToy&&!own&&q.coins>=pr,nm=selToy?TOYNAME[selToy]||'This Toy':'';
  body(selToy?(own?'Now tap a spot for '+nm+'.':can?'Buy '+nm+' for '+pr+' coins?':nm+': you need '+(pr-q.coins)+' more coins.'):selSlot>=0?'Now tap a toy, or another spot to swap.':'Tap a spot, then tap a toy.',cy+408,13.5);
  const x0=W/2-(80+8+92+8+124)/2,yb=cy+ch-70,B={col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'};
- button(x0,yb,80,46,'Close',()=>{toysT0=0;},{size:15,id:7,...B});
+ button(x0,yb,80,46,'Back',()=>tmGo(2),{size:15,id:7,...B});
  button(x0+88,yb,92,46,'Default',()=>{q.line=DEF_LINE.slice();pfSave();selSlot=-1;selToy=null;},{size:15,id:19,col:'#8a5bd6',colD:'#5a359c',colP:'#7648c2'});
  button(x0+188,yb,124,46,'Buy',toyBuy,{size:19,col:can?C.green:'#aab4cc',colD:can?C.greenD:'#8793ad',colP:can?'#27a83f':'#aab4cc'});cardEnd();}
 // ── DRESS NOAH (start screen): buy gear with coins and choose what Noah wears in the game ──
@@ -1306,7 +1331,7 @@ function drawNoah(){const q=PF.list[PF.cur],cw=336,ch=566,{cx,cy}=cardBegin(cw,c
   if(on)check(x+64,y+10);hits.push({x,y,w:74,h:84,act:()=>gearTap(k),key:uiKey,id});});
  const g=GEAR.find(z=>z[0]===selGear),can=g&&q.coins>=g[1];
  body(g?(can?'Buy the '+g[2]+' for '+g[1]+' coins?':g[2]+': you need '+(g[1]-q.coins)+' more coins.'):q.gear.length?'Tap a piece to put it on or take it off.':'Tap a piece to buy it for Noah.',cy+464,13.5);
- const xb=W/2-(104+12+164)/2,yb=cy+ch-70;button(xb,yb,104,46,'Close',()=>{noahT0=0;},{size:16,id:7,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});
+ const xb=W/2-(104+12+164)/2,yb=cy+ch-70;button(xb,yb,104,46,'Back',()=>{noahT0=0;tmGo(2);},{size:16,id:7,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});
  button(xb+116,yb,164,46,'Buy',gearBuy,{size:19,col:can?C.green:'#aab4cc',colD:can?C.greenD:'#8793ad',colP:can?'#27a83f':'#aab4cc'});cardEnd();}
 // ── HOW TO PLAY (start screen) ── five pages. The Game (toys, clock, Max, hairball); Two Ways To Play (Push or Swipe is a choice, plus Easy or Hard); Way 1: Push and Way 2: Swipe (a small looping demo and three short steps each); Coins And Toys.
 const HOWTO=[null,
@@ -1587,12 +1612,12 @@ if(TEST&&menuStep===0&&!howTo&&!bdgPg&&!pfOpen&&!toysT0&&!noahT0&&!mpT0&&uiT>.6)
  if(JOIN&&uiT>.9&&!howTo&&!bdgPg&&!pfOpen&&!toysT0&&!noahT0&&!mpT0)joinFromLink();
  if(howTo){drawHowTo();}
  else if(bdgPg){drawBadges();}
- else if(toysT0){drawMyToys();}
+ else if(toysT0){if(tmPg)drawToyMenu();else drawMyToys();}
  else if(noahT0){drawNoah();}
  else if(mpT0){if(mpPg===2)drawPerson();else if(mpPg===1)drawMulti();else drawMultiMenu();}
  else if(pfOpen){if(nameEd)drawNameCard();else if(pfToy)drawToyCard();else if(pfDel)drawDeleteCard();else drawPlayers();}
  else if(menuStep===0){const bh=56,gap=14,mh=46,bk=36,by=ih+34+(bandH-34-SAFEB-bh*2-mh-bk-gap*3)*.5,ry=by+(bh+gap)*2+mh+gap; // step 1 of 2: how to throw. v8: a Multiplayer button sits under Swipe; the small row (at ry) moved down
-  appear(EZ.back((uiT-1)/.45),ry,bk,()=>{button(bx,ry,78,bk,'How To Play',()=>{howTo=1;howT0=uiT;},{size:11,id:3,col:'#8a5bd6',colD:'#5a359c',colP:'#7648c2'});button(bx+82,ry,48,bk,'Badges',()=>{bdgPg=1;bdgT0=uiT;},{size:11,id:4,col:'#12a5a0',colD:'#0b6f6c',colP:'#0e8f8a'});button(bx+134,ry,54,bk,'My Toys',openToys,{size:11,id:18,col:'#e08a00',colD:'#a85f24',colP:'#c97800'});button(bx+192,ry,40,bk,'Noah',openNoah,{size:11,id:22,col:'#e0457a',colD:'#a3264f',colP:'#c93a6a'});});
+  appear(EZ.back((uiT-1)/.45),ry,bk,()=>{button(bx,ry,86,bk,'How To Play',()=>{howTo=1;howT0=uiT;},{size:12,id:3,col:'#8a5bd6',colD:'#5a359c',colP:'#7648c2'});button(bx+90,ry,66,bk,'Badges',()=>{bdgPg=1;bdgT0=uiT;},{size:12,id:4,col:'#12a5a0',colD:'#0b6f6c',colP:'#0e8f8a'});button(bx+160,ry,72,bk,'My Toys',openToys,{size:12,id:18,col:'#e08a00',colD:'#a85f24',colP:'#c97800'});});
   if(uiT>.7)text('Pick A Game',W/2,by-19,15,'#fff',{s:C.navy});
   // v8.19: three games against the computer, then Multiplayer (people only). Noah is the original game, untouched.
   appear(EZ.back((uiT-.7)/.45),by,bh,()=>button(bx,by,bw,bh,'Noah',()=>{menuStep=1;menuT0=uiT;},{size:25,id:0,sub:'Throw The Toys'}));
