@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v8.19'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v8.20'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -1470,7 +1470,7 @@ function drawDuelIntro(){const D=duel,mx=D.role==='max',cw=324,ch=440,{cx,cy,age
  // the two things to know, each with a small moving picture
  (mx?[['Drag to swim. Tap a spot to dive.'],['A toy that hits Max is blocked.'],['Blocks and dives tire him out.'],['Hold out until the clock hits 0!']]:[['Throw every toy in the volcano.'],['A toy that hits Max is blocked.'],['Watch his energy. A tired Max is slow!'],['Beat the clock!']]).forEach((r,i)=>{const y=cy+196+i*34;circ(cx+34,y,12);fill(C.lava);text(''+(i+1),cx+34,y+1,15,'#fff');text(r[0],cx+54,y+1,13.5,C.navy,{a:'left',w:800});});
  text((solo(D)?'Round ':'Stage ')+D.stage+'   ·   '+need+' Toys   ·   '+Math.round(roundTime)+' Seconds',W/2,cy+336,12,'#4a6fc4',{w:800});
- {const x0=(W-300)/2,yb=cy+ch-82;button(x0,yb,144,58,'Push',()=>{swipeMode=false;state='duelbag';},{size:23,sub:'Press And Hold'});button(x0+156,yb,144,58,'Swipe',()=>{swipeMode=true;state='duelbag';},{size:23,id:2,sub:'Flick To Throw',col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});}cardEnd();} // only Noah's side opens on this card now (Max has Max School and the bag): pick how to throw
+ if(solo(D))button((W-224)/2,cy+ch-82,224,58,'Next',()=>{state='duelbag';},{size:23,icon:1});else {const x0=(W-300)/2,yb=cy+ch-82;button(x0,yb,144,58,'Push',()=>{swipeMode=false;state='duelbag';},{size:23,sub:'Press And Hold'});button(x0+156,yb,144,58,'Swipe',()=>{swipeMode=true;state='duelbag';},{size:23,id:2,sub:'Flick To Throw',col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});}cardEnd();} // only Noah's side opens on this card now (Max has Max School and the bag): pick how to throw
 // PACK YOUR BAG: up to 3 charges for this match. Tap a power to pack one, tap a slot to take it out. A power you have
 // none of can be bought with coins. Nothing leaves the player's stock until it is used in the match.
 function drawBag(){const D=duel,q=PF.list[PF.cur],nh=D.role==='noah',LIST=nh?TRK:POW,cw=336,ch=nh?422:516,{cx,cy}=cardBegin(cw,ch,nh?'Pack Your Tricks':'Pack Your Bag');
@@ -1559,19 +1559,21 @@ k0=lerp(.85,1,EZ.back(uiT/.5)),ih=py+pw+30,bandH=HS-ih; // the taped picture sit
   appear(EZ.back((uiT-1)/.45),ry,bk,()=>{button(bx,ry,78,bk,'How To Play',()=>{howTo=1;howT0=uiT;},{size:11,id:3,col:'#8a5bd6',colD:'#5a359c',colP:'#7648c2'});button(bx+82,ry,48,bk,'Badges',()=>{bdgPg=1;bdgT0=uiT;},{size:11,id:4,col:'#12a5a0',colD:'#0b6f6c',colP:'#0e8f8a'});button(bx+134,ry,54,bk,'My Toys',openToys,{size:11,id:18,col:'#e08a00',colD:'#a85f24',colP:'#c97800'});button(bx+192,ry,40,bk,'Noah',openNoah,{size:11,id:22,col:'#e0457a',colD:'#a3264f',colP:'#c93a6a'});});
   if(uiT>.7)text('Pick A Game',W/2,by-19,15,'#fff',{s:C.navy});
   // v8.19: three games against the computer, then Multiplayer (people only). Noah is the original game, untouched.
-  {const hw=(bw-10)/2;appear(EZ.back((uiT-.7)/.45),by,bh,()=>{button(bx,by,hw,bh,'Noah',()=>{menuStep=1;menuT0=uiT;},{size:24,id:0,sub:'Throw The Toys'});button(bx+hw+10,by,hw,bh,'Max',playMax,{size:24,id:2,sub:'Block The Toys',col:'#e08a00',colD:'#a85f24',colP:'#c97800'});});}
-  appear(EZ.back((uiT-.85)/.45),by+bh+gap,bh,()=>button(bx,by+bh+gap,bw,bh,'Noah Vs Smart Max',()=>startCamp('noah'),{size:19,id:25,sub:'He Fights Back. You Get Tricks.',col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'}));
+  appear(EZ.back((uiT-.7)/.45),by,bh,()=>button(bx,by,bw,bh,'Noah',()=>{menuStep=1;menuT0=uiT;},{size:25,id:0,sub:'Throw The Toys'}));
+  appear(EZ.back((uiT-.85)/.45),by+bh+gap,bh,()=>button(bx,by+bh+gap,bw,bh,'Max',playMax,{size:25,id:2,sub:'Block The Toys',col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'}));
   appear(EZ.back((uiT-.95)/.45),by+(bh+gap)*2,mh,()=>button(bx,by+(bh+gap)*2,bw,mh,'Multiplayer',openMulti,{size:20,id:23,sub:'Play A Person',col:C.lava,colD:'#a82a06',colP:'#e2580f'}));
  }else if(menuStep===1){const bh=56,gap=20,bk=36,by=ih+34+(bandH-34-SAFEB-bh*2-gap*2-bk)*.5,mt=uiT-menuT0; // Noah's game, step 1: how to throw
   text('How Do You Throw?',W/2,by-19,15,'#fff',{s:C.navy});
   appear(EZ.back(mt/.35),by,bh,()=>button(bx,by,bw,bh,'Push',()=>{swipeMode=false;menuStep=2;menuT0=uiT;},{size:25,id:0,sub:'Press And Hold'}));
   appear(EZ.back((mt-.1)/.35),by+bh+gap,bh,()=>button(bx,by+bh+gap,bw,bh,'Swipe',()=>{swipeMode=true;menuStep=2;menuT0=uiT;},{size:25,id:2,sub:'Flick To Throw',col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'}));
   appear(EZ.back((mt-.2)/.35),by+(bh+gap)*2,bk,()=>button((W-120)/2,by+(bh+gap)*2,120,bk,'Back',()=>{menuStep=0;menuT0=0;swipeMode=false;},{size:16,id:3,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'}));
- }else{const bh=56,gap=20,bk=36,by=ih+34+(bandH-34-SAFEB-bh*2-gap*2-bk)*.5,mt=uiT-menuT0; // step 2 of 2: Easy or Hard (Push Hard only hides the green signal)
-  text((swipeMode?'Swipe':'Push')+' Mode: Easy Or Hard?',W/2,by-19,15,'#fff',{s:C.navy});
+ }else{const bh=56,gap=14,mh=46,bk=36,by=ih+34+(bandH-34-SAFEB-bh*2-mh-bk-gap*3)*.5,mt=uiT-menuT0; // Noah's game, step 2: Easy, Hard (Push Hard only hides the green signal), or Smart Max
+  text((swipeMode?'Swipe':'Push')+': Easy, Hard Or Smart Max?',W/2,by-19,15,'#fff',{s:C.navy});
   appear(EZ.back(mt/.35),by,bh,()=>button(bx,by,bw,bh,'Easy',()=>{hardMode=false;startGame();},{size:25,id:0,sub:'With Hints'}));
   appear(EZ.back((mt-.1)/.35),by+bh+gap,bh,()=>button(bx,by+bh+gap,bw,bh,'Hard',()=>{hardMode=true;startGame();},{size:25,id:2,sub:'No Hints',col:C.lava,colD:'#a82a06',colP:'#e2580f'}));
-  appear(EZ.back((mt-.2)/.35),by+(bh+gap)*2,bk,()=>button((W-120)/2,by+(bh+gap)*2,120,bk,'Back',()=>{menuStep=1;menuT0=uiT;},{size:16,id:3,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'}));}
+  // v8.20 (Derek): Noah Vs Smart Max is a third choice beside Easy and Hard, not a game of its own on the start screen
+  appear(EZ.back((mt-.2)/.35),by+(bh+gap)*2,mh,()=>button(bx,by+(bh+gap)*2,bw,mh,'Smart Max',()=>{const sw=swipeMode;startCamp('noah');swipeMode=sw;},{size:20,id:25,sub:'He Fights Back. You Get Tricks.',col:'#8a5bd6',colD:'#5a359c',colP:'#7648c2'}));
+  appear(EZ.back((mt-.3)/.35),by+(bh+gap)*2+mh+gap,bk,()=>button((W-120)/2,by+(bh+gap)*2+mh+gap,120,bk,'Back',()=>{menuStep=1;menuT0=uiT;},{size:16,id:3,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'}));}
  text(VERSION+(TEST?' TEST':''),W-16,HS-lblB-12,10,TEST?C.hot:'#d6efff',{a:'right',w:800});if(TEST)text(dbg,16,HS-lblB-12,9,'#d6efff',{a:'left',w:800});}
 function overlay(){card=null;card2=null;card3=null;card4=null;hits.length=0; // v8.13: the main button (card) is cleared every frame like the others. It used to survive onto a card that had no main button of its own, so a tap there ran the PREVIOUS card's button (found when the joiner's Wave tapped the old Join).
  const key=paused?'pause':state;if(key!==uiKey){uiKey=key;uiT=0;card=null;press=null;}

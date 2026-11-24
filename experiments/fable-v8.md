@@ -406,4 +406,7 @@ devices is OK (he sets up the account when asked); the one-line privacy and list
     to these. Round 10 still reads easier than round 9 (V8-2A). Two-phone matches are unchanged (fingerprint identical).
   - Not done: How To Play pages for the new games; badges for Smart Max; whether three powers every round make the
     Max game too easy again is not measured.
+- v8.20 (TEST ONLY): Derek: "make Noah vs Smart Max as a sub choice under easy and hard". Start screen is Noah, Max,
+  Multiplayer again (full-width buttons). Noah, then Push/Swipe, then Easy / Hard / **Smart Max**. Smart Max keeps the
+  throw already chosen, so its "You Are Noah!" card has one Next button instead of Push/Swipe.
 
