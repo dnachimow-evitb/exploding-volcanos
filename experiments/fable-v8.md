@@ -503,4 +503,11 @@ devices is OK (he sets up the account when asked); the one-line privacy and list
   **Max's Toys** shows his seven powers with how many are owned, what each does, and Buy (15 coins). Every card's
   Close became Back and returns one level up. Added without being asked: the Tricks card (Noah's three tricks had no
   place to be seen or bought outside the pack card). Not built: outfits for Max.
+- v8.29 (TEST ONLY): Derek: "I don't [think] decoy duck works". Checked with real pointer throws in Push and Swipe: the
+  decoy flew, the real toy stayed, the computer Max swatted it every time. But the cost was small and invisible: two
+  blocks' worth, and against Swipe the computer pays only 60% down to 43% of that (`fit`), so his bar went 1.00 to .58
+  and was back in seconds. **Now a swatted decoy empties Max's energy outright** ("Fooled! Max Is Worn Out!", bigger
+  splash; Juice Box protects him). The log line gains `fooled N`. `tricks.js`, 14 games a round, decoys fired blindly:
+  skill .6 mean 88 to 92, skill .2 mean 45 to 44: still nothing for a blind user, as expected of a bluff. Not measured:
+  a decoy followed at once by a real throw to the other side, which is how a person would use it.
 

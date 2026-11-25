@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v8.28'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v8.29'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -39,7 +39,7 @@ const POW=[['splash','Big Splash',0],['noodle','Pool Noodle',10],['flip','Flippe
  // Only a person plays Noah in a match (on a second device), so only a person uses these. What each does: doLaunch.
  ROCKET_REACH=.6,DECOY_TIRE=2, // a rocket is too quick to swat unless Max is nearly under it; swatting a decoy tires Max twice as much as a real block
  TRK=[['decoy','Decoy Duck',0],['rocket','Rocket Throw',0],['double','Double Throw',0]],ALLPW=POW.concat(TRK),POW_PRICE=15,POWNAME=Object.fromEntries(ALLPW.map(q=>[q[0],q[1]]));
-const POWDESC={splash:'A wave sweeps the toys to your side.',noodle:'A much wider reach for 10 seconds.',flip:'Swim much faster for 10 seconds.',bucket:'Your next block catches the toy.',blast:'Knocks down a toy flying above Max.',bubble:'Bubbles hide the toys from Noah.',juice:'Full energy, and no tiring for a moment.',decoy:'A fake throw. Max tires himself for nothing.',rocket:'Your next throw flies twice as fast.',double:'Your next throw sends two toys at once.'};
+const POWDESC={splash:'A wave sweeps the toys to your side.',noodle:'A much wider reach for 10 seconds.',flip:'Swim much faster for 10 seconds.',bucket:'Your next block catches the toy.',blast:'Knocks down a toy flying above Max.',bubble:'Bubbles hide the toys from Noah.',juice:'Full energy, and no tiring for a moment.',decoy:'A fake throw. If Max swats it, he is worn out.',rocket:'Your next throw flies twice as fast.',double:'Your next throw sends two toys at once.'};
 const COIN_DUEL=[2,5]; // coins for a match of 20 seconds or more: lost, won
 function pwFix(o){const r={};for(const q of ALLPW)r[q[0]]=o&&typeof o[q[0]]==='number'?clamp(o[q[0]]|0,0,99):1;return r;} // a player new to powers starts with one of each
 // repeatable randomness for everything that affects play (toy positions, drift, hairball, the computer's choices).
@@ -156,7 +156,7 @@ function logTick(dt){const R=RL;if(!R||!duel)return;const e=duel.mx.e,dx=Math.ab
 function logEnd(res){const R=RL;RL=null;if(!TEST||!R)return;const D=duel,d=new Date(),p2=n=>String(n).padStart(2,'0'),sec=Math.round(R.n);
  const game=D?(D.tut?'school':(D.net||D.wasNet?'2phone-':'')+(D.role==='max'?'max':'smartmax-noah')+(D.wasNet?'-dropped':'')+(D.role==='noah'||D.noah!=='cpu'?(swipeMode?'-swipe':'-push'):'')):'noah-'+(swipeMode?'swipe':'push')+(hardMode?'-hard':'-easy');
  let L=[VERSION,p2(d.getMonth()+1)+'-'+p2(d.getDate())+' '+p2(d.getHours())+':'+p2(d.getMinutes()),game,'r'+round,res,sec+'s','left '+Math.round(timeLeft),'in '+collected+'/'+need,'thr '+R.thr];
- if(D){L.push('blk '+D.blocks,'dive '+R.dv,'pw '+(R.pw.join('+')||'-'),'trk '+(R.tk.join('+')||'-'),'eMin '+R.eMin.toFixed(2),'tired '+Math.round(100*R.tired/Math.max(1,R.n))+'%','swim '+Math.round(R.swim),'still '+R.stillMax.toFixed(1)+'s');
+ if(D){L.push('blk '+D.blocks,'dive '+R.dv,'pw '+(R.pw.join('+')||'-'),'trk '+(R.tk.join('+')||'-')+(R.fool?' fooled '+R.fool:''),'eMin '+R.eMin.toFixed(2),'tired '+Math.round(100*R.tired/Math.max(1,R.n))+'%','swim '+Math.round(R.swim),'still '+R.stillMax.toFixed(1)+'s');
   const tu=Object.keys(TUNE0).filter(k=>TUNE[k]!==TUNE0[k]).map(k=>k+'='+TUNE[k]).join(',');if(tu)L.push('tune '+tu);}
  else L.push('miss '+rdMiss,'maxblk '+rdBlock,'score '+score);
  // v8.23, for judging difficulty AND fun: which attempt at this round this was (try), how long since the last round ended (gap: a long
@@ -202,7 +202,7 @@ function maxDive(x){const m=duel.mx;if(state!=='play'||paused)return;duel.dives=
 // what the toy does when Max gets it (a block, or the Squirt Blaster)
 function mxCount(o,dive){stat('mxBlocks');if(o.hb)stat('mxHair');if(dive)stat('mxDives');campS++;statMax('mxBestStreak',campS);campBlocks++;statMax('mxBestScore',campBlocks);} // a real block in the Max game
 function maxBlock(o,free,jet){const D=duel,m=D.mx;if(D.net==='M')netSend({t:'B',i:o.id,c:m.bucket>0&&!m.held?1:0,j:jet?1:0});D.blocks++;haptic(2);o.blocked=1;if(!free)m.e=Math.max(0,m.e-tireNow()); // a block tires him, and so does a hit with the Squirt Blaster (jet)
- if(o.dc){if(!free)m.e=Math.max(0,m.e-tireNow()*(DECOY_TIRE-1));D.blocks--;o.st='gone';waterBurst(o.x,o.y,false);pop(blk.x,blk.y-36,'Fooled! A Decoy!','#7fe0ff');sfxBlock();mood(mxc,'wow',1);mood(noah,'cheer',1);return;} // he spent the energy and got nothing
+ if(o.dc){if(!free&&!(m.juice>0))m.e=0;D.blocks--;o.st='gone';waterBurst(o.x,o.y,true);shake=5;pop(blk.x,blk.y-52,'Fooled!','#7fe0ff');pop(blk.x,blk.y-30,'Max Is Worn Out!','#ffd23f');if(RL)RL.fool=(RL.fool||0)+1;sfxBlock();mood(mxc,'wow',1);mood(noah,'cheer',1);return;} // he spent the energy and got nothing
  if(m.bucket>0&&!m.held){mxCount(o,D.dove>0);m.bucket=0;m.held={o,t:BUCKET_T};if(!free)m.e=Math.min(1,m.e+tireNow());o.st='held';pop(blk.x,blk.y-40,'In The Bucket!','#ffb020');sfxBlock();mood(mxc,'gotcha',1.1);hop(mxc,3.2);mood(noah,'wow',.8);combo=0;streak=0;return;} // caught: out of play for 4 seconds
  mxCount(o,D.dove>0);if(jet||D.tut){o.vy=Math.abs(o.vy)*.5+1;o.vx=jet?(o.x<CX?-3:3):o.vx*-.5;}else swat(o);shake=3;rdBlock++;pop(blk.x,blk.y-36,'Max Got It!','#ffb020');sfxBlock();mood(mxc,'gotcha',1.1);hop(mxc,3.2);mood(noah,'wow',.8);}
 function usePower(k,free){const D=duel,m=D.mx,q=PF.list[PF.cur];if(state!=='play'||paused)return;
