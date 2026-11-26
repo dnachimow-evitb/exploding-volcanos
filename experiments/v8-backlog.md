@@ -88,7 +88,7 @@ The goal of the whole version (Derek, 2026-11-17): make the game stickier. Judge
 - [x] **V8-61** S. (v8.4) Coins for matches (5 winner, 2 loser, none under 20 seconds).
 - [ ] **V8-62** M. New badges and stats (blocks as Max, wins on each side, Daily Bath days, golden toys).
 - [ ] **V8-63** S. Dress Up: the "Noah" button covers both boys; Max wears the 12 existing pieces.
-- [ ] **V8-64** S. How To Play pages for Multiplayer, Max's controls, powers and the Daily Bath.
+- [x] **V8-64** S. (v8.30; no Daily Bath page, it is not built) How To Play pages for Multiplayer, Max's controls, powers and the Daily Bath.
 
 - [x] **V8-65** L. (v8.19) Computer games moved to the start screen: Noah, Max (ten rounds), Noah Vs Smart Max (ten rounds);
       Multiplayer is people only. Max's twelve badges and stats. Max game retuned to climb round by round.

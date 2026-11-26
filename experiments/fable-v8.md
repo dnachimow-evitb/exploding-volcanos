@@ -510,4 +510,10 @@ devices is OK (he sets up the account when asked); the one-line privacy and list
   splash; Juice Box protects him). The log line gains `fooled N`. `tricks.js`, 14 games a round, decoys fired blindly:
   skill .6 mean 88 to 92, skill .2 mean 45 to 44: still nothing for a blind user, as expected of a bluff. Not measured:
   a decoy followed at once by a real throw to the other side, which is how a person would use it.
+- v8.30 (TEST ONLY): Derek: "Update the how to play to incorporate the new additions". How To Play goes from 5 pages to 9
+  (`HOWTO`): The Game, **Pick A Game** (Noah, Max, Smart Max, Multiplayer), Two Ways To Throw, Push, Swipe, **Playing As
+  Max** (swim and dive, block, energy, powers), **Smart Max And Tricks** (the three tricks), **Multiplayer** (two
+  phones, code or link, Quick Match, the computer takes over if someone leaves), Coins And Toys (rewritten for the My
+  Toys menu and Max's badges). Ten new small pictures in `drawHowTo` (`pw:key` draws a power's icon). Every line was
+  checked to fit the card on a 375 x 667 screen.
 

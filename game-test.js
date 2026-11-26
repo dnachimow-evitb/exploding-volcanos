@@ -7,7 +7,7 @@
    and a layout that keeps the wall decor above the tub at every screen shape.
    Rules, scoring, difficulty table, round structure and the song are unchanged.
    The game logic and motion helpers are carried over from fable-supreme; every draw call is new. */
-const VERSION='v8.29'; // shown small in the corner of the start screen; bump it with every change
+const VERSION='v8.30'; // shown small in the corner of the start screen; bump it with every change
 let card2=null,card3=null,pressId=0,hardMode=false; // extra buttons; Easy / Hard (swipe only)
 let homeAsk=0,homeWasPaused=false; // "Go Home?" question during play (uiT-based open time + 1; 0 = closed)
 let pfToy=0; // toy picker for the current player (time it opened, 0 = closed)
@@ -1334,12 +1334,18 @@ function drawNoah(){const q=PF.list[PF.cur],cw=336,ch=566,{cx,cy}=cardBegin(cw,c
  const xb=W/2-(104+12+164)/2,yb=cy+ch-70;button(xb,yb,104,46,'Back',()=>{noahT0=0;tmGo(2);},{size:16,id:7,col:'#5b7fd6',colD:'#34509c',colP:'#4a6cc0'});
  button(xb+116,yb,164,46,'Buy',gearBuy,{size:19,col:can?C.green:'#aab4cc',colD:can?C.greenD:'#8793ad',colP:can?'#27a83f':'#aab4cc'});cardEnd();}
 // ── HOW TO PLAY (start screen) ── five pages. The Game (toys, clock, Max, hairball); Two Ways To Play (Push or Swipe is a choice, plus Easy or Hard); Way 1: Push and Way 2: Swipe (a small looping demo and three short steps each); Coins And Toys.
+// HOW TO PLAY. v8.30 added the pages for what version 8 brought: Pick A Game, Playing As Max, Smart Max And Tricks, Multiplayer.
+// A page is either rows ([icon, title, one line]; at most four) or steps with the moving demo (Push, Swipe). Icons: drawHowTo.
 const HOWTO=[null,
- {name:'The Game',rows:[['toy','The Toys','Throw them all into the volcano.'],['clock','The Clock','Get them in before time runs out.'],['max','Max','He pops up and blocks your throw.'],['hair','The Hairball','Throw it in for 5 more seconds.']],note:'A new toy joins every round.',next:'Next: 2 Ways'},
- {name:'Two Ways To Play',rows:[['push','Push','Press and hold a toy, then let go.'],['swipe','Swipe','Flick a toy up at the volcano.'],['mode','Easy Or Hard','Hard hides the green dots.']],note:'You choose on the start screen. Try both!',next:'Next: Push'},
+ {name:'The Game',rows:[['toy','The Toys','Throw them all into the volcano.'],['clock','The Clock','Get them in before time runs out.'],['max','Max','He pops up and blocks your throw.'],['hair','The Hairball','Throw it in for 5 more seconds.']],note:'A new toy joins every round.',next:'Next: The Games'},
+ {name:'Pick A Game',rows:[['noah','Noah','Throw the toys. Ten rounds.'],['max','Max','Block the toys. Ten rounds.'],['smart','Smart Max','Be Noah. This Max fights back.'],['phones','Multiplayer','Play a person on two phones.']],note:'Smart Max is under Noah, next to Easy and Hard.',next:'Next: 2 Ways'},
+ {name:'Two Ways To Throw',rows:[['push','Push','Press and hold a toy, then let go.'],['swipe','Swipe','Flick a toy up at the volcano.'],['mode','Easy Or Hard','Hard hides the green dots.']],note:'You choose after you pick Noah. Try both!',next:'Next: Push'},
  {name:'Way 1: Push',steps:['Press a toy and hold.','Let go when the dots turn green.','It flies into the volcano!'],note:'Hard: the dots never turn green.',next:'Next: Swipe'},
- {name:'Way 2: Swipe',steps:['Put your finger on a toy.','Swipe up at the volcano.','Bigger swipe, bigger throw!'],note:'Bounce it off a wall for double points.',next:'Next: Coins'},
- {name:'Coins And Toys',rows:[['coin','Coins','Win rounds and badges to earn coins.'],['shop','New Toys','Buy new toys with your coins.'],['line','Your Lineup','Pick the 12 toys you play with.'],['noah','Dress Noah','Buy him a hat, goggles and more.']],note:'Tap My Toys or Noah on the start screen.',next:'Got It!'}];
+ {name:'Way 2: Swipe',steps:['Put your finger on a toy.','Swipe up at the volcano.','Bigger swipe, bigger throw!'],note:'Bounce it off a wall for double points.',next:'Next: Be Max'},
+ {name:'Playing As Max',rows:[['swim','Swim And Dive','Drag to swim. Tap a spot to dive.'],['block','Block','A toy that hits Max is swatted away.'],['energy','Energy','Blocks and dives tire him out.'],['pw:splash','Powers','Pack three. Tap one to use it.']],note:'Hold out until the clock hits 0!',next:'Next: Smart Max'},
+ {name:'Smart Max And Tricks',rows:[['smart','Smart Max','He watches your finger.'],['pw:decoy','Decoy Duck','A fake. Swat it and he is worn out.'],['pw:rocket','Rocket Throw','Your next throw flies twice as fast.'],['pw:double','Double Throw','Your next throw sends two toys.']],note:'Pack three tricks. Tap one, then throw.',next:'Next: 2 Phones'},
+ {name:'Multiplayer',rows:[['phones','Two Phones','One of you is Noah, one is Max.'],['code','Start A Game','Send a friend the code or link.'],['quick','Quick Match','Play someone who is waiting.'],['cpu','If Someone Leaves','The computer takes over their side.']],note:'Noah fills the volcano. Max runs out the clock.',next:'Next: Coins'},
+ {name:'Coins And Toys',rows:[['coin','Coins','Win rounds and badges for coins.'],['shop','Noah’s Toys','Bath toys, outfits and tricks.'],['pw:noodle','Max’s Toys','His blocking powers. 15 coins each.'],['badge','Badges','Noah and Max have twelve each.']],note:'Tap My Toys or Badges on the start screen.',next:'Got It!'}];
 function drawHowTo(){const pg=HOWTO[howTo],age=uiT-howT0,cw=324,ch=428,{cx,cy}=cardBegin(cw,ch,'How To Play',age);
  text(pg.name,W/2-(pg.name.length>13?14:0),cy+84,pg.name.length>13?19:23,C.navy);text(howTo+' Of '+(HOWTO.length-1),cx+cw-20,cy+84,12,'#4a6fc4',{a:'right',w:800});
  if(pg.rows){pg.rows.forEach((r,i)=>{const y=cy+122+i*54,ix=cx+46,k=EZ.back((age-.15-i*.08)/.3);if(k<=0)return;X.save();X.translate(ix,y);X.scale(k,k);
@@ -1353,6 +1359,16 @@ function drawHowTo(){const pg=HOWTO[howTo],age=uiT-howT0,cw=324,ch=428,{cx,cy}=c
    else if(r[0]==='shop'){X.rotate(Math.sin(NOW*2)*.12);paintToy('whale',42);}
    else if(r[0]==='line'){[['🦆',-13,3],['robot',0,-5],['🚀',13,3]].forEach(q=>{X.save();X.translate(q[1],q[2]);paintToy(q[0],24);X.restore();});}
    else if(r[0]==='noah'){X.translate(0,6);sticker(()=>kidHead(0,0,14,C.hairN,'#2b1a12',{mood:'happy',wear:['hat','goggles']}));}
+   else if(r[0].startsWith('pw:')){X.translate(0,Math.sin(NOW*3)*1.5);powIcon(r[0].slice(3),17);}
+   else if(r[0]==='smart'){X.translate(0,4);sticker(()=>kidHead(0,0,15,C.hairM,'#a84f16',{mood:'gotcha',freckles:true,flip:true}));X.strokeStyle=C.lava;X.lineWidth=3;X.lineCap='round';for(const g of[-1,1]){X.beginPath();X.moveTo(g*20,-16);X.lineTo(g*26,-22);X.stroke();}}
+   else if(r[0]==='phones'){for(const g of[-1,1]){X.save();X.translate(g*11,0);X.rotate(g*.14);rr(-8,-17,16,32,4);fill(C.navy);rr(-6,-14,12,24,2);fill(g<0?C.green:'#e08a00');X.restore();}}
+   else if(r[0]==='swim'){const dx=Math.sin(NOW*3)*7;X.lineCap='round';X.strokeStyle='#5b7fd6';X.lineWidth=5;X.beginPath();X.moveTo(-17,8);X.lineTo(17,8);X.stroke();for(const g of[-1,1]){X.beginPath();X.moveTo(g*17,8);X.lineTo(g*10,2);X.moveTo(g*17,8);X.lineTo(g*10,14);X.stroke();}circ(dx,-7,8);fill(C.hairM);}
+   else if(r[0]==='block'){X.save();X.translate(-6,6);sticker(()=>kidHead(0,0,12,C.hairM,'#a84f16',{mood:'gotcha',freckles:true,flip:true}));X.restore();X.save();X.translate(13,-10+Math.sin(NOW*5)*2);X.rotate(.4);paintToy('🦆',20);X.restore();}
+   else if(r[0]==='energy'){const f=.5+.5*Math.sin(NOW*1.5);rr(-20,-8,40,16,5);fill(C.navy);rr(-17,-5,34,10,3);fill('#c9d8f2');rr(-17,-5,Math.max(5,34*f),10,3);fill(f<.35?C.lavaDk:f<.6?C.amber:C.go);}
+   else if(r[0]==='code'){rr(-21,-12,42,24,6);fill(C.navy);text('BKTR',0,1,13,'#fff');}
+   else if(r[0]==='quick'){X.rotate(Math.sin(NOW*3)*.1);X.beginPath();X.moveTo(4,-19);X.lineTo(-11,3);X.lineTo(-1,3);X.lineTo(-5,19);X.lineTo(11,-4);X.lineTo(1,-4);X.closePath();X.lineJoin='round';X.lineWidth=4;X.strokeStyle=C.navy;X.stroke();fill(C.gold);}
+   else if(r[0]==='cpu'){rr(-16,-13,32,24,5);fill(C.navy);rr(-13,-10,26,18,3);fill('#bfeaff');circ(-5,-2,2.5);fill(C.navy);circ(5,-2,2.5);fill(C.navy);X.fillStyle=C.navy;X.fillRect(-9,13,18,4);}
+   else if(r[0]==='badge'){medal(0,3,15,3,'wins');}
    else{X.translate(0,4);sticker(()=>kidHead(0,0,15,C.hairM,'#a84f16',{mood:'cheeky',freckles:true,flip:true}));}
    X.restore();text(r[1],cx+82,y-9,16.5,C.navy,{a:'left'});text(r[2],cx+82,y+11,12.5,'#4a6fc4',{a:'left',w:800});});
   body(pg.note,cy+336,12.5,C.lavaDk);
