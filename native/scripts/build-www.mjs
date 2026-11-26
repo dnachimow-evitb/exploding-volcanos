@@ -1,5 +1,5 @@
 // Builds native/www: the files the App Store app ships with.
-// It copies the LIVE game from the folder above (index.html + game-fable-v7.js + song + cover art),
+// It copies the LIVE game from the folder above (index.html + the game file it loads, game-fable-v8.js since 2026-11-26, + song + cover art),
 // so the app always packages whatever is published at the live link. Run with: npm run build
 // The offline cache (sw.js) is left out: inside the app every file is already on the phone.
 import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
