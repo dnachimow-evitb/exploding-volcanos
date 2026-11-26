@@ -23,5 +23,7 @@ test_tag() { echo "test-v$1"; }
 live_tag() { echo "fable-v7-v${1#*.}"; }
 tag_file game-test.js test_tag
 tag_file game-fable-v7.js live_tag
+live8_tag() { echo "fable-v8-v${1#*.}"; }   # version 8 live publishes: fable-v8-vNN
+tag_file game-fable-v8.js live8_tag
 if [ -n "${DRY:-}" ]; then for t in ${DRYTAGS:-}; do git tag -d "$t" >/dev/null; done; fi
 echo "done: $made new tag(s)"

@@ -1,4 +1,4 @@
-# Publishing version 8 to the live website (prepared 2026-11-26, NOT yet done)
+# Publishing version 8 to the live website (DONE 2026-11-26 at v8.30; Derek said "Publish". Revert point: commit a017b34)
 
 Derek chose "Prep, then I test once" on 2026-11-26. **Do nothing below until he says "publish".**
 The App Store app does not change with this: it packages `game-fable-v7.js` and needs its own 2.0 build and review.

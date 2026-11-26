@@ -17,8 +17,9 @@ required, powers are limited and earned, and the goal of the whole version is to
 |---|---|
 | `game-test.js` | **The working copy. Make every change here first.** |
 | `play-test.html` | Test page. Loads `game-test.js` under a new address on every open, so it always runs the newest build (no `?v=N` to bump). No offline cache. Own saved data. |
-| `game-fable-v7.js` | **The live game.** Never edit directly; it is overwritten by `game-test.js` when publishing. |
-| `index.html` | Live page. Loads `game-fable-v7.js`, registers `sw.js`. |
+| `game-fable-v8.js` | **The live game** since 2026-11-26 (version 8). Never edit directly; it is overwritten by `game-test.js` when publishing. |
+| `game-fable-v7.js` | Version 7 (v7.45), kept for reverting: point `index.html` and `sw.js` back at it and bump `CACHE`. The App Store app (1.0) was built from it. |
+| `index.html` | Live page. Loads `game-fable-v8.js`, registers `sw.js`. |
 | `sw.js` | Offline cache, cache-first. **Its `CACHE` name must be bumped on every live change.** |
 | `apple-touch-icon.png`, `apple-touch-icon-test.png` | Home-screen icons (live, test). iPhones ignore SVG icons. |
 | `assets/cover-volcanoes.webp` | Start-screen cover art. |
@@ -42,8 +43,8 @@ Links: live `https://dnachimow-evitb.github.io/exploding-volcanos/` , test `.../
    He checks the small version label in the corner of the start screen to confirm he has the new build.
 2. Commit, push, wait for GitHub Pages, confirm the test link serves the new `VERSION`.
 3. He tries it on his iPhone (home-screen icon "Volcanoes Test").
-4. **Publish only when he says so:** copy `game-test.js` over `game-fable-v7.js`, bump the `CACHE` name in
-   `sw.js`, bump `?v=` in `play-fable-v7.html`, commit, push, confirm the live site serves the new `VERSION`.
+4. **Publish only when he says so:** copy `game-test.js` over `game-fable-v8.js`, bump the `CACHE` name in
+   `sw.js`, run `experiments/sim/live-upgrade.js` first, commit, push, confirm the live site serves the new `VERSION`.
 5. Add a line to `experiments/fable-v7.md` for every version.
 6. **The iPhone App Store app does not update when the live game is published.** It packages the live game
    (`native/`, see `native/APP-STORE.md`) and needs a new TestFlight build and Apple review for each update.

@@ -5,7 +5,7 @@ name: Version tags
 on:
   push:
     branches: [main]
-    paths: ['game-test.js', 'game-fable-v7.js', '.github/workflows/tag-versions.yml', '.github/scripts/tag-versions.sh']
+    paths: ['game-test.js', 'game-fable-v7.js', 'game-fable-v8.js', '.github/workflows/tag-versions.yml', '.github/scripts/tag-versions.sh']
   workflow_dispatch:
 
 permissions:

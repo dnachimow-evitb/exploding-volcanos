@@ -5,7 +5,7 @@ const ROOT='/home/user/exploding-volcanos',MIME={'.html':'text/html','.js':'text
 (async()=>{const b=await chromium.launch(),ctx=await b.newContext({viewport:{width:375,height:812},serviceWorkers:'block'}),p=await ctx.newPage();let NEW=false;const errs=[];
 p.on('pageerror',e=>errs.push(e.message));
 await p.route('**/*',r=>{const u=new URL(r.request().url());let f=path.join(ROOT,decodeURIComponent(u.pathname==='/'?'/index.html':u.pathname));if(u.hostname!=='game.test'||!fs.existsSync(f)||!fs.statSync(f).isFile())return r.fulfill({status:404,body:''});
- let body=fs.readFileSync(f);if(NEW&&/game-fable-v7\.js$/.test(f))body=fs.readFileSync(ROOT+'/game-test.js');r.fulfill({body,contentType:MIME[path.extname(f)]||'application/octet-stream'});});
+ let body=fs.readFileSync(f);if(!NEW&&/index\.html$/.test(f))body=Buffer.from(String(body).replace('<script src="game-fable-v8.js">','<script src="game-fable-v7.js">'));r.fulfill({body,contentType:MIME[path.extname(f)]||'application/octet-stream'});});
 const tap=async(id,w=600)=>{const r=await p.evaluate(id=>{const h=[card,card2,card3,card4,...hits].find(b=>b&&(b.id||0)===id);return h?{x:(h.x+h.w/2)*KS,y:(h.y+h.h/2)*KS}:null;},id);if(!r)throw new Error('no button '+id);const bb=await p.locator('#c').boundingBox();await p.mouse.click(bb.x+r.x,bb.y+r.y);await p.waitForTimeout(w);};
 // 1. the live game as it is today: make a player with history
 await p.goto('http://game.test/index.html');await p.waitForTimeout(2500);

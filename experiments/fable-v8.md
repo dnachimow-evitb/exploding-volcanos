@@ -516,4 +516,10 @@ devices is OK (he sets up the account when asked); the one-line privacy and list
   phones, code or link, Quick Match, the computer takes over if someone leaves), Coins And Toys (rewritten for the My
   Toys menu and Max's badges). Ten new small pictures in `drawHowTo` (`pw:key` draws a power's icon). Every line was
   checked to fit the card on a 375 x 667 screen.
+- 2026-11-26: **VERSION 8 PUBLISHED LIVE at v8.30.** Derek: "Publish" (after choosing "Prep, then I test once").
+  `game-fable-v8.js` is a copy of `game-test.js`; `index.html` loads it; `sw.js` cache v16; the privacy page gained
+  its Multiplayer section. Version 7 (`game-fable-v7.js`, v7.45) stays for reverting; revert point commit a017b34.
+  Before publishing: a v7.45 save carried over intact (`live-upgrade.js`), original-game and match checks passed, a
+  two-page match and tricks agreed on both screens. The App Store app is still 1.0 (version 7). Live tags are now
+  `fable-v8-vNN`. Derek did not report on v8.24 to v8.30 before publishing.
 

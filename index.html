@@ -13,7 +13,8 @@
 <link rel="icon" href="icon.svg" type="image/svg+xml" />
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
 <style>
-  /* Version 7 (fable-v7): push or swipe, badges, players. Version 5 (game-fable-v5.js) and the original
+  /* Version 8 (game-fable-v8.js, published 2026-11-26): adds the Max game, Smart Max, Multiplayer, tricks and powers.
+     Version 7 (game-fable-v7.js): push or swipe, badges, players. Version 5 (game-fable-v5.js) and the original
      game (original.html + game.js) are still here; README.txt explains how to switch the live game back. */
   *{margin:0;padding:0;box-sizing:border-box;}
   html,body{height:100%;width:100%;overflow:hidden;background:#2a6fdb;overscroll-behavior:none;}
@@ -33,7 +34,7 @@
 <div id="safe"></div><div id="safeb"></div>
 <div id="w"><canvas id="c" width="380" height="600"></canvas></div>
 <audio id="song" src="song.mp3" loop preload="auto"></audio>
-<script src="game-fable-v7.js"></script>
+<script src="game-fable-v8.js"></script>
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
