@@ -17,6 +17,7 @@ const SITE = 'https://dnachimow-evitb.github.io/exploding-volcanos/';
 const CFG = {
   bundleId: 'com.explodingvolcanoes.app',
   locale: 'en-US',
+  newVersion: '2.0',   // the version an update is filed under (must match MARKETING_VERSION in the Xcode project)
   subtitle: 'In The Bathtub',
   privacyPolicyUrl: SITE + 'privacy.html',
   supportUrl: SITE + 'support.html',
@@ -37,8 +38,8 @@ function listing() {
     if (!m) throw new Error(`no text block under "## ${heading}"`);
     return m[1].trim();
   };
-  const L = { promotionalText: block('Promotional text'), description: block('Description'), keywords: block('Keywords'), notes: block('Notes for the App Review team') };
-  const max = { promotionalText: 170, description: 4000, keywords: 100, notes: 4000 };
+  const L = { promotionalText: block('Promotional text'), description: block('Description'), keywords: block('Keywords'), notes: block('Notes for the App Review team'), whatsNew: block("What's New") };
+  const max = { promotionalText: 170, description: 4000, keywords: 100, notes: 4000, whatsNew: 4000 };
   for (const k in max) if (L[k].length > max[k]) throw new Error(`${k} is ${L[k].length} characters; Apple allows ${max[k]}`);
   return L;
 }
@@ -108,7 +109,14 @@ if (process.argv.includes('--status')) {   // read-only: what state is each vers
   process.exit(0);
 }
 const editable = (v) => ['PREPARE_FOR_SUBMISSION', 'DEVELOPER_REJECTED', 'REJECTED', 'METADATA_REJECTED', 'INVALID_BINARY'].includes(v.attributes.appStoreState || v.attributes.appVersionState);
-const version = versions.find(editable);
+let version = versions.find(editable);
+// An update: when the only versions are live ones, open the next version (CFG.newVersion) so the listing can be edited.
+const live = versions.some(v => ['READY_FOR_SALE', 'READY_FOR_DISTRIBUTION'].includes(v.attributes.appStoreState || v.attributes.appVersionState));
+if (!version && live && CFG.newVersion && !versions.some(v => v.attributes.versionString === CFG.newVersion)) {
+  version = (await api('POST', '/v1/appStoreVersions', { data: { type: 'appStoreVersions', attributes: { platform: 'IOS', versionString: CFG.newVersion }, relationships: { app: rel('apps', app.id) } } })).data;
+  console.log('Opened new version ' + CFG.newVersion);
+}
+const isUpdate = live;
 if (!version) { console.error('::error::No editable App Store version (already submitted or live?). States: ' + versions.map(v => v.attributes.appStoreState).join(', ')); process.exit(1); }
 console.log(`Version: ${version.attributes.versionString} (${version.attributes.appStoreState || version.attributes.appVersionState})`);
 const infos = (await api('GET', `/v1/apps/${app.id}/appInfos`)).data;
@@ -165,7 +173,8 @@ await step('Description, keywords, promotional text, links', async () => {
   const locs = (await api('GET', `/v1/appStoreVersions/${version.id}/appStoreVersionLocalizations`)).data;
   vloc = locs.find(l => l.attributes.locale === CFG.locale) || locs[0];
   await api('PATCH', `/v1/appStoreVersionLocalizations/${vloc.id}`, { data: { type: 'appStoreVersionLocalizations', id: vloc.id,
-    attributes: { description: L.description, keywords: L.keywords, promotionalText: L.promotionalText, supportUrl: CFG.supportUrl, marketingUrl: CFG.marketingUrl } } });
+    attributes: { description: L.description, keywords: L.keywords, promotionalText: L.promotionalText, supportUrl: CFG.supportUrl, marketingUrl: CFG.marketingUrl, ...(isUpdate ? { whatsNew: L.whatsNew } : {}) } } });
+  return isUpdate ? "with What's New" : undefined;
 });
 
 await step('Screenshots', async () => {
@@ -217,7 +226,7 @@ await step('Price: free', async () => {
 // ── summary ──
 const failed = results.filter(r => r[0] === 'FAILED');
 const lines = ['## Store listing', '', '| | Step | Note |', '|---|---|---|', ...results.map(r => `| ${r[0] === 'done' ? 'done' : '**FAILED**'} | ${r[1]} | ${String(r[2]).replace(/\|/g, '/').slice(0, 400)} |`), '',
-  'Still for Derek on appstoreconnect.apple.com: App Privacy ("Data Not Collected"), countries (Pricing and Availability), a phone number under App Review Information, Kids category and EU trader status, then Add for Review / Submit.'];
+  'Still for Derek on appstoreconnect.apple.com: check the App Privacy and age-rating answers against native/STORE-LISTING.md, then Add for Review / Submit.'];
 if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, lines.join('\n') + '\n');
 console.log(`\n${results.length - failed.length} of ${results.length} steps done.`);
 process.exit(failed.length ? 1 : 0);

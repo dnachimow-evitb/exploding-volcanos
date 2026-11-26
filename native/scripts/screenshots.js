@@ -15,7 +15,9 @@ try { fontDir = path.join(path.dirname(require.resolve('@fontsource/nunito/packa
 
 const PLAYER = { cur: 0, list: [{ name: 'Noah', icon: '🦆', coins: 185, owned: ['crayon', 'whale', 'jelly', 'turtle', 'crab'],
   st: { games: 14, rounds: 62, toys: 312, misses: 40, hair: 23, blocks: 9, newFirst: 6, sneak: 5, perfect: 11, quick: 4,
-        rebounds: 8, hardRounds: 6, wins: 2, bestScore: 3400, bestStreak: 22, bestRound: 10, bestCombo: 9 } }] };
+        rebounds: 8, hardRounds: 6, wins: 2, bestScore: 3400, bestStreak: 22, bestRound: 10, bestCombo: 9,
+        mxGames: 6, mxRounds: 21, mxBlocks: 240, mxHair: 7, mxDives: 12, mxPow: 18, mxShut: 3, mxNoPow: 2, mxClose: 4, mxLate: 1, mxWins: 0, mxLet: 60, mxBestStreak: 11, mxBestScore: 41, mxBestRound: 8 },
+  gear: ['goggles', 'hat'], wear: ['goggles'], mxBest: 8, mxN: 6, mxTut: 1, nhBest: 3, pw: { splash: 2, noodle: 3, flip: 2, bucket: 1, blast: 1, bubble: 2, juice: 2, decoy: 1, rocket: 2, double: 1 } }] };
 
 function serve() {
   return http.createServer((req, res) => {
@@ -100,9 +102,28 @@ function serve() {
   await page.evaluate(() => { bdgPg = 1; bdgT0 = uiT; });
   await page.waitForTimeout(1200);
   await shot('4-badges.png');
-  await page.evaluate(() => { bdgPg = 0; openToys(); });
+  await page.evaluate(() => { bdgPg = 0; openToys(); tmGo(0); });   // My Toys > Noah's Toys > Bath Toys
   await page.waitForTimeout(1200);
   await shot('5-my-toys.png');
+
+  // 6. playing as Max (version 8): round 5, his powers along the bottom, Noah winding up a throw
+  await page.evaluate(() => { toysT0 = 0; tmPg = 0; lastPack = ['noodle', 'flip', 'juice']; startDuel(5, 'max', true); bannerT = 0; RS = 77; });
+  await page.waitForTimeout(600);
+  await page.evaluate(() => new Promise(done => { const t0 = performance.now(); (function poll() { if (charging && charging.c > .75) { duel.mx.tx = crossX(charging.o) - 34; return done(); } if (performance.now() - t0 > 9000) return done(); setTimeout(poll, 8); })(); }));
+  await page.waitForTimeout(120);
+  await shot('6-play-as-max.png');
+
+  // 7. Max's Toys: his blocking powers
+  await page.evaluate(() => { goMenu(); });
+  await page.waitForTimeout(800);
+  await page.evaluate(() => { openToys(); tmGo(3); tmSel = 'bucket'; });
+  await page.waitForTimeout(1200);
+  await shot('7-max-toys.png');
+
+  // 8. Multiplayer: the first card (two phones)
+  await page.evaluate(() => { toysT0 = 0; tmPg = 0; openMulti(); });
+  await page.waitForTimeout(1200);
+  await shot('8-multiplayer.png');
 
   if (errors.length) console.log('page errors:', errors);
   await browser.close(); server.close();

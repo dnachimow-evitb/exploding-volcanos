@@ -110,6 +110,23 @@ Keep this file current: tick items off and add decisions as they are made.
       (a new app can take up to a day to show in every country and in search).
       The 6-hourly status check was switched off after this.
 
+### 5. Version 2.0 (game version 8), started 2026-11-26
+- [x] Version 8 published to the website (v8.30) on 2026-11-26. The app packages whatever `index.html` loads, now
+      `game-fable-v8.js`.
+- [x] `MARKETING_VERSION` 2.0. **Build 26 uploaded to TestFlight 2026-11-26** (game v8.30).
+- [x] Derek's decisions (2026-11-26): keep player names in code games; keep Quick Match in the app.
+- [x] Apple's rules read on 2026-11-26 (privacy "collect", the age-rating questions, guidelines 1.2, 1.3, 5.1.4,
+      review notes): summary and the judgement calls are in `STORE-LISTING.md`.
+- [x] Listing rewritten for 2.0 in `STORE-LISTING.md` (promotional text, description, What's New, review notes with
+      how to test Multiplayer on two devices). Eight screenshots (three new: playing as Max, Max's Toys, Multiplayer).
+- [x] The Store listing job opens version 2.0 by itself when only a live version exists, and sends What's New.
+- [ ] (Derek) Try build 26 from TestFlight: the three games, and a Multiplayer match between the app and the
+      website (the app talks to the relay from a different address than the website does; this is the one thing
+      that could not be checked from here). Also "Send It" on the invite card (the share sheet inside the app).
+- [ ] Run the Store listing job in `fill` mode (enters the draft; it never submits).
+- [ ] (Derek) On Apple's site: read the listing, check App Privacy and the age rating, attach a screen recording if
+      asked, then Add for Review / Submit.
+
 ## Decisions
 Made by Derek on 2026-11-12:
 - **Individual** developer account (the store shows his legal name as the seller).
