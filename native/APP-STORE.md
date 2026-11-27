@@ -126,8 +126,11 @@ Keep this file current: tick items off and add decisions as they are made.
 - [x] **Listing entered 2026-11-27** (Derek: "Enter the listing"). The job opened version 2.0 (Prepare for Submission) and all
       10 steps passed: subtitle and links, category, 27 age-rating answers (all None / No), content rights, copyright,
       description with What's New, 8 screenshots, build 26, review notes, price free. Not submitted.
-- [ ] (Derek) On Apple's site: read the listing, check App Privacy and the age rating, attach a screen recording if
-      asked, then Add for Review / Submit.
+- [x] **Derek submitted version 2.0 (build 26) for review on 2026-11-27.** Apple's status at 16:59 UTC: WAITING_FOR_REVIEW,
+      release after approval. While it waits or is in review, do NOT run the Store listing job in `fill` or `notes` mode
+      (`status` is safe). Keep the relay running: the reviewer may test Multiplayer.
+- [ ] Apple's answer. If they ask for information or reject: the email says why; fix, upload a new build only if the app
+      itself changed, and resubmit.
 
 ## Decisions
 Made by Derek on 2026-11-12:
