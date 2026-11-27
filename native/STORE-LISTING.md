@@ -97,6 +97,7 @@ kids,toddler,bath,toys,family,volcano,lava,toss,throw,duck,dinosaur,splash,casua
 • Play a friend on two devices with a code, a link or Quick Match
 • Dress Noah with 12 things to wear
 • 24 badges, 12 for Noah and 12 for Max
+• My Toys now has Noah's Toys and Max's Toys, and How To Play covers everything new
 Everything from before is still here and plays the same.
 ```
 
