@@ -123,7 +123,9 @@ Keep this file current: tick items off and add decisions as they are made.
 - [ ] (Derek) Try build 26 from TestFlight: the three games, and a Multiplayer match between the app and the
       website (the app talks to the relay from a different address than the website does; this is the one thing
       that could not be checked from here). Also "Send It" on the invite card (the share sheet inside the app).
-- [ ] Run the Store listing job in `fill` mode (enters the draft; it never submits).
+- [x] **Listing entered 2026-11-27** (Derek: "Enter the listing"). The job opened version 2.0 (Prepare for Submission) and all
+      10 steps passed: subtitle and links, category, 27 age-rating answers (all None / No), content rights, copyright,
+      description with What's New, 8 screenshots, build 26, review notes, price free. Not submitted.
 - [ ] (Derek) On Apple's site: read the listing, check App Privacy and the age rating, attach a screen recording if
       asked, then Add for Review / Submit.
 
